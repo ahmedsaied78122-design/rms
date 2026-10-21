@@ -1,0 +1,10 @@
+{
+  "doctype": "Page",
+  "name": "kitchen-display",
+  "page_name": "kitchen-display",
+  "title": "Kitchen Display",
+  "module": "RMS",
+  "standard": "Yes",
+  "system_page": 0,
+  "icon": "chef-hat"
+}

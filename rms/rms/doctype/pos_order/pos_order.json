@@ -1,0 +1,335 @@
+{
+  "doctype": "DocType",
+  "name": "POS Order",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 0,
+  "autoname": "naming_series:",
+  "naming_rule": "By \"Naming Series\" field",
+  "title_field": "name",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "order_section",
+    "naming_series",
+    "status",
+    "store",
+    "restaurant_brand",
+    "order_type",
+    "sales_taxes_and_charges_template",
+    "cashier_session",
+    "customer",
+    "external_reference",
+    "dining_area",
+    "dining_table",
+    "check_label",
+    "table_check_group",
+    "pos_invoice",
+    "recipe_stock_entry",
+    "business_date",
+    "items_section",
+    "items",
+    "cancellation_history_section",
+    "item_cancellations",
+    "totals_section",
+    "subtotal",
+    "discount_type",
+    "discount_scope",
+    "discount_value",
+    "discount_amount",
+    "discount_reason",
+    "tax_total",
+    "grand_total",
+    "payment_section",
+    "payments"
+  ],
+  "fields": [
+    {
+      "fieldname": "order_section",
+      "fieldtype": "Section Break",
+      "label": "Order"
+    },
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "RMS-ORD-.YYYY.-",
+      "default": "RMS-ORD-.YYYY.-",
+      "hidden": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Open\nPending Confirmation\nConfirmed\nIn Preparation\nReady\nPaid\nCancelled",
+      "default": "Open",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "read_only": 1
+    },
+    {
+      "fieldname": "store",
+      "fieldtype": "Link",
+      "label": "Store",
+      "options": "Store",
+      "reqd": 1,
+      "read_only": 1,
+      "description": "Assigned through the POS cashier session; change Store by starting a new POS session.",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "restaurant_brand",
+      "fieldtype": "Link",
+      "label": "Brand",
+      "options": "Restaurant Brand",
+      "reqd": 1,
+      "read_only": 1,
+      "description": "Selected for the sale in POS and locked on this order record.",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "link_filters": "[[\"Restaurant Brand\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "order_type",
+      "fieldtype": "Link",
+      "label": "Order Type",
+      "options": "Order Type",
+      "reqd": 1,
+      "read_only": 1,
+      "description": "Selected for the sale in POS and locked on this order record.",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "link_filters": "[[\"Order Type\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "options": "Sales Taxes and Charges Template",
+      "fieldtype": "Link",
+      "label": "Sales Taxes and Charges Template",
+      "fieldname": "sales_taxes_and_charges_template",
+      "reqd": 1,
+      "read_only": 1,
+      "description": "Resolved from Store and Order Type tax settings; managed by POS."
+    },
+    {
+      "fieldname": "cashier_session",
+      "fieldtype": "Link",
+      "label": "Cashier Session",
+      "options": "Cashier Session",
+      "reqd": 1,
+      "read_only": 1,
+      "description": "Set when POS creates the order; keeps the sale attributed to its cashier session.",
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"Cashier Session\",\"store\",\"=\",\"eval:doc.store\"],[\"Cashier Session\",\"status\",\"=\",\"Open\"]]"
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "read_only": 1,
+      "description": "Choose or change the customer from the POS order screen."
+    },
+    {
+      "fieldname": "external_reference",
+      "fieldtype": "Data",
+      "label": "External Reference",
+      "read_only": 1,
+      "description": "Entered in POS when the selected Order Type requires an external reference."
+    },
+    {
+      "fieldname": "dining_area",
+      "fieldtype": "Link",
+      "label": "Dining Area",
+      "options": "Dining Area",
+      "read_only": 1,
+      "description": "Set from the selected dining table in POS.",
+      "link_filters": "[[\"Dining Area\",\"store\",\"=\",\"eval:doc.store\"],[\"Dining Area\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "dining_table",
+      "fieldtype": "Link",
+      "label": "Dining Table",
+      "options": "Dining Table",
+      "read_only": 1,
+      "description": "Select or transfer tables from the POS Tables screen.",
+      "link_filters": "[[\"Dining Table\",\"store\",\"=\",\"eval:doc.store\"],[\"Dining Table\",\"dining_area\",\"=\",\"eval:doc.dining_area\"],[\"Dining Table\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "check_label",
+      "fieldtype": "Data",
+      "label": "Guest / Check Label",
+      "length": 60,
+      "read_only": 1,
+      "depends_on": "eval:doc.dining_table",
+      "description": "Optional label that identifies a guest's separate check at this table."
+    },
+    {
+      "fieldname": "table_check_group",
+      "fieldtype": "Data",
+      "label": "Table Check Group",
+      "hidden": 1,
+      "read_only": 1,
+      "no_copy": 1
+    },
+    {
+      "options": "POS Invoice",
+      "label": "POS Invoice",
+      "fieldtype": "Link",
+      "fieldname": "pos_invoice",
+      "read_only": 1
+    },
+    {
+      "fieldname": "recipe_stock_entry",
+      "fieldtype": "Link",
+      "label": "Recipe Stock Entry",
+      "options": "Stock Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "business_date",
+      "fieldtype": "Date",
+      "label": "Business Date",
+      "reqd": 1,
+      "read_only": 1,
+      "description": "Inherited from the Cashier Session when the POS order is created.",
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "items_section",
+      "fieldtype": "Section Break",
+      "label": "Items"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "POS Order Item",
+      "reqd": 1,
+      "read_only": 1,
+      "description": "Review items here. Add, edit, or confirm them through the cashier POS."
+    },
+    {
+      "fieldname": "cancellation_history_section",
+      "fieldtype": "Section Break",
+      "label": "Confirmed Item Cancellation History",
+      "depends_on": "eval:doc.item_cancellations && doc.item_cancellations.length"
+    },
+    {
+      "fieldname": "item_cancellations",
+      "fieldtype": "Table",
+      "label": "Cancellation History",
+      "options": "POS Order Item Cancellation",
+      "read_only": 1,
+      "description": "Append-only record of manager-approved cancellations after kitchen confirmation."
+    },
+    {
+      "fieldname": "totals_section",
+      "fieldtype": "Section Break",
+      "label": "Totals"
+    },
+    {
+      "fieldname": "subtotal",
+      "fieldtype": "Currency",
+      "label": "Subtotal",
+      "read_only": 1
+    },
+    {
+      "fieldname": "discount_type",
+      "fieldtype": "Select",
+      "label": "Discount Type",
+      "options": "Percentage\nAmount",
+      "default": "Percentage",
+      "read_only": 1,
+      "description": "Set through the POS checkout discount controls.",
+      "depends_on": "eval:doc.discount_value"
+    },
+    {
+      "fieldname": "discount_scope",
+      "fieldtype": "Select",
+      "label": "Apply Discount On",
+      "options": "Net Total\nGrand Total",
+      "default": "Net Total",
+      "description": "Controlled by the Store manual discount setting; not selectable by the cashier.",
+      "read_only": 1,
+      "depends_on": "eval:doc.discount_value"
+    },
+    {
+      "fieldname": "discount_value",
+      "fieldtype": "Float",
+      "label": "Discount Value",
+      "read_only": 1,
+      "description": "Set and validated through POS checkout. The discount scope comes from Store settings.",
+      "depends_on": "eval:doc.discount_value"
+    },
+    {
+      "fieldname": "discount_amount",
+      "fieldtype": "Currency",
+      "label": "Discount Amount",
+      "read_only": 1
+    },
+    {
+      "fieldname": "discount_reason",
+      "fieldtype": "Small Text",
+      "label": "Discount Reason",
+      "read_only": 1,
+      "description": "Captured in POS checkout with the manual discount.",
+      "depends_on": "eval:doc.discount_value"
+    },
+    {
+      "fieldname": "tax_total",
+      "fieldtype": "Currency",
+      "label": "Taxes",
+      "read_only": 1
+    },
+    {
+      "fieldname": "grand_total",
+      "fieldtype": "Currency",
+      "label": "Grand Total",
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "payment_section",
+      "fieldtype": "Section Break",
+      "label": "Payments",
+      "depends_on": "eval:doc.status == 'Paid'"
+    },
+    {
+      "depends_on": "eval:doc.status == 'Paid'",
+      "options": "POS Order Payment",
+      "fieldtype": "Table",
+      "fieldname": "payments",
+      "mandatory_depends_on": "eval:doc.status == 'Paid'",
+      "label": "Payments",
+      "read_only": 1,
+      "description": "Created by POS checkout and matched to the submitted POS Invoice."
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 0,
+      "create": 0,
+      "delete": 0,
+      "export": 1,
+      "import": 0,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

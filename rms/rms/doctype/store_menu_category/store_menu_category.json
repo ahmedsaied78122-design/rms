@@ -1,0 +1,32 @@
+{
+  "doctype": "DocType",
+  "name": "Store Menu Category",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "product_category",
+    "sequence_id"
+  ],
+  "fields": [
+    {
+      "fieldname": "product_category",
+      "fieldtype": "Link",
+      "label": "Product Category",
+      "options": "Product Category",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 7,
+      "link_filters": "[[\"Product Category\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "sequence_id",
+      "fieldtype": "Int",
+      "label": "Sequence ID",
+      "default": "0",
+      "in_list_view": 1,
+      "columns": 3
+    }
+  ],
+  "permissions": []
+}

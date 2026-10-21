@@ -1,0 +1,297 @@
+{
+  "doctype": "DocType",
+  "name": "Selling Product",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "field:title",
+  "naming_rule": "By fieldname",
+  "title_field": "title",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "identity_section",
+    "title",
+    "item",
+    "product_category",
+    "uom",
+    "maintain_stock",
+    "image",
+    "enabled",
+    "sequence_id",
+    "identity_column",
+    "is_modifier",
+    "can_be_sold_separately",
+    "options_section",
+    "has_options",
+    "option_products",
+    "pricing_section",
+    "selling_price",
+    "selling_prices",
+    "recipe_section",
+    "with_recipe",
+    "recipe",
+    "additional_recipe",
+    "defaults_section",
+    "default_store",
+    "default_store_company",
+    "default_warehouse",
+    "store_availability",
+    "store_order_type_exclusions",
+    "modifiers_section",
+    "modifier_groups",
+    "modifier_options",
+    "printing_section",
+    "print_routes"
+  ],
+  "fields": [
+    {
+      "fieldname": "identity_section",
+      "fieldtype": "Section Break",
+      "label": "Product"
+    },
+    {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "label": "Product Name",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1
+    },
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "read_only_depends_on": null,
+      "reqd": 0,
+      "read_only": 1
+    },
+    {
+      "fieldname": "product_category",
+      "fieldtype": "Link",
+      "label": "Product Category",
+      "options": "Product Category",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "read_only_depends_on": "eval:!doc.__islocal",
+      "link_filters": "[[\"Product Category\",\"enabled\",\"=\",\"1\"],[\"Product Category\",\"is_group\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "uom",
+      "fieldtype": "Link",
+      "label": "Unit of Measure",
+      "options": "UOM",
+      "in_list_view": 1,
+      "columns": 1,
+      "read_only_depends_on": "eval:!doc.__islocal",
+      "reqd": 1
+    },
+    {
+      "fieldname": "maintain_stock",
+      "fieldtype": "Check",
+      "label": "Maintain Stock",
+      "default": "0",
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only_depends_on": "eval:!doc.__islocal"
+    },
+    {
+      "fieldname": "image",
+      "fieldtype": "Attach Image",
+      "label": "Product Image"
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "sequence_id",
+      "fieldtype": "Int",
+      "label": "Sequence in Category",
+      "default": "0",
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "identity_column",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "is_modifier",
+      "fieldtype": "Check",
+      "label": "Is Modifier",
+      "default": "0"
+    },
+    {
+      "fieldname": "can_be_sold_separately",
+      "fieldtype": "Check",
+      "label": "Can Be Sold Separately",
+      "default": "1",
+      "depends_on": "eval:doc.is_modifier"
+    },
+    {
+      "fieldname": "options_section",
+      "fieldtype": "Section Break",
+      "label": "Options"
+    },
+    {
+      "fieldname": "has_options",
+      "fieldtype": "Check",
+      "label": "Has Options",
+      "default": "0"
+    },
+    {
+      "fieldname": "option_products",
+      "fieldtype": "Table",
+      "label": "Option Products",
+      "options": "Selling Product Option",
+      "depends_on": "eval:doc.has_options"
+    },
+    {
+      "fieldname": "pricing_section",
+      "fieldtype": "Section Break",
+      "label": "Pricing",
+      "depends_on": "eval:!doc.has_options"
+    },
+    {
+      "fieldname": "selling_price",
+      "fieldtype": "Currency",
+      "label": "Selling Price",
+      "depends_on": "eval:!doc.has_options && (!doc.is_modifier || doc.can_be_sold_separately)"
+    },
+    {
+      "fieldname": "selling_prices",
+      "fieldtype": "Table",
+      "label": "Conditional Selling Prices",
+      "options": "Selling Product Price Rule",
+      "depends_on": "eval:!doc.has_options && (!doc.is_modifier || doc.can_be_sold_separately)"
+    },
+    {
+      "fieldname": "recipe_section",
+      "fieldtype": "Section Break",
+      "label": "Recipe",
+      "depends_on": "eval:!doc.has_options"
+    },
+    {
+      "fieldname": "with_recipe",
+      "fieldtype": "Check",
+      "label": "With Recipe",
+      "default": "0",
+      "depends_on": "eval:!doc.has_options"
+    },
+    {
+      "fieldname": "recipe",
+      "fieldtype": "Table",
+      "label": "Base Recipe",
+      "options": "Selling Product Recipe Line",
+      "depends_on": "eval:doc.with_recipe && !doc.has_options",
+      "mandatory_depends_on": "eval:doc.with_recipe && !doc.has_options"
+    },
+    {
+      "fieldname": "additional_recipe",
+      "fieldtype": "Table",
+      "label": "Additional Recipe",
+      "options": "Selling Product Additional Recipe Line",
+      "depends_on": "eval:doc.with_recipe && !doc.has_options"
+    },
+    {
+      "fieldname": "defaults_section",
+      "fieldtype": "Section Break",
+      "label": "Operational Defaults"
+    },
+    {
+      "fieldname": "default_store",
+      "fieldtype": "Link",
+      "label": "Store",
+      "options": "Store",
+      "in_list_view": 0,
+      "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]",
+      "reqd": 0
+    },
+    {
+      "fieldname": "default_store_company",
+      "fieldtype": "Link",
+      "label": "Store Company",
+      "options": "Company",
+      "hidden": 1,
+      "fetch_from": "default_store.company",
+      "read_only": 1
+    },
+    {
+      "fieldname": "default_warehouse",
+      "fieldtype": "Link",
+      "label": "Default Warehouse",
+      "options": "Warehouse",
+      "link_filters": "[[\"Warehouse\",\"company\",\"=\",\"eval:doc.default_store_company\"],[\"Warehouse\",\"is_group\",\"=\",\"0\"],[\"Warehouse\",\"disabled\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "store_availability",
+      "fieldtype": "Table",
+      "label": "Store Availability",
+      "options": "Selling Product Store Availability"
+    },
+    {
+      "fieldname": "store_order_type_exclusions",
+      "fieldtype": "Table",
+      "label": "Disabled Order Types by Store",
+      "options": "Selling Product Store Order Type Exclusion"
+    },
+    {
+      "fieldname": "modifiers_section",
+      "fieldtype": "Section Break",
+      "label": "Modifiers"
+    },
+    {
+      "fieldname": "modifier_groups",
+      "fieldtype": "Table",
+      "label": "Modifier Groups",
+      "options": "Selling Product Modifier Group"
+    },
+    {
+      "fieldname": "modifier_options",
+      "fieldtype": "Table",
+      "label": "Modifier Options",
+      "options": "Selling Product Modifier Option"
+    },
+    {
+      "fieldname": "printing_section",
+      "fieldtype": "Section Break",
+      "label": "Printing"
+    },
+    {
+      "fieldname": "print_routes",
+      "fieldtype": "Table",
+      "label": "Print Routes",
+      "options": "Selling Product Print Route"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "doctype": "Report",
+  "name": "RMS POS Sales Summary",
+  "report_name": "RMS POS Sales Summary",
+  "ref_doctype": "POS Order",
+  "report_type": "Script Report",
+  "module": "RMS",
+  "is_standard": "Yes",
+  "roles": [
+    {"role": "POS Manager"},
+    {"role": "System Manager"}
+  ]
+}

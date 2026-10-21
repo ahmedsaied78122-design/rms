@@ -1,0 +1,14 @@
+{
+  "doctype": "Page",
+  "name": "print-dispatch-queue",
+  "page_name": "print-dispatch-queue",
+  "title": "Print Dispatch Queue",
+  "module": "RMS",
+  "standard": "Yes",
+  "system_page": 0,
+  "icon": "printer",
+  "roles": [
+    { "role": "POS Manager" },
+    { "role": "System Manager" }
+  ]
+}

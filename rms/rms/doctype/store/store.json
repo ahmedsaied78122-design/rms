@@ -1,0 +1,220 @@
+{
+  "doctype": "DocType",
+  "name": "Store",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "field:title",
+  "naming_rule": "By fieldname",
+  "title_field": "title",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "identity_section",
+    "title",
+    "store_code",
+    "enabled",
+    "company",
+    "defaults_section",
+    "default_warehouse",
+    "default_preparation_area",
+    "pos_profile",
+    "operating_day_end",
+    "brands_section",
+    "brands",
+    "hours_section",
+    "working_hours",
+    "users_section",
+    "allowed_users",
+    "accounting_section",
+    "manual_discount_scope",
+    "order_type_taxes",
+    "location_section",
+    "latitude",
+    "longitude",
+    "state",
+    "city",
+    "description"
+  ],
+  "fields": [
+    {
+      "fieldname": "identity_section",
+      "fieldtype": "Section Break",
+      "label": "Store"
+    },
+    {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "label": "Store Name",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 3
+    },
+    {
+      "fieldname": "store_code",
+      "fieldtype": "Data",
+      "label": "Store Code",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 3
+    },
+    {
+      "fieldname": "defaults_section",
+      "fieldtype": "Section Break",
+      "label": "Operational Defaults"
+    },
+    {
+      "fieldname": "default_warehouse",
+      "fieldtype": "Link",
+      "label": "Default Warehouse",
+      "options": "Warehouse",
+      "link_filters": "[[\"Warehouse\",\"company\",\"=\",\"eval:doc.company\"],[\"Warehouse\",\"is_group\",\"=\",\"0\"],[\"Warehouse\",\"disabled\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "default_preparation_area",
+      "fieldtype": "Link",
+      "label": "Default Preparation Area",
+      "options": "Preparation Area",
+      "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:doc.name\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "pos_profile",
+      "fieldtype": "Link",
+      "label": "POS Profile",
+      "options": "POS Profile",
+      "link_filters": "[[\"POS Profile\",\"company\",\"=\",\"eval:doc.company\"],[\"POS Profile\",\"disabled\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "operating_day_end",
+      "fieldtype": "Time",
+      "label": "Operating Day End",
+      "default": "04:00:00",
+      "reqd": 1
+    },
+    {
+      "fieldname": "brands_section",
+      "fieldtype": "Section Break",
+      "label": "Brands"
+    },
+    {
+      "fieldname": "brands",
+      "fieldtype": "Table",
+      "label": "Brands",
+      "options": "Store Brand Assignment",
+      "reqd": 1
+    },
+    {
+      "fieldname": "hours_section",
+      "fieldtype": "Section Break",
+      "label": "Working Hours",
+      "collapsible": 1
+    },
+    {
+      "fieldname": "working_hours",
+      "fieldtype": "Table",
+      "label": "Working Hours",
+      "options": "Store Working Hour"
+    },
+    {
+      "fieldname": "users_section",
+      "fieldtype": "Section Break",
+      "label": "Allowed Users",
+      "collapsible": 1
+    },
+    {
+      "fieldname": "allowed_users",
+      "fieldtype": "Table",
+      "label": "Allowed Users",
+      "options": "Store User Assignment"
+    },
+    {
+      "fieldname": "accounting_section",
+      "fieldtype": "Section Break",
+      "label": "Accounting"
+    },
+    {
+      "fieldname": "manual_discount_scope",
+      "fieldtype": "Select",
+      "label": "Manual Discount Applies On",
+      "options": "Net Total\nGrand Total",
+      "default": "Net Total",
+      "description": "Cashier discounts use this base and cannot change it at checkout."
+    },
+    {
+      "fieldname": "order_type_taxes",
+      "fieldtype": "Table",
+      "label": "Order Type Taxes",
+      "options": "Store Order Type Tax"
+    },
+    {
+      "fieldname": "location_section",
+      "fieldtype": "Section Break",
+      "label": "Location",
+      "collapsible": 1
+    },
+    {
+      "fieldname": "latitude",
+      "fieldtype": "Float",
+      "label": "Latitude",
+      "precision": "7"
+    },
+    {
+      "fieldname": "longitude",
+      "fieldtype": "Float",
+      "label": "Longitude",
+      "precision": "7"
+    },
+    {
+      "fieldname": "state",
+      "fieldtype": "Data",
+      "label": "State"
+    },
+    {
+      "fieldname": "city",
+      "fieldtype": "Data",
+      "label": "City"
+    },
+    {
+      "fieldname": "description",
+      "fieldtype": "Small Text",
+      "label": "Description"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

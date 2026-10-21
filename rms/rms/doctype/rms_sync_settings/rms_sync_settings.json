@@ -1,0 +1,16 @@
+{
+  "doctype": "DocType",
+  "name": "RMS Sync Settings",
+  "module": "RMS",
+  "issingle": 1,
+  "track_changes": 1,
+  "field_order": ["capture_section", "capture_enabled", "schema_version"],
+  "fields": [
+    {"fieldname": "capture_section", "fieldtype": "Section Break", "label": "Local Event Capture"},
+    {"fieldname": "capture_enabled", "fieldtype": "Check", "label": "Capture Events Locally", "default": "0", "description": "Records approved RMS master changes in the local journal. Events are not sent to another site."},
+    {"fieldname": "schema_version", "fieldtype": "Int", "label": "Payload Schema Version", "default": "1", "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "System Manager", "read": 1, "write": 1}
+  ]
+}

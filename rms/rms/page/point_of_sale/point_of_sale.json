@@ -1,0 +1,10 @@
+{
+  "doctype": "Page",
+  "name": "point-of-sale",
+  "page_name": "point-of-sale",
+  "title": "Point of Sale",
+  "module": "RMS",
+  "standard": "Yes",
+  "system_page": 0,
+  "icon": "pos"
+}

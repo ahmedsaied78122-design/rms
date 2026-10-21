@@ -1,0 +1,44 @@
+{
+  "doctype": "DocType",
+  "name": "Order Type Account Mapping",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "company",
+    "income_account",
+    "cost_of_goods_sold_account"
+  ],
+  "fields": [
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 3,
+      "link_filters": "[[\"Company\",\"is_group\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "income_account",
+      "fieldtype": "Link",
+      "label": "Income Account",
+      "options": "Account",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 3,
+      "link_filters": "[[\"Account\",\"company\",\"=\",\"eval:doc.company\"],[\"Account\",\"is_group\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "cost_of_goods_sold_account",
+      "fieldtype": "Link",
+      "label": "Cost of Goods Sold Account",
+      "options": "Account",
+      "in_list_view": 1,
+      "columns": 4,
+      "link_filters": "[[\"Account\",\"company\",\"=\",\"eval:doc.company\"],[\"Account\",\"is_group\",\"=\",\"0\"]]"
+    }
+  ],
+  "permissions": []
+}

@@ -1,0 +1,174 @@
+/* RMS visual identity for the Frappe 16 Desk. Kept in the RMS app so framework
+   and ERPNext assets stay upgradeable. */
+:root,
+[data-theme="light"] {
+	--primary: #b74d32;
+	--primary-color: #b74d32;
+	--brand-color: #b74d32;
+	--surface-base: #f5f2ec;
+	--surface-gray-1: #efebe4;
+	--surface-gray-2: #e8e2d9;
+	--surface-gray-3: #ddd6cb;
+	--outline-gray-1: #e6e0d7;
+	--outline-gray-2: #d8d1c7;
+	--focus-default: 0 0 0 3px rgb(183 77 50 / 18%);
+}
+
+html,
+body {
+	background: var(--surface-base);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+	font-family: Inter, "IBM Plex Sans Arabic", Cairo, "Segoe UI", Tahoma, sans-serif;
+}
+
+/* A dark, warm navigation rail makes the Desk read as an RMS product instead
+   of the stock Frappe shell while keeping every standard navigation control. */
+.body-sidebar {
+	--ink-gray-6: #b8b6b1;
+	--ink-gray-8: #fff8ef;
+	--surface-gray-2: #282b2d;
+	--outline-gray-1: #303335;
+	--outline-gray-2: #3a3d3f;
+	background: #1b1d1f;
+	border: 0;
+	box-shadow: 8px 0 28px rgb(32 26 20 / 8%);
+}
+
+.body-sidebar .standard-sidebar-label {
+	color: #92999a;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+}
+
+.body-sidebar .standard-sidebar-item .item-anchor {
+	color: #c7c5c0;
+	border-radius: 10px;
+}
+
+.body-sidebar .standard-sidebar-item:not(.active-sidebar) .item-anchor:hover {
+	color: #fff8ef;
+	background: #292c2e;
+}
+
+.body-sidebar .standard-sidebar-item.active-sidebar .item-anchor {
+	color: #fffaf4;
+	background: linear-gradient(110deg, #a9432d, #c5673e);
+	box-shadow: 0 5px 16px rgb(183 77 50 / 24%);
+}
+
+.body-sidebar .sidebar-header,
+.body-sidebar .body-sidebar-bottom {
+	color: #f7f2e9;
+}
+
+.body-sidebar .sidebar-header .app-logo,
+.app-logo {
+	width: 30px;
+	height: 30px;
+	max-height: 30px;
+	object-fit: cover;
+	object-position: center 22%;
+	border: 1px solid rgb(255 255 255 / 18%);
+	border-radius: 10px;
+}
+
+.layout-main-section,
+.form-layout,
+.list-row-container,
+.report-wrapper,
+.workspace-sidebar {
+	border-color: var(--outline-gray-1);
+}
+
+.layout-main-section {
+	border-radius: 16px;
+	box-shadow: 0 8px 24px rgb(44 37 28 / 4%);
+}
+
+.page-head .page-title,
+.page-head h3 {
+	letter-spacing: -.025em;
+}
+
+.btn-primary,
+.primary-action {
+	--primary: #b74d32;
+	border-color: #a9432d;
+	background: #b74d32;
+}
+
+.btn-primary:hover,
+.primary-action:hover {
+	border-color: #923b29;
+	background: #a9432d;
+}
+
+.form-control:focus,
+.control-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	border-color: #bf674c !important;
+	box-shadow: 0 0 0 3px rgb(183 77 50 / 12%) !important;
+}
+
+.standard-sidebar-item,
+.btn,
+.layout-main-section,
+.form-layout,
+.list-row,
+.indicator-pill {
+	transition: background-color .16s ease, border-color .16s ease,
+		box-shadow .16s ease, color .16s ease, transform .16s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: .01ms !important;
+		animation-duration: .01ms !important;
+	}
+}
+
+/* Match the point-of-sale page to the same warm RMS palette. */
+.rms-pos-page {
+	background: #f5f2ec;
+}
+
+.rms-pos-shell {
+	color: #252321;
+}
+
+.rms-pos-mark {
+	background: #1b1d1f;
+	color: #e8b65e;
+}
+
+.rms-pos-eyebrow {
+	color: #a9432d;
+}
+
+.rms-pos-choice:hover,
+.rms-pos-open-order:hover {
+	border-color: #c47c63;
+	background: #fbf5ef;
+}
+
+@media (max-width: 767px) {
+	.body-sidebar {
+		box-shadow: 12px 0 40px rgb(0 0 0 / 18%);
+	}
+
+	.layout-main-section {
+		border-radius: 12px;
+	}
+}

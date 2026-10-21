@@ -1,0 +1,123 @@
+{
+  "doctype": "DocType",
+  "name": "Preparation Area",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "field:title",
+  "naming_rule": "By fieldname",
+  "title_field": "title",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "area_section",
+    "title",
+    "store",
+    "enabled",
+    "sequence_id",
+    "output_column",
+    "has_kds",
+    "has_printer",
+    "print_device",
+    "comments_section",
+    "comments"
+  ],
+  "fields": [
+    {
+      "fieldname": "area_section",
+      "fieldtype": "Section Break",
+      "label": "Preparation Area"
+    },
+    {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "label": "Area Name",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 4
+    },
+    {
+      "fieldname": "store",
+      "fieldtype": "Link",
+      "label": "Store",
+      "options": "Store",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 3,
+      "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1
+    },
+    {
+      "fieldname": "sequence_id",
+      "fieldtype": "Int",
+      "label": "Display Order",
+      "default": "0",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "output_column",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "has_kds",
+      "fieldtype": "Check",
+      "label": "Has KDS",
+      "default": "0"
+    },
+    {
+      "fieldname": "has_printer",
+      "fieldtype": "Check",
+      "label": "Has Printer",
+      "default": "0"
+    },
+    {
+      "fieldname": "print_device",
+      "fieldtype": "Link",
+      "label": "Print Device",
+      "options": "Print Device",
+      "depends_on": "eval:doc.has_printer",
+      "mandatory_depends_on": "eval:doc.has_printer",
+      "link_filters": "[[\"Print Device\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "comments_section",
+      "fieldtype": "Section Break",
+      "label": "Comments",
+      "collapsible": 1
+    },
+    {
+      "fieldname": "comments",
+      "fieldtype": "Small Text",
+      "label": "Comments"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

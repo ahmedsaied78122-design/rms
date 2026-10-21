@@ -1,0 +1,23 @@
+{
+  "doctype": "DocType",
+  "name": "Order Type MultiSelect Option",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "order_type"
+  ],
+  "fields": [
+    {
+      "fieldname": "order_type",
+      "fieldtype": "Link",
+      "label": "Order Type",
+      "options": "Order Type",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 8,
+      "link_filters": "[[\"Order Type\",\"enabled\",\"=\",\"1\"]]"
+    }
+  ],
+  "permissions": []
+}

@@ -1,0 +1,83 @@
+{
+  "doctype": "DocType",
+  "name": "Store Menu",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "field:title",
+  "naming_rule": "By fieldname",
+  "title_field": "title",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "menu_section",
+    "title",
+    "restaurant_brand",
+    "enabled",
+    "categories_section",
+    "categories"
+  ],
+  "fields": [
+    {
+      "fieldname": "menu_section",
+      "fieldtype": "Section Break",
+      "label": "Menu"
+    },
+    {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "label": "Menu Name",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 4
+    },
+    {
+      "fieldname": "restaurant_brand",
+      "fieldtype": "Link",
+      "label": "Brand",
+      "options": "Restaurant Brand",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 3
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "categories_section",
+      "fieldtype": "Section Break",
+      "label": "Product Categories"
+    },
+    {
+      "fieldname": "categories",
+      "fieldtype": "Table",
+      "label": "Categories",
+      "options": "Store Menu Category"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

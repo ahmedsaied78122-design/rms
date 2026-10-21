@@ -1,0 +1,13 @@
+{
+  "doctype": "DocType",
+  "name": "POS User Preparation Area",
+  "module": "RMS",
+  "istable": 1,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": ["preparation_area"],
+  "fields": [
+    {"fieldname": "preparation_area", "fieldtype": "Link", "label": "Preparation Area", "options": "Preparation Area", "reqd": 1, "in_list_view": 1}
+  ],
+  "permissions": []
+}

@@ -1,0 +1,32 @@
+{
+  "doctype": "DocType",
+  "name": "POS Return",
+  "module": "RMS",
+  "autoname": "naming_series:",
+  "naming_rule": "By \"Naming Series\" field",
+  "track_changes": 1,
+  "field_order": ["naming_series", "status", "store", "cashier_session", "source_pos_invoice", "customer", "items", "payments", "refund_total", "return_pos_invoice", "stock_entry", "approved_by", "approved_at", "rejected_by", "rejected_at", "reason"],
+  "fields": [
+    {"fieldname":"naming_series","fieldtype":"Select","label":"Series","options":"RMS-RET-.YYYY.-","default":"RMS-RET-.YYYY.-","hidden":1},
+    {"fieldname":"status","fieldtype":"Select","label":"Status","options":"Pending Approval\nApproved\nRejected","default":"Pending Approval","read_only":1,"in_list_view":1,"in_standard_filter":1},
+    {"fieldname":"store","fieldtype":"Link","label":"Store","options":"Store","read_only":1,"in_list_view":1,"link_filters":"[[\"Store\",\"enabled\",\"=\",\"1\"]]"},
+    {"fieldname":"cashier_session","fieldtype":"Link","label":"Cashier Session","options":"Cashier Session","read_only":1,"in_list_view":1},
+    {"fieldname":"source_pos_invoice","fieldtype":"Link","label":"Source POS Invoice","options":"POS Invoice","read_only":1,"reqd":1},
+    {"fieldname":"customer","fieldtype":"Link","label":"Customer","options":"Customer","read_only":1},
+    {"fieldname":"items","fieldtype":"Table","label":"Returned Items","options":"POS Return Item","reqd":1},
+    {"fieldname":"payments","fieldtype":"Table","label":"Refund Payments","options":"POS Return Payment","reqd":1},
+    {"fieldname":"refund_total","fieldtype":"Currency","label":"Refund Total","read_only":1,"in_list_view":1},
+    {"fieldname":"return_pos_invoice","fieldtype":"Link","label":"Return POS Invoice","options":"POS Invoice","read_only":1},
+    {"fieldname":"stock_entry","fieldtype":"Link","label":"Returned Stock Entry","options":"Stock Entry","read_only":1},
+    {"fieldname":"approved_by","fieldtype":"Link","label":"Approved By","options":"User","read_only":1},
+    {"fieldname":"approved_at","fieldtype":"Datetime","label":"Approved At","read_only":1},
+    {"fieldname":"rejected_by","fieldtype":"Link","label":"Rejected By","options":"User","read_only":1},
+    {"fieldname":"rejected_at","fieldtype":"Datetime","label":"Rejected At","read_only":1},
+    {"fieldname":"reason","fieldtype":"Small Text","label":"Reason"}
+  ],
+  "permissions": [
+    {"role":"System Manager","read":1,"write":1,"create":1,"submit":1,"cancel":1,"delete":1,"report":1},
+    {"role":"POS Manager","read":1,"write":1,"create":1,"submit":1,"report":1},
+    {"role":"POS Cashier","read":1,"create":1}
+  ]
+}

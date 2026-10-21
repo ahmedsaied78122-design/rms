@@ -1,0 +1,152 @@
+{
+  "doctype": "DocType",
+  "name": "POS Order Item",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "selling_product",
+    "option_parent",
+    "item",
+    "qty",
+    "cancelled_qty",
+    "uom",
+    "price_list",
+    "selling_price",
+    "amount",
+    "recipe_snapshot",
+    "modifiers",
+    "warehouse",
+    "preparation_area",
+    "notes",
+    "sent_to_kitchen"
+  ],
+  "fields": [
+    {
+      "fieldname": "selling_product",
+      "fieldtype": "Link",
+      "label": "Selling Product",
+      "options": "Selling Product",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 1,
+      "link_filters": "[[\"Selling Product\",\"enabled\",\"=\",\"1\"],[\"Selling Product\",\"has_options\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "option_parent",
+      "fieldtype": "Link",
+      "label": "Option Parent",
+      "options": "Selling Product",
+      "read_only": 1,
+      "hidden": 1
+    },
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 1,
+      "link_filters": "[[\"Item\",\"disabled\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "Quantity",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "cancelled_qty",
+      "fieldtype": "Float",
+      "label": "Cancelled Quantity",
+      "default": "0",
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 1
+    },
+    {
+      "fieldname": "uom",
+      "fieldtype": "Link",
+      "label": "UOM",
+      "options": "UOM",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"UOM\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "options": "Price List",
+      "label": "Price List",
+      "fieldtype": "Link",
+      "fieldname": "price_list",
+      "read_only": 1
+    },
+    {
+      "fieldname": "selling_price",
+      "fieldtype": "Currency",
+      "label": "Selling Price",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "Amount",
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "default": "[]",
+      "read_only": 1,
+      "hidden": 1,
+      "label": "Recipe Snapshot",
+      "fieldtype": "Long Text",
+      "fieldname": "recipe_snapshot"
+    },
+    {
+      "default": "[]",
+      "hidden": 1,
+      "read_only": 1,
+      "fieldname": "modifiers",
+      "fieldtype": "Long Text",
+      "label": "Modifiers"
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "Warehouse",
+      "options": "Warehouse",
+      "link_filters": "[[\"Warehouse\",\"is_group\",\"=\",\"0\"]]",
+      "read_only": 1
+    },
+    {
+      "fieldname": "preparation_area",
+      "fieldtype": "Link",
+      "label": "Preparation Area",
+      "options": "Preparation Area",
+      "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:parent.store\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]",
+      "read_only": 1
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    },
+    {
+      "fieldname": "sent_to_kitchen",
+      "fieldtype": "Check",
+      "label": "Confirmed to Preparation",
+      "default": "0",
+      "hidden": 1,
+      "read_only": 1
+    }
+  ],
+  "permissions": []
+}

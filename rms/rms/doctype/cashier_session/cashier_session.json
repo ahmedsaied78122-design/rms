@@ -1,0 +1,156 @@
+{
+  "doctype": "DocType",
+  "name": "Cashier Session",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "naming_rule": "By \"Naming Series\" field",
+  "title_field": "name",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "session_section",
+    "naming_series",
+    "user",
+    "store",
+    "store_company",
+    "pos_profile",
+    "pos_opening_entry",
+    "pos_closing_entry",
+    "status",
+    "business_date",
+    "opened_at",
+    "payments",
+    "closed_at"
+  ],
+  "fields": [
+    {
+      "fieldname": "session_section",
+      "fieldtype": "Section Break",
+      "label": "Cashier Session"
+    },
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "RMS-SES-.YYYY.-",
+      "default": "RMS-SES-.YYYY.-",
+      "hidden": 1
+    },
+    {
+      "fieldname": "user",
+      "fieldtype": "Link",
+      "label": "Cashier",
+      "options": "User",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "link_filters": "[[\"User\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "store",
+      "fieldtype": "Link",
+      "label": "Store",
+      "options": "Store",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "options": "Company",
+      "fieldtype": "Link",
+      "hidden": 1,
+      "fetch_from": "store.company",
+      "read_only": 1,
+      "label": "Store Company",
+      "fieldname": "store_company"
+    },
+    {
+      "fieldname": "pos_profile",
+      "fieldtype": "Link",
+      "label": "POS Profile",
+      "options": "POS Profile",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"POS Profile\",\"disabled\",\"=\",\"0\"],[\"POS Profile\",\"company\",\"=\",\"eval:doc.store_company\"]]"
+    },
+    {
+      "fieldname": "pos_opening_entry",
+      "fieldtype": "Link",
+      "label": "ERPNext POS Opening Entry",
+      "options": "POS Opening Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pos_closing_entry",
+      "fieldtype": "Link",
+      "label": "ERPNext POS Closing Entry",
+      "options": "POS Closing Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Open\nClosing\nClosed",
+      "default": "Open",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "business_date",
+      "fieldtype": "Date",
+      "label": "Business Date",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "opened_at",
+      "fieldtype": "Datetime",
+      "label": "Opened At",
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "payments",
+      "fieldtype": "Table",
+      "label": "Payment Reconciliation",
+      "options": "Cashier Session Payment",
+      "reqd": 1
+    },
+    {
+      "fieldname": "closed_at",
+      "fieldtype": "Datetime",
+      "label": "Closed At",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

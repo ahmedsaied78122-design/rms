@@ -1,0 +1,71 @@
+{
+  "doctype": "DocType",
+  "name": "Selling Product Recipe Line",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "item",
+    "qty",
+    "uom",
+    "cost",
+    "sub_recipe",
+    "multi_level"
+  ],
+  "fields": [
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"Item\",\"is_stock_item\",\"=\",\"1\"],[\"Item\",\"disabled\",\"=\",\"0\"]]"
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "Quantity",
+      "reqd": 1,
+      "non_negative": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "uom",
+      "fieldtype": "Link",
+      "label": "UOM",
+      "options": "UOM",
+      "fetch_from": "item.stock_uom",
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "cost",
+      "fieldtype": "Currency",
+      "label": "Cost",
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "fetch_from": "item.valuation_rate"
+    },
+    {
+      "fieldname": "sub_recipe",
+      "fieldtype": "Check",
+      "label": "Sub Recipe",
+      "default": "0",
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "multi_level",
+      "fieldtype": "Check",
+      "label": "Multi-Level",
+      "default": "0",
+      "depends_on": "eval:doc.sub_recipe"
+    }
+  ],
+  "permissions": []
+}

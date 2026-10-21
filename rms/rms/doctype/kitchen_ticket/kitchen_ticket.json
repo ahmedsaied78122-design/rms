@@ -1,0 +1,164 @@
+{
+  "doctype": "DocType",
+  "name": "Kitchen Ticket",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "naming_rule": "By \"Naming Series\" field",
+  "title_field": "name",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "ticket_section",
+    "naming_series",
+    "pos_order",
+    "store",
+    "preparation_area",
+    "status",
+    "is_item_cancellation_notice",
+    "cancellation_reason",
+    "cancellation_acknowledged_at",
+    "cancellation_acknowledged_by",
+    "started_at",
+    "sent_at",
+    "picked_at",
+    "ready_at",
+    "items"
+  ],
+  "fields": [
+    {
+      "fieldname": "ticket_section",
+      "fieldtype": "Section Break",
+      "label": "Kitchen Ticket"
+    },
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "RMS-KT-.YYYY.-",
+      "default": "RMS-KT-.YYYY.-",
+      "hidden": 1
+    },
+    {
+      "fieldname": "pos_order",
+      "fieldtype": "Link",
+      "label": "POS Order",
+      "options": "POS Order",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 1
+    },
+    {
+      "fieldname": "store",
+      "fieldtype": "Link",
+      "label": "Store",
+      "options": "Store",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 1
+    },
+    {
+      "fieldname": "preparation_area",
+      "fieldtype": "Link",
+      "label": "Preparation Area",
+      "options": "Preparation Area",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2,
+      "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:doc.store\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Pending\nStarted\nReady\nPicked\nCancelled",
+      "default": "Pending",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "is_item_cancellation_notice",
+      "fieldtype": "Check",
+      "label": "Item Cancellation Notice",
+      "default": "0",
+      "read_only": 1,
+      "hidden": 1
+    },
+    {
+      "fieldname": "cancellation_reason",
+      "fieldtype": "Small Text",
+      "label": "Cancellation Reason",
+      "read_only": 1
+    },
+    {
+      "fieldname": "cancellation_acknowledged_at",
+      "fieldtype": "Datetime",
+      "label": "Cancellation Acknowledged At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "cancellation_acknowledged_by",
+      "fieldtype": "Link",
+      "label": "Cancellation Acknowledged By",
+      "options": "User",
+      "read_only": 1
+    },
+    {
+      "label": "Started At",
+      "fieldtype": "Datetime",
+      "fieldname": "started_at",
+      "read_only": 1
+    },
+    {
+      "fieldname": "sent_at",
+      "fieldtype": "Datetime",
+      "label": "Sent At",
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "label": "Picked At",
+      "fieldtype": "Datetime",
+      "fieldname": "picked_at",
+      "read_only": 1
+    },
+    {
+      "fieldname": "ready_at",
+      "fieldtype": "Datetime",
+      "label": "Ready At",
+      "in_list_view": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "Kitchen Ticket Item",
+      "reqd": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

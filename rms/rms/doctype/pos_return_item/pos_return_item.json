@@ -1,0 +1,15 @@
+{
+  "doctype":"DocType","name":"POS Return Item","module":"RMS","istable":1,
+  "field_order":["source_pos_invoice_item","pos_order_item","item_code","uom","qty","is_waste","rate","amount","warehouse"],
+  "fields":[
+    {"fieldname":"source_pos_invoice_item","fieldtype":"Data","label":"Source POS Invoice Item","reqd":1,"read_only":1},
+    {"fieldname":"pos_order_item","fieldtype":"Link","label":"POS Order Item","options":"POS Order Item","read_only":1},
+    {"fieldname":"item_code","fieldtype":"Link","label":"Item","options":"Item","read_only":1,"in_list_view":1},
+    {"fieldname":"uom","fieldtype":"Link","label":"UOM","options":"UOM","read_only":1},
+    {"fieldname":"qty","fieldtype":"Float","label":"Quantity","reqd":1,"in_list_view":1},
+    {"fieldname":"is_waste","fieldtype":"Check","label":"Is Waste","default":"0","in_list_view":1},
+    {"fieldname":"rate","fieldtype":"Currency","label":"Rate","read_only":1},
+    {"fieldname":"amount","fieldtype":"Currency","label":"Amount","read_only":1,"in_list_view":1},
+    {"fieldname":"warehouse","fieldtype":"Link","label":"Warehouse","options":"Warehouse","read_only":1}
+  ],"permissions":[]
+}

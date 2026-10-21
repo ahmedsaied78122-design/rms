@@ -1,0 +1,15 @@
+{
+  "doctype": "DocType",
+  "name": "POS User Store",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": ["store", "store_company", "pos_profile", "default_store"],
+  "fields": [
+    {"fieldname": "store", "fieldtype": "Link", "label": "Store", "options": "Store", "reqd": 1, "in_list_view": 1, "columns": 3, "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]"},
+    {"fieldname": "store_company", "fieldtype": "Link", "label": "Store Company", "options": "Company", "fetch_from": "store.company", "read_only": 1, "hidden": 1},
+    {"fieldname": "pos_profile", "fieldtype": "Link", "label": "Cashier POS Profile", "options": "POS Profile", "in_list_view": 1, "columns": 3, "description": "Assign a separate ERPNext POS Profile when this Store needs concurrent cashier sessions. Leave blank to use the Store default.", "link_filters": "[[\"POS Profile\",\"company\",\"=\",\"eval:doc.store_company\"],[\"POS Profile\",\"disabled\",\"=\",\"0\"]]"},
+    {"fieldname": "default_store", "fieldtype": "Check", "label": "Default Store", "default": "0", "in_list_view": 1, "columns": 1, "description": "POS opens this Store by default when the cashier has no active session. Assign one default Store per POS User."}
+  ],
+  "permissions": []
+}

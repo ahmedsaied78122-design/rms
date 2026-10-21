@@ -1,0 +1,2 @@
+
+execute:frappe.get_attr("rms.patches.backfill_pos_order_item_confirmation_from_kitchen_tickets")()

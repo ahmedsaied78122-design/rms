@@ -1,0 +1,97 @@
+{
+  "doctype": "DocType",
+  "name": "Modifier Group",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "field:title",
+  "naming_rule": "By fieldname",
+  "title_field": "title",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "group_section",
+    "title",
+    "enabled",
+    "sequence_id",
+    "display_section",
+    "allow_collapse",
+    "collapsed_by_default",
+    "allow_multiple_selections"
+  ],
+  "fields": [
+    {
+      "fieldname": "group_section",
+      "fieldtype": "Section Break",
+      "label": "Modifier Group"
+    },
+    {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "label": "Group Name",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 4
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "sequence_id",
+      "fieldtype": "Int",
+      "label": "Sequence ID",
+      "default": "0",
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "display_section",
+      "fieldtype": "Section Break",
+      "label": "Display"
+    },
+    {
+      "fieldname": "allow_collapse",
+      "fieldtype": "Check",
+      "label": "Allow Collapse",
+      "default": "0"
+    },
+    {
+      "fieldname": "collapsed_by_default",
+      "fieldtype": "Check",
+      "label": "Collapsed By Default",
+      "default": "0",
+      "depends_on": "eval:doc.allow_collapse"
+    },
+    {
+      "fieldname": "allow_multiple_selections",
+      "fieldtype": "Check",
+      "label": "Allow Multiple Selections",
+      "default": "1",
+      "description": "When disabled, a user can choose at most one option from this group."
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

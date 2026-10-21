@@ -1,0 +1,163 @@
+{
+  "doctype": "DocType",
+  "name": "Print Dispatch Job",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "naming_rule": "By \"Naming Series\" field",
+  "title_field": "name",
+  "search_fields": "title",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": [
+    "job_section",
+    "naming_series",
+    "store",
+    "preparation_area",
+    "print_device",
+    "status",
+    "document_type",
+    "document_name",
+    "idempotency_key",
+    "attempt_count",
+    "payload",
+    "last_error",
+    "queued_at",
+    "printed_at"
+  ],
+  "fields": [
+    {
+      "fieldname": "job_section",
+      "fieldtype": "Section Break",
+      "label": "Print Job"
+    },
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "RMS-PRINT-.YYYY.-",
+      "default": "RMS-PRINT-.YYYY.-",
+      "hidden": 1
+    },
+    {
+      "fieldname": "store",
+      "fieldtype": "Link",
+      "label": "Store",
+      "options": "Store",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 1,
+      "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "preparation_area",
+      "fieldtype": "Link",
+      "label": "Preparation Area",
+      "options": "Preparation Area",
+      "in_list_view": 1,
+      "columns": 1,
+      "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:doc.store\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "print_device",
+      "fieldtype": "Link",
+      "label": "Print Device",
+      "options": "Print Device",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"Print Device\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Queued\nPrinting\nPrinted\nFailed\nCancelled",
+      "default": "Queued",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "document_type",
+      "fieldtype": "Data",
+      "label": "Source Type",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "document_name",
+      "fieldtype": "Data",
+      "label": "Source Document",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "idempotency_key",
+      "fieldtype": "Data",
+      "label": "Idempotency Key",
+      "reqd": 1,
+      "unique": 1,
+      "read_only": 1,
+      "hidden": 1
+    },
+    {
+      "fieldname": "attempt_count",
+      "fieldtype": "Int",
+      "label": "Attempt Count",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "payload",
+      "fieldtype": "Code",
+      "label": "Print Payload",
+      "options": "JSON",
+      "read_only": 1
+    },
+    {
+      "fieldname": "last_error",
+      "fieldtype": "Small Text",
+      "label": "Last Error",
+      "read_only": 1
+    },
+    {
+      "fieldname": "queued_at",
+      "fieldtype": "Datetime",
+      "label": "Queued At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "printed_at",
+      "fieldtype": "Datetime",
+      "label": "Printed At",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "POS Manager",
+      "read": 1,
+      "report": 1
+    },
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "email": 1,
+      "share": 1,
+      "report": 1
+    }
+  ]
+}

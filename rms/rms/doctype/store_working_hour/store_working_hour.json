@@ -1,0 +1,59 @@
+{
+  "doctype": "DocType",
+  "name": "Store Working Hour",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "weekday",
+    "from_time",
+    "to_time",
+    "order_type",
+    "enabled"
+  ],
+  "fields": [
+    {
+      "fieldname": "weekday",
+      "fieldtype": "Select",
+      "label": "Weekday",
+      "options": "Monday\nTuesday\nWednesday\nThursday\nFriday\nSaturday\nSunday",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "from_time",
+      "fieldtype": "Time",
+      "label": "From Time",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "to_time",
+      "fieldtype": "Time",
+      "label": "To Time",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "order_type",
+      "fieldtype": "Link",
+      "label": "Order Type",
+      "options": "Order Type",
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"Order Type\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "columns": 2
+    }
+  ],
+  "permissions": []
+}

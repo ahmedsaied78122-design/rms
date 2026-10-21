@@ -1,0 +1,30 @@
+{
+  "doctype": "DocType",
+  "name": "RMS Sync Event",
+  "module": "RMS",
+  "engine": "InnoDB",
+  "autoname": "naming_series:",
+  "naming_rule": "By \"Naming Series\" field",
+  "title_field": "name",
+  "search_fields": "source_doctype,source_name,idempotency_key",
+  "sort_field": "creation",
+  "sort_order": "ASC",
+  "track_changes": 0,
+  "field_order": ["naming_series", "event_section", "source_doctype", "source_name", "event_action", "schema_version", "source_modified", "captured_at", "idempotency_key", "payload_hash", "payload"],
+  "fields": [
+    {"fieldname": "naming_series", "fieldtype": "Select", "label": "Series", "options": "RMS-SYNC-EVT-.########", "default": "RMS-SYNC-EVT-.########", "hidden": 1},
+    {"fieldname": "event_section", "fieldtype": "Section Break", "label": "Captured Change"},
+    {"fieldname": "source_doctype", "fieldtype": "Link", "label": "Source Type", "options": "DocType", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 2},
+    {"fieldname": "source_name", "fieldtype": "Data", "label": "Source Document", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 3},
+    {"fieldname": "event_action", "fieldtype": "Select", "label": "Action", "options": "insert\nupdate\ndelete\nrename\ncancel", "reqd": 1, "read_only": 1, "in_list_view": 1, "in_standard_filter": 1, "columns": 1},
+    {"fieldname": "schema_version", "fieldtype": "Int", "label": "Schema Version", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 1},
+    {"fieldname": "source_modified", "fieldtype": "Datetime", "label": "Source Modified", "read_only": 1},
+    {"fieldname": "captured_at", "fieldtype": "Datetime", "label": "Captured At", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 2},
+    {"fieldname": "idempotency_key", "fieldtype": "Data", "label": "Idempotency Key", "reqd": 1, "unique": 1, "read_only": 1, "hidden": 1, "no_copy": 1},
+    {"fieldname": "payload_hash", "fieldtype": "Data", "label": "Payload SHA-256", "reqd": 1, "read_only": 1, "hidden": 1, "no_copy": 1},
+    {"fieldname": "payload", "fieldtype": "Code", "label": "Allowlisted Payload", "options": "JSON", "reqd": 1, "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "System Manager", "read": 1, "report": 1, "export": 1, "print": 1}
+  ]
+}

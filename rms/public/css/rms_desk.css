@@ -1,0 +1,447 @@
+/* RMS Operations Deck: a complete Desk skin kept inside the RMS app.
+   Frappe and ERPNext markup and behavior remain untouched. */
+:root,
+[data-theme="light"] {
+	--primary: #17604e;
+	--primary-color: #17604e;
+	--brand-color: #17604e;
+	--surface-base: #edf1f3;
+	--surface-white: #fff;
+	--surface-gray-1: #f6f8f9;
+	--surface-gray-2: #edf1f3;
+	--surface-gray-3: #e2e8eb;
+	--outline-gray-1: #e2e8eb;
+	--outline-gray-2: #d4dde1;
+	--ink-gray-9: #19242d;
+	--ink-gray-7: #465660;
+	--ink-gray-5: #74818b;
+	--focus-default: 0 0 0 3px rgb(23 96 78 / 16%);
+}
+
+html,
+body {
+	background: #edf1f3;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+	font-family: Inter, "IBM Plex Sans Arabic", Cairo, "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Deep petrol navigation rail, with a thin signal line to anchor the product. */
+.body-sidebar {
+	--ink-gray-6: #a9bcb9;
+	--ink-gray-8: #f2f7f6;
+	--surface-gray-2: #1c3239;
+	--outline-gray-1: #2d4248;
+	--outline-gray-2: #3a5055;
+	background: #12232b;
+	border: 0;
+	box-shadow: 8px 0 28px rgb(15 34 41 / 12%);
+}
+
+/* Keep the full workspace navigation as the only left rail. Frappe 16's dock is a
+   separate shortcut column; it floats beside (or takes a column before) this sidebar. */
+html body #desk-dock,
+html body #desk-dock.dock,
+html body .dock,
+html body.dock-active .dock,
+html body.dock-pinned .dock,
+html body.dock-open .dock {
+	display: none !important;
+	position: fixed !important;
+	left: -100vw !important;
+	top: -100vh !important;
+	width: 0 !important;
+	height: 0 !important;
+	max-width: 0 !important;
+	max-height: 0 !important;
+	overflow: hidden !important;
+	visibility: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* Pinned-dock rules hide these useful parts of the normal workspace sidebar. Restore
+   them when the shortcut dock is visually removed. */
+body.dock-pinned.dock-active .body-sidebar-container.expanded .sidebar-header {
+	padding-left: 16px;
+}
+
+body.dock-pinned.dock-active .body-sidebar-container.expanded .sidebar-header .header-logo {
+	display: flex !important;
+}
+
+body.dock-pinned.dock-active .body-sidebar .dropdown-navbar-user {
+	display: flex !important;
+}
+
+.body-sidebar .sidebar-header .header-logo {
+	position: relative;
+	flex: 0 0 38px;
+	width: 38px;
+	height: 42px;
+	background: url("/assets/rms/images/rms-portrait.jpg") center 23% / cover no-repeat;
+	border: 0;
+	border-radius: 0;
+}
+
+.body-sidebar .sidebar-header .header-logo > * {
+	display: none !important;
+}
+
+.body-sidebar::before {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 3px;
+	background: linear-gradient(180deg, #efad46 0 72px, #17604e 72px 100%);
+	content: "";
+}
+
+.body-sidebar .standard-sidebar-label {
+	color: #89a09d;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .11em;
+	text-transform: uppercase;
+}
+
+.body-sidebar .standard-sidebar-item .item-anchor {
+	color: #d3dfdd;
+	border-radius: 9px;
+}
+
+.body-sidebar .standard-sidebar-item:not(.active-sidebar) .item-anchor:hover {
+	color: #fff;
+	background: #1c3239;
+}
+
+.body-sidebar .standard-sidebar-item.active-sidebar .item-anchor {
+	color: #fff;
+	background: #25483f;
+	box-shadow: inset 3px 0 #efad46;
+}
+
+.body-sidebar .sidebar-header,
+.body-sidebar .body-sidebar-bottom {
+	color: #f2f7f6;
+}
+
+/* A focused, searchable workspace switcher replaces the long DocType shortcut tree. */
+.body-sidebar [hidden] {
+	display: none !important;
+}
+
+.body-sidebar-top {
+	min-height: 0;
+	overflow: hidden;
+}
+
+.rms-workspace-nav {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	min-height: 0;
+	height: 100%;
+	padding: 13px 12px 15px;
+	color: #e3eeeb;
+}
+
+.rms-workspace-list {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 3px;
+	min-height: 0;
+	margin: 8px -2px 0;
+	padding: 0 2px 8px;
+	overflow-y: auto;
+	scrollbar-color: #40575b transparent;
+	scrollbar-width: thin;
+}
+
+.rms-workspace-link {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	width: 100%;
+	min-height: 37px;
+	padding: 4px 7px;
+	color: #d3dfdd;
+	background: transparent;
+	border: 0;
+	border-radius: 9px;
+	text-align: start;
+	cursor: pointer;
+}
+
+.rms-workspace-link:hover {
+	color: #fff;
+	background: #1c3239;
+}
+
+.rms-workspace-link.is-active {
+	color: #fff;
+	background: #25483f;
+	box-shadow: inset 3px 0 #efad46;
+}
+
+.rms-workspace-marker {
+	display: grid;
+	flex: 0 0 24px;
+	width: 24px;
+	height: 24px;
+	place-items: center;
+	color: #b4cbc5;
+	background: #263d42;
+	border: 1px solid #385057;
+	border-radius: 7px;
+	font-size: 10px;
+	font-weight: 700;
+}
+
+.rms-workspace-link.is-active .rms-workspace-marker {
+	color: #fff4dc;
+	background: #326151;
+	border-color: #477865;
+}
+
+.rms-workspace-link-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	font-size: 12px;
+	font-weight: 550;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.rms-workspace-default-badge {
+	flex: 0 0 auto;
+	padding: 2px 5px;
+	color: #f5d394;
+	background: #3c392d;
+	border-radius: 5px;
+	font-size: 9px;
+}
+
+.rms-workspace-link.is-default .rms-workspace-link-label {
+	color: #fff;
+}
+
+/* Always-visible, centered search launcher. Typing is forwarded to Frappe's native
+   Awesome Bar so the existing permissions, search providers, and results stay intact. */
+.page-head-content {
+	position: relative;
+}
+
+#rms-desk-search {
+	position: fixed;
+	left: 50%;
+	top: 8px;
+	z-index: 3;
+	width: min(430px, 42vw);
+	height: 38px;
+	padding: 0 40px 0 14px;
+	color: #24343c;
+	background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2374818b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E") no-repeat right 13px center;
+	border: 1px solid #d6e0e3;
+	border-radius: 11px;
+	box-shadow: 0 3px 12px rgb(15 34 41 / 5%);
+	font-size: 13px;
+	transform: translateX(-50%);
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+#rms-desk-search::placeholder {
+	color: #87949b;
+}
+
+#rms-desk-search:focus {
+	border-color: #17604e;
+	box-shadow: 0 0 0 3px rgb(23 96 78 / 12%);
+	outline: 0;
+}
+
+.rms-workspace-empty {
+	padding: 17px 5px;
+	color: #9bb0ac;
+	font-size: 12px;
+	text-align: center;
+}
+
+.es-toast-container:has(.rms-system-welcome-toast) {
+	top: 14px;
+	bottom: auto;
+	inset-inline: 0;
+	align-items: center;
+}
+
+.rms-system-welcome-toast {
+	max-width: min(560px, calc(100vw - 24px));
+	text-align: right;
+}
+
+@media (max-width: 760px) {
+	#rms-desk-search {
+		position: fixed;
+		width: min(100%, 280px);
+		margin-inline: 10px;
+		top: 8px;
+		transform: none;
+	}
+}
+
+.body-sidebar .sidebar-header .app-logo,
+.app-logo {
+	width: 34px;
+	height: 34px;
+	max-height: 34px;
+	object-fit: cover;
+	object-position: center 22%;
+	border: 0;
+	border-radius: 0;
+}
+
+#brand-logo,
+.desktop-navbar .navbar-home img {
+	max-width: 44px;
+	max-height: 44px;
+	object-fit: cover;
+	object-position: center 23%;
+	border: 0;
+	border-radius: 0;
+}
+
+/* Header and working canvas: cool paper tones against the navigation rail. */
+.navbar {
+	background: #fff;
+	border-bottom: 1px solid #e2e8eb;
+	box-shadow: 0 2px 10px rgb(25 36 45 / 3%);
+}
+
+.navbar .navbar-home,
+.navbar .nav-link,
+.navbar .dropdown-toggle {
+	color: #465660;
+}
+
+.page-head {
+	background: #edf1f3;
+}
+
+.page-head .page-title,
+.page-head h3 {
+	color: #19242d;
+	letter-spacing: -.025em;
+}
+
+.page-head .breadcrumb a,
+.page-head .indicator-pill {
+	color: #64737c;
+}
+
+.layout-main-section,
+.form-layout,
+.list-row-container,
+.report-wrapper,
+.workspace-sidebar {
+	border-color: #e2e8eb;
+}
+
+.layout-main-section,
+.form-layout,
+.workspace .widget,
+.workspace-sidebar {
+	border-radius: 13px;
+}
+
+.layout-main-section {
+	box-shadow: 0 5px 18px rgb(25 36 45 / 4%);
+}
+
+.list-row-container {
+	background: #fff;
+}
+
+.list-row-container:hover {
+	background: #f8faf9;
+}
+
+.form-control,
+.control-input,
+input,
+select,
+textarea {
+	border-color: #d9e1e4;
+	border-radius: 8px;
+}
+
+.form-control:focus,
+.control-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	border-color: #438675 !important;
+	box-shadow: 0 0 0 3px rgb(23 96 78 / 12%) !important;
+}
+
+.btn-primary,
+.primary-action {
+	--primary: #17604e;
+	border-color: #145443;
+	background: #17604e;
+}
+
+.btn-primary:hover,
+.primary-action:hover {
+	border-color: #0d3c36;
+	background: #0d3c36;
+}
+
+.indicator-pill.green,
+.indicator-pill.blue {
+	background: #e3f1ec;
+	color: #17604e;
+}
+
+.standard-sidebar-item,
+.btn,
+.layout-main-section,
+.form-layout,
+.list-row,
+.indicator-pill,
+.workspace .widget {
+	transition: background-color .16s ease, border-color .16s ease,
+		box-shadow .16s ease, color .16s ease, transform .16s ease;
+}
+
+:focus-visible {
+	outline: 2px solid #efad46;
+	outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+	.body-sidebar {
+		box-shadow: 12px 0 40px rgb(0 0 0 / 20%);
+	}
+
+	.layout-main-section,
+	.form-layout {
+		border-radius: 10px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: .01ms !important;
+		animation-duration: .01ms !important;
+	}
+}

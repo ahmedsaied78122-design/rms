@@ -1,0 +1,10 @@
+{
+  "doctype": "Page",
+  "name": "table-management",
+  "page_name": "table-management",
+  "title": "Table Management",
+  "module": "RMS",
+  "standard": "Yes",
+  "system_page": 0,
+  "icon": "table"
+}
