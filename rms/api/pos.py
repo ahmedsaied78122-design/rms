@@ -1013,6 +1013,7 @@ def get_open_order_overview(order_name):
 		for modifier in modifiers:
 			modifier["title"] = frappe.db.get_value("Selling Product", modifier.get("modifier_product"), "title") or modifier.get("modifier_product")
 		result["items"].append({
+			"order_item_name": row.name,
 			"title": frappe.db.get_value("Selling Product", row.selling_product, "title") or row.selling_product,
 			"qty": get_active_order_item_qty(row.qty, row.cancelled_qty), "ordered_qty": row.qty,
 			"cancelled_qty": flt(row.cancelled_qty), "uom": row.uom, "selling_price": row.selling_price,
@@ -1022,7 +1023,7 @@ def get_open_order_overview(order_name):
 
 
 @frappe.whitelist()
-def get_open_order_check_print_html(order_name):
+def get_open_order_check_print_html(order_name, guest_check_name=None):
 	"""Render a confirmed, unpaid check for table-side printing."""
 	require_pos_action("can_reprint_receipts")
 	order = frappe.get_doc("POS Order", order_name)
@@ -1042,20 +1043,38 @@ def get_open_order_check_print_html(order_name):
 		return html_escape(str(value or ""), quote=True)
 
 	rows = []
+	guest_check = next((row for row in order.guest_checks or [] if row.name == guest_check_name), None) if guest_check_name else None
+	if guest_check_name and not guest_check:
+		frappe.throw(_("Guest check was not found."))
+	guest_item_allocations = get_guest_check_item_allocations(guest_check) if guest_check else None
 	for item in order.items:
+		if guest_item_allocations is not None and item.name not in guest_item_allocations:
+			continue
+		active_qty = get_active_order_item_qty(item.qty, item.cancelled_qty)
+		allocated_qty = guest_item_allocations.get(item.name) if guest_item_allocations is not None else None
+		qty = active_qty if allocated_qty is None else min(active_qty, allocated_qty)
+		if qty <= 0:
+			continue
+		amount = flt(item.amount) * qty / max(active_qty, 0.000001)
 		title = frappe.db.get_value("Selling Product", item.selling_product, "title") or item.selling_product
 		modifier_names = [frappe.db.get_value("Selling Product", row.modifier_product, "title") or row.modifier_product
 			for row in parse_json_rows(item.modifiers)]
 		details = "".join(f"<small>{esc(label)}</small>" for label in modifier_names)
 		if item.notes:
 			details += f"<small class=\"note\">{esc(item.notes)}</small>"
-		rows.append(f"<tr><td>{esc(title)}{details}</td><td>{flt(item.qty):g}</td><td>{flt(item.amount):,.2f}</td></tr>")
-	label = order.check_label or order.name
+		rows.append(f"<tr><td>{esc(title)}{details}</td><td>{qty:g}</td><td>{amount:,.2f}</td></tr>")
+	label = guest_check.guest_name if guest_check else (order.check_label or order.name)
+	printed_total = flt(guest_check.grand_total) if guest_check else flt(order.grand_total)
 	return f"""<!doctype html><html><head><meta charset=\"utf-8\"><title>{esc(label)}</title>
 	<style>body{{font:14px Arial,sans-serif;color:#172e31;max-width:360px;margin:20px auto}}h1{{font-size:20px;margin:0}}p{{margin:6px 0;color:#546665}}table{{width:100%;border-collapse:collapse;margin-top:18px}}td{{padding:9px 3px;border-bottom:1px solid #dfe5e0;vertical-align:top}}td:nth-child(2),td:nth-child(3){{text-align:right;white-space:nowrap}}small{{display:block;color:#62716c;font-size:11px;margin-top:3px}}.note{{color:#945c19}}.total{{display:flex;justify-content:space-between;margin-top:18px;font-size:18px;font-weight:bold}}@media print{{body{{margin:0 auto}}}}</style></head>
 	<body><h1>{esc(label)}</h1><p>{esc(order.dining_table)} · {esc(order.status)}</p><p>{esc(order.store)} · {esc(order.modified)}</p>
-	<table><tbody>{''.join(rows)}</tbody></table><div class=\"total\"><span>{esc(_('Total'))}</span><span>{flt(order.grand_total):,.2f}</span></div>
+	<table><tbody>{''.join(rows)}</tbody></table><div class=\"total\"><span>{esc(_('Total'))}</span><span>{printed_total:,.2f}</span></div>
 	<script>window.onload=()=>window.print()</script></body></html>"""
+
+
+@frappe.whitelist()
+def get_guest_check_print_html(order_name, guest_check_name):
+	return get_open_order_check_print_html(order_name, guest_check_name)
 
 
 def get_pos_sales_history_filters(store, user, roles, session_names):
@@ -1085,19 +1104,37 @@ def get_pos_sales_history(store, limit=50):
 		order_by="modified desc", limit_page_length=min(max(int(limit or 50), 1), 100))
 	orders = [row for row in orders if is_pos_scope_allowed("brand", row.restaurant_brand)
 		and is_pos_scope_allowed("order_type", row.order_type)]
+	result = []
 	for order in orders:
-		order["cashier"] = frappe.db.get_value("Cashier Session", order.cashier_session, "user")
-		order["invoice_status"] = frappe.db.get_value("POS Invoice", order.pos_invoice, "status")
-	return orders
+		cashier = frappe.db.get_value("Cashier Session", order.cashier_session, "user")
+		checks = frappe.get_all("POS Order Guest Check", filters={"parent": order.name, "parenttype": "POS Order", "status": "Paid"},
+			fields=["guest_name", "pos_invoice", "grand_total"], order_by="idx asc")
+		if checks:
+			for check in checks:
+				if not check.pos_invoice:
+					continue
+				row = dict(order)
+				row.update({"pos_invoice": check.pos_invoice, "grand_total": check.grand_total,
+					"guest_name": check.guest_name, "cashier": cashier,
+					"invoice_status": frappe.db.get_value("POS Invoice", check.pos_invoice, "status")})
+				result.append(row)
+		else:
+			order["cashier"] = cashier
+			order["invoice_status"] = frappe.db.get_value("POS Invoice", order.pos_invoice, "status")
+			result.append(order)
+	return result[:min(max(int(limit or 50), 1), 100)]
 
 
 @frappe.whitelist()
-def get_pos_invoice_print_html(order_name):
+def get_pos_invoice_print_html(order_name, invoice_name=None):
 	require_pos_action("can_reprint_receipts")
 	order = frappe.get_doc("POS Order", order_name)
 	assert_store_access(order.store)
 	require_order_scope(order)
-	if order.status != "Paid" or not order.pos_invoice:
+	allowed_invoices = {order.pos_invoice} if order.pos_invoice else set()
+	allowed_invoices.update(row.pos_invoice for row in order.guest_checks or [] if row.pos_invoice)
+	invoice_name = invoice_name or order.pos_invoice
+	if not invoice_name or invoice_name not in allowed_invoices:
 		frappe.throw(_("Only a paid POS sale can be reprinted."))
 	user = frappe.session.user
 	roles = set(frappe.get_roles(user))
@@ -1105,7 +1142,7 @@ def get_pos_invoice_print_html(order_name):
 		owned_sessions = set(frappe.get_all("Cashier Session", filters={"store": order.store, "user": user}, pluck="name"))
 		if "POS Cashier" not in roles or order.cashier_session not in owned_sessions:
 			frappe.throw(_("You can only reprint receipts from your own cashier sessions."), frappe.PermissionError)
-	invoice = frappe.get_doc("POS Invoice", order.pos_invoice)
+	invoice = frappe.get_doc("POS Invoice", invoice_name)
 	if invoice.docstatus != 1:
 		frappe.throw(_("Only a submitted POS Invoice can be reprinted."))
 	# The cashier has already passed Store/session authorization above. Render using
@@ -1113,7 +1150,7 @@ def get_pos_invoice_print_html(order_name):
 	# read permission on the accounting DocType.
 	frappe.set_user("Administrator")
 	try:
-		return frappe.get_print("POS Invoice", order.pos_invoice, print_format="Standard", no_letterhead=1)
+		return frappe.get_print("POS Invoice", invoice_name, print_format="Standard", no_letterhead=1)
 	finally:
 		frappe.set_user(user)
 
@@ -1302,6 +1339,8 @@ def cancel_order(order_name):
 		frappe.throw(_("This order does not belong to your Cashier Session."), frappe.PermissionError)
 	if doc.status not in ("Open", "Pending Confirmation", "Confirmed", "In Preparation", "Ready"):
 		frappe.throw(_("Only unpaid active orders can be cancelled."))
+	if any(row.status == "Paid" for row in getattr(doc, "guest_checks", []) or []):
+		frappe.throw(_("An order with a paid guest check cannot be cancelled."))
 	if doc.status not in ("Open", "Pending Confirmation") and not manager:
 		frappe.throw(_("A POS Manager must approve cancellation after kitchen confirmation."), frappe.PermissionError)
 	for ticket_name in frappe.get_all("Kitchen Ticket", filters={"pos_order": doc.name}, pluck="name"):
@@ -1336,11 +1375,16 @@ def cancel_confirmed_order_item(order_name, item_name, qty, reason):
 	doc = frappe.get_doc("POS Order", order_name)
 	assert_store_access(doc.store)
 	require_order_scope(doc)
+	if getattr(doc, "guest_checks", None):
+		frappe.throw(_("Items cannot be changed after guest checks are confirmed."))
 	if doc.cashier_session != frappe.db.get_value("Cashier Session", {"user": frappe.session.user, "status": ["in", ["Open", "Closing"]]}, "name"):
 		require_pos_action("can_edit_open_orders")
 	row = next((entry for entry in doc.items if entry.name == item_name), None)
 	if not row:
 		frappe.throw(_("The selected item does not belong to this order."))
+	if any(check.status == "Paid" and item_name in get_guest_check_item_names(check)
+		for check in getattr(doc, "guest_checks", []) or []):
+		frappe.throw(_("An item on a paid guest check cannot be cancelled."))
 	cancel_qty = validate_confirmed_item_cancellation(
 		doc.status, row.sent_to_kitchen, row.qty, row.cancelled_qty, qty, reason, True
 	)
@@ -1478,10 +1522,18 @@ def save_order(order_data):
 	if append_mode and not items_to_save:
 		return {"name": doc.name, "status": doc.status, "subtotal": doc.subtotal, "tax_total": doc.tax_total,
 			"grand_total": doc.grand_total, "sales_taxes_and_charges_template": doc.sales_taxes_and_charges_template,
-			"appended_items": []}
+			"appended_items": [], "guest_checks": get_guest_checks(doc.name)["guest_checks"] if doc.guest_checks else []}
+	guest_check_append_target = None
+	if append_mode and getattr(doc, "guest_checks", None):
+		guest_check_append_target = next((row for row in doc.guest_checks if row.status == "Open"), None)
+		if not guest_check_append_target:
+			frappe.throw(_("New items cannot be added because every guest check is already paid."))
+		doc.flags.allow_guest_check_item_append = True
 	appended_items = []
 	for item in items_to_save:
 		row = doc.append("items", {
+			"name": frappe.generate_hash(length=10),
+			"__islocal": 1,
 			"selling_product": item.get("selling_product"),
 			"option_parent": item.get("option_parent"),
 			"qty": flt(item.get("qty") or 1),
@@ -1498,13 +1550,17 @@ def save_order(order_data):
 			),
 		})
 		appended_items.append({"client_key": str(item.get("client_key") or ""), "name": row.name})
+		if guest_check_append_target:
+			allocations = frappe.parse_json(guest_check_append_target.items_json or "[]") if isinstance(guest_check_append_target.items_json, str) else list(guest_check_append_target.items_json or [])
+			allocations.append({"name": row.name, "qty": flt(row.qty)})
+			guest_check_append_target.items_json = json.dumps(allocations)
 	if doc.is_new():
 		doc.insert(ignore_permissions=True)
 	else:
 		doc.save(ignore_permissions=True)
 	return {"name": doc.name, "status": doc.status, "subtotal": doc.subtotal, "tax_total": doc.tax_total,
 		"grand_total": doc.grand_total, "sales_taxes_and_charges_template": doc.sales_taxes_and_charges_template,
-		"appended_items": appended_items}
+		"appended_items": appended_items, "guest_checks": get_guest_checks(doc.name)["guest_checks"] if doc.guest_checks else []}
 
 
 @frappe.whitelist()
@@ -1525,11 +1581,12 @@ def confirm_order(order_name):
 	return {"name": doc.name, "status": doc.status, "tickets": frappe.get_all("Kitchen Ticket", filters={"pos_order": doc.name}, pluck="name")}
 
 
-def pos_discount_approval_context_hash(order_name, requester, store, discount_type, discount_value, discount_reason, discount_scope):
+def pos_discount_approval_context_hash(order_name, requester, store, discount_type, discount_value, discount_reason, discount_scope, guest_check_name=None):
 	context = {
 		"order": str(order_name), "requester": str(requester), "store": str(store),
 		"type": str(discount_type), "value": format(flt(discount_value), ".6f"),
 		"reason": str(discount_reason or "").strip(), "scope": str(discount_scope),
+		"guest_check": str(guest_check_name or ""),
 	}
 	return hashlib.sha256(json.dumps(context, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
@@ -1575,14 +1632,14 @@ def validate_pos_discount_value(discount_type, discount_value, invoice_total):
 
 
 def get_pos_discount_approval(doc, discount_type, discount_value, discount_reason, approval_code,
-		approval_approver=None, consume=False):
+		approval_approver=None, consume=False, guest_check_name=None, discount_scope=None):
 	if not approval_code:
 		return None
 	from frappe.utils import now_datetime
 
 	requester = frappe.session.user
 	context_hash = pos_discount_approval_context_hash(doc.name, requester, doc.store, discount_type,
-		discount_value, discount_reason, doc.discount_scope)
+		discount_value, discount_reason, discount_scope or doc.discount_scope, guest_check_name)
 	challenge_names = frappe.get_all("Approval Challenge", filters={
 		"subject_doctype": "POS Order", "subject_name": doc.name,
 		"action": POS_DISCOUNT_APPROVAL_ACTION, "requester": requester,
@@ -1618,7 +1675,7 @@ def _clear_discount_password_failures(cache_key):
 	frappe.cache().delete_value(cache_key, shared=True)
 
 
-def verify_pos_discount_manager_password(doc, approver, password, discount_type, discount_value, discount_reason):
+def verify_pos_discount_manager_password(doc, approver, password, discount_type, discount_value, discount_reason, guest_check_name=None, discount_scope=None):
 	"""Verify an authorized manager's fixed approval password and mint a one-use token."""
 	requester = frappe.session.user
 	eligible_approvers = {row["user"] for row in get_pos_discount_approvers(doc.store, exclude_user=requester)}
@@ -1645,9 +1702,9 @@ def verify_pos_discount_manager_password(doc, approver, password, discount_type,
 	from frappe.utils import add_to_date, now_datetime
 	from frappe.utils.password import passlibctx
 	requester = frappe.session.user
-	scope = getattr(doc, "discount_scope", None) or "Net Total"
+	scope = discount_scope or getattr(doc, "discount_scope", None) or "Net Total"
 	context_hash = pos_discount_approval_context_hash(doc.name, requester, doc.store, discount_type,
-		discount_value, discount_reason, scope)
+		discount_value, discount_reason, scope, guest_check_name)
 	token = secrets.token_urlsafe(32)
 	challenge = frappe.new_doc("Approval Challenge")
 	challenge.update({
@@ -1662,7 +1719,7 @@ def verify_pos_discount_manager_password(doc, approver, password, discount_type,
 
 
 @frappe.whitelist()
-def issue_pos_discount_approval_code(order_name, discount_type="Percentage", discount_value=0, discount_reason=""):
+def issue_pos_discount_approval_code(order_name, discount_type="Percentage", discount_value=0, discount_reason="", guest_check_name=None):
 	approver = frappe.session.user
 	if not (set(frappe.get_roles(approver)) & {"POS Manager", "System Manager"}):
 		frappe.throw(_("Only a POS Manager can issue a discount approval code."), frappe.PermissionError)
@@ -1686,20 +1743,31 @@ def issue_pos_discount_approval_code(order_name, discount_type="Percentage", dis
 		frappe.throw(_("Enter a positive discount and its reason before requesting approval."))
 	if discount_type not in ("Percentage", "Amount"):
 		frappe.throw(_("Choose Percentage or Fixed Amount for the discount."))
-	doc.discount_scope = scope
-	doc.discount_type = discount_type
-	doc.discount_value = value
-	doc.discount_reason = reason
-	normal_tax, normal_total = doc.calculate_tax_preview()
-	validate_pos_discount_value(discount_type, value, normal_total)
-	base = flt(doc.subtotal) if scope == "Net Total" else flt(normal_total)
+	guest_check = next((row for row in getattr(doc, "guest_checks", []) or [] if row.name == guest_check_name), None) if guest_check_name else None
+	if guest_check_name and (not guest_check or guest_check.status != "Open"):
+		frappe.throw(_("Only an open guest check can receive a discount."))
+	if guest_check:
+		scope = doc.discount_scope if flt(doc.discount_amount) else scope
+		guest_preview = get_guest_check_discount_totals(doc, guest_check, discount_type, value, reason, scope)
+		base = guest_preview["base"]
+		normal_total = guest_preview["baseline_grand_total"]
+		if value > base and discount_type == "Amount":
+			frappe.throw(_("Discount amount cannot exceed this guest check's total."))
+	else:
+		doc.discount_scope = scope
+		doc.discount_type = discount_type
+		doc.discount_value = value
+		doc.discount_reason = reason
+		normal_tax, normal_total = doc.calculate_tax_preview()
+		validate_pos_discount_value(discount_type, value, normal_total)
+		base = flt(doc.subtotal) if scope == "Net Total" else flt(normal_total)
 	effective_percent = value if discount_type == "Percentage" else (value / base * 100 if base else 0)
 	pos_user = frappe.db.get_value("POS User", {"user": requester, "enabled": 1},
 		["can_apply_manual_discount", "max_manual_discount_percent"], as_dict=True)
 	limit = flt(pos_user.max_manual_discount_percent if pos_user else 0)
 	if effective_percent <= limit:
 		frappe.throw(_("This discount is within the cashier's allowed limit and does not need manager approval."))
-	context_hash = pos_discount_approval_context_hash(doc.name, requester, doc.store, discount_type, value, reason, scope)
+	context_hash = pos_discount_approval_context_hash(doc.name, requester, doc.store, discount_type, value, reason, scope, guest_check_name)
 	for row in frappe.get_all("Approval Challenge", filters={
 		"subject_doctype": "POS Order", "subject_name": doc.name,
 		"action": POS_DISCOUNT_APPROVAL_ACTION, "requester": requester, "status": "Issued",
@@ -1725,8 +1793,60 @@ def issue_pos_discount_approval_code(order_name, discount_type="Percentage", dis
 
 
 @frappe.whitelist()
+def get_guest_check_discount_totals(order, guest_check, discount_type=None, discount_value=None, discount_reason=None,
+		discount_scope=None):
+	"""Calculate an open check's totals with its share of any order discount and its own discount."""
+	from rms.rms.doctype.pos_order.pos_order import calculate_discount_amount, calculate_order_item_amount
+
+	allocations = get_guest_check_item_allocations(guest_check)
+	active_qty = {row.name: get_active_order_item_qty(row.qty, row.cancelled_qty) for row in order.items}
+	all_base = sum(calculate_order_item_amount(row.qty, row.selling_price, parse_json_rows(row.modifiers), row.cancelled_qty)
+		for row in order.items if active_qty[row.name] > 0)
+	check_base = sum(calculate_order_item_amount(row.qty, row.selling_price, parse_json_rows(row.modifiers), row.cancelled_qty)
+		* (allocations[row.name] if allocations[row.name] is not None else active_qty[row.name]) / max(active_qty[row.name], 0.000001)
+		for row in order.items if row.name in allocations and (allocations[row.name] is None or allocations[row.name] > 0))
+	share = check_base / all_base if all_base else 0
+	order_discount_share = 0
+	baseline = order.calculate_tax_preview(guest_check=guest_check, return_details=True)
+	if flt(order.discount_amount):
+		global_discount = frappe._dict({"discount_scope": order.discount_scope or "Net Total",
+			"discount_type": order.discount_type or "Percentage",
+			"discount_value": order.discount_value if order.discount_type == "Percentage" else flt(order.discount_value) * share,
+			"discount_amount": flt(order.discount_amount) * share})
+		baseline = order.calculate_tax_preview(apply_discount=True, guest_check=guest_check,
+			discount_order=global_discount, return_details=True)
+		order_discount_share = flt(order.discount_amount) * share if order.discount_type != "Percentage" else max(
+			0, order.calculate_tax_preview(guest_check=guest_check, return_details=True)["grand_total"] - baseline["grand_total"])
+	scope = discount_scope or ((guest_check.discount_scope or "Net Total") if (guest_check.discount_value or guest_check.discount_reason) else None)
+	if not scope:
+		scope = order.discount_scope if flt(order.discount_amount) else (frappe.db.get_value("Store", order.store, "manual_discount_scope") or "Net Total")
+	type_ = discount_type or guest_check.discount_type or "Percentage"
+	value = flt(guest_check.discount_value if discount_value is None else discount_value)
+	if type_ not in ("Percentage", "Amount") or scope not in ("Net Total", "Grand Total"):
+		frappe.throw(_("Choose a valid discount type and scope."))
+	base = baseline["subtotal"] if scope == "Net Total" else baseline["grand_total"]
+	if type_ == "Amount" and value > base:
+		frappe.throw(_("Discount amount cannot exceed this guest check's total."))
+	if type_ == "Percentage" and value > 100:
+		frappe.throw(_("Discount percentage cannot exceed 100%."))
+	local_discount = calculate_discount_amount(baseline["subtotal"], baseline["tax_total"], type_, value, scope, baseline["grand_total"])
+	combined_discount = order_discount_share + local_discount
+	combined = frappe._dict({"discount_scope": scope, "discount_type": "Amount",
+		"discount_value": combined_discount, "discount_amount": combined_discount})
+	final = order.calculate_tax_preview(apply_discount=bool(combined_discount), guest_check=guest_check,
+		discount_order=combined, return_details=True)
+	return {"subtotal": baseline["subtotal"], "tax_total": baseline["tax_total"], "base": base,
+		"baseline_grand_total": baseline["grand_total"],
+		"discount_scope": scope, "discount_type": type_, "discount_value": value,
+		"discount_reason": (guest_check.discount_reason or "") if discount_reason is None else discount_reason,
+		"discount_amount": local_discount, "order_discount_share": order_discount_share,
+		"combined_discount_amount": combined_discount, "grand_total": final["grand_total"],
+		"final_tax_total": final["tax_total"]}
+
+
+@frappe.whitelist()
 def preview_order_discount(order_name, discount_type="Percentage", discount_value=0, discount_reason="", approval_code=None,
-		approval_approver=None, approval_method="OTP"):
+		approval_approver=None, approval_method="OTP", guest_check_name=None):
 	require_pos_action("can_checkout")
 	doc = frappe.get_doc("POS Order", order_name)
 	assert_store_access(doc.store)
@@ -1734,7 +1854,43 @@ def preview_order_discount(order_name, discount_type="Percentage", discount_valu
 	if doc.cashier_session != frappe.db.get_value("Cashier Session", {"user": frappe.session.user, "status": "Open", "store": doc.store}, "name"):
 		frappe.throw(_("This order does not belong to your open Cashier Session."), frappe.PermissionError)
 	store = frappe.get_doc("Store", doc.store)
-	doc.discount_scope = store.manual_discount_scope or "Net Total"
+	if not guest_check_name:
+		doc.discount_scope = store.manual_discount_scope or "Net Total"
+	if guest_check_name:
+		guest_check = next((row for row in getattr(doc, "guest_checks", []) or [] if row.name == guest_check_name), None)
+		if not guest_check or guest_check.status != "Open":
+			frappe.throw(_("Only an open guest check can receive a discount."))
+		scope = doc.discount_scope if flt(doc.discount_amount) else (store.manual_discount_scope or "Net Total")
+		preview = get_guest_check_discount_totals(doc, guest_check, discount_type, discount_value,
+			discount_reason, scope)
+		if preview["discount_value"]:
+			require_pos_action("can_apply_manual_discount")
+		requires_approval = discount_exceeds_pos_user_limit(frappe.session.user, preview["discount_type"],
+			preview["discount_value"], preview["discount_scope"], preview["subtotal"], preview["baseline_grand_total"])
+		approver = None
+		approval_token = None
+		if approval_code:
+			if approval_method == "Password":
+				password_approval = verify_pos_discount_manager_password(doc, approval_approver, approval_code,
+					preview["discount_type"], preview["discount_value"], preview["discount_reason"], guest_check_name,
+					discount_scope=preview["discount_scope"])
+				approver = password_approval["approver"]
+				approval_token = password_approval["approval_token"]
+			else:
+				approver = get_pos_discount_approval(doc, preview["discount_type"], preview["discount_value"],
+					preview["discount_reason"], approval_code, approval_approver, guest_check_name=guest_check_name,
+					discount_scope=preview["discount_scope"])
+		if requires_approval and not approver:
+			return {**preview, "requires_manager_approval": True,
+				"approvers": get_pos_discount_approvers(doc.store, exclude_user=frappe.session.user)}
+		return {**preview, "requires_manager_approval": bool(approver), "approved_by": approver,
+			"approval_token": approval_token}
+	if any(row.status == "Paid" for row in getattr(doc, "guest_checks", []) or []):
+		proposed_type = discount_type or "Percentage"
+		proposed_value = flt(discount_value)
+		proposed_reason = (discount_reason or "").strip()
+		if (doc.discount_type or "Percentage") != proposed_type or flt(doc.discount_value) != proposed_value or (doc.discount_reason or "").strip() != proposed_reason:
+			frappe.throw(_("Use an open guest check to apply a discount after another guest has paid."))
 	doc.discount_type = discount_type
 	doc.discount_value = flt(discount_value)
 	doc.discount_reason = (discount_reason or "").strip() or (_("Preview") if doc.discount_value else "")
@@ -1796,14 +1952,27 @@ def validate_guest_payment_rows(guest_rows, allowed_methods, allow_zero=False):
 		if name_key in seen_names:
 			frappe.throw(_("Guest names must be different for a split check."))
 		seen_names.add(name_key)
-		split_mode = str(guest.get("split_mode") or "people")
-		if split_mode not in ("people", "items"):
-			frappe.throw(_("Choose to split the check by people or by items."))
+		split_mode = str(guest.get("split_mode") or "amount")
+		if split_mode == "people":  # Accept the legacy equal-by-person split payload.
+			split_mode = "amount"
+		if split_mode not in ("amount", "items"):
+			frappe.throw(_("Choose to split the check by amount or by items."))
 		items = guest.get("items") or []
 		if not isinstance(items, list):
 			frappe.throw(_("Guest item assignments must be a list."))
+		normalized_items = []
+		for item in items:
+			if isinstance(item, dict):
+				item_name = str(item.get("item_name") or "").strip()
+				share = flt(item.get("share"))
+			else:  # Accept legacy whole-item assignments from an already open POS tab.
+				item_name = str(item or "").strip()
+				share = 1
+			if not item_name or share <= 0 or share > 1:
+				frappe.throw(_("Each item share must be greater than 0% and no more than 100%."))
+			normalized_items.append({"item_name": item_name, "share": share})
 		normalized_rows.append({"guest": name, "mode_of_payment": method, "amount": amount,
-			"due_amount": flt(guest.get("due_amount")), "items": items, "split_mode": split_mode})
+			"due_amount": flt(guest.get("due_amount", amount)), "items": normalized_items, "split_mode": split_mode})
 		payment_totals[method] = payment_totals.get(method, 0) + amount
 	return normalized_rows, payment_totals
 
@@ -1845,7 +2014,7 @@ def ensure_payment_rows_for_total(payment_rows, allowed_methods, expected_total)
 	return [{"mode_of_payment": allowed_methods[0], "amount": 0}]
 
 
-def validate_guest_item_allocations(guest_rows, active_item_names, expected_total):
+def validate_guest_item_allocations(guest_rows, active_item_names, expected_total, item_amounts=None):
 	"""Check split shares and enforce complete, unique item assignments."""
 	if not guest_rows:
 		return
@@ -1855,26 +2024,394 @@ def validate_guest_item_allocations(guest_rows, active_item_names, expected_tota
 	if abs(sum(row["due_amount"] for row in guest_rows) - flt(expected_total)) > 0.01:
 		frappe.throw(_("Guest shares must add up to the order total."))
 	if modes == {"items"}:
-		assigned = [item for row in guest_rows for item in row["items"]]
-		if len(assigned) != len(set(assigned)) or set(assigned) != set(active_item_names):
-			frappe.throw(_("Assign every active order item to exactly one person."))
+		allocations = {}
+		for row in guest_rows:
+			seen_items = set()
+			for item in row["items"]:
+				item_name = item.get("item_name") if isinstance(item, dict) else item
+				share = flt(item.get("share", 1)) if isinstance(item, dict) else 1
+				if item_name not in active_item_names or item_name in seen_items or share <= 0 or share > 1:
+					frappe.throw(_("Assign valid shares of every active order item."))
+				seen_items.add(item_name)
+				allocations[item_name] = allocations.get(item_name, 0) + share
+		if any(abs(allocations.get(item_name, 0) - 1) > 0.01 for item_name in active_item_names):
+			frappe.throw(_("Assign 100% of every active order item between the people."))
+		if item_amounts:
+			total_item_amount = sum(flt(item_amounts.get(item_name)) for item_name in active_item_names)
+			if total_item_amount > 0:
+				for row in guest_rows:
+					weight = sum(flt(item_amounts.get(item.get("item_name") if isinstance(item, dict) else item))
+						* (flt(item.get("share", 1)) if isinstance(item, dict) else 1) for item in row["items"])
+					expected_share = flt(expected_total) * weight / total_item_amount
+					if abs(flt(row["due_amount"]) - expected_share) > 0.02:
+						frappe.throw(_("Each person's share must match their allocated items."))
+
+
+def validate_guest_check_allocations(order_items, guest_checks):
+	"""Partition every active order item quantity across guest checks."""
+	active_qty = {row.name: get_active_order_item_qty(row.qty, row.cancelled_qty)
+		for row in order_items if get_active_order_item_qty(row.qty, row.cancelled_qty) > 0}
+	whole_quantity_items = {row.name for row in order_items if getattr(row, "must_be_whole_number", False)
+		or (getattr(row, "uom", None) and frappe.get_cached_value("UOM", row.uom, "must_be_whole_number"))}
+	if len(active_qty) < 2:
+		frappe.throw(_("By items requires at least two active order items."))
+	if not isinstance(guest_checks, list) or len(guest_checks) < 2 or len(guest_checks) > 10:
+		frappe.throw(_("Add between two and ten guest checks."))
+	seen_names = set()
+	allocated_qty = {name: 0 for name in active_qty}
+	normalized = []
+	for check in guest_checks:
+		guest_name = (check.get("guest_name") or "").strip()
+		key = guest_name.casefold()
+		if not guest_name or key in seen_names:
+			frappe.throw(_("Guest names must be present and different."))
+		seen_names.add(key)
+		items = check.get("items") or []
+		if not isinstance(items, list):
+			frappe.throw(_("Assign valid active order items."))
+		guest_items = []
+		seen_for_guest = set()
+		for item in items:
+			if isinstance(item, str):
+				item_name = item
+				quantity = active_qty.get(item_name, 0)
+			elif isinstance(item, dict):
+				item_name = item.get("name")
+				quantity = flt(item.get("qty"), 6)
+			else:
+				frappe.throw(_("Assign valid active order items."))
+			if item_name not in active_qty or item_name in seen_for_guest or quantity <= 0 or quantity > active_qty[item_name] + 0.001:
+				frappe.throw(_("Assign valid active order items."))
+			if item_name in whole_quantity_items and abs(quantity - round(quantity)) > 0.001:
+				frappe.throw(_("Whole-number items cannot be split into fractional quantities."))
+			seen_for_guest.add(item_name)
+			allocated_qty[item_name] += quantity
+			guest_items.append({"name": item_name, "qty": flt(quantity, 6)})
+		normalized.append({"guest_name": guest_name, "items": guest_items})
+	if any(abs(allocated_qty[name] - quantity) > 0.001 for name, quantity in active_qty.items()):
+		frappe.throw(_("Assign every active order item exactly once."))
+	return normalized
+
+
+def validate_guest_check_resplit(order_items, existing_checks, target_check_name, replacement_checks):
+	"""Replace one open guest check while keeping every other check allocation fixed."""
+	existing_checks = list(existing_checks or [])
+	target = next((row for row in existing_checks if row.name == target_check_name), None)
+	if not target or target.status != "Open":
+		frappe.throw(_("Only an open guest check can be split again."))
+	active_items = {row.name: row for row in order_items
+		if get_active_order_item_qty(row.qty, row.cancelled_qty) > 0}
+	target_allocations = get_guest_check_item_allocations(target)
+	target_items = []
+	for name, quantity in target_allocations.items():
+		if name not in active_items:
+			frappe.throw(_("Guest check contains invalid item assignments."))
+		row = active_items[name]
+		target_items.append(frappe._dict(row, qty=get_active_order_item_qty(row.qty, row.cancelled_qty)
+			if quantity is None else quantity, cancelled_qty=0))
+	if len(target_items) < 2:
+		frappe.throw(_("By items requires at least two active order items."))
+	normalized_target = validate_guest_check_allocations(target_items, replacement_checks)
+	existing_names = {row.guest_name.strip().casefold() for row in existing_checks if row.name != target_check_name}
+	if any(row["guest_name"].casefold() in existing_names for row in normalized_target):
+		frappe.throw(_("Guest names must be present and different."))
+
+	result = []
+	for check in existing_checks:
+		if check.name == target_check_name:
+			result.extend(normalized_target)
+		else:
+			allocations = get_guest_check_item_allocations(check)
+			result.append({"guest_name": check.guest_name, "items": [
+				{"name": name, "qty": get_active_order_item_qty(active_items[name].qty, active_items[name].cancelled_qty)
+					if quantity is None else quantity} for name, quantity in allocations.items()]})
+	if any(not row["items"] for row in normalized_target):
+		frappe.throw(_("Give every guest at least one item."))
+	allocated_qty = {name: 0 for name in active_items}
+	for check in result:
+		for item in check["items"]:
+			if item["name"] not in allocated_qty:
+				frappe.throw(_("Guest check contains invalid item assignments."))
+			allocated_qty[item["name"]] += flt(item["qty"], 6)
+	if any(abs(allocated_qty[name] - get_active_order_item_qty(row.qty, row.cancelled_qty)) > 0.001
+		for name, row in active_items.items()):
+		frappe.throw(_("Assign every active order item exactly once."))
+	return result
+
+
+def get_guest_check_item_allocations(check):
+	"""Return {order_item_name: quantity}; None means a legacy full-line assignment."""
+	try:
+		value = frappe.parse_json(check.items_json) if isinstance(check.items_json, str) else check.items_json
+	except (TypeError, ValueError):
+		frappe.throw(_("Guest check contains invalid item assignments."))
+	if not isinstance(value, list):
+		frappe.throw(_("Guest check contains invalid item assignments."))
+	allocations = {}
+	for item in value:
+		if isinstance(item, str):
+			name, quantity = item, None
+		elif isinstance(item, dict) and isinstance(item.get("name"), str):
+			name, quantity = item["name"], flt(item.get("qty"), 6)
+		else:
+			frappe.throw(_("Guest check contains invalid item assignments."))
+		if name in allocations or (quantity is not None and quantity <= 0):
+			frappe.throw(_("Guest check contains invalid item assignments."))
+		allocations[name] = quantity
+	return allocations
+
+
+def get_guest_check_item_names(check):
+	return list(get_guest_check_item_allocations(check))
+
+
+def ensure_guest_check_allocations_unchanged(order, normalized):
+	"""Treat persisted guest checks as a cashier-confirmed, immutable split."""
+	existing = list(getattr(order, "guest_checks", []) or [])
+	if not existing:
+		return False
+	active_qty = {row.name: get_active_order_item_qty(row.qty, row.cancelled_qty)
+		for row in order.items if get_active_order_item_qty(row.qty, row.cancelled_qty) > 0}
+	current = {}
+	for check in existing:
+		items = get_guest_check_item_allocations(check)
+		current[check.guest_name.strip().casefold()] = {
+			name: active_qty.get(name, 0) if quantity is None else flt(quantity, 6)
+			for name, quantity in items.items()
+		}
+	candidate = {row["guest_name"].strip().casefold(): {
+		item["name"]: flt(item["qty"], 6) for item in row["items"]
+	} for row in normalized}
+	if current.keys() != candidate.keys() or any(
+		current[name].keys() != candidate[name].keys() or any(
+			abs(current[name][item] - candidate[name][item]) > 0.000001
+			for item in current[name]
+		) for name in current
+	):
+		frappe.throw(_("Guest checks are already confirmed and cannot be changed."))
+	return True
+
+
+@frappe.whitelist()
+def pay_guest_check(order_name, guest_check_name, payments, discount_type=None, discount_value=None, discount_reason=None,
+		discount_approval_code=None, discount_approval_approver=None):
+	require_pos_action("can_checkout")
+	order = frappe.get_doc("POS Order", order_name)
+	assert_store_access(order.store)
+	require_order_scope(order)
+	if order.cashier_session and frappe.db.get_value("Cashier Session", order.cashier_session, "user") != frappe.session.user:
+		frappe.throw(_("This order belongs to another Cashier Session."), frappe.PermissionError)
+	if not any(row.name == guest_check_name for row in order.guest_checks or []):
+		frappe.throw(_("Guest check was not found."))
+	return pay_order(order_name, payments, discount_type=discount_type, discount_value=discount_value,
+		discount_reason=discount_reason, discount_approval_code=discount_approval_code,
+		discount_approval_approver=discount_approval_approver, guest_check_name=guest_check_name)
+
+
+@frappe.whitelist()
+def save_guest_check_allocations(order_name, guest_checks):
+	require_pos_action("can_checkout")
+	order = frappe.get_doc("POS Order", order_name, for_update=True)
+	assert_store_access(order.store)
+	require_order_scope(order)
+	if order.status not in ("Confirmed", "In Preparation", "Ready"):
+		frappe.throw(_("Confirm the order before splitting it by items."))
+	if order.cashier_session and frappe.db.get_value("Cashier Session", order.cashier_session, "user") != frappe.session.user:
+		frappe.throw(_("This order belongs to another Cashier Session."), frappe.PermissionError)
+	if order.pos_invoice:
+		frappe.throw(_("This order has already been paid."))
+	checks = frappe.parse_json(guest_checks) if isinstance(guest_checks, str) else guest_checks
+	normalized = validate_guest_check_allocations(order.items, checks)
+	if ensure_guest_check_allocations_unchanged(order, normalized):
+		return get_guest_checks(order_name)
+	item_amounts = {}
+	from rms.rms.doctype.pos_order.pos_order import calculate_order_item_amount
+	for row in order.items:
+		qty = get_active_order_item_qty(row.qty, row.cancelled_qty)
+		if qty:
+			item_amounts[row.name] = calculate_order_item_amount(row.qty, row.selling_price,
+				parse_json_rows(row.modifiers), row.cancelled_qty)
+	subtotal = sum(item_amounts.values())
+	for existing in order.guest_checks or []:
+		if existing.status == "Paid":
+			frappe.throw(_("Paid guest checks cannot be changed."))
+	order.set("guest_checks", [])
+	store_discount_scope = frappe.db.get_value("Store", order.store, "manual_discount_scope") or "Net Total"
+	check_discount_scope = order.discount_scope if flt(order.discount_amount) else store_discount_scope
+	active_qty_by_name = {row.name: get_active_order_item_qty(row.qty, row.cancelled_qty) for row in order.items}
+	raw_totals = []
+	for row in normalized:
+		amount = sum(item_amounts.get(item["name"], 0) * item["qty"] / max(active_qty_by_name.get(item["name"], 0), 0.000001) for item in row["items"])
+		share = amount / subtotal if subtotal else 0
+		raw_totals.append(max(0, amount - flt(order.discount_amount) * share) + flt(order.tax_total) * share)
+	rounded_totals = [flt(amount, 2) for amount in raw_totals]
+	last_nonempty = next((index for index in range(len(normalized) - 1, -1, -1) if any(item["qty"] > 0 for item in normalized[index]["items"])), None)
+	if last_nonempty is not None:
+		rounded_totals[last_nonempty] = flt(rounded_totals[last_nonempty] + flt(order.grand_total) - sum(rounded_totals), 2)
+	for index, row in enumerate(normalized):
+		order.append("guest_checks", {"guest_name": row["guest_name"], "status": "Open",
+			"grand_total": rounded_totals[index], "discount_scope": check_discount_scope,
+			"items_json": json.dumps(row["items"]), "payments_json": "[]"})
+	order.flags.ignore_permissions = True
+	order.save(ignore_permissions=True)
+	return get_guest_checks(order_name)
+
+
+@frappe.whitelist()
+def resplit_open_guest_check(order_name, guest_check_name, guest_checks):
+	"""Split one open guest check by its assigned item quantities only."""
+	require_pos_action("can_checkout")
+	order = frappe.get_doc("POS Order", order_name, for_update=True)
+	assert_store_access(order.store)
+	require_order_scope(order)
+	if order.status not in ("Confirmed", "In Preparation", "Ready"):
+		frappe.throw(_("Only an active unpaid order can be split."))
+	if order.cashier_session and frappe.db.get_value("Cashier Session", order.cashier_session, "user") != frappe.session.user:
+		frappe.throw(_("This order belongs to another Cashier Session."), frappe.PermissionError)
+	if order.pos_invoice:
+		frappe.throw(_("This order has already been paid."))
+	checks = frappe.parse_json(guest_checks) if isinstance(guest_checks, str) else guest_checks
+	normalized = validate_guest_check_resplit(order.items, order.guest_checks, guest_check_name, checks)
+	if len(order.guest_checks or []) - 1 + len(checks) > 10:
+		frappe.throw(_("A check can be split between up to ten people."))
+	target = next(row for row in order.guest_checks if row.name == guest_check_name)
+	target_total = flt(target.grand_total)
+	from rms.rms.doctype.pos_order.pos_order import calculate_order_item_amount
+	item_amounts = {row.name: calculate_order_item_amount(row.qty, row.selling_price,
+		parse_json_rows(row.modifiers), row.cancelled_qty) for row in order.items}
+	active_qty = {row.name: get_active_order_item_qty(row.qty, row.cancelled_qty) for row in order.items}
+	start = next(index for index, check in enumerate(order.guest_checks) if check.name == guest_check_name)
+	replacements = normalized[start:start + len(checks)]
+	weights = [sum(item_amounts.get(item["name"], 0) * flt(item["qty"]) / max(active_qty.get(item["name"], 0), 0.000001)
+		for item in check["items"]) for check in replacements]
+	if not sum(weights):
+		weights = [sum(flt(item["qty"]) for item in check["items"]) for check in replacements]
+	total_weight = sum(weights) or len(replacements)
+	amounts = [flt(target_total * weight / total_weight, 2) for weight in weights]
+	last_nonempty = next((index for index in range(len(replacements) - 1, -1, -1) if replacements[index]["items"]), None)
+	if last_nonempty is not None:
+		amounts[last_nonempty] = flt(amounts[last_nonempty] + target_total - sum(amounts), 2)
+	for index, replacement in enumerate(replacements):
+		if index == 0:
+			target.guest_name = replacement["guest_name"]
+			target.status = "Open"
+			target.grand_total = amounts[index]
+			target.items_json = json.dumps(replacement["items"])
+			target.pos_invoice = None
+			target.payments_json = "[]"
+			target.discount_type = "Percentage"
+			target.discount_value = 0
+			target.discount_amount = 0
+			target.discount_scope = order.discount_scope if flt(order.discount_amount) else (frappe.db.get_value("Store", order.store, "manual_discount_scope") or "Net Total")
+			target.discount_reason = ""
+		else:
+			order.append("guest_checks", {"guest_name": replacement["guest_name"], "status": "Open",
+				"grand_total": amounts[index], "discount_scope": order.discount_scope if flt(order.discount_amount) else (frappe.db.get_value("Store", order.store, "manual_discount_scope") or "Net Total"),
+				"items_json": json.dumps(replacement["items"]), "payments_json": "[]"})
+	for check in order.guest_checks:
+		if check.status != "Paid":
+			check_totals = get_guest_check_discount_totals(order, check)
+			check.discount_amount = check_totals["discount_amount"]
+			check.grand_total = check_totals["grand_total"]
+	order.grand_total = flt(sum(flt(row.grand_total) for row in order.guest_checks), 2)
+	order.flags.allow_guest_check_resplit = True
+	order.flags.ignore_permissions = True
+	order.save(ignore_permissions=True)
+	return get_guest_checks(order_name)
+
+
+@frappe.whitelist()
+def get_guest_checks(order_name):
+	order = frappe.get_doc("POS Order", order_name)
+	assert_store_access(order.store)
+	require_order_scope(order)
+	active_items = [row for row in order.items if get_active_order_item_qty(row.qty, row.cancelled_qty) > 0]
+	checks = []
+	for row in order.guest_checks or []:
+		item_allocations = get_guest_check_item_allocations(row)
+		checks.append({"name": row.name, "guest_name": row.guest_name, "status": row.status,
+			"grand_total": flt(row.grand_total), "discount_type": row.discount_type or "Percentage",
+			"discount_value": flt(row.discount_value), "discount_amount": flt(row.discount_amount),
+			"discount_scope": row.discount_scope or "Net Total", "discount_reason": row.discount_reason or "",
+			"items": [{"name": item.name,
+				"title": frappe.db.get_value("Selling Product", item.selling_product, "title") or item.selling_product,
+				"qty": item_allocations[item.name] if item_allocations[item.name] is not None else get_active_order_item_qty(item.qty, item.cancelled_qty),
+				"amount": flt(item.amount) * (item_allocations[item.name] if item_allocations[item.name] is not None else get_active_order_item_qty(item.qty, item.cancelled_qty)) / max(get_active_order_item_qty(item.qty, item.cancelled_qty), 0.000001)}
+				for item in order.items if item.name in item_allocations and (item_allocations[item.name] is None or item_allocations[item.name] > 0)], "pos_invoice": row.pos_invoice})
+	return {"guest_checks": checks, "can_split_by_items": len(active_items) > 1 and any(
+		row.status == "Open" and len(get_guest_check_item_allocations(row)) > 1 for row in order.guest_checks
+	) if order.guest_checks else len(active_items) > 1}
+
+
+@frappe.whitelist()
+def clear_guest_check_allocations(order_name):
+	require_pos_action("can_checkout")
+	order = frappe.get_doc("POS Order", order_name, for_update=True)
+	assert_store_access(order.store)
+	require_order_scope(order)
+	if order.cashier_session and frappe.db.get_value("Cashier Session", order.cashier_session, "user") != frappe.session.user:
+		frappe.throw(_("This order belongs to another Cashier Session."), frappe.PermissionError)
+	if order.guest_checks:
+		frappe.throw(_("Guest checks are confirmed and cannot be cleared."))
+	return {"guest_checks": [], "status": order.status}
 
 
 @frappe.whitelist()
 def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, discount_value=None, discount_reason=None,
-		discount_approval_code=None, discount_approval_approver=None):
+		discount_approval_code=None, discount_approval_approver=None, guest_check_name=None):
 	require_pos_action("can_checkout")
 	doc = frappe.get_doc("POS Order", order_name, for_update=True)
 	assert_store_access(doc.store)
 	require_order_scope(doc)
 	if doc.cashier_session and frappe.db.get_value("Cashier Session", doc.cashier_session, "user") != frappe.session.user:
 		frappe.throw(_("This order belongs to another Cashier Session."), frappe.PermissionError)
-	if doc.pos_invoice:
+	guest_check = next((row for row in getattr(doc, "guest_checks", []) or [] if row.name == guest_check_name), None) if guest_check_name else None
+	if guest_check_name and not guest_check:
+		frappe.throw(_("Guest check was not found."))
+	if guest_check and guest_check.status == "Paid" and guest_check.pos_invoice:
+		return {"pos_invoice": guest_check.pos_invoice, "status": "Paid", "guest_check_status": "Paid"}
+	if not guest_check and any(row.status == "Paid" for row in getattr(doc, "guest_checks", []) or []) and discount_value is not None:
+		proposed_type = discount_type or "Percentage"
+		if (doc.discount_type or "Percentage") != proposed_type or flt(doc.discount_value) != flt(discount_value) or (doc.discount_reason or "").strip() != (discount_reason or "").strip():
+			frappe.throw(_("Use an open guest check to apply a discount after another guest has paid."))
+	if doc.pos_invoice and not guest_check_name:
 		return {"pos_invoice": doc.pos_invoice, "status": doc.status}
 	if doc.status not in ("Confirmed", "In Preparation", "Ready"):
 		frappe.throw(_("Confirm the order before taking payment."))
-	if discount_value is not None:
-		store = frappe.get_doc("Store", doc.store)
+	if guest_check:
+		if guest_check.status != "Open":
+			frappe.throw(_("This guest check is no longer open."))
+		if not get_guest_check_item_names(guest_check):
+			frappe.throw(_("Assign at least one item quantity to this guest before payment."))
+		validate_guest_check_allocations(doc.items, [{"guest_name": row.guest_name,
+			"items": [{"name": name, "qty": quantity if quantity is not None else get_active_order_item_qty(next(item.qty for item in doc.items if item.name == name), next(item.cancelled_qty for item in doc.items if item.name == name))} for name, quantity in get_guest_check_item_allocations(row).items()]} for row in doc.guest_checks])
+	store = frappe.get_doc("Store", doc.store) if discount_value is not None or guest_check else None
+	guest_discount_preview = None
+	selected_discount_approver = discount_approval_approver
+	discount_approval_approver = None
+	if discount_value is not None and guest_check:
+		discount_scope = doc.discount_scope if flt(doc.discount_amount) else (store.manual_discount_scope or "Net Total")
+		guest_check.discount_type = discount_type or "Percentage"
+		guest_check.discount_value = flt(discount_value)
+		guest_check.discount_scope = discount_scope
+		guest_check.discount_reason = (discount_reason or "").strip()
+		if guest_check.discount_value:
+			require_pos_action("can_apply_manual_discount")
+		guest_discount_preview = get_guest_check_discount_totals(doc, guest_check,
+			guest_check.discount_type, guest_check.discount_value, guest_check.discount_reason, discount_scope)
+		requires_approval = discount_exceeds_pos_user_limit(frappe.session.user, guest_check.discount_type,
+			guest_check.discount_value, discount_scope, guest_discount_preview["subtotal"],
+			guest_discount_preview["baseline_grand_total"])
+		if discount_approval_code:
+			discount_approval_approver = get_pos_discount_approval(doc, guest_check.discount_type,
+				guest_check.discount_value, guest_check.discount_reason, discount_approval_code,
+				approval_approver=selected_discount_approver, guest_check_name=guest_check.name,
+				discount_scope=discount_scope)
+		if requires_approval and not discount_approval_approver:
+			frappe.throw(_("A POS Manager must approve this guest check discount."))
+		if discount_approval_approver:
+			doc.flags.discount_approval_authorized = True
+	if discount_value is not None and not guest_check:
 		doc.discount_type = discount_type or "Percentage"
 		doc.discount_scope = store.manual_discount_scope or "Net Total"
 		doc.discount_value = flt(discount_value)
@@ -1884,27 +2421,50 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 		doc.flags.allow_discount_update = True
 
 	guest_rows = frappe.parse_json(guest_breakdown) if guest_breakdown else []
+	if guest_rows and guest_rows[0].get("split_mode") == "items":
+		frappe.throw(_("Item splits must be paid one guest check at a time."))
 	payment_rows = frappe.parse_json(payments)
 	allowed_payment_rows = session_payment_rows(doc.cashier_session)
 	allowed_methods = {row.mode_of_payment for row in allowed_payment_rows}
-	expected_grand_total = flt(doc.grand_total)
-	selected_discount_approver = discount_approval_approver
-	discount_approval_approver = None
-	if discount_value is not None:
+	if guest_check and discount_value is not None:
+		check_tax_total = 0
+		for check in doc.guest_checks:
+			if check.status == "Paid":
+				check_tax_total += flt(frappe.db.get_value("POS Invoice", check.pos_invoice, "total_taxes_and_charges") or 0)
+				continue
+			check_totals = get_guest_check_discount_totals(doc, check)
+			check.discount_amount = check_totals["discount_amount"]
+			check.grand_total = check_totals["grand_total"]
+			check_tax_total += check_totals["final_tax_total"]
+		doc.grand_total = flt(sum(flt(row.grand_total) for row in doc.guest_checks), 2)
+		doc.tax_total = flt(check_tax_total, 2)
+	expected_grand_total = flt(guest_check.grand_total if guest_check else doc.grand_total)
+	if discount_value is not None and not guest_check:
 		from rms.rms.doctype.pos_order.pos_order import calculate_discount_amount
 
 		normal_tax, normal_total = doc.calculate_tax_preview()
 		validate_pos_discount_value(doc.discount_type, doc.discount_value, normal_total)
+		requires_approval = discount_exceeds_pos_user_limit(frappe.session.user, doc.discount_type,
+			doc.discount_value, doc.discount_scope, doc.subtotal, normal_total)
 		discount_approval_approver = get_pos_discount_approval(doc, doc.discount_type, doc.discount_value,
 			doc.discount_reason, discount_approval_code, approval_approver=selected_discount_approver)
+		if requires_approval and not discount_approval_approver:
+			frappe.throw(_("A POS Manager must approve this discount."))
 		if discount_approval_approver:
 			doc.flags.discount_approval_authorized = True
 		doc.validate_discount(doc.subtotal, normal_tax, normal_total)
 		doc.discount_amount = calculate_discount_amount(doc.subtotal, normal_tax, doc.discount_type,
 			doc.discount_value, doc.discount_scope, normal_total)
 		_discount_tax_total, expected_grand_total = doc.calculate_tax_preview(apply_discount=bool(doc.discount_value))
+		doc.tax_total = _discount_tax_total
+		doc.grand_total = expected_grand_total
+		for check in getattr(doc, "guest_checks", []) or []:
+			if check.status != "Paid":
+				check_totals = get_guest_check_discount_totals(doc, check)
+				check.discount_amount = check_totals["discount_amount"]
+				check.grand_total = check_totals["grand_total"]
 	guest_rows, payment_totals = validate_guest_payment_rows(
-		guest_rows, allowed_methods, allow_zero=expected_grand_total <= 0.005)
+		guest_rows if not guest_check_name else [], allowed_methods, allow_zero=expected_grand_total <= 0.005)
 	if guest_rows:
 		payment_rows = [{"mode_of_payment": method, "amount": amount} for method, amount in payment_totals.items()]
 	payment_rows = ensure_payment_rows_for_total(
@@ -1918,13 +2478,29 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 		amount = flt(payment.get("amount"))
 		if amount < 0 or (amount <= 0 and expected_grand_total > 0.005):
 			frappe.throw(_("Payment amounts must be greater than zero."))
-	active_items = [item.name for item in doc.items if get_active_order_item_qty(item.qty, item.cancelled_qty) > 0] if guest_rows else []
-	validate_guest_item_allocations(guest_rows, active_items, expected_grand_total)
+	split_mode = guest_rows[0]["split_mode"] if guest_rows else None
+	guest_item_allocations = get_guest_check_item_allocations(guest_check) if guest_check else None
+	guest_item_names = set(guest_item_allocations) if guest_item_allocations is not None else None
+	active_item_rows = [item for item in doc.items if get_active_order_item_qty(item.qty, item.cancelled_qty) > 0
+		and (guest_item_names is None or item.name in guest_item_names)] if guest_check or guest_rows else []
+	active_items = [item.name for item in active_item_rows]
+	item_amounts = {}
+	if guest_rows and split_mode == "items":
+		from rms.rms.doctype.pos_order.pos_order import calculate_order_item_amount
+		item_amounts = {item.name: calculate_order_item_amount(item.qty, item.selling_price,
+			parse_json_rows(item.modifiers), item.cancelled_qty) for item in active_item_rows}
+	if guest_rows:
+		validate_guest_item_allocations(guest_rows, active_items, expected_grand_total, item_amounts)
 	paid_total, change_amount = validate_payment_change(payment_rows, expected_grand_total)
 	if discount_value is not None:
 		if discount_approval_code and discount_approval_approver:
-			get_pos_discount_approval(doc, doc.discount_type, doc.discount_value, doc.discount_reason,
-				discount_approval_code, approval_approver=discount_approval_approver, consume=True)
+			if guest_check:
+				get_pos_discount_approval(doc, guest_check.discount_type, guest_check.discount_value,
+					guest_check.discount_reason, discount_approval_code, approval_approver=discount_approval_approver,
+					consume=True, guest_check_name=guest_check.name, discount_scope=guest_check.discount_scope)
+			else:
+				get_pos_discount_approval(doc, doc.discount_type, doc.discount_value, doc.discount_reason,
+					discount_approval_code, approval_approver=discount_approval_approver, consume=True)
 			doc.flags.discount_approval_authorized = True
 		doc.save(ignore_permissions=True)
 
@@ -1965,7 +2541,12 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 
 	invoice_line_rates = []
 	for row in doc.items:
+		if guest_item_names is not None and row.name not in guest_item_names:
+			continue
 		active_qty = get_active_order_item_qty(row.qty, row.cancelled_qty)
+		if guest_item_allocations is not None:
+			allocated_qty = guest_item_allocations.get(row.name)
+			active_qty = active_qty if allocated_qty is None else min(active_qty, allocated_qty)
 		if not active_qty:
 			continue
 		item_stock_uom = frappe.db.get_value("Item", row.item, "stock_uom")
@@ -2022,7 +2603,14 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 		with allow_rms_cashier_session_pos_invoice(invoice, session, actor), prevent_pos_item_price_autoinsert(invoice):
 			invoice.set_missing_values()
 			_apply_order_tax_template(invoice, doc.sales_taxes_and_charges_template)
-			_apply_order_discount(invoice, doc)
+			if guest_check:
+				check_discount = guest_discount_preview or get_guest_check_discount_totals(doc, guest_check)
+				discount_order = frappe._dict({"discount_scope": check_discount["discount_scope"], "discount_type": "Amount",
+					"discount_value": check_discount["combined_discount_amount"],
+					"discount_amount": check_discount["combined_discount_amount"]})
+				_apply_order_discount(invoice, discount_order)
+			else:
+				_apply_order_discount(invoice, doc)
 			for invoice_row, rate, warehouse in invoice_line_rates:
 				invoice_row.rate = rate
 				invoice_row.price_list_rate = rate
@@ -2030,7 +2618,7 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 					invoice_row.warehouse = warehouse
 			# Recalculate final totals using ERPNext's standard invoice rules.
 			invoice.calculate_taxes_and_totals()
-			if abs(flt(invoice.grand_total) - expected_grand_total) > 0.01:
+			if abs(flt(invoice.grand_total) - expected_grand_total) > 0.02:
 				frappe.throw(_("ERPNext Invoice total {0} differs from the POS total {1}. Refresh the order and retry payment.").format(
 					flt(invoice.grand_total, 2), flt(expected_grand_total, 2)))
 			invoice.insert(ignore_permissions=True)
@@ -2040,7 +2628,14 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 			for invoice_row in invoice.items:
 				frappe.db.set_value("POS Invoice Item", invoice_row.name, "owner", actor, update_modified=False)
 			invoice.submit()
-			if flt(doc.discount_amount) > 0 and doc.discount_reason:
+			if guest_check and flt(guest_check.discount_amount) > 0 and guest_check.discount_reason:
+				discount_comment = _("POS guest check discount: {0} {1} on {2}. Reason: {3}. Applied by {4}.").format(
+					guest_check.discount_value, guest_check.discount_type, guest_check.discount_scope,
+					guest_check.discount_reason, actor)
+				if discount_approval_approver:
+					discount_comment += " " + _("Approved by {0} using a one-time manager code.").format(discount_approval_approver)
+				invoice.add_comment("Info", discount_comment)
+			elif flt(doc.discount_amount) > 0 and doc.discount_reason:
 				discount_comment = _("POS discount: {0} {1} on {2}. Reason: {3}. Applied by {4}.").format(
 					doc.discount_value, doc.discount_type, doc.discount_scope, doc.discount_reason, actor)
 				if discount_approval_approver:
@@ -2050,20 +2645,42 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 	finally:
 		frappe.set_user(actor)
 
-	doc.pos_invoice = invoice.name
+	if guest_check:
+		guest_check.status = "Paid"
+		guest_check.pos_invoice = invoice.name
+		guest_check.payments_json = json.dumps(allocate_change_to_order_payments(payment_rows, change_amount,
+			{payment.get("mode_of_payment") for payment in payment_rows if frappe.db.get_value("Mode of Payment", payment.get("mode_of_payment"), "type") == "Cash"}))
+		all_paid = all(row.status == "Paid" for row in doc.guest_checks)
+	else:
+		all_paid = True
+	if all_paid:
+		doc.pos_invoice = invoice.name
 	if recipe_stock_entry:
 		doc.recipe_stock_entry = recipe_stock_entry
-	doc.payments = []
+	if all_paid:
+		doc.payments = []
 	cash_methods = {payment.get("mode_of_payment") for payment in payment_rows
 		if frappe.db.get_value("Mode of Payment", payment.get("mode_of_payment"), "type") == "Cash"}
-	for payment in allocate_change_to_order_payments(payment_rows, change_amount, cash_methods):
-		doc.append("payments", {"mode_of_payment": payment.get("mode_of_payment"), "amount": payment.get("amount")})
-	if not doc.payments and expected_grand_total <= 0.005:
-		doc.append("payments", {"mode_of_payment": payment_rows[0].get("mode_of_payment"), "amount": 0})
-	doc.status = "Paid"
+	if all_paid:
+		combined = {}
+		for check in getattr(doc, "guest_checks", []) or []:
+			for payment in parse_json_rows(check.payments_json):
+				combined[payment.get("mode_of_payment")] = combined.get(payment.get("mode_of_payment"), 0) + flt(payment.get("amount"))
+		if getattr(doc, "guest_checks", None):
+			payment_rows = [{"mode_of_payment": mode, "amount": amount} for mode, amount in combined.items()]
+		else:
+			payment_rows = allocate_change_to_order_payments(payment_rows, change_amount, cash_methods)
+		for payment in payment_rows:
+			doc.append("payments", {"mode_of_payment": payment.get("mode_of_payment"), "amount": payment.get("amount")})
+		if not doc.payments and flt(doc.grand_total) <= 0.005:
+			doc.append("payments", {"mode_of_payment": payment_rows[0].get("mode_of_payment"), "amount": 0})
+		doc.status = "Paid"
 	doc.flags.ignore_permissions = True
 	doc.save(ignore_permissions=True)
-	return {"pos_invoice": invoice.name, "status": doc.status, "grand_total": invoice.grand_total,
+	return {"pos_invoice": invoice.name, "status": doc.status, "guest_check_status": guest_check.status if guest_check else None,
+		"grand_total": invoice.grand_total,
+		"order_grand_total": doc.grand_total, "order_discount_amount": doc.discount_amount,
+		"guest_checks": get_guest_checks(order_name).get("guest_checks", []) if getattr(doc, "guest_checks", None) else [],
 		"paid_total": paid_total, "change_amount": flt(invoice.change_amount or change_amount),
 		"discount_approved_by": discount_approval_approver}
 
@@ -2108,8 +2725,13 @@ def get_returnable_sales(store):
 		and is_pos_scope_allowed("order_type", row.order_type)]
 	if not orders:
 		return []
-	invoice_names = frappe.get_all("POS Order", filters={"name": ["in", orders]}, pluck="pos_invoice")
-	invoice_names = [name for name in invoice_names if name]
+	invoice_names = []
+	for order_name in orders:
+		order = frappe.db.get_value("POS Order", order_name, ["pos_invoice"], as_dict=True)
+		if order and order.pos_invoice:
+			invoice_names.append(order.pos_invoice)
+		invoice_names.extend(frappe.get_all("POS Order Guest Check", filters={"parent": order_name,
+			"parenttype": "POS Order", "status": "Paid", "pos_invoice": ["is", "set"]}, pluck="pos_invoice"))
 	rows = frappe.get_all("POS Invoice", filters={
 		"name": ["in", invoice_names], "docstatus": 1, "is_return": 0,
 	}, fields=["name", "customer", "posting_date", "grand_total", "owner"], order_by="posting_date desc, modified desc")
@@ -2132,7 +2754,7 @@ def get_returnable_sale_items(invoice_name, session=None):
 		["docstatus", "is_return", "pos_profile", "owner"], as_dict=True)
 	if not invoice or invoice.docstatus != 1 or invoice.is_return or invoice.owner != session.user or invoice.pos_profile != session.pos_profile:
 		return []
-	order = frappe.db.get_value("POS Order", {"pos_invoice": invoice_name}, ["restaurant_brand", "order_type"], as_dict=True)
+	order = get_pos_order_for_invoice(invoice_name, ["restaurant_brand", "order_type"])
 	if not order or not is_pos_scope_allowed("brand", order.restaurant_brand) or not is_pos_scope_allowed("order_type", order.order_type):
 		return []
 	rows = frappe.get_all("POS Invoice Item", filters={"parent": invoice_name, "parenttype": "POS Invoice"},
@@ -2156,6 +2778,15 @@ def get_returnable_sale_items(invoice_name, session=None):
 				"must_be_whole_number": bool(frappe.db.get_value("UOM", row.uom, "must_be_whole_number"))})
 			result.append(row)
 	return result
+
+
+def get_pos_order_for_invoice(invoice_name, fields=None):
+	order_name = frappe.db.get_value("POS Order", {"pos_invoice": invoice_name}, "name")
+	if not order_name:
+		order_name = frappe.db.get_value("POS Order Guest Check", {"pos_invoice": invoice_name, "status": "Paid"}, "parent")
+	if not order_name:
+		return None
+	return frappe.db.get_value("POS Order", order_name, fields or ["name"], as_dict=True)
 
 
 @frappe.whitelist(methods=["POST"])
@@ -2229,7 +2860,7 @@ def approve_pos_return(return_name):
 		frappe.throw(_("Only a POS Manager can approve a return."), frappe.PermissionError)
 	ret = frappe.get_doc("POS Return", return_name)
 	assert_store_access(ret.store)
-	order = frappe.db.get_value("POS Order", {"pos_invoice": ret.source_pos_invoice}, ["restaurant_brand", "order_type"], as_dict=True)
+	order = get_pos_order_for_invoice(ret.source_pos_invoice, ["restaurant_brand", "order_type"])
 	if order:
 		require_order_scope(order)
 	if ret.status == "Approved" and ret.return_pos_invoice:
@@ -2300,7 +2931,7 @@ def reject_pos_return(return_name, reason=None):
 		frappe.throw(_("Only a POS Manager can reject a return."), frappe.PermissionError)
 	ret = frappe.get_doc("POS Return", return_name)
 	assert_store_access(ret.store)
-	order = frappe.db.get_value("POS Order", {"pos_invoice": ret.source_pos_invoice}, ["restaurant_brand", "order_type"], as_dict=True)
+	order = get_pos_order_for_invoice(ret.source_pos_invoice, ["restaurant_brand", "order_type"])
 	if order:
 		require_order_scope(order)
 	if ret.status != "Pending Approval":

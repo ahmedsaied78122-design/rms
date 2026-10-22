@@ -1,0 +1,22 @@
+{
+  "doctype": "DocType",
+  "name": "POS Order Guest Check",
+  "module": "RMS",
+  "istable": 1,
+  "engine": "InnoDB",
+  "field_order": ["guest_name", "status", "grand_total", "discount_type", "discount_value", "discount_amount", "discount_scope", "discount_reason", "items_json", "pos_invoice", "payments_json"],
+  "fields": [
+    {"fieldname": "guest_name", "fieldtype": "Data", "label": "Guest", "reqd": 1, "in_list_view": 1, "columns": 2},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Open\nPaid", "default": "Open", "reqd": 1, "in_list_view": 1, "columns": 1},
+    {"fieldname": "grand_total", "fieldtype": "Currency", "label": "Grand Total", "read_only": 1, "in_list_view": 1, "columns": 1},
+    {"fieldname": "discount_type", "fieldtype": "Select", "label": "Discount Type", "options": "Percentage\nAmount", "default": "Percentage"},
+    {"fieldname": "discount_value", "fieldtype": "Float", "label": "Discount Value", "default": 0},
+    {"fieldname": "discount_amount", "fieldtype": "Currency", "label": "Discount Amount", "read_only": 1, "default": 0},
+    {"fieldname": "discount_scope", "fieldtype": "Select", "label": "Discount Scope", "options": "Net Total\nGrand Total", "default": "Net Total"},
+    {"fieldname": "discount_reason", "fieldtype": "Small Text", "label": "Discount Reason"},
+    {"fieldname": "items_json", "fieldtype": "Long Text", "label": "Order Item Names", "reqd": 1},
+    {"fieldname": "pos_invoice", "fieldtype": "Link", "label": "POS Invoice", "options": "POS Invoice", "read_only": 1},
+    {"fieldname": "payments_json", "fieldtype": "Long Text", "label": "Payments", "read_only": 1}
+  ],
+  "permissions": []
+}

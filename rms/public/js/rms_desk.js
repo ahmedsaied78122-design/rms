@@ -1,6 +1,6 @@
 // Refresh the Page scripts and discard the old duplicate-loaded cache once.
 (() => {
-const cacheVersion = "rms-page-cache-v14";
+const cacheVersion = "rms-page-cache-v24";
 	try {
 		if (localStorage.getItem(cacheVersion) !== "1") {
 			localStorage.removeItem("_page:point-of-sale");

@@ -27,6 +27,7 @@
     "check_label",
     "table_check_group",
     "pos_invoice",
+    "guest_checks",
     "recipe_stock_entry",
     "business_date",
     "items_section",
@@ -315,6 +316,14 @@
       "label": "Payments",
       "read_only": 1,
       "description": "Created by POS checkout and matched to the submitted POS Invoice."
+    },
+    {
+      "fieldname": "guest_checks",
+      "fieldtype": "Table",
+      "label": "Guest Checks",
+      "options": "POS Order Guest Check",
+      "read_only": 1,
+      "description": "Separate item-level checks and their submitted POS Invoices."
     }
   ],
   "permissions": [

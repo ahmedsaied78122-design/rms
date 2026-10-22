@@ -9,11 +9,17 @@ const styles = fs.readFileSync(path.join(__dirname, "../../../public/css/point_o
 
 async function run() {
 	assert.match(source, /data-pay-discount-value="percentage"[^>]*step="5"/, "percentage discount slider moves in five point steps");
-	assert.match(source, /const max = Number\(this\.state\.totals\?\.grand_total \|\| 0\)/, "fixed discount input uses the invoice total as its maximum");
+	assert.match(source, /const max = Number\(this\.activeGuestPayment\?\.grand_total \|\| this\.state\.totals\?\.grand_total \|\| 0\)/, "fixed discount input is capped at the selected check total");
 	assert.doesNotMatch(source, /Configured by Back Office for this Store/, "payment UI does not expose the configured discount scope");
 	assert.ok(source.includes('const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "C"]'), "place decimal before zero on the payment keypad");
 	assert.match(source, /data-action="payment-open-discount"/, "open discount controls in a dedicated dialog from checkout");
+	assert.match(source, /const discountTools = canEditDiscount \?/, "keep the discount dialog available while paying an individual guest check");
 	assert.match(source, /rms-discount-backdrop[\s\S]*rms-discount-dialog/, "render discount controls in a centered overlay dialog");
+	assert.match(source, /const title = this\.activeGuestPayment \? __\("Discount for \{0\}"/, "name the guest whose card discount is being edited");
+	assert.match(source, /const currentDiscount = this\.activeGuestPayment \? activeGuestCheck\?\.discount_amount/, "show the selected guest card's existing discount in the dialog");
+	assert.match(styles, /body \.rms-split-dialog \.rms-guest-checks > \[data-payment-guests\][\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/, "force two guest cards side by side in the split dialog");
+	assert.doesNotMatch(styles, /@media\s*\(max-width:\s*680px\)[\s\S]{0,180}body \.rms-split-dialog \.rms-guest-checks > \[data-payment-guests\][\s\S]{0,100}grid-template-columns:\s*minmax\(0,\s*1fr\)/, "keep split guests side by side at tablet widths");
+	assert.match(source, /type === "Percentage" \? __\("Discount %"\) : __\("Discount amount"\)/, "label percentage entry as a percentage and fixed entry as an amount");
 	assert.doesNotMatch(source.slice(source.indexOf("renderDiscountApprovalPrompt("), source.indexOf("queuePaymentDiscountPreview(")), /<select data-discount-approver/, "render managers as explicit choices in the approval step");
 	assert.match(source, /data-action="payment-discount-approver"/, "select an authorizer before revealing the code step");
 	assert.match(source, /if \(action === "payment-discount-approver"\)/, "handle manager selection from approval dialog");
@@ -21,6 +27,50 @@ async function run() {
 	assert.match(source, /applyButton\.hidden = true/, "hide Apply while the cashier is choosing a manager");
 	assert.match(source, /applyButton\.textContent = __\("Verify and Apply"\); applyButton\.hidden = false/, "show code verification only after a manager is selected");
 	assert.match(source, /data-action="payment-discount-close"/, "allow closing the discount dialog");
+	assert.ok(source.indexOf('data-mode="items" aria-pressed=') < source.indexOf('data-mode="amount" aria-pressed='), "show item splitting first and equally split second");
+	assert.match(source, /this\.paymentSplitMode = activeOrderItemCount >= 2 \? "items" : "amount"/, "default to item split when there are at least two active order lines");
+	assert.match(source, /button\.setAttribute\("aria-pressed", String\(button\.dataset\.mode === this\.paymentSplitMode\)\)/, "keep the selected split button synchronized with the active allocation mode");
+	assert.match(source, /By items requires at least two active order items/, "prevent item splitting when the order has only one active line");
+	assert.match(source, /data-action="guest-check-take-payment"/, "open one separate payment screen for each unpaid guest");
+	assert.match(source, /guestPayment[\s\S]*?rms-guest-payment-overview[\s\S]*?renderGuestPaymentProgress\(Number\(this\.state\.totals\?\.grand_total/, "keep the confirmed split and full-order payment progress visible while paying one guest");
+	assert.match(source, /renderPaymentGuests\(Boolean\(this\.paymentSplitSetupOpen \|\| this\.activeGuestPayment\)\)/, "show guest cards as a read-only overview during partial payment");
+	assert.match(source, /guest\.check_name === this\.activeGuestPayment\?\.guest_check_name/, "identify the guest check being paid now");
+	assert.match(source, /class="rms-guest-check-status is-current">\$\{__\("Selected"\)\}/, "label the selected guest check during payment");
+	assert.match(source, /const guestResplitButton = activeGuestCheck\?\.status === "Open"[\s\S]*?data-action="guest-check-resplit-current"/, "place re-splitting inside the selected guest's payment screen");
+	assert.match(source, /data-split-checks-anchor[\s\S]*?data-guest-checks/, "keep the item split editor available from the partial payment screen");
+	assert.match(source, /data-mode="amount">\$\{__\("Equally"\)\}<\/button><\/div><\/div><\/div><p data-split-description hidden><\/p><div data-payment-guests>/, "keep the guest cards outside the toolbar in the partial payment re-split dialog");
+	assert.match(source, /activeGuestPayment \? await this.call\("get_guest_check_print_html"/, "print only the active guest check from its payment screen");
+	assert.match(source, /data-action="split-item-adjust"/, "move grouped item quantities with simple plus and minus controls");
+	assert.match(source, /paymentItemAssignments\[row\.order_item_name\] = allocation/, "store a per-guest quantity for each order line");
+	assert.match(source, /paymentItemAssignments\[row\.order_item_name\] = allocation/, "start item allocation at Guest 1 and adjust by quantity");
+	assert.match(source, /getPaymentItemGroups\(\)/, "group identical product rows into one visible item row");
+	assert.match(source, /allocation = Array\(\(this\.paymentGuests \|\| \[\]\)\.length\)\.fill\(0\); allocation\[0\] = active/, "start all item quantities on Guest 1");
+	assert.doesNotMatch(source.slice(source.indexOf("changePaymentGuestCount(delta)"), source.indexOf("async setPaymentSplitMode")), /distributePaymentItemsEvenly/, "adding guests does not redistribute the full order");
+	assert.match(source, /handlePaymentKey\(key\)[\s\S]*?this\.paymentKeypadInput = input/, "use the keypad to enter amounts into the selected payment field");
+	assert.match(styles, /.rms-guest-checks.is-item-split \.rms-split-description \{ display:none !important; \}/, "remove explanatory copy from the guest card space");
+	assert.match(styles, /data-split-balance\]\[data-valid="true"\] \{ display:none !important; \}/, "hide the redundant success status while keeping split errors visible");
+	assert.match(styles, /\.rms-payment-layout\.is-item-split > \.rms-payment-keypad \{[\s\S]*?display:block !important;/, "keep the touch keypad available during item split");
+	assert.match(styles, /grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,290px\),1fr\)\)/, "keep guest cards side by side when there is room");
+	assert.match(styles, /\.rms-split-dialog \.rms-guest-checks > \[data-payment-guests\] \{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\) !important/, "keep the two split guests side by side in the resplit dialog");
+	assert.match(source, /if \(itemSplitActive\)[\s\S]*?this\.paymentInput = guestTender/, "route the touch keypad to visible guest tender fields during item splits");
+	assert.match(source, /this\.call\("save_guest_check_allocations"/, "persist guest assignments before printing or payment");
+	assert.match(source, /this\.call\("pay_guest_check"/, "submit only the selected guest check for payment");
+	assert.ok(source.includes('this.call("pay_guest_check", { order_name: this.state.order_name, guest_check_name: activeGuestPayment.guest_check_name'), "submit multiple payment methods for the selected guest on its own payment screen");
+	assert.match(source, /pay_guest_check", \{ order_name: this\.state\.order_name, guest_check_name: activeGuestPayment\.guest_check_name, payments: JSON\.stringify\(payments\), discount_type:/, "submit the selected discount with a guest check payment");
+	assert.match(source, /this\.paymentTotal = Number\(this\.paymentDiscountPreview\.grand_total \|\| 0\)/, "use the selected guest check's discounted preview total directly");
+	assert.match(source, /guest_check_name: this\.activeGuestPayment\?\.guest_check_name \|\| null/, "preview discounts within the selected guest check");
+	assert.match(source, /activeGuestCheck\?\.discount_value/, "reopen the selected guest check with its own discount settings");
+	assert.match(source, /renderGuestPaymentProgress\(total\)[\s\S]*?role="progressbar"/, "show cumulative paid progress on the confirmed split");
+	assert.match(source, /__\("Paid amount"\)/, "label the cumulative payments with clear wording");
+	assert.match(source, /const progress = root\.querySelector\("\[data-guest-payment-progress-container\]"\);[\s\S]*?progress\.innerHTML = this\.renderGuestPaymentProgress\(this\.paymentTotal\)/, "show the paid progress as soon as guest checks are confirmed");
+	assert.match(styles, /\.rms-guest-payment-progress-track span \{[^}]*background:#347858/, "fill the payment progress with the RMS identity green");
+	assert.match(styles, /\.rms-payment-layout\.is-item-split \.rms-guest-check-actions \{[^}]*grid-template-columns:minmax\(0,1fr\)/, "show just the single Take Payment action on each guest card");
+	assert.match(source, /is-guest-check-overview/, "identify the confirmed guest card overview separately from payment screens");
+	assert.match(source, /Boolean\(this\.guestSplitFinalized && itemMode && !this\.activeGuestPayment\)/, "hide the keypad based on the confirmed split state rather than the hidden checkbox");
+	assert.doesNotMatch(source, /Split confirmed · guest checks are locked|data-split-confirmed-label/, "do not show a locked status label after confirming the split");
+	assert.match(styles, /\.rms-payment-layout\.is-guest-check-overview > \.rms-payment-keypad \{ display:none !important; \}/, "hide the keypad only from the confirmed guest overview");
+	assert.doesNotMatch(source, /data-item-share|share each item between people/i, "do not split a single line by percentage");
+	assert.match(styles, /\.rms-guest-checks\.is-item-split \.[\s\S]*?grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,290px\),1fr\)\)/, "fit split guest cards alongside the touch keypad");
 	assert.match(source, /data-action="payment-discount-type"[^>]*aria-pressed=/, "render the selected discount type explicitly");
 	assert.match(source, /data-method="OTP" aria-pressed=/, "offer one-time code verification for manager approval");
 	assert.match(source, /data-method="Password" aria-pressed=/, "offer the manager's fixed approval password");
@@ -52,8 +102,18 @@ async function run() {
 	Object.create(errorContext.__RMSPointOfSale.prototype).showError({ message: "The operation could not be completed." });
 	assert.equal(errorToast.config.message, "The operation could not be completed.", "show a short toast for client-side errors without server messages");
 	assert.equal(errorToast.duration, 7, "keep API errors as short POS alerts");
-	assert.deepEqual(Array.from(helpers.getSuggestedPaymentAmounts(155)), [155, 160, 170, 200], "suggest cash amounts rounded to useful EGP denominations");
-	assert.deepEqual(Array.from(helpers.getSuggestedPaymentAmounts(80)), [80, 90, 100], "remove duplicate denomination suggestions");
+	assert.deepEqual(Array.from(helpers.getSuggestedPaymentAmounts(155)), [155, 160, 200], "suggest exact, five, ten, and fifty pound rounded amounts without duplicates");
+	assert.deepEqual(Array.from(helpers.getSuggestedPaymentAmounts(80)), [80, 100, 200], "offer higher banknote denominations when useful");
+	assert.deepEqual(Array.from(helpers.getSuggestedPaymentAmounts(531.07)), [531.07, 535, 540, 550, 600], "suggest the requested rounded amounts for a discounted total of 531.07");
+	assert.deepEqual(Array.from(helpers.getSuggestedPaymentAmounts(482.79)), [482.79, 485, 490, 500, 600], "include a 600 pound option for three 200 pound notes");
+	let suggestedAmountsHtml = "";
+	helpers.paymentTotal = 531.07;
+	helpers.currency = (amount) => Number(amount).toFixed(2);
+	helpers.page = { main: [{ querySelector(selector) { return selector === "[data-suggested-payment-amounts]" ? { set innerHTML(value) { suggestedAmountsHtml = value; } } : null; } }] };
+	helpers.updateSuggestedPaymentAmounts();
+	for (const amount of [535, 540, 550, 600]) assert.match(suggestedAmountsHtml, new RegExp(`data-amount="${amount}"`), `render ${amount} after recalculating payment suggestions`);
+	const applyDiscountSource = source.slice(source.indexOf("async applyPaymentDiscount()"), source.indexOf("async handleSplitCheckToggle("));
+	assert.match(applyDiscountSource, /this\.updateSuggestedPaymentAmounts\(\)/, "recalculate the visible payment suggestions after applying a discount");
 	const tenderAmounts = { Cash: 250, "Credit Card": 250, "Mobile Wallet": 250 };
 	let remainingText = "";
 	let changeText = "";
@@ -88,11 +148,13 @@ async function run() {
 	helpers.updatePaymentTotal();
 	assert.equal(changeText, "721.50", "show the correct change for the reported 700 plus 50 tender on a 28.50 order");
 	let cleared = false;
-	const keypadInput = { value: "25", dispatchEvent(event) { cleared = event.type === "input"; } };
+	const keypadInput = { isConnected: true, value: "25", dispatchEvent(event) { cleared = event.type === "input"; } };
 	helpers.paymentInput = keypadInput;
 	helpers.handlePaymentKey("C");
 	assert.equal(keypadInput.value, "", "C clears the selected tender amount");
 	assert.equal(cleared, true, "clearing refreshes remaining and change calculations");
+	helpers.handlePaymentKey("4"); helpers.handlePaymentKey("2"); helpers.handlePaymentKey("."); helpers.handlePaymentKey("5");
+	assert.equal(keypadInput.value, "42.5", "touch keypad starts a fresh entry after selecting a tender field");
 	let dialogConfig;
 	let dialog;
 	let flowHtml = "";
@@ -129,6 +191,82 @@ async function run() {
 	pos.escape = (value) => String(value);
 	pos.currency = (value) => `${value} EGP`;
 	pos.showError = (error) => { throw error; };
+	const splitUi = Object.create(context.__RMSPointOfSale.prototype);
+	splitUi.state = { cart: [
+		{ order_item_name: "ROW-LEMON", title: "Lemonade", qty: 1, price: 68 },
+		{ order_item_name: "ROW-LEMON-2", title: "Lemonade", qty: 1, price: 68 },
+		{ order_item_name: "ROW-TEA", title: "Tea", qty: 2, price: 15 },
+	] };
+	splitUi.paymentSplitMode = "items";
+	splitUi.guestCheckState = { guest_checks: [
+		{ name: "CHECK-1", guest_name: "Guest One", status: "Open", grand_total: 136, items: [{ name: "ROW-LEMON", qty: 1 }, { name: "ROW-LEMON-2", qty: 1 }] },
+		{ name: "CHECK-2", guest_name: "Guest Two", status: "Open", grand_total: 0, items: [] },
+		{ name: "CHECK-3", guest_name: "Guest Three", status: "Open", grand_total: 30, items: [{ name: "ROW-TEA", qty: 2 }] },
+	] };
+	splitUi.paymentGuests = [
+		{ name: "Guest One", method: "Cash", amount: 68, due: 68 },
+		{ name: "Guest Two", method: "Cash", amount: 0, due: 0 },
+		{ name: "Guest Three", method: "Cash", amount: 30, due: 30 },
+	];
+	splitUi.paymentGuestMethods = [{ mode_of_payment: "Cash" }];
+	splitUi.paymentItemAssignments = { "ROW-LEMON": [1, 0, 0], "ROW-LEMON-2": [1, 0, 0], "ROW-TEA": [0, 0, 2] };
+	splitUi.guestSplitFinalized = false;
+	splitUi.escape = (value) => String(value);
+	splitUi.currency = (value) => `${Number(value).toFixed(2)} EGP`;
+	const splitSetupHtml = splitUi.renderPaymentGuests(true);
+	assert.match(splitSetupHtml, /Tea/, "keep zero-quantity products visible while assigning items");
+	assert.doesNotMatch(splitSetupHtml, /data-guest-method|data-guest-amount|data-action="guest-check-pay"/, "keep payment actions out of the setup dialog");
+	splitUi.guestSplitFinalized = true;
+	const splitGuestHtml = splitUi.renderPaymentGuests();
+	const splitDialogHtml = splitUi.renderPaymentSplitDialog();
+	assert.match(splitDialogHtml, /data-split-dialog role="dialog"/, "open split setup in an accessible modal");
+	assert.match(splitDialogHtml, /data-split-modal-host/, "render split setup inside the modal");
+	assert.match(source, /data-mode="items"[\s\S]*data-mode="amount"/, "choose item assignment first and equal sharing second in the modal content");
+	assert.match(splitDialogHtml, /data-action="payment-confirm-split"/, "confirm the split before guest checks become available");
+	assert.doesNotMatch(splitDialogHtml, /data-action="guest-check-take-payment"/, "do not expose payment actions before confirming the split");
+	splitUi.paymentResplitGuestIndex = 0;
+	const resplitDialogHtml = splitUi.renderPaymentSplitDialog();
+	assert.match(resplitDialogHtml, /Assign this open check's items to guests/, "explain that re-splitting applies only to the selected check");
+	assert.doesNotMatch(resplitDialogHtml, /equal shares/, "do not offer amount-based splitting when re-splitting");
+	splitUi.paymentResplitGuestIndex = null;
+	assert.equal((splitGuestHtml.match(/class="rms-guest-check /g) || []).length, 3, "render a separate side-by-side guest card for each person");
+	const guestOneCard = splitGuestHtml.split("<article class=\"rms-guest-check ")[1];
+	const guestThreeCard = splitGuestHtml.split("<article class=\"rms-guest-check ")[3];
+	assert.match(guestOneCard, /Lemonade/, "show each assigned item inside its guest check");
+	assert.equal((guestOneCard.match(/class="rms-guest-item"/g) || []).length, 1, "render only assigned product groups after confirming the split");
+	assert.match(styles, /\.rms-guest-item \{ display:grid; grid-template-columns:minmax\(0,1fr\) auto/, "keep the item name full width and place its quantity controls at the row end");
+	assert.match(styles, /\.rms-guest-item-copy strong \{[^}]*white-space:normal/, "allow long product names to wrap instead of truncating");
+	assert.match(guestOneCard, /Lemonade[\s\S]*?<b>2<\/b>/, "show the grouped quantity for repeated product lines");
+	assert.match(guestThreeCard, /Tea/, "support assigning an item to a third guest");
+	assert.equal((splitGuestHtml.match(/data-action="guest-check-take-payment"/g) || []).length, 3, "render one Take Payment action for each unpaid guest");
+	assert.equal((splitGuestHtml.match(/data-action="guest-check-resplit-current"/g) || []).length, 0, "keep the re-split action off the guest overview cards");
+	assert.doesNotMatch(splitGuestHtml, /data-guest-method|data-guest-amount|data-action="guest-check-pay-print"|data-action="guest-check-print"/, "keep payment controls off confirmed guest cards");
+	assert.doesNotMatch(guestThreeCard, /Lemonade/, "hide zero-quantity items from finalized guest cards");
+	const lockedSplitHtml = splitUi.renderPaymentGuests();
+	assert.match(lockedSplitHtml, /data-action="split-item-adjust"[^>]*disabled/, "disable item reassignment after confirming the split");
+	assert.match(lockedSplitHtml, /data-guest-name[^>]*disabled/, "lock guest names after confirming the split");
+	assert.doesNotMatch(lockedSplitHtml, /data-action="guest-check-resplit-current"/, "keep the re-split action off the guest overview cards");
+	assert.match(source, /this\.paymentSplitMode = "items";[\s\S]*this\.paymentResplitGuestIndex/, "re-split mode is item-only and remembers the selected guest card");
+	assert.match(source, /this\.call\("resplit_open_guest_check"/, "save the selected guest's item split without editing the other cards");
+	const quantityUi = Object.create(context.__RMSPointOfSale.prototype);
+	quantityUi.state = { cart: [{ order_item_name: "ROW-CHICKEN", title: "Chicken", qty: 7, price: 100 }, { order_item_name: "ROW-TEA", title: "Tea", qty: 1, price: 20 }] };
+	quantityUi.paymentSplitMode = "items";
+	quantityUi.paymentGuests = [{ name: "Guest 1" }, { name: "Guest 2" }];
+	quantityUi.paymentItemAssignments = { "ROW-CHICKEN": [7, 0], "ROW-TEA": [1, 0] };
+	quantityUi.syncPaymentGuestFields = () => {};
+	quantityUi.renderPaymentItemAssignments = () => {};
+	quantityUi.updateGuestSplitAmounts = () => {};
+	const chickenGroup = quantityUi.getPaymentItemGroups().find((group) => group.title === "Chicken");
+	quantityUi.adjustPaymentItemAllocation(chickenGroup.key, 1, 1);
+	assert.deepEqual(quantityUi.paymentItemAssignments["ROW-CHICKEN"], [6, 1], "plus transfers one unit from Guest 1 even when the order line quantity is seven");
+	quantityUi.paymentResplitGuestIndex = 0;
+	quantityUi.paymentResplitItemNames = ["ROW-CHICKEN", "ROW-TEA"];
+	quantityUi.guestCheckState = { guest_checks: [{ items: [{ name: "ROW-CHICKEN", qty: 6 }, { name: "ROW-TEA", qty: 1 }] }] };
+	quantityUi.renderPaymentItemAssignments = () => {};
+	quantityUi.updateGuestSplitAmounts = () => {};
+	const teaGroup = quantityUi.getPaymentItemGroups().find((group) => group.title === "Tea");
+	quantityUi.adjustPaymentItemAllocation(teaGroup.key, 1, 1);
+	assert.equal(quantityUi.guestCheckState.guest_checks[0].items.length, 2, "keep the selected guest check's source quantities while recalculating a re-split");
 	const root = {
 		name: "FRAPPE", title: "Frappé", has_options: true, options: [
 			{ name: "FLAVOR-CARAMEL", title: "Caramel", has_options: true, price: null },
@@ -199,6 +337,7 @@ async function run() {
 	assert.match(productHtml, /Choose option/, "tell the cashier to open the parent product options");
 	assert.equal(productCountText, "{0} products");
 	let discountInput = 10;
+	let discountType = "Percentage";
 	let paymentTotalText = "";
 	let paymentDiscountText = "";
 	const pendingPreviews = [];
@@ -207,8 +346,8 @@ async function run() {
 	let approvalCodeFocused = false;
 	const approvalCodeInput = { focus() { approvalCodeFocused = true; } };
 	pos.page = { main: Object.assign({ find(selector) {
-		if (selector === "[data-pay-discount-type]") return { val: () => "Percentage" };
-		if (selector === '[data-pay-discount-value="percentage"]') return { val: () => discountInput };
+		if (selector === "[data-pay-discount-type]") return { val: () => discountType };
+		if (selector.startsWith('[data-pay-discount-value=')) return { val: () => discountInput };
 		if (selector === "[data-pay-discount-reason]") return { val: () => "" };
 		if (selector === "[data-discount-percent-label]") return { text() {} };
 		if (selector === ".rms-payment-total") return { text(value) { paymentTotalText = value; } };
@@ -251,6 +390,20 @@ async function run() {
 	assert.equal(discountFeedback.innerHTML, "", "clear a stale manager prompt when the discount is within the cashier limit");
 	assert.equal(discountFeedback.textContent, "", "remove stale manager guidance after a permitted discount preview");
 	assert.equal(pos.paymentDiscountPreview.grand_total, 95, "retain a permitted preview for the Apply action");
+	discountType = "Amount";
+	discountInput = 101;
+	pos.discountPreviewRequestId = 5;
+	await pos.refreshPaymentDiscountPreview(5, "", false);
+	assert.equal(paymentDiscountText, "—", "clear the previous calculated discount when the entered amount is invalid");
+	assert.equal(pos.paymentDiscountPreview, null, "do not retain a stale valid discount preview for an invalid amount");
+	const dialogContext = Object.create(contextlessPosPrototype());
+	dialogContext.paymentDiscount = { type: "Percentage", value: 20, reason: "" };
+	dialogContext.state = { totals: { grand_total: 100, discount_amount: 20 } };
+	dialogContext.escape = (value) => String(value);
+	dialogContext.currency = (value) => Number(value || 0).toFixed(2);
+	assert.match(dialogContext.renderPaymentDiscountDialog(), /<span>Discount %<\/span>/, "show a percentage label beside the percentage control");
+	dialogContext.paymentDiscount.type = "Amount";
+	assert.match(dialogContext.renderPaymentDiscountDialog(), /<span>Discount amount<\/span>/, "show an amount label beside the amount control");
 	const approvers = [{ user: "manager@example.com", full_name: "POS Manager" }];
 	pos.renderDiscountApprovalPrompt(approvers, "");
 	assert.match(discountFeedback.innerHTML, /data-action="payment-discount-approver"/, "show manager choices after Apply requires approval");

@@ -69,16 +69,31 @@ class RMSPointOfSale {
 	getSuggestedPaymentAmounts(total) {
 		const due = Math.max(0, Number(total) || 0);
 		if (!due) return [];
-		const nextTen = Math.ceil((due - 1e-9) / 10) * 10;
-		const values = [due, nextTen, nextTen + 10, Math.ceil((due - 1e-9) / 50) * 50];
+		const roundUp = (denomination) => Math.ceil((due - 1e-9) / denomination) * denomination;
+		const values = [due, roundUp(5), roundUp(10), roundUp(50), roundUp(100), roundUp(200)];
 		return [...new Set(values.map((value) => Math.round(value * 100) / 100))];
 	}
 
+	renderSuggestedPaymentAmounts(total) {
+		return this.getSuggestedPaymentAmounts(total).map((amount) => `<button type="button" data-action="payment-quick" data-amount="${amount}">${amount === Number(total) ? __("Exact") : this.currency(amount)}</button>`).join("");
+	}
+
+	updateSuggestedPaymentAmounts() {
+		const container = this.page.main[0].querySelector("[data-suggested-payment-amounts]");
+		if (container) container.innerHTML = this.renderSuggestedPaymentAmounts(this.paymentTotal);
+	}
+
 	handlePaymentKey(key) {
-		const input = this.paymentInput || this.page.main[0].querySelector("[data-payment-amount], [data-guest-amount]");
-		if (!input) return;
-		const value = String(input.value || "");
-		input.value = key === "C" ? "" : `${value}${key}`;
+		const input = this.paymentInput?.isConnected ? this.paymentInput : this.page.main[0].querySelector("[data-payment-amount], [data-guest-amount]");
+		if (!input || input.disabled || input.readOnly) return;
+		if (key === "C") { input.value = ""; this.paymentKeypadInput = input; }
+		else {
+			let value = this.paymentKeypadInput === input ? String(input.value || "") : "";
+			if (key === "." && value.includes(".")) return;
+			if (key === "." && !value) value = "0";
+			input.value = value + key;
+			this.paymentKeypadInput = input;
+		}
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 	}
 
@@ -130,9 +145,8 @@ class RMSPointOfSale {
 		const root = this.page.main.get(0);
 		root.addEventListener("change", (event) => {
 			if (event.target.matches("[data-table-area-filter], [data-table-status-filter]")) return this.renderTableMap();
-			if (event.target.matches("[data-split-check-toggle]")) return this.toggleSplitCheck(event.target.checked);
-			if (event.target.matches("[data-payment-split-mode]")) return this.updateGuestSplitAmounts();
-			if (event.target.matches("[data-item-guest]")) { this.paymentItemAssignments[event.target.dataset.itemGuest] = event.target.value === "" ? null : Number(event.target.value); return this.updateGuestSplitAmounts(); }
+			if (event.target.matches("[data-split-check-toggle]")) return this.handleSplitCheckToggle(event.target);
+			if (event.target.matches("[data-guest-name]")) { this.syncPaymentGuestFields(); if ((this.paymentResplitGuestIndex === null || this.paymentResplitGuestIndex === undefined) && !this.paymentGuests?.some((guest) => guest.paid)) this.guestCheckState = null; this.renderPaymentItemAssignments(); return; }
 			if (event.target.matches("[data-guest-method]")) return;
 			const quantity = event.target.closest("[data-quantity]");
 			if (quantity) return this.updateQuantity(quantity);
@@ -151,6 +165,11 @@ class RMSPointOfSale {
 			if (key === "dining_table") this.saveDraft();
 		});
 		root.addEventListener("input", (event) => {
+			if (event.target.matches("[data-guest-share]")) {
+				event.target.value = Math.max(0, Math.min(Number(this.paymentTotal || 0), Number(event.target.value || 0))).toFixed(2);
+				event.target.dataset.manualShare = "1";
+				return this.updateGuestSplitAmounts();
+			}
 			if (event.target.matches("[data-search]")) {
 				this.state.search = event.target.value;
 				clearTimeout(this.searchTimer);
@@ -161,7 +180,7 @@ class RMSPointOfSale {
 			if (event.target.matches("[data-table-search], [data-table-area-filter], [data-table-status-filter]")) this.renderTableMap();
 			if (event.target.matches("[data-payment-amount], [data-guest-amount]")) this.updatePaymentTotal();
 			if (event.target.matches("[data-guest-amount]")) event.target.dataset.manual = "1";
-			if (event.target.matches("[data-guest-name]")) { const row = event.target.closest(".rms-guest-check"); if (row && this.paymentGuests[Number(row.dataset.guestIndex)]) this.paymentGuests[Number(row.dataset.guestIndex)].name = event.target.value; this.renderPaymentItemAssignments(); }
+			if (event.target.matches("[data-guest-name]")) { const row = event.target.closest(".rms-guest-check"); if (row && this.paymentGuests[Number(row.dataset.guestIndex)]) this.paymentGuests[Number(row.dataset.guestIndex)].name = event.target.value; const heading = row?.querySelector(".rms-guest-check-heading strong"); if (heading) heading.textContent = event.target.value || __("Guest {0}", [Number(row.dataset.guestIndex) + 1]); }
 			if (event.target.matches("[data-pay-discount-value], [data-pay-discount-reason]")) {
 				this.clearDiscountApprovalPrompt();
 				if (event.target.matches('[data-pay-discount-value="percentage"]')) {
@@ -173,7 +192,7 @@ class RMSPointOfSale {
 			}
 			if (event.target.matches("[data-discount-approval-code]")) this.updateDiscountApplyState();
 		});
-		root.addEventListener("focusin", (event) => { if (event.target.matches("[data-payment-amount], [data-guest-amount]")) this.paymentInput = event.target; });
+		root.addEventListener("focusin", (event) => { if (event.target.matches("[data-payment-amount], [data-guest-amount], [data-guest-share]")) { this.paymentInput = event.target; this.paymentKeypadInput = null; } });
 		root.addEventListener("keydown", (event) => {
 			if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
 				event.preventDefault();
@@ -184,6 +203,7 @@ class RMSPointOfSale {
 			if (!event.target.matches("[data-search]")) return;
 			if (event.key === "Enter") { event.preventDefault(); this.searchAndAddBarcode(); }
 		});
+		root.addEventListener("click", (event) => { if (event.target.matches("[data-split-dialog-backdrop]")) this.closePaymentSplitDialog(); });
 		root.addEventListener("click", (event) => {
 			const modeButton = event.target.closest("[data-catalog-mode]");
 			if (modeButton) { this.state.catalog_mode = modeButton.dataset.catalogMode; this.state.category = null; this.state.search = ""; root.querySelector("[data-search]").value = ""; this.renderCategories(); this.renderProducts(); this.loadCatalog(); return; }
@@ -499,6 +519,7 @@ class RMSPointOfSale {
 		const save = async () => {
 			const result = await this.call("save_order", { order_data: JSON.stringify(this.orderPayload()) });
 			this.state.order_name = result.name; this.state.totals = result;
+			if (result.guest_checks?.length) this.guestCheckState = { order_name: result.name, guest_checks: result.guest_checks };
 			for (const appended of result.appended_items || []) {
 				const line = this.state.cart.find((row) => row.local_id === appended.client_key);
 				if (line) { line.saved_to_order = true; line.order_item_name = appended.name; }
@@ -580,7 +601,10 @@ class RMSPointOfSale {
 		if (action === "table-view-order") {
 			try { return await this.showOpenOrderOverview(data.order); } catch (error) { return this.showError(error); }
 		}
-		if (action === "payment-back") { this.paymentApprovalOnly = false; this.page.main.find('[data-screen="payment"]').prop("hidden", true); this.page.main.find(".rms-pos-shell").prop("hidden", false); return; }
+		if (action === "payment-back") { this.paymentApprovalOnly = false; if (this.activeGuestPayment) { this.activeGuestPayment = null; return this.showPaymentScreen(); } this.page.main.find('[data-screen="payment"]').prop("hidden", true); this.page.main.find(".rms-pos-shell").prop("hidden", false); return; }
+		if (action === "payment-open-split") return this.openPaymentSplitDialog();
+		if (action === "payment-cancel-split") return this.closePaymentSplitDialog();
+		if (action === "payment-confirm-split") return this.confirmPaymentSplit();
 		if (action === "payment-pay") return this.submitPayment(false);
 		if (action === "payment-pay-print") return this.submitPayment(true);
 		if (action === "payment-key") return this.handlePaymentKey(data.key);
@@ -594,6 +618,10 @@ class RMSPointOfSale {
 		if (action === "payment-print-only") return this.printOpenOrderCheck();
 		if (action === "payment-guest-add") return this.changePaymentGuestCount(1);
 		if (action === "payment-guest-remove") return this.changePaymentGuestCount(-1);
+		if (action === "payment-split-mode") return this.setPaymentSplitMode(data.mode);
+		if (action === "split-item-adjust") return this.adjustPaymentItemAllocation(data.groupKey, Number(data.guestIndex), Number(data.delta));
+		if (action === "guest-check-take-payment") return this.openGuestPayment(Number(data.guestIndex));
+		if (action === "guest-check-resplit-current") return this.openCurrentGuestCheckResplit();
 		if (action === "payment-apply-discount") return this.applyPaymentDiscount();
 		if (action === "payment-quick") {
 			return this.applySuggestedPaymentAmount(data.amount);
@@ -605,7 +633,7 @@ class RMSPointOfSale {
 			this.state.cross_session_edit = false;
 			this.state.customer = this.state.default_customer || null; this.state.external_reference = null;
 			this.state.discount_type = "Percentage"; this.state.discount_scope = "Net Total"; this.state.discount_value = 0; this.state.discount_reason = "";
-			this.state.dining_table = null; this.renderCart(); this.renderFields(); return;
+			this.state.dining_table = null; this.activeGuestPayment = null; this.guestCheckState = null; this.renderCart(); this.renderFields(); return;
 		}
 		if (action === "session") return this.state.session ? this.closeSession() : this.openSession();
 		if (action === "expenses") return this.openExpenses();
@@ -934,30 +962,51 @@ class RMSPointOfSale {
 	showPaymentScreen() {
 		const methods = this.state.payment_config || [];
 		if (!methods.length && !this.paymentApprovalOnly) return frappe.msgprint(__("Configure payment methods on the POS Profile before taking payment."));
-		const total = Number(this.state.totals?.grand_total || 0);
+		const guestPayment = this.activeGuestPayment;
+		const total = guestPayment ? Number(guestPayment.grand_total || 0) : Number(this.state.totals?.grand_total || 0);
+		const activeGuestCheck = guestPayment ? this.guestCheckState?.guest_checks?.find((row) => row.name === guestPayment.guest_check_name) : null;
 		this.paymentTotal = total;
-		this.paymentDiscount = { type: this.state.discount_type || "Percentage", value: Number(this.state.discount_value || 0), reason: this.state.discount_reason || "" };
+		this.paymentDiscount = guestPayment
+			? { type: activeGuestCheck?.discount_type || "Percentage", value: Number(activeGuestCheck?.discount_value || 0), reason: activeGuestCheck?.discount_reason || "" }
+			: { type: this.state.discount_type || "Percentage", value: Number(this.state.discount_value || 0), reason: this.state.discount_reason || "" };
 		this.paymentDiscountApprovalCode = null;
 		this.paymentDiscountApprovalApprover = null;
 		this.paymentDiscountApprovers = [];
 		const approvalOnly = Boolean(this.paymentApprovalOnly);
 		const canEditDiscount = this.state.permissions.can_apply_manual_discount || approvalOnly;
 		const firstGuestAmount = Math.floor(total * 50) / 100;
+		const activeOrderItemCount = (this.state.cart || []).filter((row) => row.order_item_name && Number(row.qty || 0) > Number(row.cancelled_qty || 0)).length;
 		const methodFields = methods.map((row, index) => `<label class="rms-payment-method"><span>${this.escape(row.mode_of_payment)}${row.default ? ` <small>${__("Default")}</small>` : ""}</span><input type="number" min="0" step="0.01" data-payment-amount data-method="${this.escape(row.mode_of_payment)}" value="${index === 0 ? total.toFixed(2) : "0.00"}" aria-label="${__("Amount for")} ${this.escape(row.mode_of_payment)}"></label>`).join("");
 		this.paymentGuestMethods = methods;
-		this.paymentGuests = methods.length ? [1, 2].map((number) => ({ name: __("Guest {0}", [number]), method: methods[0].mode_of_payment, amount: number === 1 ? firstGuestAmount : total - firstGuestAmount })) : [];
+		this.paymentSplitMode = this.guestCheckState?.order_name === this.state.order_name ? "items" : "amount";
+		this.guestSplitFinalized = guestPayment ? true : this.guestCheckState?.order_name === this.state.order_name;
+		this.paymentGuests = this.guestCheckState?.order_name === this.state.order_name
+			? this.guestCheckState.guest_checks.map((row) => ({ check_name: row.name, name: row.guest_name, method: methods[0]?.mode_of_payment, amount: Number(row.grand_total || 0), due: Number(row.grand_total || 0), paid: row.status === "Paid" }))
+			: methods.length ? [1, 2].map((number) => ({ name: __("Guest {0}", [number]), method: methods[0].mode_of_payment, amount: number === 1 ? firstGuestAmount : total - firstGuestAmount })) : [];
+		if (this.guestCheckState?.order_name === this.state.order_name) {
+			this.paymentItemAssignments = {};
+			this.guestCheckState.guest_checks.forEach((check, index) => (check.items || []).forEach((item) => { const allocation = this.paymentItemAssignments[item.name] ||= Array(this.guestCheckState.guest_checks.length).fill(0); allocation[index] = Number(item.qty || 0); }));
+		}
 		const guests = this.renderPaymentGuests();
-		const discountTools = canEditDiscount ? `<div class="rms-payment-discount-launch"><span>${__("Discount")}: <b data-discount-preview>${this.currency(this.state.totals?.discount_amount || 0)}</b></span><button type="button" class="rms-screen-secondary" data-action="payment-open-discount">${__("Add discount")}</button></div>` : "";
-		const quickAmounts = this.getSuggestedPaymentAmounts(total);
-		const quick = quickAmounts.map((amount) => `<button type="button" data-action="payment-quick" data-amount="${amount}">${amount === total ? __("Exact") : this.currency(amount)}</button>`).join("");
+		const discountTools = canEditDiscount ? `<div class="rms-payment-discount-launch"><span>${guestPayment ? this.escape(__("Discount for {0}", [guestPayment.guest_name])) : __("Discount")}: <b data-discount-preview>${this.currency(guestPayment ? activeGuestCheck?.discount_amount || 0 : this.state.totals?.discount_amount || 0)}</b></span><button type="button" class="rms-screen-secondary" data-action="payment-open-discount" aria-label="${this.escape(guestPayment ? __("Add discount for {0}", [guestPayment.guest_name]) : __("Add discount"))}">${__("Add discount")}</button></div>` : "";
+		const quick = this.renderSuggestedPaymentAmounts(total);
 		const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "C"].map((key) => `<button type="button" data-action="payment-key" data-key="${key}">${key}</button>`).join("");
-		this.page.main.find('[data-screen="payment"]').html(`<header class="rms-workspace-head"><button class="rms-screen-back" data-action="payment-back">‹ ${__("Back to order")}</button><div><span class="rms-pos-eyebrow">${approvalOnly ? __("DISCOUNT APPROVAL") : __("CHECKOUT")}</span><h1>${approvalOnly ? __("Approve cashier discount") : __("Take Payment")}</h1><p>${this.escape(this.state.order_name || "")} · ${this.escape(this.state.order_type || "")}</p></div><strong class="rms-payment-total">${this.currency(total)}</strong></header><div class="rms-payment-layout"><section class="rms-payment-panel">${approvalOnly ? "" : `<h2>${__("Payment methods")}</h2><p>${__("Allocate the total across payment methods or guests.")}</p>`}${discountTools}${approvalOnly ? "" : `<div class="rms-payment-method-list">${methodFields}</div><label class="rms-split-check-toggle"><input type="checkbox" data-split-check-toggle> ${__("Split check")}</label><div class="rms-guest-checks" data-guest-checks hidden><div class="rms-split-toolbar"><label>${__("Split by")}<select data-payment-split-mode><option value="people">${__("People")}</option><option value="items">${__("Items")}</option></select></label><button type="button" data-action="payment-guest-add">+ ${__("Add person")}</button><button type="button" data-action="payment-guest-remove">− ${__("Remove person")}</button></div><div data-payment-guests>${guests}</div><div class="rms-item-assignments" data-item-assignments hidden></div></div><div class="rms-payment-shortcuts"><span>${__("Suggested payment amounts")}</span>${quick}</div><div class="rms-payment-sum">${__("Remaining")}: <b data-payment-remaining>${this.currency(total)}</b></div><div class="rms-payment-change" data-payment-change hidden>${__("Change")}: <b data-change-amount>${this.currency(0)}</b></div><div class="rms-payment-actions"><button class="rms-screen-secondary" data-action="payment-print-only">${__("Print only")}</button><button class="rms-screen-secondary" data-action="payment-pay-print">${__("Pay and print")}</button><button class="rms-screen-primary" data-action="payment-pay">${__("Pay only")}</button></div>`}</section>${approvalOnly ? "" : `<section class="rms-payment-panel rms-payment-keypad"><h2>${__("Keypad")}</h2><p>${__("Select an amount field, then enter the amount.")}</p><div>${keys}</div></section>`}</div><div data-discount-dialog-root></div>`);
-		this.paymentItemAssignments = {};
+		const guestResplitButton = activeGuestCheck?.status === "Open" && (activeGuestCheck.items || []).filter((item) => Number(item.qty || 0) > 0).length >= 2
+			? `<button type="button" class="rms-screen-secondary" data-action="guest-check-resplit-current">${__("Split items")}</button>` : "";
+		const splitMarkup = guestPayment
+			? `<section class="rms-guest-payment-overview"><div class="rms-guest-payment-overview-head"><h3>${__("Order split")}</h3>${guestResplitButton}</div><div data-guest-payment-progress-container>${this.renderGuestPaymentProgress(Number(this.state.totals?.grand_total || 0))}</div><div data-split-checks-anchor><input type="checkbox" data-split-check-toggle hidden><div class="rms-guest-checks" data-guest-checks><div class="rms-split-toolbar" hidden><div><span>${__("Split by")}</span><div class="rms-split-mode-switch"><button type="button" data-action="payment-split-mode" data-mode="items">${__("By items")}</button><button type="button" data-action="payment-split-mode" data-mode="amount">${__("Equally")}</button></div></div></div><p data-split-description hidden></p><div data-payment-guests>${guests}</div><div class="rms-item-assignments" data-item-assignments hidden></div><p class="rms-split-balance" data-split-balance data-valid="false" aria-live="polite"></p></div></div></section>`
+			: `${this.guestSplitFinalized ? "" : `<div class="rms-split-check-launch"><button type="button" class="rms-screen-secondary" data-action="payment-open-split">${__("Split check")}</button></div>`}<div data-guest-payment-progress-container>${this.renderGuestPaymentProgress(total)}</div><input type="checkbox" data-split-check-toggle hidden><div data-split-checks-anchor><div class="rms-guest-checks" data-guest-checks hidden><div class="rms-split-toolbar"><div><span>${__("Split by")}</span><div class="rms-split-mode-switch" role="group" aria-label="${__("Split by")}"><button type="button" data-action="payment-split-mode" data-mode="items" aria-pressed="${this.paymentSplitMode === "items"}" ${activeOrderItemCount < 2 ? "disabled" : ""}>${__("By items")}</button><button type="button" data-action="payment-split-mode" data-mode="amount" aria-pressed="${this.paymentSplitMode === "amount"}">${__("Equally")}</button></div></div><div class="rms-split-actions"><button type="button" data-action="payment-guest-add">+ ${__("Add person")}</button><button type="button" data-action="payment-guest-remove">− ${__("Remove person")}</button></div></div><p class="rms-split-description" data-split-description>${__("Set each person's share of the bill.")}</p><div data-payment-guests>${guests}</div><div class="rms-item-assignments" data-item-assignments hidden></div><p class="rms-split-balance" data-split-balance data-valid="false" aria-live="polite"></p></div></div>`;
+		this.page.main.find('[data-screen="payment"]').html(`<header class="rms-workspace-head"><button class="rms-screen-back" data-action="payment-back">‹ ${__("Back to order")}</button><div><span class="rms-pos-eyebrow">${approvalOnly ? __("DISCOUNT APPROVAL") : __("CHECKOUT")}</span><h1>${approvalOnly ? __("Approve cashier discount") : __("Take Payment")}</h1><p>${this.escape(this.state.order_name || "")} · ${this.escape(guestPayment?.guest_name || this.state.order_type || "")}</p></div><strong class="rms-payment-total">${this.currency(total)}</strong></header><div class="rms-payment-layout"><section class="rms-payment-panel">${approvalOnly ? "" : `<h2>${__("Payment methods")}</h2><p>${__("Allocate the total across payment methods or guests.")}</p>`}${discountTools}${approvalOnly ? "" : `<div class="rms-payment-method-list">${methodFields}</div>${splitMarkup}<div class="rms-payment-shortcuts"><span>${__("Suggested payment amounts")}</span><div data-suggested-payment-amounts>${quick}</div></div><div class="rms-payment-sum">${__("Remaining")}: <b data-payment-remaining>${this.currency(total)}</b></div><div class="rms-payment-change" data-payment-change hidden>${__("Change")}: <b data-change-amount>${this.currency(0)}</b></div><div class="rms-payment-actions"><button class="rms-screen-secondary" data-action="payment-print-only">${__("Print only")}</button><button class="rms-screen-secondary" data-action="payment-pay-print">${__("Pay and print")}</button><button class="rms-screen-primary" data-action="payment-pay">${__("Pay only")}</button></div>`}</section>${approvalOnly ? "" : `<section class="rms-payment-panel rms-payment-keypad"><h2>${__("Keypad")}</h2><p>${__("Select an amount field, then enter the amount.")}</p><div>${keys}</div></section>`}</div><div data-discount-dialog-root></div><div data-split-dialog-root></div>`);
+		if (this.guestCheckState?.order_name !== this.state.order_name) this.paymentItemAssignments = {};
 		this.renderPaymentItemAssignments();
 		this.page.main.find(".rms-pos-shell").prop("hidden", true);
 		this.page.main.find('[data-screen="payment"]').prop("hidden", false);
 		this.updatePaymentTotal();
 		this.updateGuestSplitAmounts();
+		if (!guestPayment && this.guestCheckState?.order_name === this.state.order_name) {
+			this.page.main[0].querySelector("[data-split-check-toggle]").checked = true;
+			this.toggleSplitCheck(true);
+		}
 		this.toggleDiscountValueInput(this.paymentDiscount.type);
 	}
 
@@ -984,73 +1033,429 @@ class RMSPointOfSale {
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 	}
 
-	renderPaymentGuests() {
+	openGuestPayment(index) {
+		const guest = this.paymentGuests?.[index];
+		const check = this.guestCheckState?.order_name === this.state.order_name
+			? this.guestCheckState.guest_checks.find((row) => row.guest_name === guest?.name) : null;
+		if (!guest || !check || guest.paid || check.status === "Paid") return;
+		this.activeGuestPayment = { guest_check_name: check.name, guest_name: guest.name, grand_total: Number(check.grand_total || guest.due || 0), index };
+		this.showPaymentScreen();
+	}
+
+	renderGuestPaymentProgress(total) {
+		if (!this.guestSplitFinalized || this.paymentSplitMode !== "items" || this.guestCheckState?.order_name !== this.state.order_name) return "";
+		const checks = this.guestCheckState.guest_checks || [];
+		const paid = checks.reduce((sum, check) => sum + (check.status === "Paid" ? Number(check.grand_total || 0) : 0), 0);
+		const percent = total > 0 ? Math.max(0, Math.min(100, Math.round(paid / total * 100))) : 100;
+		return `<section class="rms-guest-payment-progress" aria-label="${__("Order payment progress")}"><div><span>${__("Paid amount")}</span><strong>${this.currency(paid)} <small>/ ${this.currency(total)}</small></strong></div><div class="rms-guest-payment-progress-track" role="progressbar" aria-label="${__("Paid")}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span style="width:${percent}%"></span></div><small>${percent}% ${__("paid")}</small></section>`;
+	}
+
+	renderPaymentGuests(setupOnly = false) {
 		const methods = this.paymentGuestMethods || [];
-		return (this.paymentGuests || []).map((guest, index) => `<article class="rms-guest-check" data-guest-index="${index}"><label>${__("Guest {0}", [index + 1])}<input type="text" data-guest-name value="${this.escape(guest.name || __("Guest {0}", [index + 1]))}" aria-label="${__("Guest {0}", [index + 1])}"></label><label>${__("Payment method")}<select data-guest-method>${methods.map((row) => `<option value="${this.escape(row.mode_of_payment)}" ${row.mode_of_payment === guest.method ? "selected" : ""}>${this.escape(row.mode_of_payment)}</option>`).join("")}</select></label><label>${__("Amount tendered")}<input type="number" data-guest-amount data-manual="${guest.manual ? "1" : ""}" min="0" step="0.01" value="${Number(guest.amount || 0).toFixed(2)}"></label><small>${__("Share due")}: <b data-guest-due>${this.currency(guest.due || guest.amount || 0)}</b></small></article>`).join("");
+		const mode = this.paymentSplitMode || "amount";
+		const finalized = Boolean(this.guestSplitFinalized);
+		const groups = this.getPaymentItemGroups();
+		return (this.paymentGuests || []).map((guest, index) => {
+			const guestName = this.escape(guest.name || __("Guest {0}", [index + 1]));
+			const currentPayment = guest.check_name && guest.check_name === this.activeGuestPayment?.guest_check_name;
+			const status = guest.paid ? `<span class="rms-guest-check-status is-paid">${__("Paid")}</span>` : currentPayment ? `<span class="rms-guest-check-status is-current">${__("Selected")}</span>` : `<span class="rms-guest-check-status">${__("Open")}</span>`;
+			const resplitItemNames = new Set(this.paymentResplitItemNames || []);
+			const scopedGroups = resplitItemNames.size ? groups.filter((group) => group.rows.some((row) => resplitItemNames.has(row.order_item_name))) : groups;
+			const visibleGroups = finalized && mode === "items" ? scopedGroups.filter((group) => group.rows.some((row) => Number(this.paymentItemAssignments?.[row.order_item_name]?.[index] || 0) > 0)) : scopedGroups;
+			const itemList = mode === "items" ? `<div class="rms-guest-item-list" aria-label="${__("Items for")} ${guestName}">${visibleGroups.map((group) => {
+				const assigned = group.rows.filter((row) => Number(this.paymentItemAssignments?.[row.order_item_name]?.[index] || 0) > 0);
+				const quantity = group.rows.reduce((sum, row) => sum + Number(this.paymentItemAssignments?.[row.order_item_name]?.[index] || 0), 0);
+				const total = group.rows.reduce((sum, row) => { const active = Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0)); return sum + (active ? this.paymentItemRowAmount(row) * Number(this.paymentItemAssignments?.[row.order_item_name]?.[index] || 0) / active : 0); }, 0);
+				const canTake = group.rows.some((row) => (this.paymentItemAssignments?.[row.order_item_name] || []).some((qty, guestIndex) => guestIndex !== index && Number(qty) >= (row.must_be_whole_number === false ? 0.001 : 1)));
+				const canGive = group.rows.some((row) => Number(this.paymentItemAssignments?.[row.order_item_name]?.[index] || 0) >= (row.must_be_whole_number === false ? 0.001 : 1));
+				return `<div class="rms-guest-item"><div class="rms-guest-item-copy"><strong>${this.escape(group.title)}</strong><small>${this.currency(total)}</small></div><div class="rms-guest-item-quantity" aria-label="${quantity} ${__("assigned")}"><button type="button" data-action="split-item-adjust" data-group-key="${this.escape(group.key)}" data-guest-index="${index}" data-delta="-1" aria-label="${__("Move one unit away from")} ${guestName}" ${!canGive || guest.paid || finalized ? "disabled" : ""}>−</button><b>${quantity}</b><button type="button" data-action="split-item-adjust" data-group-key="${this.escape(group.key)}" data-guest-index="${index}" data-delta="1" aria-label="${__("Move one unit to")} ${guestName}" ${!canTake || guest.paid || finalized ? "disabled" : ""}>+</button></div></div>`;
+			}).join("")}</div>` : "";
+			const shareField = `<label>${mode === "items" ? __("Check total") : __("Share due")}<input type="number" data-guest-share data-manual-share="${guest.dueManual ? "1" : ""}" min="0" step="0.01" value="${Number(guest.due || guest.amount || 0).toFixed(2)}" ${mode === "items" || guest.paid || finalized || setupOnly ? "readonly" : ""}></label>`;
+			const lockedCheck = mode === "items" && finalized && !setupOnly;
+			const paymentFields = setupOnly || lockedCheck ? "" : `<label>${__("Payment method")}<select data-guest-method ${guest.paid ? "disabled" : ""}>${methods.map((row) => `<option value="${this.escape(row.mode_of_payment)}" ${row.mode_of_payment === guest.method ? "selected" : ""}>${this.escape(row.mode_of_payment)}</option>`).join("")}</select></label><label>${__("Paid Amount")}<input type="number" data-guest-amount data-manual="${guest.manual ? "1" : ""}" min="0" step="0.01" value="${Number(guest.amount || 0).toFixed(2)}" ${guest.paid ? "disabled" : ""}></label>`;
+			const checkActions = lockedCheck && !guest.paid ? `<div class="rms-guest-check-actions"><button type="button" data-action="guest-check-take-payment" data-guest-index="${index}">${__("Take Payment")}</button></div>` : "";
+			return `<article class="rms-guest-check ${mode === "items" ? "is-item-check" : ""} ${currentPayment ? "is-current-payment" : ""}" data-guest-index="${index}"><header><div class="rms-guest-check-heading"><span class="rms-guest-check-number">${index + 1}</span><strong>${guestName}</strong>${status}</div></header><label class="rms-guest-name">${__("Guest name")}<input type="text" data-guest-name value="${guestName}" aria-label="${__("Guest {0}", [index + 1])}" ${guest.paid || finalized ? "disabled" : ""}></label>${itemList}<div class="rms-guest-check-fields">${shareField}${paymentFields}</div>${checkActions}</article>`;
+		}).join("");
+	}
+
+	openGuestCheckResplit(index) {
+		const check = this.guestCheckState?.guest_checks?.[index];
+		if (!check || check.status !== "Open") return;
+		const itemNames = (check.items || []).filter((item) => Number(item.qty || 0) > 0).map((item) => item.name);
+		if (itemNames.length < 2) return frappe.msgprint(__("By items requires at least two active order items."));
+		const root = this.page.main[0];
+		const checks = root.querySelector("[data-guest-checks]");
+		const dialogRoot = root.querySelector("[data-split-dialog-root]");
+		if (!checks || !dialogRoot) return;
+		this.paymentSplitDraftBackup = {
+			mode: this.paymentSplitMode || "items", finalized: Boolean(this.guestSplitFinalized), total: this.paymentTotal,
+			resplitGuestIndex: this.paymentResplitGuestIndex, resplitItemNames: this.paymentResplitItemNames,
+			guests: (this.paymentGuests || []).map((guest) => ({ ...guest })),
+			assignments: Object.fromEntries(Object.entries(this.paymentItemAssignments || {}).map(([name, values]) => [name, Array.isArray(values) ? [...values] : values])),
+			payments: [...root.querySelectorAll("[data-payment-amount]")].map((input) => input.value),
+		};
+		this.paymentResplitGuestIndex = index;
+		this.paymentResplitItemNames = itemNames;
+		this.paymentTotal = Number(check.grand_total || 0);
+		this.paymentSplitMode = "items";
+		this.paymentSplitSetupOpen = true;
+		this.guestSplitFinalized = false;
+		this.paymentGuests = [
+			{ name: check.guest_name, method: this.paymentGuestMethods?.[0]?.mode_of_payment, amount: Number(check.grand_total || 0), due: Number(check.grand_total || 0) },
+			{ name: __("Guest {0}", [this.guestCheckState.guest_checks.length + 1]), method: this.paymentGuestMethods?.[0]?.mode_of_payment, amount: 0, due: 0 },
+		];
+		this.paymentItemAssignments = Object.fromEntries((this.state.cart || []).filter((row) => row.order_item_name).map((row) => {
+			const assigned = (check.items || []).find((item) => item.name === row.order_item_name);
+			return [row.order_item_name, [Number(assigned?.qty || 0), 0]];
+		}));
+		dialogRoot.innerHTML = this.renderPaymentSplitDialog();
+		dialogRoot.querySelector("[data-split-modal-host]").append(checks);
+		checks.hidden = false;
+		root.querySelector(".rms-split-toolbar > div:first-child").hidden = true;
+		root.querySelectorAll('[data-action="payment-split-mode"]').forEach((button) => button.hidden = true);
+		root.querySelector("[data-split-description]").textContent = __("Assign this open check's items to guests.");
+		root.querySelector("[data-split-check-toggle]").checked = true;
+		this.renderPaymentItemAssignments();
+		this.updateGuestSplitAmounts();
+		dialogRoot.querySelector("[data-split-dialog]")?.focus();
+	}
+
+	openCurrentGuestCheckResplit() {
+		if (!this.activeGuestPayment) return;
+		this.openGuestCheckResplit(Number(this.activeGuestPayment.index));
+	}
+
+	renderPaymentSplitDialog() {
+		return `<div class="rms-split-dialog-backdrop" data-split-dialog-backdrop><section class="rms-split-dialog" data-split-dialog role="dialog" aria-modal="true" aria-labelledby="rms-split-dialog-title" tabindex="-1"><header><div><span class="rms-pos-eyebrow">${__("CHECKOUT")}</span><h2 id="rms-split-dialog-title">${__("Split check")}</h2><p>${this.paymentResplitGuestIndex !== null && this.paymentResplitGuestIndex !== undefined ? __("Assign this open check's items to guests.") : __("Choose equal shares or assign items to each guest.")}</p></div><button type="button" data-action="payment-cancel-split" aria-label="${__("Close")}">×</button></header><div class="rms-split-dialog-body"><div data-split-modal-host></div></div><footer><button type="button" class="rms-screen-secondary" data-action="payment-cancel-split">${__("Cancel")}</button><button type="button" class="rms-screen-primary" data-action="payment-confirm-split" disabled>${__("Confirm split")}</button></footer></section></div>`;
+	}
+
+	openPaymentSplitDialog() {
+		if (this.guestSplitFinalized) return frappe.msgprint(__("Guest checks are confirmed and cannot be changed."));
+		const root = this.page.main[0];
+		const split = root.querySelector("[data-split-check-toggle]");
+		const checks = root.querySelector("[data-guest-checks]");
+		const dialogRoot = root.querySelector("[data-split-dialog-root]");
+		if (!split || !checks || !dialogRoot) return;
+		this.paymentSplitDraftBackup = {
+			mode: this.paymentSplitMode || "amount",
+			finalized: Boolean(this.guestSplitFinalized),
+			total: this.paymentTotal,
+			resplitGuestIndex: this.paymentResplitGuestIndex,
+			resplitItemNames: this.paymentResplitItemNames,
+			guests: (this.paymentGuests || []).map((guest) => ({ ...guest })),
+			assignments: Object.fromEntries(Object.entries(this.paymentItemAssignments || {}).map(([name, values]) => [name, Array.isArray(values) ? [...values] : values])),
+			payments: [...root.querySelectorAll("[data-payment-amount]")].map((input) => input.value),
+		};
+		const activeOrderItemCount = (this.state.cart || []).filter((row) => row.order_item_name && Number(row.qty || 0) > Number(row.cancelled_qty || 0)).length;
+		this.paymentSplitMode = activeOrderItemCount >= 2 ? "items" : "amount";
+		this.paymentResplitGuestIndex = null;
+		this.paymentResplitItemNames = null;
+		root.querySelector(".rms-split-toolbar > div:first-child").hidden = false;
+		root.querySelectorAll('[data-action="payment-split-mode"]').forEach((button) => button.hidden = false);
+		this.paymentSplitSetupOpen = true;
+		split.checked = true;
+		this.toggleSplitCheck(true);
+		dialogRoot.innerHTML = this.renderPaymentSplitDialog();
+		dialogRoot.querySelector("[data-split-modal-host]").append(checks);
+		checks.hidden = false;
+		this.renderPaymentItemAssignments();
+		this.updateGuestSplitAmounts();
+		dialogRoot.querySelector("[data-split-dialog]")?.focus();
+	}
+
+	closePaymentSplitDialog() {
+		const root = this.page.main[0];
+		const dialogRoot = root.querySelector("[data-split-dialog-root]");
+		const checks = root.querySelector("[data-guest-checks]");
+		const anchor = root.querySelector("[data-split-checks-anchor]");
+		if (!dialogRoot?.childElementCount || !checks || !anchor) return;
+		anchor.append(checks);
+		dialogRoot.innerHTML = "";
+		this.paymentSplitSetupOpen = false;
+		const backup = this.paymentSplitDraftBackup;
+		this.guestSplitFinalized = Boolean(backup?.finalized);
+		root.querySelector("[data-split-check-toggle]").checked = false;
+		if (backup) {
+			this.paymentSplitMode = backup.mode;
+			this.paymentTotal = backup.total;
+			this.paymentResplitGuestIndex = backup.resplitGuestIndex ?? null;
+			this.paymentResplitItemNames = backup.resplitItemNames ?? null;
+			this.paymentGuests = backup.guests;
+			this.paymentItemAssignments = backup.assignments;
+		}
+		root.querySelectorAll('[data-action="payment-split-mode"]').forEach((button) => button.hidden = backup?.resplitGuestIndex !== null && backup?.resplitGuestIndex !== undefined);
+		root.querySelector(".rms-split-toolbar > div:first-child").hidden = backup?.resplitGuestIndex !== null && backup?.resplitGuestIndex !== undefined;
+		this.toggleSplitCheck(false);
+		if (backup) [...root.querySelectorAll("[data-payment-amount]")].forEach((input, index) => { if (backup.payments[index] !== undefined) input.value = backup.payments[index]; });
+		this.paymentSplitDraftBackup = null;
+		checks.hidden = true;
+		this.renderPaymentItemAssignments();
+		this.updatePaymentTotal();
+		if (backup?.resplitGuestIndex !== null && backup?.resplitGuestIndex !== undefined && this.activeGuestPayment) return this.showPaymentScreen();
+	}
+
+	async confirmPaymentSplit() {
+		if (this.paymentSubmitting || !this.paymentSplitSetupOpen) return;
+		this.updateGuestSplitAmounts();
+		const root = this.page.main[0];
+		if (root.querySelector("[data-split-balance]")?.dataset.valid !== "true") return frappe.msgprint(root.querySelector("[data-split-balance]")?.textContent || __("Complete the split before confirming."));
+		if (this.paymentResplitGuestIndex !== null && this.paymentResplitGuestIndex !== undefined) {
+			const target = this.guestCheckState?.guest_checks?.[this.paymentResplitGuestIndex];
+			if (!target || target.status !== "Open") return frappe.msgprint(__("Only an open guest check can be split again."));
+			const guest_checks = [...root.querySelectorAll(".rms-guest-check")].map((card, index) => ({
+				guest_name: (card.querySelector("[data-guest-name]").value || __("Guest {0}", [index + 1])).trim(),
+				items: Object.entries(this.paymentItemAssignments || {}).flatMap(([name, quantities]) => Number(quantities?.[index] || 0) > 0 ? [{ name, qty: Number(quantities[index]) }] : []),
+			}));
+			this.paymentSubmitting = true;
+			try {
+				const result = await this.call("resplit_open_guest_check", { order_name: this.state.order_name, guest_check_name: target.name, guest_checks: JSON.stringify(guest_checks) });
+				this.guestCheckState = { order_name: this.state.order_name, guest_checks: result.guest_checks };
+				if (this.activeGuestPayment) {
+					const activeIndex = result.guest_checks.findIndex((row) => row.name === this.activeGuestPayment.guest_check_name);
+					const activeCheck = result.guest_checks[activeIndex];
+					if (activeCheck) this.activeGuestPayment = { ...this.activeGuestPayment, guest_name: activeCheck.guest_name, grand_total: Number(activeCheck.grand_total || 0), index: activeIndex };
+				}
+				this.paymentSplitMode = "items";
+				this.paymentResplitGuestIndex = null;
+				this.paymentResplitItemNames = null;
+				this.paymentSplitSetupOpen = false;
+				this.paymentSplitDraftBackup = null;
+				return this.showPaymentScreen();
+			} catch (error) { return this.showError(error); }
+			finally { this.paymentSubmitting = false; }
+		}
+		if (this.paymentSplitMode === "items") {
+			this.paymentSubmitting = true;
+			try { await this.ensureGuestChecks(); }
+			catch (error) { this.showError(error); return; }
+			finally { this.paymentSubmitting = false; }
+		}
+		this.guestSplitFinalized = true;
+		this.paymentSplitSetupOpen = false;
+		this.paymentSplitDraftBackup = null;
+		const checks = root.querySelector("[data-guest-checks]");
+		const anchor = root.querySelector("[data-split-checks-anchor]");
+		anchor.append(checks);
+		root.querySelector("[data-split-dialog-root]").innerHTML = "";
+		checks.hidden = false;
+		root.querySelector(".rms-split-toolbar").hidden = true;
+		root.querySelector("[data-split-description]").hidden = true;
+		this.renderPaymentItemAssignments();
+		this.updateGuestSplitAmounts();
+		this.updatePaymentTotal();
+		const progress = root.querySelector("[data-guest-payment-progress-container]");
+		if (progress) progress.innerHTML = this.renderGuestPaymentProgress(this.paymentTotal);
+	}
+
+	getPaymentItemGroups() {
+		const groups = new Map();
+		for (const row of (this.state.cart || []).filter((item) => item.order_item_name && Math.max(0, Number(item.qty || 0) - Number(item.cancelled_qty || 0)) > 0)) {
+			const modifiers = (row.modifier_labels || []).map((item) => [item.title || item.modifier_product, Number(item.price || 0)]).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+			const key = JSON.stringify([row.selling_product || row.title, row.option_parent || "", row.uom || "", Number(row.price || 0), row.notes || "", modifiers]);
+			if (!groups.has(key)) groups.set(key, { key, title: row.title, rows: [] });
+			groups.get(key).rows.push(row);
+		}
+		return [...groups.values()];
+	}
+
+	paymentItemRowAmount(row) {
+		const quantity = Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0));
+		return quantity * (Number(row.price || 0) + (row.modifier_labels || []).reduce((sum, modifier) => sum + Number(modifier.price || 0), 0));
+	}
+
+	syncPaymentGuestFields() {
+		const cards = this.page.main[0]?.querySelectorAll(".rms-guest-check") || [];
+		cards.forEach((card, index) => {
+			const guest = this.paymentGuests?.[index];
+			if (!guest) return;
+			guest.name = card.querySelector("[data-guest-name]")?.value || guest.name;
+			guest.method = card.querySelector("[data-guest-method]")?.value || guest.method;
+			guest.amount = Number(card.querySelector("[data-guest-amount]")?.value || 0);
+			guest.due = Number(card.querySelector("[data-guest-share]")?.value || 0);
+			guest.manual = Boolean(card.querySelector("[data-guest-amount]")?.dataset.manual);
+		});
 	}
 
 	changePaymentGuestCount(delta) {
-		if (this.page.main[0]?.querySelector("[data-payment-guests]")) {
-			this.paymentGuests = [...this.page.main[0].querySelectorAll(".rms-guest-check")].map((section) => ({
-				name: section.querySelector("[data-guest-name]").value,
-				method: section.querySelector("[data-guest-method]").value,
-				amount: Number(section.querySelector("[data-guest-amount]").value || 0),
-				manual: Boolean(section.querySelector("[data-guest-amount]").dataset.manual),
-			}));
-		}
+		this.syncPaymentGuestFields();
 		const count = this.paymentGuests?.length || 0;
-		if (delta > 0 && count >= 10) return frappe.msgprint(__("A check can be split between up to ten people."));
-		if (delta < 0 && count <= 2) return frappe.msgprint(__("A split check needs at least two people."));
-		const total = Number(this.paymentTotal || 0);
-		if (delta > 0) this.paymentGuests.push({ name: __("Guest {0}", [count + 1]), method: this.paymentGuestMethods?.[0]?.mode_of_payment, amount: total / (count + 1) });
-		else this.paymentGuests.pop();
-		this.page.main[0].querySelector("[data-payment-guests]").innerHTML = this.renderPaymentGuests();
+		if (this.guestSplitFinalized) return frappe.msgprint(__("Guest checks are confirmed and cannot be changed."));
+		if (this.paymentGuests?.some((guest) => guest.paid)) return frappe.msgprint(__("Guest checks cannot be changed after one has been paid."));
+		if (delta > 0 && (this.paymentResplitGuestIndex !== null && this.paymentResplitGuestIndex !== undefined ? (this.guestCheckState?.guest_checks?.length || 0) + count - 1 >= 10 : count >= 10)) return frappe.msgprint(__("A check can be split between up to ten people."));
+		if (delta < 0 && count <= 2) return;
+		if (delta > 0) {
+			const newNumber = this.paymentResplitGuestIndex !== null && this.paymentResplitGuestIndex !== undefined ? (this.guestCheckState?.guest_checks?.length || 0) + count - 1 : count + 1;
+			this.paymentGuests.push({ name: __("Guest {0}", [newNumber]), method: this.paymentGuestMethods?.[0]?.mode_of_payment, amount: 0, due: 0, manual: false, dueManual: false });
+			for (const allocation of Object.values(this.paymentItemAssignments || {})) if (Array.isArray(allocation)) allocation.push(0);
+		} else {
+			const removedIndex = count - 1;
+			for (const allocation of Object.values(this.paymentItemAssignments || {})) if (Array.isArray(allocation)) {
+				allocation[0] = Number(allocation[0] || 0) + Number(allocation[removedIndex] || 0);
+				allocation.pop();
+			}
+			this.paymentGuests.pop();
+		}
+		if (this.paymentResplitGuestIndex === null || this.paymentResplitGuestIndex === undefined) this.guestCheckState = null;
+		this.page.main[0].querySelector("[data-payment-guests]").innerHTML = this.renderPaymentGuests(Boolean(this.paymentSplitSetupOpen));
+		this.renderPaymentItemAssignments();
+		this.updateGuestSplitAmounts();
+	}
+	async setPaymentSplitMode(mode) {
+		if (!["amount", "items"].includes(mode)) return;
+		if (this.guestSplitFinalized) return frappe.msgprint(__("Guest checks are confirmed and cannot be changed."));
+		if (this.paymentGuests?.some((guest) => guest.paid)) return frappe.msgprint(__("Guest checks cannot be changed after one has been paid."));
+		if (mode === "amount" && this.guestCheckState?.order_name === this.state.order_name) {
+			try { await this.call("clear_guest_check_allocations", { order_name: this.state.order_name }); this.guestCheckState = null; }
+			catch (error) { return this.showError(error); }
+		}
+		if (mode === "items" && (this.state.cart || []).filter((row) => row.order_item_name && Number(row.qty || 0) > Number(row.cancelled_qty || 0)).length < 2) return frappe.msgprint(__("By items requires at least two active order items."));
+		this.paymentSplitMode = mode;
+		this.page.main[0].querySelectorAll('[data-action="payment-split-mode"]').forEach((button) => {
+			button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+		});
+		const description = this.page.main[0].querySelector("[data-split-description]");
+		if (description) description.textContent = mode === "items"
+			? __("All item quantities start with Guest 1. Use + or − to move one unit to another guest.")
+			: __("The order total is divided equally between the guests.");
 		this.renderPaymentItemAssignments();
 		this.updateGuestSplitAmounts();
 	}
 
 	renderPaymentItemAssignments() {
-		const target = this.page.main[0]?.querySelector("[data-item-assignments]");
+		const root = this.page.main[0];
+		const target = root?.querySelector("[data-payment-guests]");
 		if (!target) return;
+		this.syncPaymentGuestFields();
+		root.querySelectorAll('[data-action="payment-split-mode"]').forEach((button) => {
+			button.setAttribute("aria-pressed", String(button.dataset.mode === this.paymentSplitMode));
+		});
 		const items = (this.state.cart || []).filter((row) => row.order_item_name && Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0)) > 0);
-		target.innerHTML = items.map((row) => `<label class="rms-item-assignment">${this.escape(row.title)} <select data-item-guest="${this.escape(row.order_item_name)}"><option value="">${__("Choose person")}</option>${this.paymentGuests.map((guest, index) => `<option value="${index}" ${this.paymentItemAssignments?.[row.order_item_name] === index ? "selected" : ""}>${this.escape(guest.name)}</option>`).join("")}</select></label>`).join("");
-	}
-
-	updateGuestSplitAmounts() {
-		if (!this.page.main[0]?.querySelector("[data-split-check-toggle]")?.checked) return;
-		const mode = this.page.main[0].querySelector("[data-payment-split-mode]")?.value || "people";
-		const total = Number(this.paymentTotal || 0);
-		const dues = this.paymentGuests.map(() => 0);
-		if (mode === "people") {
-			const share = Math.floor(total * 100 / this.paymentGuests.length) / 100;
-			dues.fill(share);
-			dues[dues.length - 1] += total - share * dues.length;
-		} else {
-			const assignmentSelects = [...this.page.main[0].querySelectorAll("[data-item-guest]")];
-			const lines = (this.state.cart || []).filter((row) => row.order_item_name && Number(row.qty || 0) > Number(row.cancelled_qty || 0));
-			const amountFor = (row) => Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0)) * (Number(row.price || 0) + (row.modifier_labels || []).reduce((sum, item) => sum + Number(item.price || 0), 0));
-			const subtotal = lines.reduce((sum, row) => sum + amountFor(row), 0);
-			for (const select of assignmentSelects) {
-				if (select.value === "") continue;
-				const row = lines.find((item) => item.order_item_name === select.dataset.itemGuest);
-				if (row && subtotal > 0) dues[Number(select.value)] += total * amountFor(row) / subtotal;
-			}
-			const assignedGuests = dues.map((amount, index) => amount > 0 ? index : -1).filter((index) => index >= 0);
-			if (assignedGuests.length) {
-				let allocated = 0;
-				for (const index of assignedGuests.slice(0, -1)) { dues[index] = Math.round(dues[index] * 100) / 100; allocated += dues[index]; }
-				const last = assignedGuests[assignedGuests.length - 1]; dues[last] = Math.round((total - allocated) * 100) / 100;
+		this.paymentItemAssignments ||= {};
+		for (const group of this.getPaymentItemGroups()) {
+			for (const row of group.rows) {
+				const active = Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0));
+				let allocation = this.paymentItemAssignments[row.order_item_name];
+				if (!Array.isArray(allocation)) { allocation = Array((this.paymentGuests || []).length).fill(0); allocation[0] = active; this.paymentItemAssignments[row.order_item_name] = allocation; }
+				while (allocation.length < (this.paymentGuests || []).length) allocation.push(0);
 			}
 		}
+		target.innerHTML = this.renderPaymentGuests(Boolean(this.paymentSplitSetupOpen || this.activeGuestPayment));
+		const itemMode = this.paymentSplitMode === "items";
+		const itemSplitActive = itemMode && Boolean(root.querySelector("[data-split-check-toggle]")?.checked);
+		const guestTender = root.querySelector("[data-guest-amount]:not([disabled])");
+		const methodTender = root.querySelector("[data-payment-amount]:not([disabled])");
+		if (itemSplitActive) {
+			if (!this.paymentInput?.isConnected || this.paymentInput.matches?.("[data-payment-amount]")) this.paymentInput = guestTender;
+		} else if (!this.paymentInput?.isConnected || this.paymentInput.matches?.("[data-guest-amount]")) {
+			this.paymentInput = methodTender || guestTender;
+		}
+		if (!this.paymentInput?.isConnected) this.paymentInput = guestTender || methodTender;
+		this.paymentKeypadInput = null;
+		root.querySelector(".rms-payment-layout")?.classList.toggle("is-item-split", itemSplitActive);
+		root.querySelector(".rms-payment-layout")?.classList.toggle("is-guest-check-overview", Boolean(this.guestSplitFinalized && itemMode && !this.activeGuestPayment));
+		root.querySelector(".rms-guest-checks")?.classList.toggle("is-item-split", itemMode);
+		root.querySelector(".rms-payment-method-list")?.classList.toggle("is-item-split-hidden", itemSplitActive);
+		root.querySelector(".rms-split-toolbar")?.toggleAttribute("hidden", Boolean(this.guestSplitFinalized && !this.paymentSplitSetupOpen));
+		root.querySelector("[data-split-description]")?.toggleAttribute("hidden", Boolean(this.guestSplitFinalized));
+		root.querySelectorAll('[data-action="payment-pay"], [data-action="payment-pay-print"], [data-action="payment-print-only"]').forEach((button) => { button.hidden = itemSplitActive; });
+		root.querySelectorAll(".rms-payment-shortcuts, .rms-payment-sum, .rms-payment-change").forEach((node) => { node.hidden = itemSplitActive; });
+		if (this.paymentGuests?.some((guest) => guest.paid)) {
+			root.querySelectorAll("[data-item-guest], [data-guest-name], [data-action='payment-guest-add'], [data-action='payment-guest-remove'], [data-action='payment-split-mode']").forEach((input) => { input.disabled = true; });
+		}
+	}
+
+	adjustPaymentItemAllocation(groupKey, guestIndex, delta) {
+		if (this.guestSplitFinalized) return frappe.msgprint(__("Guest checks are confirmed and cannot be changed."));
+		if (this.paymentGuests?.some((guest) => guest.paid)) return frappe.msgprint(__("Guest checks cannot be changed after one has been paid."));
+		this.syncPaymentGuestFields();
+		const group = this.getPaymentItemGroups().find((row) => row.key === groupKey);
+		if (!group || !this.paymentGuests?.[guestIndex]) return;
+		const stepFor = (row) => row.must_be_whole_number === false ? 0.001 : 1;
+		const quantityFor = (row, index) => Number(this.paymentItemAssignments[row.order_item_name]?.[index] || 0);
+		const totals = this.paymentGuests.map((_, index) => group.rows.reduce((sum, row) => sum + quantityFor(row, index), 0));
+		if (delta > 0) {
+			const donor = totals.map((quantity, index) => ({ index, quantity })).filter((row) => row.index !== guestIndex && row.quantity > 0).sort((a, b) => b.quantity - a.quantity)[0];
+			if (!donor) return;
+			const row = group.rows.find((item) => quantityFor(item, donor.index) >= stepFor(item));
+			if (!row) return;
+			const allocation = this.paymentItemAssignments[row.order_item_name];
+			const moved = Math.min(1, quantityFor(row, donor.index));
+			allocation[donor.index] = Number((allocation[donor.index] - moved).toFixed(3));
+			allocation[guestIndex] = Number((quantityFor(row, guestIndex) + moved).toFixed(3));
+		} else {
+			const row = group.rows.find((item) => quantityFor(item, guestIndex) >= stepFor(item));
+			if (!row) return;
+			const recipient = totals.map((quantity, index) => ({ index, quantity })).filter((item) => item.index !== guestIndex).sort((a, b) => a.quantity - b.quantity)[0];
+			if (!recipient) return;
+			const allocation = this.paymentItemAssignments[row.order_item_name];
+			const moved = Math.min(1, quantityFor(row, guestIndex));
+			allocation[guestIndex] = Number((allocation[guestIndex] - moved).toFixed(3));
+			allocation[recipient.index] = Number((quantityFor(row, recipient.index) + moved).toFixed(3));
+		}
+		if (this.paymentResplitGuestIndex === null || this.paymentResplitGuestIndex === undefined) this.guestCheckState = null;
+		this.renderPaymentItemAssignments(); this.updateGuestSplitAmounts();
+	}
+	updateGuestSplitAmounts() {
+		if (!this.page.main[0]?.querySelector("[data-split-check-toggle]")?.checked) return;
+		const mode = this.paymentSplitMode || "amount";
+		const total = Number(this.paymentTotal || 0);
 		const sections = [...this.page.main[0].querySelectorAll(".rms-guest-check")];
+		const dues = sections.map(() => 0);
+		let valid = true;
+		let message = "";
+		if (mode === "amount") {
+			const shares = sections.map((section) => section.querySelector("[data-guest-share]"));
+			const manualIndexes = shares.map((input, index) => input.dataset.manualShare === "1" ? index : -1).filter((index) => index >= 0);
+			const autoIndexes = shares.map((input, index) => input.dataset.manualShare !== "1" ? index : -1).filter((index) => index >= 0);
+			const manualTotal = manualIndexes.reduce((sum, index) => sum + Math.max(0, Number(shares[index].value || 0)), 0);
+			const remainder = Math.max(0, total - manualTotal);
+			if (autoIndexes.length) {
+				const base = Math.floor(remainder * 100 / autoIndexes.length) / 100;
+				autoIndexes.forEach((index, position) => { shares[index].value = (position === autoIndexes.length - 1 ? remainder - base * (autoIndexes.length - 1) : base).toFixed(2); });
+			}
+			shares.forEach((input, index) => { dues[index] = Math.max(0, Number(input.value || 0)); });
+			const allocated = dues.reduce((sum, amount) => sum + amount, 0);
+			valid = Math.abs(allocated - total) <= 0.01 && (total <= 0.005 || dues.every((amount) => amount > 0.005));
+			message = valid ? __("Shares match the order total.") : Math.abs(allocated - total) > 0.01
+				? __("Shares must add up to the order total.") : __("Give every person a share of the order.");
+		} else {
+			const scopedNames = new Set(this.paymentResplitItemNames || []);
+			const lines = (this.state.cart || []).filter((row) => row.order_item_name && Number(row.qty || 0) > Number(row.cancelled_qty || 0) && (!scopedNames.size || scopedNames.has(row.order_item_name)));
+			if (lines.length < 2) { valid = false; message = __("By items requires at least two active order items."); }
+			const scopedQuantities = new Map((this.guestCheckState?.guest_checks?.[this.paymentResplitGuestIndex]?.items || []).map((item) => [item.name, Number(item.qty || 0)]));
+			const amountFor = (row) => {
+				const fullQty = Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0));
+				const qty = scopedNames.size ? Number(scopedQuantities.get(row.order_item_name) || 0) : fullQty;
+				return fullQty ? this.paymentItemRowAmount(row) * qty / fullQty : 0;
+			};
+			const subtotal = lines.reduce((sum, row) => sum + amountFor(row), 0);
+			for (const row of lines) {
+				const active = scopedNames.size ? Number(scopedQuantities.get(row.order_item_name) || 0) : Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0));
+				const allocation = this.paymentItemAssignments?.[row.order_item_name] || [];
+				const allocatedQty = allocation.reduce((sum, quantity) => sum + Number(quantity || 0), 0);
+				if (Math.abs(allocatedQty - active) > 0.001 || allocation.some((quantity) => Number(quantity) < -0.001)) valid = false;
+			if (subtotal > 0 && active > 0) allocation.forEach((quantity, index) => { if (index < dues.length && Number(quantity) > 0) dues[index] += total * amountFor(row) * Number(quantity) / active / subtotal; });
+			}
+			const assigned = sections.map((_, index) => lines.some((row) => Number(this.paymentItemAssignments?.[row.order_item_name]?.[index] || 0) > 0) ? index : -1).filter((index) => index >= 0);
+			if (valid && assigned.length) {
+				let allocated = 0;
+				for (const index of assigned.slice(0, -1)) { dues[index] = Math.round(dues[index] * 100) / 100; allocated += dues[index]; }
+				const last = assigned[assigned.length - 1]; dues[last] = Math.round((total - allocated) * 100) / 100;
+			}
+			if (assigned.length !== sections.length) valid = false;
+			message = valid ? __("Every item quantity is assigned once. Guests can pay separately.") : __("Assign every item quantity and give each guest an item.");
+		}
 		sections.forEach((section, index) => {
 			const due = Math.round((dues[index] || 0) * 100) / 100;
-			const dueLabel = section.querySelector("[data-guest-due]");
-			dueLabel.textContent = this.currency(due); dueLabel.dataset.amount = due.toFixed(2);
-			const amount = section.querySelector("[data-guest-amount]");
-			if (!amount.dataset.manual) amount.value = due.toFixed(2);
+			const share = section.querySelector("[data-guest-share]");
+			share.value = due.toFixed(2);
+			const tender = section.querySelector("[data-guest-amount]");
+			if (tender && !tender.dataset.manual) tender.value = due.toFixed(2);
 		});
-		this.page.main.find("[data-item-assignments]").prop("hidden", mode !== "items");
+		const balance = this.page.main[0].querySelector("[data-split-balance]");
+		if (balance) { balance.dataset.valid = String(valid); balance.textContent = message; balance.classList.toggle("is-invalid", !valid); }
+		const confirmButton = this.page.main[0].querySelector('[data-action="payment-confirm-split"]');
+		if (confirmButton) confirmButton.disabled = !valid;
 		this.updatePaymentTotal();
 	}
 
@@ -1070,9 +1475,14 @@ class RMSPointOfSale {
 	renderPaymentDiscountDialog() {
 		const type = this.paymentDiscount.type;
 		const value = Number(this.paymentDiscount.value || 0);
-		const max = Number(this.state.totals?.grand_total || 0);
+		const max = Number(this.activeGuestPayment?.grand_total || this.state.totals?.grand_total || 0);
+		const activeGuestCheck = this.activeGuestPayment
+			? this.guestCheckState?.guest_checks?.find((row) => row.name === this.activeGuestPayment.guest_check_name)
+			: null;
+		const currentDiscount = this.activeGuestPayment ? activeGuestCheck?.discount_amount || 0 : this.state.totals?.discount_amount || 0;
+		const title = this.activeGuestPayment ? __("Discount for {0}", [this.activeGuestPayment.guest_name]) : __("Add Discount");
 		const percentageTicks = [0, 10, 20, 30, 50, 80, 100].map((tick) => `<span style="left:${tick}%">${tick}%</span>`).join("");
-		return `<div class="rms-discount-backdrop" data-action="payment-discount-backdrop"><section class="rms-discount-dialog" data-discount-dialog role="dialog" aria-modal="true" aria-labelledby="rms-discount-title" tabindex="-1"><header><h2 id="rms-discount-title">${__("Add Discount")}</h2><button type="button" data-action="payment-discount-close" aria-label="${__("Close")}">×</button></header><div class="rms-discount-dialog-body"><div data-discount-edit-fields><div class="rms-discount-type-wrap"><span>${__("Discount type")}</span><input type="hidden" data-pay-discount-type value="${this.escape(type)}"><div class="rms-discount-type-switch" role="group" aria-label="${__("Discount type")}"><button type="button" data-action="payment-discount-type" data-type="Amount" aria-pressed="${type === "Amount"}">${__("Amount")}</button><button type="button" data-action="payment-discount-type" data-type="Percentage" aria-pressed="${type === "Percentage"}">${__("Percentage")}</button></div></div><div class="rms-discount-percentage" data-discount-range-wrap ${type === "Percentage" ? "" : "hidden"}><div class="rms-discount-value-heading"><span>${__("Discount Amount")}</span><strong><b data-discount-percent-label>${type === "Percentage" ? value : 0}%</b></strong></div><input type="range" data-pay-discount-value="percentage" min="0" max="100" step="5" value="${type === "Percentage" ? value : 0}" aria-label="${__("Discount percentage")}"><div class="rms-discount-ticks" aria-hidden="true">${percentageTicks}</div></div><label class="rms-discount-amount-wrap" data-discount-amount-wrap ${type === "Amount" ? "" : "hidden"}>${__("Discount amount")}<span class="rms-discount-value-field"><input type="number" data-pay-discount-value="amount" min="0" max="${max}" step="0.01" value="${type === "Amount" ? value : 0}" aria-label="${__("Discount amount")}"><button type="button" data-action="payment-discount-clear" aria-label="${__("Clear discount amount")}">×</button></span></label><label class="rms-discount-reason">${__("Reason")}<input type="text" data-pay-discount-reason value="${this.escape(this.paymentDiscount.reason)}" placeholder="${__("Reason for discount")}"></label><div class="rms-discount-dialog-summary">${__("Discount")}: <b data-discount-preview>${this.currency(this.state.totals?.discount_amount || 0)}</b></div></div><div class="rms-discount-approval-feedback" data-discount-approval-feedback aria-live="polite"></div></div><footer><button type="button" class="rms-screen-secondary" data-action="payment-discount-close">${__("Cancel")}</button><button type="button" class="rms-screen-primary rms-discount-apply" data-action="payment-apply-discount" ${this.paymentDiscount.reason.trim() ? "" : "disabled"}>${__("Apply")}</button></footer></section></div>`;
+		return `<div class="rms-discount-backdrop" data-action="payment-discount-backdrop"><section class="rms-discount-dialog" data-discount-dialog role="dialog" aria-modal="true" aria-labelledby="rms-discount-title" tabindex="-1"><header><h2 id="rms-discount-title">${title}</h2><button type="button" data-action="payment-discount-close" aria-label="${__("Close")}">×</button></header><div class="rms-discount-dialog-body"><div data-discount-edit-fields><div class="rms-discount-type-wrap"><span>${__("Discount type")}</span><input type="hidden" data-pay-discount-type value="${this.escape(type)}"><div class="rms-discount-type-switch" role="group" aria-label="${__("Discount type")}"><button type="button" data-action="payment-discount-type" data-type="Amount" aria-pressed="${type === "Amount"}">${__("Amount")}</button><button type="button" data-action="payment-discount-type" data-type="Percentage" aria-pressed="${type === "Percentage"}">${__("Percentage")}</button></div></div><div class="rms-discount-percentage" data-discount-range-wrap ${type === "Percentage" ? "" : "hidden"}><div class="rms-discount-value-heading"><span>${type === "Percentage" ? __("Discount %") : __("Discount amount")}</span><strong><b data-discount-percent-label>${type === "Percentage" ? value : 0}%</b></strong></div><input type="range" data-pay-discount-value="percentage" min="0" max="100" step="5" value="${type === "Percentage" ? value : 0}" aria-label="${__("Discount percentage")}"><div class="rms-discount-ticks" aria-hidden="true">${percentageTicks}</div></div><label class="rms-discount-amount-wrap" data-discount-amount-wrap ${type === "Amount" ? "" : "hidden"}>${__("Discount amount")}<span class="rms-discount-value-field"><input type="number" data-pay-discount-value="amount" min="0" max="${max}" step="0.01" value="${type === "Amount" ? value : 0}" aria-label="${__("Discount amount")}"><button type="button" data-action="payment-discount-clear" aria-label="${__("Clear discount amount")}">×</button></span></label><label class="rms-discount-reason">${__("Reason")}<input type="text" data-pay-discount-reason value="${this.escape(this.paymentDiscount.reason)}" placeholder="${__("Reason for discount")}"></label><div class="rms-discount-dialog-summary">${__("Discount")}: <b data-discount-preview>${this.currency(currentDiscount)}</b></div></div><div class="rms-discount-approval-feedback" data-discount-approval-feedback aria-live="polite"></div></div><footer><button type="button" class="rms-screen-secondary" data-action="payment-discount-close">${__("Cancel")}</button><button type="button" class="rms-screen-primary rms-discount-apply" data-action="payment-apply-discount" ${this.paymentDiscount.reason.trim() ? "" : "disabled"}>${__("Apply")}</button></footer></section></div>`;
 	}
 
 	async printOpenOrderCheck() {
@@ -1083,7 +1493,7 @@ class RMSPointOfSale {
 		const button = this.page.main.find('[data-action="payment-print-only"]');
 		button.prop("disabled", true);
 		try {
-			const html = await this.call("get_open_order_check_print_html", { order_name: this.state.order_name });
+			const html = this.activeGuestPayment ? await this.call("get_guest_check_print_html", { order_name: this.state.order_name, guest_check_name: this.activeGuestPayment.guest_check_name }) : await this.call("get_open_order_check_print_html", { order_name: this.state.order_name });
 			printWindow.document.open(); printWindow.document.write(html); printWindow.document.close();
 			setTimeout(() => printWindow.print(), 400);
 		} catch (error) {
@@ -1222,19 +1632,21 @@ class RMSPointOfSale {
 		const value = Number(input.val() || 0);
 		const reason = this.page.main.find("[data-pay-discount-reason]").val() || "";
 		this.paymentDiscountDraft = { type, value, reason };
-		const invoiceTotal = Number(this.state.totals?.grand_total || 0);
+		const invoiceTotal = Number(this.activeGuestPayment?.grand_total || this.state.totals?.grand_total || 0);
 		const feedback = this.page.main[0].querySelector("[data-discount-approval-feedback]");
 		if (value < 0 || (type === "Percentage" && value > 100) || (type === "Amount" && value > invoiceTotal)) {
 			feedback.textContent = type === "Amount" && value > invoiceTotal
 				? __("Discount amount cannot exceed the invoice total.")
 				: __("Enter a valid discount value.");
+			const previewTarget = this.page.main[0].querySelector("[data-discount-dialog] [data-discount-preview]");
+			if (previewTarget) previewTarget.textContent = "—";
 			this.paymentDiscountPreview = null;
 			return;
 		}
 		const approvalApprover = this.paymentDiscountApprovalApprover || "";
 		if (type === "Percentage") this.page.main.find("[data-discount-percent-label]").text(`${value}%`);
 		try {
-			const preview = await this.call("preview_order_discount", { order_name: this.state.order_name, discount_type: type, discount_value: value, discount_reason: reason, approval_code: approvalCode || null, approval_approver: approvalApprover || null, approval_method: this.paymentDiscountAuthMethod || "OTP" });
+			const preview = await this.call("preview_order_discount", { order_name: this.state.order_name, discount_type: type, discount_value: value, discount_reason: reason, approval_code: approvalCode || null, approval_approver: approvalApprover || null, approval_method: this.paymentDiscountAuthMethod || "OTP", guest_check_name: this.activeGuestPayment?.guest_check_name || null });
 			if (requestId !== this.discountPreviewRequestId) return;
 			const previewTarget = this.page.main[0].querySelector("[data-discount-dialog] [data-discount-preview]");
 			if (previewTarget) previewTarget.textContent = this.currency(preview.discount_amount);
@@ -1289,7 +1701,19 @@ class RMSPointOfSale {
 		await this.refreshPaymentDiscountPreview(requestId, approvalCode, true);
 		if (!this.paymentDiscountPreview || requestId !== this.discountPreviewRequestId) return;
 		this.paymentDiscount = this.paymentDiscountDraft || this.paymentDiscount;
-		this.paymentTotal = Number(this.paymentDiscountPreview.grand_total);
+		this.paymentTotal = Number(this.paymentDiscountPreview.grand_total || 0);
+		this.updateSuggestedPaymentAmounts();
+		if (this.activeGuestPayment) {
+			this.activeGuestPayment.grand_total = this.paymentTotal;
+			const activeCheck = this.guestCheckState?.guest_checks?.find((row) => row.name === this.activeGuestPayment.guest_check_name);
+			if (activeCheck) Object.assign(activeCheck, {
+				discount_type: this.paymentDiscount.type,
+				discount_value: this.paymentDiscount.value,
+				discount_reason: this.paymentDiscount.reason,
+				discount_amount: Number(this.paymentDiscountPreview.discount_amount || 0),
+				grand_total: this.paymentTotal,
+			});
+		}
 		const appliedDiscountLabel = this.page.main[0].querySelector(".rms-payment-discount-launch [data-discount-preview]");
 		if (appliedDiscountLabel) appliedDiscountLabel.textContent = this.currency(this.paymentDiscountPreview.discount_amount);
 		this.page.main.find(".rms-payment-total").text(this.currency(this.paymentTotal));
@@ -1305,7 +1729,17 @@ class RMSPointOfSale {
 		this.closePaymentDiscountDialog(true);
 	}
 
-	 toggleSplitCheck(enabled) {
+	async handleSplitCheckToggle(input) {
+		const enabled = input.checked;
+		if (!enabled && this.guestCheckState?.order_name === this.state.order_name) {
+			if (this.paymentGuests?.some((guest) => guest.paid)) { input.checked = true; return frappe.msgprint(__("Guest checks cannot be changed after one has been paid.")); }
+			try { await this.call("clear_guest_check_allocations", { order_name: this.state.order_name }); this.guestCheckState = null; }
+			catch (error) { input.checked = true; return this.showError(error); }
+		}
+		this.toggleSplitCheck(enabled);
+	}
+
+	toggleSplitCheck(enabled) {
 		this.page.main.find(".rms-payment-method-list, .rms-payment-shortcuts").prop("hidden", enabled);
 		this.page.main.find("[data-guest-checks]").prop("hidden", !enabled);
 		const total = Number(this.paymentTotal ?? this.state.totals?.grand_total ?? 0);
@@ -1322,23 +1756,26 @@ class RMSPointOfSale {
 
 	async submitPayment(print = false) {
 		if (this.paymentSubmitting) return;
-		const isSplit = Boolean(this.page.main[0].querySelector("[data-split-check-toggle]")?.checked);
-		const splitMode = this.page.main[0].querySelector("[data-payment-split-mode]")?.value || "people";
+		const activeGuestPayment = this.activeGuestPayment;
+		const isSplit = !activeGuestPayment && Boolean(this.page.main[0].querySelector("[data-split-check-toggle]")?.checked);
+		if (isSplit && !this.guestSplitFinalized) return frappe.msgprint(__("Confirm the split before taking payment."));
+		const splitMode = this.paymentSplitMode || "amount";
+		if (isSplit && this.page.main[0].querySelector("[data-split-balance]")?.dataset.valid !== "true") {
+			return frappe.msgprint(this.page.main[0].querySelector("[data-split-balance]")?.textContent || __("Complete the split before payment."));
+		}
 		const guestRows = isSplit ? [...this.page.main[0].querySelectorAll(".rms-guest-check")].map((section, index) => ({
 			guest: section.querySelector("[data-guest-name]").value.trim(),
 			mode_of_payment: section.querySelector("[data-guest-method]").value,
 			amount: Number(section.querySelector("[data-guest-amount]").value || 0),
-			due_amount: Number(section.querySelector("[data-guest-due]")?.dataset.amount || 0),
-			items: [...this.page.main[0].querySelectorAll("[data-item-guest]")].filter((select) => Number(select.value) === index).map((select) => select.dataset.itemGuest),
+			due_amount: Number(section.querySelector("[data-guest-share]")?.value || 0),
+			items: [],
 			split_mode: splitMode,
 		})) : [];
 		const payments = isSplit ? guestRows.map(({ mode_of_payment, amount }) => ({ mode_of_payment, amount })) : [...this.page.main[0].querySelectorAll("[data-payment-amount]")].map((input) => ({ mode_of_payment: input.dataset.method, amount: Number(input.value || 0) })).filter((row) => row.amount > 0);
 		const total = Number(this.paymentTotal ?? this.state.totals?.grand_total ?? 0);
-		if (this.paymentDiscount?.value > 0 && !this.paymentDiscount.reason.trim()) return frappe.msgprint(__("Enter a reason for the discount."));
+		if (!activeGuestPayment && this.paymentDiscount?.value > 0 && !this.paymentDiscount.reason.trim()) return frappe.msgprint(__("Enter a reason for the discount."));
 		const tendered = payments.reduce((sum, row) => sum + row.amount, 0);
 		if (tendered + 0.01 < total) return frappe.msgprint(__("Payment amounts must cover the order total."));
-		// Reserve the print tab during the user gesture. Opening it after the payment
-		// request resolves is blocked by browsers because the async call loses that gesture.
 		const printWindow = print ? window.open("about:blank", "_blank") : null;
 		if (print && !printWindow) return frappe.msgprint(__("Your browser blocked the print window. Allow pop-ups for this POS, then try again."));
 		this.paymentSubmitting = true;
@@ -1346,12 +1783,22 @@ class RMSPointOfSale {
 		paymentButtons.prop("disabled", true);
 		let paymentRecorded = false;
 		try {
-			const result = await this.call("pay_order", { order_name: this.state.order_name, payments: JSON.stringify(payments), guest_breakdown: isSplit ? JSON.stringify(guestRows) : null, discount_type: this.paymentDiscount?.type || "Percentage", discount_value: this.paymentDiscount?.value || 0, discount_reason: this.paymentDiscount?.reason || "", discount_approval_code: this.paymentDiscountApprovalCode || null, discount_approval_approver: this.paymentDiscountApprovalApprover || null });
+			const result = activeGuestPayment
+				? await this.call("pay_guest_check", { order_name: this.state.order_name, guest_check_name: activeGuestPayment.guest_check_name, payments: JSON.stringify(payments), discount_type: this.paymentDiscount?.type || "Percentage", discount_value: this.paymentDiscount?.value || 0, discount_reason: this.paymentDiscount?.reason || "", discount_approval_code: this.paymentDiscountApprovalCode || null, discount_approval_approver: this.paymentDiscountApprovalApprover || null })
+				: await this.call("pay_order", { order_name: this.state.order_name, payments: JSON.stringify(payments), guest_breakdown: isSplit ? JSON.stringify(guestRows) : null, discount_type: this.paymentDiscount?.type || "Percentage", discount_value: this.paymentDiscount?.value || 0, discount_reason: this.paymentDiscount?.reason || "", discount_approval_code: this.paymentDiscountApprovalCode || null, discount_approval_approver: this.paymentDiscountApprovalApprover || null });
 			paymentRecorded = true;
-			this.state.order_status = "Paid"; this.state.last_invoice = result.pos_invoice;
+			if (activeGuestPayment) {
+				if (result.guest_checks?.length) this.guestCheckState = { order_name: this.state.order_name, guest_checks: result.guest_checks };
+				if (this.state.totals && result.order_grand_total !== undefined) this.state.totals.grand_total = Number(result.order_grand_total || 0);
+				if (this.state.totals && result.order_discount_amount !== undefined) this.state.totals.discount_amount = Number(result.order_discount_amount || 0);
+				const check = this.guestCheckState?.guest_checks.find((row) => row.name === activeGuestPayment.guest_check_name);
+				if (check) { check.status = "Paid"; check.pos_invoice = result.pos_invoice; }
+				const guest = this.paymentGuests?.[activeGuestPayment.index];
+				if (guest) guest.paid = true;
+			}
 			if (print) {
 				try {
-					const html = await this.call("get_pos_invoice_print_html", { order_name: this.state.order_name });
+					const html = await this.call("get_pos_invoice_print_html", { order_name: this.state.order_name, ...(activeGuestPayment ? { invoice_name: result.pos_invoice } : {}) });
 					printWindow.document.open(); printWindow.document.write(html); printWindow.document.close();
 					setTimeout(() => printWindow.print(), 500);
 				} catch (error) {
@@ -1359,6 +1806,13 @@ class RMSPointOfSale {
 					frappe.msgprint({ title: __("Payment recorded; print unavailable"), message: __("The payment was recorded as {0}, but the receipt could not be prepared. Reprint it from Sales History.", [result.pos_invoice]), indicator: "orange" });
 				}
 			}
+			if (activeGuestPayment && result.status !== "Paid") {
+				this.activeGuestPayment = null;
+				this.showPaymentScreen();
+				return;
+			}
+			this.state.order_status = "Paid"; this.state.last_invoice = result.pos_invoice;
+			if (activeGuestPayment) this.guestCheckState = null;
 			this.page.main.find("[data-screen]").prop("hidden", true);
 			this.page.main.find(".rms-pos-shell").prop("hidden", false);
 			this.onAction("new-sale");
@@ -1368,11 +1822,23 @@ class RMSPointOfSale {
 			if (!paymentRecorded) paymentButtons.prop("disabled", false);
 		}
 	}
+
+	async ensureGuestChecks() {
+		if (this.guestCheckState?.order_name === this.state.order_name) return this.guestCheckState.guest_checks;
+		const guest_checks = [...this.page.main[0].querySelectorAll(".rms-guest-check")].map((card, index) => ({
+			guest_name: (card.querySelector("[data-guest-name]").value || __("Guest {0}", [index + 1])).trim(),
+			items: Object.entries(this.paymentItemAssignments || {}).flatMap(([itemName, allocation]) => Number(allocation?.[index] || 0) > 0 ? [{ name: itemName, qty: Number(allocation[index]) }] : []),
+		}));
+		const result = await this.call("save_guest_check_allocations", { order_name: this.state.order_name, guest_checks: JSON.stringify(guest_checks) });
+		this.guestCheckState = { order_name: this.state.order_name, guest_checks: result.guest_checks };
+		return result.guest_checks;
+	}
+
 	async showSalesHistory() {
 		if (!this.state.store) return frappe.msgprint(__("Select a Store to view sales history."));
 		try {
 			const sales = await this.call("get_pos_sales_history", { store: this.state.store });
-			const rows = sales.map((sale) => `<tr><td><b>${this.escape(sale.pos_invoice)}</b><small>${this.escape(sale.name)} · ${this.escape(sale.order_type || "")}${sale.dining_table ? ` · ${this.escape(sale.dining_table)}` : ""}</small></td><td>${this.currency(sale.grand_total)}</td><td>${this.escape(__(sale.invoice_status || "Paid"))}</td><td>${this.state.permissions.can_reprint_receipts ? `<button type="button" class="btn btn-default btn-xs" data-reprint-order="${this.escape(sale.name)}">${__("Reprint")}</button>` : ""}</td></tr>`).join("");
+			const rows = sales.map((sale) => `<tr><td><b>${this.escape(sale.pos_invoice)}</b><small>${this.escape(sale.name)} · ${this.escape(sale.guest_name || sale.order_type || "")}${sale.dining_table ? ` · ${this.escape(sale.dining_table)}` : ""}</small></td><td>${this.currency(sale.grand_total)}</td><td>${this.escape(__(sale.invoice_status || "Paid"))}</td><td>${this.state.permissions.can_reprint_receipts ? `<button type="button" class="btn btn-default btn-xs" data-reprint-order="${this.escape(sale.name)}" data-reprint-invoice="${this.escape(sale.pos_invoice)}">${__("Reprint")}</button>` : ""}</td></tr>`).join("");
 			const html = rows ? `<div class="rms-pos-sales-history"><table class="table table-bordered"><thead><tr><th>${__("Invoice")}</th><th>${__("Total")}</th><th>${__("Status")}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p>${__("No paid invoices are available in this Store for your account.")}</p>`;
 			const dialog = new frappe.ui.Dialog({ title: __("Closed Sales and Reprints"), size: "large",
 				fields: [{ fieldtype: "HTML", fieldname: "sales_history", options: html }],
@@ -1382,7 +1848,7 @@ class RMSPointOfSale {
 				const printWindow = window.open("about:blank", "_blank");
 				if (!printWindow) return frappe.msgprint(__("Allow pop-ups to open the receipt for reprinting."));
 				try {
-					const html = await this.call("get_pos_invoice_print_html", { order_name: event.currentTarget.dataset.reprintOrder });
+					const html = await this.call("get_pos_invoice_print_html", { order_name: event.currentTarget.dataset.reprintOrder, invoice_name: event.currentTarget.dataset.reprintInvoice });
 					printWindow.document.open(); printWindow.document.write(html); printWindow.document.close();
 					setTimeout(() => printWindow.print(), 700);
 				} catch (error) { printWindow.close(); this.showError(error); }
@@ -1461,6 +1927,10 @@ class RMSPointOfSale {
 			modifiers: row.modifiers.map((modifier) => ({ modifier_group: modifier.modifier_group, modifier_product: modifier.modifier_product, qty: modifier.qty })),
 			modifier_labels: row.modifiers.map((modifier) => ({ title: modifier.title || modifier.modifier_product, price: modifier.selling_price })) }));
 		this.state.totals = { subtotal: order.subtotal, discount_amount: order.discount_amount, tax_total: order.tax_total, grand_total: order.grand_total };
+		try {
+			const checks = await this.call("get_guest_checks", { order_name: order.name });
+			this.guestCheckState = checks.guest_checks?.length ? { order_name: order.name, guest_checks: checks.guest_checks } : null;
+		} catch (error) { this.guestCheckState = null; }
 		[this.state.categories, this.state.tables, this.state.products] = await Promise.all([
 			this.call("get_categories", { brand: this.state.brand, store: this.state.store }),
 			this.call("get_tables", { store: this.state.store, dining_area: this.state.dining_area }),

@@ -1,16 +1,20 @@
+import json
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
 import frappe
 
-from rms.api.pos import assert_store_access, cancel_confirmed_order_item, cancel_order, confirm_order, create_recipe_stock_entry, discount_exceeds_pos_user_limit, ensure_payment_rows_for_total, get_active_pos_user, get_kitchen_board, get_open_order_check_print_html, get_open_order_overview, get_owned_draft_order, get_pos_capabilities, get_pos_sales_history_filters, get_pos_user_scope_values, get_product_configuration, get_pos_invoice_print_html, get_store_open_orders, get_tables, is_pos_scope_allowed, merge_orders, pay_order, preview_order_discount, require_kitchen_capability, require_pos_action, require_pos_scope, set_kitchen_ticket_status, split_order, update_order_item_notes, validate_guest_payment_rows, validate_guest_item_allocations, validate_payment_change, validate_pos_discount_value, pos_discount_approval_context_hash, verify_pos_discount_manager_password
+from rms.api.pos import assert_store_access, cancel_confirmed_order_item, cancel_order, confirm_order, create_recipe_stock_entry, discount_exceeds_pos_user_limit, ensure_guest_check_allocations_unchanged, ensure_payment_rows_for_total, get_active_pos_user, get_kitchen_board, get_open_order_check_print_html, get_open_order_overview, get_owned_draft_order, get_pos_capabilities, get_pos_sales_history_filters, get_pos_user_scope_values, get_product_configuration, get_pos_invoice_print_html, get_store_open_orders, get_tables, is_pos_scope_allowed, merge_orders, pay_order, preview_order_discount, require_kitchen_capability, require_pos_action, require_pos_scope, resplit_open_guest_check, set_kitchen_ticket_status, split_order, update_order_item_notes, validate_guest_check_allocations, validate_guest_check_resplit, validate_guest_payment_rows, validate_guest_item_allocations, validate_payment_change, validate_pos_discount_value, pos_discount_approval_context_hash, verify_pos_discount_manager_password
 from rms.api.pos import allocate_change_to_order_payments
-from rms.rms.doctype.pos_order.pos_order import POSOrder
+from rms.rms.doctype.pos_order.pos_order import POSOrder, ensure_confirmed_guest_checks_unchanged, ensure_guest_check_item_append_only
 from rms.rms.doctype.kitchen_ticket.kitchen_ticket import KitchenTicket
 
 
 class TestPOSOrderOperations(unittest.TestCase):
+	def test_discount_preview_is_exposed_as_a_whitelisted_method(self):
+		frappe.is_whitelisted(preview_order_discount)
+
 	def test_product_configuration_returns_missing_regular_product_price_as_none(self):
 		product = frappe._dict(name="PRODUCT-1", title="Unpriced Tea", enabled=1, has_options=0, uom="Nos",
 			option_products=[], modifier_groups=[], modifier_options=[], resolve_price=lambda *args, **kwargs: None)
@@ -46,8 +50,8 @@ class TestPOSOrderOperations(unittest.TestCase):
 			{"guest": "Omar", "mode_of_payment": "Cash", "amount": 5.75},
 		], {"Cash"})
 		self.assertEqual(rows, [
-			{"guest": "Mariam", "mode_of_payment": "Cash", "amount": 4.25, "due_amount": 0.0, "items": [], "split_mode": "people"},
-			{"guest": "Omar", "mode_of_payment": "Cash", "amount": 5.75, "due_amount": 0.0, "items": [], "split_mode": "people"},
+			{"guest": "Mariam", "mode_of_payment": "Cash", "amount": 4.25, "due_amount": 4.25, "items": [], "split_mode": "amount"},
+			{"guest": "Omar", "mode_of_payment": "Cash", "amount": 5.75, "due_amount": 5.75, "items": [], "split_mode": "amount"},
 		])
 		self.assertEqual(totals, {"Cash": 10.0})
 
@@ -150,6 +154,38 @@ class TestPOSOrderOperations(unittest.TestCase):
 		self.assertEqual(calculate_discount.call_args.args, (100, 0, "Percentage", 20.0, "Net Total", 100))
 		order.validate_discount.assert_called_once_with(100, 0, 100)
 
+	def test_discount_preview_cannot_change_discount_after_a_guest_check_is_paid(self):
+		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="SESSION-1", subtotal=100,
+			discount_type="Percentage", discount_value=10, discount_reason="Existing discount",
+			guest_checks=[frappe._dict(status="Paid")], flags=frappe._dict())
+		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.assert_store_access"), \
+				patch("rms.api.pos.require_order_scope"), \
+				patch("rms.api.pos.frappe.get_doc", side_effect=[order, frappe._dict(manual_discount_scope="Net Total")]), \
+				patch("rms.api.pos.frappe.db.get_value", return_value="SESSION-1"), \
+				patch("rms.api.pos.frappe.session", frappe._dict(user="cashier@example.com")):
+			with self.assertRaisesRegex(frappe.ValidationError, "Use an open guest check to apply a discount"):
+				preview_order_discount("ORDER-1", "Percentage", 20, "Changed discount")
+
+	def test_open_guest_check_discount_preview_is_scoped_after_another_check_is_paid(self):
+		paid = frappe._dict(name="PAID", status="Paid", grand_total=40, discount_amount=0)
+		opened = frappe._dict(name="OPEN", status="Open", grand_total=60, discount_amount=0)
+		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="SESSION-1", discount_amount=0,
+			discount_scope="Net Total", guest_checks=[paid, opened])
+		store = frappe._dict(manual_discount_scope="Net Total")
+		preview = {"discount_amount": 5, "grand_total": 55, "subtotal": 60, "baseline_grand_total": 60,
+			"discount_value": 10, "discount_type": "Percentage", "discount_scope": "Net Total",
+			"discount_reason": "Tea", "requires_manager_approval": False, "approved_by": None, "approval_token": None}
+		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.assert_store_access"), \
+				patch("rms.api.pos.require_order_scope"), patch("rms.api.pos.frappe.get_doc", side_effect=[order, store]), \
+				patch("rms.api.pos.frappe.db.get_value", return_value="SESSION-1"), \
+				patch("rms.api.pos.frappe.session", frappe._dict(user="cashier@example.com")), \
+				patch("rms.api.pos.get_guest_check_discount_totals", return_value=preview) as totals, \
+				patch("rms.api.pos.discount_exceeds_pos_user_limit", return_value=False):
+			result = preview_order_discount("ORDER-1", "Percentage", 10, "Tea", guest_check_name="OPEN")
+		self.assertEqual(result["discount_amount"], 5)
+		self.assertEqual(result["grand_total"], 55)
+		self.assertEqual(paid.grand_total, 40, "the paid guest check remains untouched")
+		self.assertEqual(totals.call_args.args[:2], (order, opened))
 	def test_manager_password_mints_context_bound_one_time_approval_token(self):
 		challenge = frappe._dict(flags=frappe._dict(), insert=unittest.mock.Mock())
 		manager_user = frappe._dict(get_password=unittest.mock.Mock(return_value="manager-password"))
@@ -215,8 +251,226 @@ class TestPOSOrderOperations(unittest.TestCase):
 			{"split_mode": "items", "due_amount": 40, "items": ["ORDER-ITEM-2"]},
 		]
 		validate_guest_item_allocations(guest_rows, ["ORDER-ITEM-1", "ORDER-ITEM-2"], 100)
-		with self.assertRaisesRegex(frappe.ValidationError, "Assign every active order item"):
+		with self.assertRaisesRegex(frappe.ValidationError, "Assign 100% of every active order item"):
 			validate_guest_item_allocations(guest_rows, ["ORDER-ITEM-1", "ORDER-ITEM-2", "ORDER-ITEM-3"], 100)
+
+	def test_single_item_can_be_split_between_people_by_percentage(self):
+		guest_rows = [
+			{"split_mode": "items", "due_amount": 25, "items": [{"item_name": "ORDER-ITEM-1", "share": 0.25}]},
+			{"split_mode": "items", "due_amount": 75, "items": [{"item_name": "ORDER-ITEM-1", "share": 0.75}]},
+		]
+		validate_guest_item_allocations(guest_rows, ["ORDER-ITEM-1"], 100, {"ORDER-ITEM-1": 100})
+
+	def test_item_split_requires_all_shares_to_total_one_hundred_percent(self):
+		guest_rows = [
+			{"split_mode": "items", "due_amount": 50, "items": [{"item_name": "ORDER-ITEM-1", "share": 0.5}]},
+			{"split_mode": "items", "due_amount": 50, "items": [{"item_name": "ORDER-ITEM-1", "share": 0.25}]},
+		]
+		with self.assertRaisesRegex(frappe.ValidationError, "Assign 100% of every active order item"):
+			validate_guest_item_allocations(guest_rows, ["ORDER-ITEM-1"], 100, {"ORDER-ITEM-1": 100})
+
+	def test_guest_checks_assign_each_complete_order_line_to_one_guest(self):
+		order_items = [frappe._dict(name="LINE-LEMON", qty=1, cancelled_qty=0),
+			frappe._dict(name="LINE-TEA", qty=1, cancelled_qty=0)]
+		checks = [
+			{"guest_name": "Guest 1", "items": ["LINE-LEMON"]},
+			{"guest_name": "Guest 2", "items": ["LINE-TEA"]},
+		]
+		result = validate_guest_check_allocations(order_items, checks)
+		self.assertEqual([row["guest_name"] for row in result], ["Guest 1", "Guest 2"])
+		self.assertEqual([row["items"] for row in result], [[{"name": "LINE-LEMON", "qty": 1}], [{"name": "LINE-TEA", "qty": 1}]])
+
+	def test_guest_checks_reject_duplicate_or_unassigned_order_lines(self):
+		order_items = [frappe._dict(name="LINE-LEMON", qty=1, cancelled_qty=0),
+			frappe._dict(name="LINE-TEA", qty=1, cancelled_qty=0)]
+		with self.assertRaisesRegex(frappe.ValidationError, "Assign every active order item exactly once"):
+			validate_guest_check_allocations(order_items, [
+				{"guest_name": "Guest 1", "items": ["LINE-LEMON", "LINE-TEA"]},
+				{"guest_name": "Guest 2", "items": ["LINE-LEMON"]},
+			])
+		result = validate_guest_check_allocations(order_items, [
+			{"guest_name": "Guest 1", "items": ["LINE-LEMON", "LINE-TEA"]},
+			{"guest_name": "Guest 2", "items": []},
+		])
+		self.assertEqual(result[1]["items"], [], "new guest can start with no quantity assigned")
+
+	def test_guest_checks_can_split_quantities_from_one_order_line(self):
+		order_items = [frappe._dict(name="LINE-LEMON", qty=7, cancelled_qty=0),
+			frappe._dict(name="LINE-TEA", qty=2, cancelled_qty=0)]
+		result = validate_guest_check_allocations(order_items, [
+			{"guest_name": "Guest 1", "items": [{"name": "LINE-LEMON", "qty": 5}, {"name": "LINE-TEA", "qty": 2}]},
+			{"guest_name": "Guest 2", "items": [{"name": "LINE-LEMON", "qty": 2}]},
+		])
+		self.assertEqual(result[0]["items"][0]["qty"], 5)
+		self.assertEqual(result[1]["items"][0]["qty"], 2)
+
+	def test_guest_checks_reject_fractional_quantity_for_whole_number_items(self):
+		order_items = [frappe._dict(name="LINE-LEMON", qty=3, cancelled_qty=0, must_be_whole_number=True),
+			frappe._dict(name="LINE-TEA", qty=1, cancelled_qty=0)]
+		with self.assertRaisesRegex(frappe.ValidationError, "Whole-number items cannot be split into fractional quantities"):
+			validate_guest_check_allocations(order_items, [
+				{"guest_name": "Guest 1", "items": [{"name": "LINE-LEMON", "qty": 2.5}, "LINE-TEA"]},
+				{"guest_name": "Guest 2", "items": [{"name": "LINE-LEMON", "qty": 0.5}]},
+			])
+
+	def test_confirmed_guest_checks_cannot_be_changed_when_order_is_saved(self):
+		item = frappe._dict(name="LINE-1", selling_product="TEA", option_parent=None, item="TEA", qty=2,
+			cancelled_qty=0, uom="Nos", selling_price=10, price_list="Standard", amount=20, warehouse="WH",
+			preparation_area="KITCHEN", notes=None, modifiers="[]", recipe_snapshot="[]")
+		check = frappe._dict(guest_name="Guest 1", status="Open", items_json='[{"name":"LINE-1","qty":2}]')
+		previous = SimpleNamespace(items=[item], guest_checks=[check])
+		current = SimpleNamespace(items=[frappe._dict(item)], guest_checks=[frappe._dict(check, status="Paid", pos_invoice="INV-1")])
+		ensure_confirmed_guest_checks_unchanged(previous, current)
+		current.guest_checks[0].guest_name = "Guest 2"
+		with self.assertRaisesRegex(frappe.ValidationError, "Guest checks are confirmed and cannot be changed"):
+			ensure_confirmed_guest_checks_unchanged(previous, current)
+		current.guest_checks[0].guest_name = "Guest 1"
+		current.items[0].qty = 1
+		with self.assertRaisesRegex(frappe.ValidationError, "Order items cannot be changed after guest checks are confirmed"):
+			ensure_confirmed_guest_checks_unchanged(previous, current)
+
+	def test_confirmed_guest_checks_cannot_be_reassigned(self):
+		items = [frappe._dict(name="LINE-LEMON", qty=2, cancelled_qty=0),
+			frappe._dict(name="LINE-TEA", qty=1, cancelled_qty=0)]
+		order = SimpleNamespace(items=items, guest_checks=[
+			frappe._dict(guest_name="Guest 1", status="Open", items_json='[{"name":"LINE-LEMON","qty":2}]'),
+			frappe._dict(guest_name="Guest 2", status="Open", items_json='[{"name":"LINE-TEA","qty":1}]'),
+		])
+		assert ensure_guest_check_allocations_unchanged(order, [
+			{"guest_name": "Guest 1", "items": [{"name": "LINE-LEMON", "qty": 2}]},
+			{"guest_name": "Guest 2", "items": [{"name": "LINE-TEA", "qty": 1}]},
+		]) is True
+		with self.assertRaisesRegex(frappe.ValidationError, "Guest checks are already confirmed and cannot be changed"):
+			ensure_guest_check_allocations_unchanged(order, [
+				{"guest_name": "Guest 1", "items": [{"name": "LINE-LEMON", "qty": 1}, {"name": "LINE-TEA", "qty": 1}]},
+				{"guest_name": "Guest 2", "items": [{"name": "LINE-LEMON", "qty": 1}]},
+			])
+
+	def test_open_guest_check_can_be_resplit_without_changing_paid_or_other_open_checks(self):
+		items = [frappe._dict(name="TEA", qty=1, cancelled_qty=0), frappe._dict(name="LEMON", qty=1, cancelled_qty=0), frappe._dict(name="MEAL", qty=1, cancelled_qty=0)]
+		checks = [
+			frappe._dict(name="PAID-CHECK", guest_name="Guest 1", status="Paid", items_json='[{"name":"TEA","qty":1}]'),
+			frappe._dict(name="TARGET-CHECK", guest_name="Guest 2", status="Open", items_json='[{"name":"LEMON","qty":1},{"name":"MEAL","qty":1}]'),
+			frappe._dict(name="OTHER-CHECK", guest_name="Guest 3", status="Open", items_json='[]'),
+		]
+		result = validate_guest_check_resplit(items, checks, "TARGET-CHECK", [
+			{"guest_name": "Guest 2", "items": ["LEMON"]},
+			{"guest_name": "Guest 4", "items": ["MEAL"]},
+		])
+		self.assertEqual([row["guest_name"] for row in result], ["Guest 1", "Guest 2", "Guest 4", "Guest 3"])
+		self.assertEqual(result[0]["items"], [{"name": "TEA", "qty": 1}])
+		self.assertEqual(result[1]["items"], [{"name": "LEMON", "qty": 1}])
+		self.assertEqual(result[2]["items"], [{"name": "MEAL", "qty": 1}])
+		self.assertEqual(result[3]["items"], [])
+
+	def test_paid_guest_check_cannot_be_resplit(self):
+		items = [frappe._dict(name="TEA", qty=1, cancelled_qty=0), frappe._dict(name="LEMON", qty=1, cancelled_qty=0)]
+		checks = [frappe._dict(name="PAID-CHECK", guest_name="Guest 1", status="Paid", items_json='[{"name":"TEA","qty":1},{"name":"LEMON","qty":1}]')]
+		with self.assertRaisesRegex(frappe.ValidationError, "Only an open guest check can be split again"):
+			validate_guest_check_resplit(items, checks, "PAID-CHECK", [
+				{"guest_name": "Guest 1", "items": ["TEA"]}, {"guest_name": "Guest 2", "items": ["LEMON"]},
+			])
+
+	def test_resplitting_persists_only_the_selected_open_check(self):
+		def item(name, price):
+			return frappe._dict(name=name, qty=1, cancelled_qty=0, selling_price=price, modifiers="[]")
+		paid = frappe._dict(name="PAID-CHECK", guest_name="Guest 1", status="Paid", grand_total=25,
+			items_json='[{"name":"PAID-LINE","qty":1}]', pos_invoice="INV-1", payments_json='[]')
+		target = frappe._dict(name="TARGET-CHECK", guest_name="Guest 2", status="Open", grand_total=70,
+			items_json='[{"name":"LEMON","qty":1},{"name":"TEA","qty":1}]', pos_invoice=None, payments_json='[]')
+		other = frappe._dict(name="OTHER-CHECK", guest_name="Guest 3", status="Open", grand_total=35,
+			items_json='[{"name":"MEAL","qty":1}]', pos_invoice=None, payments_json='[]')
+		checks = [paid, target, other]
+		order = SimpleNamespace(name="ORDER-1", store="STORE-1", cashier_session=None, status="Confirmed", pos_invoice=None,
+			items=[item("PAID-LINE", 25), item("LEMON", 50), item("TEA", 20), item("MEAL", 35)], guest_checks=checks, discount_amount=0, discount_scope="Net Total",
+			flags=frappe._dict())
+		order.append = lambda field, values: checks.append(frappe._dict(name="NEW-CHECK", **values))
+		order.save = lambda **kwargs: None
+		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.assert_store_access"), \
+				patch("rms.api.pos.require_order_scope"), patch("rms.api.pos.frappe.get_doc", return_value=order), \
+				patch("rms.api.pos.get_guest_checks", return_value={"guest_checks": []}), \
+				patch("rms.api.pos.get_guest_check_discount_totals", side_effect=lambda current_order, check: {"discount_amount": 0, "grand_total": check.grand_total, "final_tax_total": 0}):
+			resplit_open_guest_check("ORDER-1", "TARGET-CHECK", [
+				{"guest_name": "Guest 2", "items": ["LEMON"]},
+				{"guest_name": "Guest 4", "items": ["TEA"]},
+			])
+		self.assertEqual((paid.status, paid.grand_total, paid.pos_invoice, paid.items_json),
+			("Paid", 25, "INV-1", '[{"name":"PAID-LINE","qty":1}]'))
+		self.assertEqual((other.status, other.grand_total, other.items_json),
+			("Open", 35, '[{"name":"MEAL","qty":1}]'))
+		self.assertEqual((target.guest_name, target.grand_total, target.items_json),
+			("Guest 2", 50, '[{"name": "LEMON", "qty": 1.0}]'))
+		self.assertEqual(checks[-1].guest_name, "Guest 4")
+		self.assertEqual(checks[-1].grand_total, 20)
+
+	def test_appended_order_items_must_be_assigned_to_first_open_check(self):
+		def item(name):
+			return frappe._dict(name=name, selling_product="TEA", option_parent=None, item="TEA", qty=1,
+				cancelled_qty=0, uom="Nos", selling_price=10, price_list="Standard", amount=10, warehouse="WH",
+				preparation_area="KITCHEN", notes=None, modifiers="[]", recipe_snapshot="[]")
+		old_checks = [
+			frappe._dict(name="PAID", guest_name="Guest 1", status="Paid", pos_invoice="INV-1", grand_total=10,
+				items_json='[{"name":"LINE-1","qty":1}]'),
+			frappe._dict(name="OPEN", guest_name="Guest 2", status="Open", pos_invoice=None, grand_total=10,
+				items_json='[{"name":"LINE-2","qty":1}]'),
+		]
+		previous = SimpleNamespace(items=[item("LINE-1"), item("LINE-2")], guest_checks=old_checks)
+		current_checks = [frappe._dict(old_checks[0]), frappe._dict(old_checks[1], grand_total=20,
+			items_json='[{"name":"LINE-2","qty":1},{"name":"LINE-3","qty":1}]')]
+		current = SimpleNamespace(items=[item("LINE-1"), item("LINE-2"), item("LINE-3")], guest_checks=current_checks)
+		ensure_guest_check_item_append_only(previous, current)
+		current_checks[1].items_json = '[{"name":"LINE-2","qty":1}]'
+		with self.assertRaisesRegex(frappe.ValidationError, "New items must be assigned to the first open guest check"):
+			ensure_guest_check_item_append_only(previous, current)
+
+	def test_save_order_gives_appended_items_stable_names_before_guest_check_assignment(self):
+		from rms.api.pos import save_order
+
+		new_child = frappe.new_doc("POS Order").append("items", {"name": "LINE-NEW", "__islocal": 1})
+		self.assertTrue(new_child.is_new(), "a generated child name must still be inserted as a new row")
+		open_check = frappe._dict(name="CHECK-OPEN", guest_name="Guest 2", status="Open", pos_invoice=None,
+			grand_total=10, items_json='[{"name":"LINE-OLD","qty":1}]')
+		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="SESSION-1", status="Confirmed",
+			restaurant_brand="BRAND-1", order_type="Takeaway", subtotal=20, tax_total=0, grand_total=20,
+			sales_taxes_and_charges_template=None, items=[frappe._dict(name="LINE-OLD", qty=1)], guest_checks=[open_check],
+			flags=frappe._dict())
+		def append_item(fieldname, values):
+			self.assertEqual(fieldname, "items")
+			row = frappe._dict(values)
+			order["items"].append(row)
+			return row
+		order.append = append_item
+		order.is_new = lambda: False
+		order.save = lambda **kwargs: None
+		store = frappe._dict(name="STORE-1")
+		session = frappe._dict(name="SESSION-1", status="Open", user=frappe.session.user)
+		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.assert_store_access", return_value=store), \
+				patch("rms.api.pos.get_user_session", return_value=session), patch("rms.api.pos.require_order_scope"), \
+				patch("rms.api.pos.get_brands", return_value=[{"name": "BRAND-1"}]), \
+				patch("rms.api.pos.get_order_types", return_value=[{"name": "Takeaway"}]), \
+				patch("rms.api.pos.frappe.get_doc", return_value=order), \
+				patch("rms.api.pos.frappe.generate_hash", return_value="LINE-NEW"), \
+				patch("rms.api.pos.get_guest_checks", return_value={"guest_checks": []}):
+			result = save_order(json.dumps({"name": "ORDER-1", "store": "STORE-1", "restaurant_brand": "BRAND-1",
+				"order_type": "Takeaway", "items": [{"selling_product": "TEA", "qty": 1}]}))
+		self.assertEqual(result["appended_items"], [{"client_key": "", "name": "LINE-NEW"}])
+		self.assertEqual(order["items"][-1]["__islocal"], 1)
+		self.assertIn('"name": "LINE-NEW"', open_check.items_json)
+
+	def test_guest_checks_reject_cancelled_and_single_line_item_splits(self):
+		with self.assertRaisesRegex(frappe.ValidationError, "at least two active order items"):
+			validate_guest_check_allocations([frappe._dict(name="LINE-TEA", qty=1, cancelled_qty=0)], [
+				{"guest_name": "Guest 1", "items": ["LINE-TEA"]},
+				{"guest_name": "Guest 2", "items": []},
+			])
+		order_items = [frappe._dict(name="LINE-LEMON", qty=1, cancelled_qty=0),
+			frappe._dict(name="LINE-TEA", qty=1, cancelled_qty=0),
+			frappe._dict(name="LINE-CANCELLED", qty=1, cancelled_qty=1)]
+		with self.assertRaisesRegex(frappe.ValidationError, "Assign valid active order items"):
+			validate_guest_check_allocations(order_items, [
+				{"guest_name": "Guest 1", "items": ["LINE-LEMON", "LINE-CANCELLED"]},
+				{"guest_name": "Guest 2", "items": ["LINE-TEA"]},
+			])
 
 	def _call_pay_order_with_guest_rows(self, guest_rows):
 		order = frappe._dict(
@@ -253,6 +507,15 @@ class TestPOSOrderOperations(unittest.TestCase):
 				{"guest": "  mariam ", "mode_of_payment": "Cash", "amount": 5},
 			])
 
+	def test_legacy_percentage_item_split_cannot_pay_the_whole_order(self):
+		with self.assertRaisesRegex(frappe.ValidationError, "paid one guest check at a time"):
+			self._call_pay_order_with_guest_rows([
+				{"guest": "Mariam", "mode_of_payment": "Cash", "amount": 5, "split_mode": "items",
+				 "items": [{"item_name": "LINE-1", "share": 0.5}]},
+				{"guest": "Omar", "mode_of_payment": "Cash", "amount": 5, "split_mode": "items",
+				 "items": [{"item_name": "LINE-1", "share": 0.5}]},
+			])
+
 	def test_unbalanced_payment_does_not_save_discount_to_the_order(self):
 		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="SESSION-1", status="Confirmed",
 			pos_invoice=None, customer="CUSTOMER-1", subtotal=100, grand_total=10, discount_value=0,
@@ -262,6 +525,7 @@ class TestPOSOrderOperations(unittest.TestCase):
 		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.assert_store_access"), \
 				patch("rms.api.pos.require_order_scope"), patch("rms.api.pos.frappe.get_doc", side_effect=[order, frappe._dict(manual_discount_scope="Net Total")]), \
 				patch("rms.api.pos.frappe.db.get_value", return_value="cashier@example.com"), \
+				patch("rms.api.pos.discount_exceeds_pos_user_limit", return_value=False), \
 				patch("rms.api.pos.session_payment_rows", return_value=[frappe._dict(mode_of_payment="Cash")]), \
 				patch("rms.api.pos.frappe.session", frappe._dict(user="cashier@example.com")):
 			with self.assertRaisesRegex(frappe.ValidationError, "Payment amounts must cover"):
@@ -770,6 +1034,15 @@ class TestPOSOrderOperations(unittest.TestCase):
 	def test_confirmed_item_cancellation_is_manager_only(self):
 		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.frappe.get_roles", return_value=["POS Cashier"]):
 			with self.assertRaisesRegex(frappe.PermissionError, "POS Manager"):
+				cancel_confirmed_order_item("ORDER-1", "ROW-1", 1, "Customer changed mind")
+
+	def test_confirmed_guest_split_locks_order_item_cancellation(self):
+		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="SESSION-1", items=[],
+			guest_checks=[frappe._dict(status="Open")])
+		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.frappe.get_doc", return_value=order), \
+				patch("rms.api.pos.assert_store_access"), patch("rms.api.pos.require_order_scope"), \
+				patch("rms.api.pos.frappe.get_roles", return_value=["POS Manager"]):
+			with self.assertRaisesRegex(frappe.ValidationError, "Items cannot be changed after guest checks are confirmed"):
 				cancel_confirmed_order_item("ORDER-1", "ROW-1", 1, "Customer changed mind")
 
 	def test_unsent_order_item_comment_is_saved_for_same_cashier(self):
