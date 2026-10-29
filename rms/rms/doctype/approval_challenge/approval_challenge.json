@@ -5,10 +5,10 @@
   "engine": "InnoDB",
   "autoname": "naming_series:",
   "naming_rule": "By \"Naming Series\" field",
-  "title_field": "name",
   "search_fields": "subject_doctype,subject_name,requester,approver",
   "sort_field": "creation",
   "sort_order": "DESC",
+  "title_field": "",
   "track_changes": 1,
   "field_order": ["naming_series", "scope_section", "store", "subject_doctype", "subject_name", "action", "requester", "approver", "status", "code_hash", "approval_context_hash", "expires_at", "failed_attempts", "used_at"],
   "fields": [

@@ -18,10 +18,10 @@ add_to_apps_screen = [
 	}
 ]
 
-app_include_js = ["/assets/rms/js/rms_desk.js?v=desk-a-24"]
+app_include_js = ["/assets/rms/js/rms_desk.js?v=desk-a-35"]
 app_include_css = [
-	"/assets/rms/css/rms_desk.css?v=desk-a-6",
-	"/assets/rms/css/point_of_sale.css?v=pos-a-47",
+	"/assets/rms/css/rms_desk.css?v=desk-a-8",
+	"/assets/rms/css/point_of_sale.css?v=pos-a-57",
 ]
 web_include_css = ["/assets/rms/css/rms_login.css"]
 
@@ -30,6 +30,37 @@ after_migrate = "rms.setup.ensure_pos_roles"
 from rms.streaming import doc_events as rms_sync_doc_events
 
 doc_events = rms_sync_doc_events
+
+extend_doctype_class = {
+	"POS Invoice": "rms.pos_rounding.POSInvoiceRoundingMixin",
+}
+
+# Transaction Deletion Record must keep RMS catalog and setup records intact.
+company_data_to_be_ignored = [
+	"Selling Product",
+	"Product Category",
+	"Restaurant Brand",
+	"Store",
+	"Store Menu",
+	"Store Brand Assignment",
+	"Store Working Hour",
+	"Store Order Type Tax",
+	"Store User Assignment",
+	"Dining Area",
+	"Dining Table",
+	"Preparation Area",
+	"Modifier Group",
+	"Order Type",
+	"Order Type Account Mapping",
+	"POS User",
+	"POS User Store",
+	"POS User Brand",
+	"POS User Preparation Area",
+	"POS User Order Type",
+	"Expense Category",
+	"Print Device",
+	"RMS Sync Settings",
+]
 
 doctype_js = {
 	"POS User": "public/js/pos_user.js",

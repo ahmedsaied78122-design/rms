@@ -2,13 +2,14 @@
   "doctype": "DocType",
   "name": "Shift Expense",
   "module": "RMS",
+  "is_submittable": 1,
   "engine": "InnoDB",
   "autoname": "naming_series:",
   "naming_rule": "By \"Naming Series\" field",
-  "title_field": "name",
   "search_fields": "cashier_session,expense_category,mode_of_payment",
   "sort_field": "creation",
   "sort_order": "DESC",
+  "title_field": "",
   "track_changes": 1,
   "field_order": ["naming_series", "overview_section", "status", "cashier_session", "store", "company", "cashier", "business_date", "currency", "expense_section", "expense_category", "expense_account", "cost_center", "mode_of_payment", "payment_account", "amount", "remarks", "attachment", "posting_section", "journal_entry", "approver", "approved_at", "rejected_by", "rejected_at", "rejection_reason"],
   "fields": [
@@ -39,8 +40,8 @@
     {"fieldname": "rejection_reason", "fieldtype": "Small Text", "label": "Rejection Reason", "read_only": 1}
   ],
   "permissions": [
-    {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1},
-    {"role": "POS Manager", "read": 1, "write": 1, "create": 1, "report": 1},
+    {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "submit": 1, "report": 1},
+    {"role": "POS Manager", "read": 1, "write": 1, "create": 1, "submit": 1, "report": 1},
     {"role": "POS Cashier", "read": 1}
   ]
 }

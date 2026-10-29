@@ -7,15 +7,21 @@ from rms.snapshots import parse_json_rows
 
 
 def get_return_refund_total(invoice):
-	return abs(flt(invoice.grand_total))
+	rounded_total = getattr(invoice, "rounded_total", None)
+	return abs(flt(invoice.grand_total if rounded_total is None else rounded_total))
 
 
-def normalize_return_rounding(invoice):
-	invoice.rounded_total = invoice.grand_total
-	invoice.rounding_adjustment = 0
-	if hasattr(invoice, "base_grand_total"):
-		invoice.base_rounded_total = invoice.base_grand_total
-		invoice.base_rounding_adjustment = 0
+def normalize_return_rounding(invoice, method=None):
+	if method:
+		from rms.pos_rounding import apply_pos_brand_rounding
+
+		apply_pos_brand_rounding(invoice, method)
+	else:
+		invoice.rounded_total = invoice.grand_total
+		invoice.rounding_adjustment = 0
+		if hasattr(invoice, "base_grand_total"):
+			invoice.base_rounded_total = invoice.base_grand_total
+			invoice.base_rounding_adjustment = 0
 	return invoice
 
 
@@ -38,16 +44,16 @@ class POSReturn(Document):
 	def validate_request(self):
 		if not self.source_pos_invoice or not self.cashier_session:
 			frappe.throw(_("Source POS Invoice and Cashier Session are required."))
+		from rms.rms.doctype.pos_action_reason.pos_action_reason import validate_pos_action_reason
+		self.reason = validate_pos_action_reason(self.action_reason, "Return")
 		session = frappe.db.get_value("Cashier Session", self.cashier_session,
 			["store", "user", "pos_profile", "status"], as_dict=True)
 		source = frappe.db.get_value("POS Invoice", self.source_pos_invoice,
-			["docstatus", "is_return", "pos_profile", "customer", "owner", "return_against"], as_dict=True)
+			["docstatus", "is_return", "customer"], as_dict=True)
 		if not session or session.status != "Open" or session.store != self.store:
 			frappe.throw(_("Return requires an Open Cashier Session for the selected Store."))
-		if not source or source.docstatus != 1 or source.is_return or source.pos_profile != session.pos_profile:
-			frappe.throw(_("Choose a submitted, non-return POS Invoice from this Store's POS Profile."))
-		if source.owner != session.user:
-			frappe.throw(_("Only sales created by the active cashier can be returned in this session."))
+		if not source or source.docstatus != 1 or source.is_return:
+			frappe.throw(_("Choose a submitted, non-return POS Invoice from this Store."))
 		self.customer = source.customer
 		if not self.items or not self.payments:
 			frappe.throw(_("Add returned items and refund payments."))
@@ -85,9 +91,9 @@ class POSReturn(Document):
 		order_item = frappe.db.get_value("POS Order Item", source_line.rms_pos_order_item,
 			["parent", "item", "warehouse", "modifiers"], as_dict=True)
 		order = frappe.db.get_value("POS Order", order_item.parent if order_item else None,
-			["status", "cashier_session", "store"], as_dict=True) if order_item else None
-		if not order or order.status != "Paid" or order.cashier_session != self.cashier_session or order.store != self.store:
-			frappe.throw(_("Return line must belong to a paid RMS order in the active session."))
+			["status", "store"], as_dict=True) if order_item else None
+		if not order or order.status != "Paid" or order.store != self.store:
+			frappe.throw(_("Return line must belong to a paid RMS order in this Store."))
 		modifier_items = {row.get("item") for row in parse_json_rows(order_item.modifiers)}
 		if order_item.item != source_line.item_code and source_line.item_code not in modifier_items:
 			frappe.throw(_("Source Item must match the product or one of its saved modifiers."))
@@ -140,8 +146,19 @@ class POSReturn(Document):
 				tax.tax_amount = -abs(flt(source_tax.tax_amount) if source_tax else flt(tax.tax_amount)) * actual_ratio
 		invoice.update_stock = 0
 		invoice.set("payments", [])
+		rounding_method = self.get_source_rounding_method()
+		invoice.flags.rms_pos_rounding_method = rounding_method
 		invoice.calculate_taxes_and_totals()
-		return normalize_return_rounding(invoice)
+		return normalize_return_rounding(invoice, rounding_method)
+
+	def get_source_rounding_method(self):
+		order_name = frappe.db.get_value("POS Order", {"pos_invoice": self.source_pos_invoice}, "name")
+		if not order_name:
+			order_name = frappe.db.get_value("POS Order Guest Check", {
+				"pos_invoice": self.source_pos_invoice, "status": "Paid",
+			}, "parent")
+		brand = frappe.db.get_value("POS Order", order_name, "restaurant_brand") if order_name else None
+		return (frappe.db.get_value("Restaurant Brand", brand, "pos_rounding_method") if brand else None) or "Nearest"
 
 	@staticmethod
 	def get_reserved_qty(source_item, exclude_return=None):
@@ -178,6 +195,8 @@ class POSReturn(Document):
 		return quantity
 
 	def build_stock_receipt_items(self):
+		if self.is_waste:
+			return []
 		items = []
 		for returned in self.items:
 			if returned.is_waste:

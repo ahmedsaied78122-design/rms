@@ -1,6 +1,6 @@
 // Refresh the Page scripts and discard the old duplicate-loaded cache once.
 (() => {
-const cacheVersion = "rms-page-cache-v24";
+const cacheVersion = "rms-page-cache-v34";
 	try {
 		if (localStorage.getItem(cacheVersion) !== "1") {
 			localStorage.removeItem("_page:point-of-sale");
@@ -29,6 +29,7 @@ const cacheVersion = "rms-page-cache-v24";
 			id: "rms-system-welcome",
 		});
 		toast.$el.attr({ dir: "rtl", "aria-label": "رسالة ترحيب من RMS" }).addClass("rms-system-welcome-toast");
+		toast.$el.closest(".es-toast-container").addClass("rms-system-welcome-container");
 		return true;
 	}
 

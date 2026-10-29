@@ -748,8 +748,19 @@ class POSOrder(Document):
 		if not self.payments:
 			frappe.throw(_("Add at least one payment before marking the order Paid."))
 		paid_total = sum(flt(row.amount) for row in self.payments)
-		if abs(paid_total - flt(self.grand_total)) > 0.01:
-			frappe.throw(_("Payment amounts must equal the order Grand Total."))
+		guest_invoice_names = [row.pos_invoice for row in (self.guest_checks or [])
+			if row.status == "Paid" and row.pos_invoice]
+		if guest_invoice_names:
+			expected_total = sum(flt(frappe.db.get_value("POS Invoice", name, "rounded_total"))
+				for name in guest_invoice_names)
+		elif self.pos_invoice:
+			expected_total = flt(frappe.db.get_value("POS Invoice", self.pos_invoice, "rounded_total"))
+		else:
+			from rms.pos_rounding import round_pos_payable
+			rounding_method = frappe.db.get_value("Restaurant Brand", self.restaurant_brand, "pos_rounding_method") or "Nearest"
+			expected_total = flt(round_pos_payable(self.grand_total, rounding_method), 2)
+		if abs(paid_total - expected_total) > 0.01:
+			frappe.throw(_("Payment amounts must equal the payable total."))
 
 	def validate_terminal_state(self):
 		previous = self.get_doc_before_save()

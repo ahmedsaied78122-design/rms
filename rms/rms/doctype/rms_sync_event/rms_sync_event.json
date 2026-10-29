@@ -5,10 +5,10 @@
   "engine": "InnoDB",
   "autoname": "naming_series:",
   "naming_rule": "By \"Naming Series\" field",
-  "title_field": "name",
   "search_fields": "source_doctype,source_name,idempotency_key",
   "sort_field": "creation",
   "sort_order": "ASC",
+  "title_field": "",
   "track_changes": 0,
   "field_order": ["naming_series", "event_section", "source_doctype", "source_name", "event_action", "schema_version", "source_modified", "captured_at", "idempotency_key", "payload_hash", "payload"],
   "fields": [

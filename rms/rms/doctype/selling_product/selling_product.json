@@ -18,6 +18,7 @@
     "product_category",
     "uom",
     "maintain_stock",
+    "allow_negative_stock",
     "image",
     "enabled",
     "sequence_id",
@@ -103,6 +104,14 @@
       "in_list_view": 1,
       "columns": 2,
       "read_only_depends_on": "eval:!doc.__islocal"
+    },
+    {
+      "fieldname": "allow_negative_stock",
+      "fieldtype": "Check",
+      "label": "Allow Negative Stock",
+      "default": "1",
+      "description": "Allow POS sales when this item's available stock is insufficient.",
+      "depends_on": "eval:doc.maintain_stock"
     },
     {
       "fieldname": "image",

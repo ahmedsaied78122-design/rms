@@ -1,3 +1,4 @@
 
 execute:frappe.get_attr("rms.patches.backfill_pos_order_item_confirmation_from_kitchen_tickets")()
+execute:frappe.get_attr("rms.patches.enable_negative_stock_by_default")()
 

@@ -26,7 +26,12 @@ class SellingProduct(Document):
 	def on_update(self):
 		if self.item and frappe.db.exists("Item", self.item):
 			frappe.db.set_value(
-				"Item", self.item, "disabled", 0 if self.enabled else 1, update_modified=False
+				"Item", self.item,
+				{
+					"disabled": 0 if self.enabled else 1,
+					"allow_negative_stock": int(bool(self.allow_negative_stock)),
+				},
+				update_modified=False,
 			)
 			self.sync_erpnext_prices()
 
@@ -79,6 +84,7 @@ class SellingProduct(Document):
 				"is_stock_item": 1 if self.maintain_stock else 0,
 				"is_sales_item": 1,
 				"is_purchase_item": 0,
+				"allow_negative_stock": int(bool(self.allow_negative_stock)),
 				"disabled": 0 if self.enabled else 1,
 				"image": self.image,
 			}

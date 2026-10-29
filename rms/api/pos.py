@@ -376,9 +376,11 @@ def get_brands(store_name):
 	for row in rows:
 		if allowed is not None and row.restaurant_brand not in allowed:
 			continue
-		brand = frappe.db.get_value("Restaurant Brand", row.restaurant_brand, ["title", "enabled"], as_dict=True)
+		brand = frappe.db.get_value("Restaurant Brand", row.restaurant_brand,
+			["title", "enabled", "pos_rounding_method"], as_dict=True)
 		if brand and brand.enabled:
-			result.append({"name": row.restaurant_brand, "title": brand.title, "is_default": bool(row.is_default)})
+			result.append({"name": row.restaurant_brand, "title": brand.title,
+				"pos_rounding_method": brand.pos_rounding_method or "Nearest", "is_default": bool(row.is_default)})
 	return result
 
 
@@ -1065,6 +1067,16 @@ def get_open_order_check_print_html(order_name, guest_check_name=None):
 		rows.append(f"<tr><td>{esc(title)}{details}</td><td>{qty:g}</td><td>{amount:,.2f}</td></tr>")
 	label = guest_check.guest_name if guest_check else (order.check_label or order.name)
 	printed_total = flt(guest_check.grand_total) if guest_check else flt(order.grand_total)
+	from rms.pos_rounding import round_pos_payable
+
+	rounding_method = frappe.db.get_value("Restaurant Brand", order.restaurant_brand, "pos_rounding_method") or "Nearest"
+	printed_total = flt(round_pos_payable(printed_total, rounding_method), 2)
+	if guest_check and guest_check.status == "Paid" and guest_check.pos_invoice:
+		invoice_totals = frappe.db.get_value("POS Invoice", guest_check.pos_invoice,
+			["rounded_total", "grand_total"], as_dict=True)
+		if invoice_totals:
+			printed_total = flt(invoice_totals.rounded_total if invoice_totals.rounded_total is not None
+				else invoice_totals.grand_total, 2)
 	return f"""<!doctype html><html><head><meta charset=\"utf-8\"><title>{esc(label)}</title>
 	<style>body{{font:14px Arial,sans-serif;color:#172e31;max-width:360px;margin:20px auto}}h1{{font-size:20px;margin:0}}p{{margin:6px 0;color:#546665}}table{{width:100%;border-collapse:collapse;margin-top:18px}}td{{padding:9px 3px;border-bottom:1px solid #dfe5e0;vertical-align:top}}td:nth-child(2),td:nth-child(3){{text-align:right;white-space:nowrap}}small{{display:block;color:#62716c;font-size:11px;margin-top:3px}}.note{{color:#945c19}}.total{{display:flex;justify-content:space-between;margin-top:18px;font-size:18px;font-weight:bold}}@media print{{body{{margin:0 auto}}}}</style></head>
 	<body><h1>{esc(label)}</h1><p>{esc(order.dining_table)} · {esc(order.status)}</p><p>{esc(order.store)} · {esc(order.modified)}</p>
@@ -1367,7 +1379,7 @@ def cancel_order(order_name):
 
 
 @frappe.whitelist()
-def cancel_confirmed_order_item(order_name, item_name, qty, reason):
+def cancel_confirmed_order_item(order_name, item_name, qty, action_reason):
 	"""Manager-only, audited cancellation of a previously confirmed order line."""
 	require_pos_action("can_cancel_orders")
 	if not (set(frappe.get_roles()) & {"POS Manager", "System Manager"}):
@@ -1382,6 +1394,8 @@ def cancel_confirmed_order_item(order_name, item_name, qty, reason):
 	row = next((entry for entry in doc.items if entry.name == item_name), None)
 	if not row:
 		frappe.throw(_("The selected item does not belong to this order."))
+	from rms.rms.doctype.pos_action_reason.pos_action_reason import validate_pos_action_reason
+	reason = validate_pos_action_reason(action_reason, "Confirmed Item Cancellation")
 	if any(check.status == "Paid" and item_name in get_guest_check_item_names(check)
 		for check in getattr(doc, "guest_checks", []) or []):
 		frappe.throw(_("An item on a paid guest check cannot be cancelled."))
@@ -1390,7 +1404,7 @@ def cancel_confirmed_order_item(order_name, item_name, qty, reason):
 	)
 	row.cancelled_qty = flt(row.cancelled_qty) + cancel_qty
 	doc.append("item_cancellations", {
-		"pos_order_item": row.name, "qty": cancel_qty, "reason": (reason or "").strip(),
+		"pos_order_item": row.name, "qty": cancel_qty, "action_reason": action_reason, "reason": reason,
 		"cancelled_by": frappe.session.user, "cancelled_at": now_datetime(),
 	})
 	for ticket_name in frappe.get_all("Kitchen Ticket", filters={"pos_order": doc.name}, pluck="name"):
@@ -2107,7 +2121,8 @@ def validate_guest_check_resplit(order_items, existing_checks, target_check_name
 		if name not in active_items:
 			frappe.throw(_("Guest check contains invalid item assignments."))
 		row = active_items[name]
-		target_items.append(frappe._dict(row, qty=get_active_order_item_qty(row.qty, row.cancelled_qty)
+		row_data = row.as_dict() if callable(getattr(row, "as_dict", None)) else row
+		target_items.append(frappe._dict(row_data, qty=get_active_order_item_qty(row.qty, row.cancelled_qty)
 			if quantity is None else quantity, cancelled_qty=0))
 	if len(target_items) < 2:
 		frappe.throw(_("By items requires at least two active order items."))
@@ -2325,12 +2340,23 @@ def get_guest_checks(order_name):
 	order = frappe.get_doc("POS Order", order_name)
 	assert_store_access(order.store)
 	require_order_scope(order)
+	from rms.pos_rounding import round_pos_payable
+
+	rounding_method = frappe.db.get_value("Restaurant Brand", order.restaurant_brand, "pos_rounding_method") or "Nearest"
 	active_items = [row for row in order.items if get_active_order_item_qty(row.qty, row.cancelled_qty) > 0]
 	checks = []
 	for row in order.guest_checks or []:
 		item_allocations = get_guest_check_item_allocations(row)
+		payable_total = flt(round_pos_payable(row.grand_total, rounding_method), 2)
+		if row.status == "Paid" and row.pos_invoice:
+			invoice_totals = frappe.db.get_value("POS Invoice", row.pos_invoice,
+				["rounded_total", "grand_total"], as_dict=True)
+			if invoice_totals:
+				payable_total = flt(invoice_totals.rounded_total if invoice_totals.rounded_total is not None
+					else invoice_totals.grand_total)
 		checks.append({"name": row.name, "guest_name": row.guest_name, "status": row.status,
 			"grand_total": flt(row.grand_total), "discount_type": row.discount_type or "Percentage",
+			"payable_total": payable_total,
 			"discount_value": flt(row.discount_value), "discount_amount": flt(row.discount_amount),
 			"discount_scope": row.discount_scope or "Net Total", "discount_reason": row.discount_reason or "",
 			"items": [{"name": item.name,
@@ -2463,12 +2489,15 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 				check_totals = get_guest_check_discount_totals(doc, check)
 				check.discount_amount = check_totals["discount_amount"]
 				check.grand_total = check_totals["grand_total"]
+	from rms.pos_rounding import round_pos_payable
+	rounding_method = frappe.db.get_value("Restaurant Brand", doc.restaurant_brand, "pos_rounding_method") or "Nearest"
+	payable_total = flt(round_pos_payable(expected_grand_total, rounding_method), 2)
 	guest_rows, payment_totals = validate_guest_payment_rows(
-		guest_rows if not guest_check_name else [], allowed_methods, allow_zero=expected_grand_total <= 0.005)
+		guest_rows if not guest_check_name else [], allowed_methods, allow_zero=payable_total <= 0.005)
 	if guest_rows:
 		payment_rows = [{"mode_of_payment": method, "amount": amount} for method, amount in payment_totals.items()]
 	payment_rows = ensure_payment_rows_for_total(
-		payment_rows, [row.mode_of_payment for row in allowed_payment_rows], expected_grand_total)
+		payment_rows, [row.mode_of_payment for row in allowed_payment_rows], payable_total)
 	seen_methods = set()
 	for payment in payment_rows:
 		method = payment.get("mode_of_payment")
@@ -2476,7 +2505,7 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 			frappe.throw(_("Choose each payment method once from this cashier session."))
 		seen_methods.add(method)
 		amount = flt(payment.get("amount"))
-		if amount < 0 or (amount <= 0 and expected_grand_total > 0.005):
+		if amount < 0 or (amount <= 0 and payable_total > 0.005):
 			frappe.throw(_("Payment amounts must be greater than zero."))
 	split_mode = guest_rows[0]["split_mode"] if guest_rows else None
 	guest_item_allocations = get_guest_check_item_allocations(guest_check) if guest_check else None
@@ -2491,7 +2520,7 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 			parse_json_rows(item.modifiers), item.cancelled_qty) for item in active_item_rows}
 	if guest_rows:
 		validate_guest_item_allocations(guest_rows, active_items, expected_grand_total, item_amounts)
-	paid_total, change_amount = validate_payment_change(payment_rows, expected_grand_total)
+	paid_total, change_amount = validate_payment_change(payment_rows, payable_total)
 	if discount_value is not None:
 		if discount_approval_code and discount_approval_approver:
 			if guest_check:
@@ -2517,6 +2546,7 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 		frappe.throw(_("Set a Selling Price List on the POS Profile."))
 
 	invoice = frappe.new_doc("POS Invoice")
+	invoice.flags.rms_pos_rounding_method = rounding_method
 	invoice.company = company
 	invoice.customer = customer
 	invoice.pos_profile = profile.name
@@ -2621,6 +2651,8 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 			if abs(flt(invoice.grand_total) - expected_grand_total) > 0.02:
 				frappe.throw(_("ERPNext Invoice total {0} differs from the POS total {1}. Refresh the order and retry payment.").format(
 					flt(invoice.grand_total, 2), flt(expected_grand_total, 2)))
+			if abs(flt(invoice.rounded_total) - payable_total) > 0.01:
+				frappe.throw(_("The POS Invoice payable total does not match the selected Restaurant Brand rounding rule. Refresh the order and retry payment."))
 			invoice.insert(ignore_permissions=True)
 			# Keep the sale attributable to its cashier so the same session can return it.
 			invoice.owner = actor
@@ -2719,12 +2751,12 @@ def get_returnable_sales(store):
 	session = get_user_session(store)
 	if not session or session.status != "Open":
 		frappe.throw(_("Open a Cashier Session before processing a return."))
-	orders = frappe.get_all("POS Order", filters={"cashier_session": session.name, "status": "Paid"},
+	orders = frappe.get_all("POS Order", filters={"store": store, "status": "Paid"},
 		fields=["name", "restaurant_brand", "order_type"])
 	orders = [row.name for row in orders if is_pos_scope_allowed("brand", row.restaurant_brand)
 		and is_pos_scope_allowed("order_type", row.order_type)]
 	if not orders:
-		return []
+		return {"invoices": [], "refund_methods": []}
 	invoice_names = []
 	for order_name in orders:
 		order = frappe.db.get_value("POS Order", order_name, ["pos_invoice"], as_dict=True)
@@ -2741,7 +2773,10 @@ def get_returnable_sales(store):
 	methods = frappe.get_all("POS Payment Method", filters={
 		"parent": session.pos_profile, "parenttype": "POS Profile", "allow_in_returns": 1,
 	}, fields=["mode_of_payment"], order_by="idx asc")
-	return {"invoices": rows, "refund_methods": methods}
+	reasons = frappe.get_all("POS Action Reason", filters={
+		"enabled": 1, "applies_to": ["in", ["Both", "Return"]],
+	}, fields=["name", "reason"], order_by="reason asc")
+	return {"invoices": rows, "refund_methods": methods, "action_reasons": reasons}
 
 
 def get_returnable_sale_items(invoice_name, session=None):
@@ -2750,12 +2785,13 @@ def get_returnable_sale_items(invoice_name, session=None):
 	session = session or get_user_session()
 	if not session or session.status != "Open":
 		return []
-	invoice = frappe.db.get_value("POS Invoice", invoice_name,
-		["docstatus", "is_return", "pos_profile", "owner"], as_dict=True)
-	if not invoice or invoice.docstatus != 1 or invoice.is_return or invoice.owner != session.user or invoice.pos_profile != session.pos_profile:
+	invoice = frappe.db.get_value("POS Invoice", invoice_name, ["docstatus", "is_return"], as_dict=True)
+	if not invoice or invoice.docstatus != 1 or invoice.is_return:
 		return []
-	order = get_pos_order_for_invoice(invoice_name, ["restaurant_brand", "order_type"])
-	if not order or not is_pos_scope_allowed("brand", order.restaurant_brand) or not is_pos_scope_allowed("order_type", order.order_type):
+	order = get_pos_order_for_invoice(invoice_name, ["status", "store", "restaurant_brand", "order_type"])
+	if (not order or order.status != "Paid" or order.store != session.store
+			or not is_pos_scope_allowed("brand", order.restaurant_brand)
+			or not is_pos_scope_allowed("order_type", order.order_type)):
 		return []
 	rows = frappe.get_all("POS Invoice Item", filters={"parent": invoice_name, "parenttype": "POS Invoice"},
 		fields=["name", "item_code", "qty", "rate", "amount", "warehouse", "uom", "rms_pos_order_item"], order_by="idx asc")
@@ -2790,7 +2826,8 @@ def get_pos_order_for_invoice(invoice_name, fields=None):
 
 
 @frappe.whitelist(methods=["POST"])
-def request_pos_return(source_pos_invoice, items, payments, reason=None):
+def request_pos_return(source_pos_invoice, items, payments, action_reason=None,
+		approval_approver=None, approval_password=None):
 	require_pos_action("can_request_returns")
 	items = frappe.parse_json(items or "[]")
 	payments = frappe.parse_json(payments or "[]")
@@ -2799,31 +2836,72 @@ def request_pos_return(source_pos_invoice, items, payments, reason=None):
 	session = get_user_session()
 	if not session or session.status != "Open":
 		frappe.throw(_("Open your Cashier Session before requesting a return."))
+	from rms.rms.doctype.pos_action_reason.pos_action_reason import validate_pos_action_reason
+	reason = validate_pos_action_reason(action_reason, "Return")
 	assert_store_access(session.store)
 	frappe.db.sql("select name from `tabPOS Invoice` where name = %s for update", source_pos_invoice)
 	source = frappe.get_doc("POS Invoice", source_pos_invoice)
 	allowed_lines = {row.name: row for row in get_returnable_sale_items(source_pos_invoice, session=session)}
 	if not allowed_lines:
-		frappe.throw(_("This POS Invoice has no returnable items in your active session."))
+		frappe.throw(_("This POS Invoice has no returnable items for this Store."))
+	waste_flags = {bool(item.get("is_waste")) for item in items}
+	if len(waste_flags) > 1:
+		frappe.throw(_("Mark the entire return as waste or non-waste."))
 	ret = frappe.new_doc("POS Return")
 	ret.store = session.store
 	ret.cashier_session = session.name
 	ret.source_pos_invoice = source.name
+	ret.action_reason = action_reason
 	ret.reason = reason
+	ret.is_waste = int(next(iter(waste_flags), False))
 	for item in items:
 		line_name = item.get("source_pos_invoice_item")
 		if line_name not in allowed_lines:
 			frappe.throw(_("Select return items from the source POS Invoice."))
 		ret.append("items", {"source_pos_invoice_item": line_name,
-			"qty": flt(item.get("qty")), "is_waste": int(bool(item.get("is_waste")))})
+			"qty": flt(item.get("qty")), "is_waste": ret.is_waste})
 	for payment in payments:
 		ret.append("payments", {"mode_of_payment": payment.get("mode_of_payment"), "amount": flt(payment.get("amount"))})
+	ret.validate_request()
+	roles = set(frappe.get_roles())
+	if frappe.session.user == "Administrator" or roles & {"POS Manager", "System Manager"}:
+		manager = frappe.session.user
+	elif approval_approver and approval_password:
+		manager = verify_pos_return_manager_password(session.store, approval_approver, approval_password)
+	else:
+		approvers = get_pos_discount_approvers(session.store, exclude_user=frappe.session.user)
+		return {"requires_manager_authorization": True, "approvers": approvers,
+			"refund_total": ret.refund_total, "currency": source.currency}
 	ret.insert(ignore_permissions=True)
-	return {"name": ret.name, "status": ret.status, "refund_total": ret.refund_total}
+	return approve_pos_return_document(ret, manager)
+
+
+def verify_pos_return_manager_password(store, approver, password):
+	requester = frappe.session.user
+	eligible_approvers = {row["user"] for row in get_pos_discount_approvers(store, exclude_user=requester)}
+	if approver not in eligible_approvers:
+		frappe.throw(_("Choose a POS Manager with access to this Store."), frappe.PermissionError)
+	if not password:
+		frappe.throw(_("Enter the manager approval password."))
+	cache_key = "rms:pos-return-password-failures:" + hashlib.sha256(
+		f"{requester}:{approver}".encode()).hexdigest()
+	failed_attempts = _get_discount_password_failure_count(cache_key)
+	if failed_attempts >= 5:
+		frappe.throw(_("Manager password verification is locked for five minutes."))
+	pos_user_name = frappe.db.get_value("POS User", {"user": approver, "enabled": 1}, "name")
+	stored_password = None
+	if pos_user_name:
+		manager_pos_user = frappe.get_doc("POS User", pos_user_name)
+		stored_password = manager_pos_user.get_password("discount_approval_password", raise_exception=False)
+	if not stored_password or not hmac.compare_digest(str(stored_password), str(password)):
+		_record_discount_password_failure(cache_key, failed_attempts + 1)
+		frappe.throw(_("The manager approval password is incorrect."))
+	_clear_discount_password_failures(cache_key)
+	return approver
 
 
 @frappe.whitelist(methods=["POST"])
-def preview_pos_return(source_pos_invoice, items):
+def preview_pos_return(source_pos_invoice, items, action_reason=None):
 	require_pos_action("can_request_returns")
 	items = frappe.parse_json(items or "[]")
 	if not isinstance(items, list) or not items:
@@ -2831,6 +2909,8 @@ def preview_pos_return(source_pos_invoice, items):
 	session = get_user_session()
 	if not session or session.status != "Open":
 		frappe.throw(_("Open your Cashier Session before previewing a return."))
+	from rms.rms.doctype.pos_action_reason.pos_action_reason import validate_pos_action_reason
+	reason = validate_pos_action_reason(action_reason, "Return")
 	assert_store_access(session.store)
 	frappe.db.sql("select name from `tabPOS Invoice` where name = %s for update", source_pos_invoice)
 	allowed_lines = {row.name for row in get_returnable_sale_items(source_pos_invoice, session=session)}
@@ -2838,6 +2918,12 @@ def preview_pos_return(source_pos_invoice, items):
 	ret.store = session.store
 	ret.cashier_session = session.name
 	ret.source_pos_invoice = source_pos_invoice
+	ret.action_reason = action_reason
+	ret.reason = reason
+	waste_flags = {bool(item.get("is_waste")) for item in items}
+	if len(waste_flags) > 1:
+		frappe.throw(_("Mark the entire return as waste or non-waste."))
+	ret.is_waste = int(next(iter(waste_flags), False))
 	seen = set()
 	for item in items:
 		line_name = item.get("source_pos_invoice_item")
@@ -2845,7 +2931,7 @@ def preview_pos_return(source_pos_invoice, items):
 			frappe.throw(_("Select unique return lines from the source POS Invoice."))
 		seen.add(line_name)
 		ret.append("items", {"source_pos_invoice_item": line_name, "qty": flt(item.get("qty")),
-			"is_waste": int(bool(item.get("is_waste")))})
+			"is_waste": ret.is_waste})
 	for row in ret.items:
 		ret.validate_return_line(row)
 	invoice = ret.build_return_invoice()
@@ -2859,13 +2945,17 @@ def approve_pos_return(return_name):
 	if frappe.session.user == "Guest" or not (set(frappe.get_roles()) & {"POS Manager", "System Manager"}):
 		frappe.throw(_("Only a POS Manager can approve a return."), frappe.PermissionError)
 	ret = frappe.get_doc("POS Return", return_name)
+	return approve_pos_return_document(ret, frappe.session.user)
+
+
+def approve_pos_return_document(ret, manager):
 	assert_store_access(ret.store)
 	order = get_pos_order_for_invoice(ret.source_pos_invoice, ["restaurant_brand", "order_type"])
 	if order:
 		require_order_scope(order)
 	if ret.status == "Approved" and ret.return_pos_invoice:
 		return {"name": ret.name, "status": ret.status, "return_pos_invoice": ret.return_pos_invoice,
-			"stock_entry": ret.stock_entry}
+			"stock_entry": ret.stock_entry, "refund_total": ret.refund_total}
 	if ret.status != "Pending Approval":
 		frappe.throw(_("Only a return Pending Approval can be approved."))
 	session = frappe.get_doc("Cashier Session", ret.cashier_session)
@@ -2897,7 +2987,6 @@ def approve_pos_return(return_name):
 	from rms.rms.doctype.pos_return.pos_return import get_return_refund_total
 	if abs(get_return_refund_total(invoice) - flt(ret.refund_total)) > 0.01:
 		frappe.throw(_("The ERPNext Credit Note total changed. Refresh the return and submit it again."))
-	manager = frappe.session.user
 	actor = frappe.session.user
 	try:
 		frappe.set_user("Administrator")
@@ -2922,7 +3011,8 @@ def approve_pos_return(return_name):
 	ret.approved_at = now_datetime()
 	ret.flags.allow_workflow_update = True
 	ret.save(ignore_permissions=True)
-	return {"name": ret.name, "status": ret.status, "return_pos_invoice": invoice.name, "stock_entry": stock_entry}
+	return {"name": ret.name, "status": ret.status, "return_pos_invoice": invoice.name,
+		"stock_entry": stock_entry, "refund_total": ret.refund_total}
 
 
 @frappe.whitelist(methods=["POST"])

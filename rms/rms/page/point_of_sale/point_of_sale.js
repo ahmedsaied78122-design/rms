@@ -66,6 +66,26 @@ class RMSPointOfSale {
 	escape(value) { return frappe.utils.escape_html(String(value ?? "")); }
 	currency(value) { return format_currency(value || 0, this.state.currency || undefined); }
 
+	getPosRoundingMethod() {
+		const brand = (this.state.brands || []).find((row) => row.name === this.state.brand);
+		return ["No Rounding", "Round Up", "Nearest", "Round Down"].includes(brand?.pos_rounding_method)
+			? brand.pos_rounding_method : "Nearest";
+	}
+
+	roundPosPayable(amount, method = this.getPosRoundingMethod()) {
+		const value = Number(amount) || 0;
+		const epsilon = 1e-9;
+		if (method === "No Rounding") return value;
+		if (value >= 0) {
+			if (method === "Round Up") return Math.ceil(value - epsilon);
+			if (method === "Round Down") return Math.floor(value + epsilon);
+			return Math.floor(value + 0.5 + epsilon);
+		}
+		if (method === "Round Up") return Math.ceil(value + epsilon);
+		if (method === "Round Down") return Math.floor(value - epsilon);
+		return Math.ceil(value - 0.5 - epsilon);
+	}
+
 	getSuggestedPaymentAmounts(total) {
 		const due = Math.max(0, Number(total) || 0);
 		if (!due) return [];
@@ -111,7 +131,6 @@ class RMSPointOfSale {
 						<button class="rms-pos-quiet-action rms-pos-switch-apps" data-action="switch-apps">${__("Switch Apps")}</button>
 						<div class="rms-pos-session-status" data-role="context"><span class="rms-pos-live"></span><span>${__("Cashier session closed")}</span></div>
 						<button class="rms-pos-quiet-action" data-action="expenses">${__("Expenses")}</button>
-						<button class="rms-pos-quiet-action" data-action="review-expenses" hidden>${__("Review Expenses")}</button>
 						<button class="rms-pos-quiet-action" data-action="returns" data-capability="can_request_returns">${__("Returns")}</button>
 						<button class="rms-pos-quiet-action" data-action="sales-history" data-capability="can_view_sales_history">${__("Sales History")}</button>
 						<button class="rms-pos-quiet-action" data-action="open-orders" data-capability="can_view_open_orders">${__("Open Orders")}</button>
@@ -194,6 +213,7 @@ class RMSPointOfSale {
 		});
 		root.addEventListener("focusin", (event) => { if (event.target.matches("[data-payment-amount], [data-guest-amount], [data-guest-share]")) { this.paymentInput = event.target; this.paymentKeypadInput = null; } });
 		root.addEventListener("keydown", (event) => {
+			if (event.key === "Escape" && root.querySelector("[data-payment-items-backdrop]")) { event.preventDefault(); return this.closePaymentItemsDialog(); }
 			if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
 				event.preventDefault();
 				const search = root.querySelector("[data-search]");
@@ -204,6 +224,7 @@ class RMSPointOfSale {
 			if (event.key === "Enter") { event.preventDefault(); this.searchAndAddBarcode(); }
 		});
 		root.addEventListener("click", (event) => { if (event.target.matches("[data-split-dialog-backdrop]")) this.closePaymentSplitDialog(); });
+		root.addEventListener("click", (event) => { if (event.target.matches("[data-payment-items-backdrop]")) this.closePaymentItemsDialog(); });
 		root.addEventListener("click", (event) => {
 			const modeButton = event.target.closest("[data-catalog-mode]");
 			if (modeButton) { this.state.catalog_mode = modeButton.dataset.catalogMode; this.state.category = null; this.state.search = ""; root.querySelector("[data-search]").value = ""; this.renderCategories(); this.renderProducts(); this.loadCatalog(); return; }
@@ -602,6 +623,8 @@ class RMSPointOfSale {
 			try { return await this.showOpenOrderOverview(data.order); } catch (error) { return this.showError(error); }
 		}
 		if (action === "payment-back") { this.paymentApprovalOnly = false; if (this.activeGuestPayment) { this.activeGuestPayment = null; return this.showPaymentScreen(); } this.page.main.find('[data-screen="payment"]').prop("hidden", true); this.page.main.find(".rms-pos-shell").prop("hidden", false); return; }
+		if (action === "payment-open-items") return this.openPaymentItemsDialog();
+		if (action === "payment-close-items") return this.closePaymentItemsDialog();
 		if (action === "payment-open-split") return this.openPaymentSplitDialog();
 		if (action === "payment-cancel-split") return this.closePaymentSplitDialog();
 		if (action === "payment-confirm-split") return this.confirmPaymentSplit();
@@ -610,6 +633,7 @@ class RMSPointOfSale {
 		if (action === "payment-key") return this.handlePaymentKey(data.key);
 		if (action === "payment-discount-type") { this.setPaymentDiscountType(data.type); this.queuePaymentDiscountPreview(false); return; }
 		if (action === "payment-discount-clear") return this.clearPaymentDiscountValue();
+		if (action === "payment-clear-discount") return this.clearAppliedPaymentDiscount();
 		if (action === "payment-open-discount") return this.openPaymentDiscountDialog();
 		if (action === "payment-discount-close") return this.closePaymentDiscountDialog();
 		if (action === "payment-discount-approver") return this.selectDiscountApprover(data.approver || "");
@@ -637,7 +661,6 @@ class RMSPointOfSale {
 		}
 		if (action === "session") return this.state.session ? this.closeSession() : this.openSession();
 		if (action === "expenses") return this.openExpenses();
-		if (action === "review-expenses") return this.reviewPendingExpenses();
 		if (action === "checkout") return this.checkout();
 		if (action === "sales-history") return this.showSalesHistory();
 		if (action === "customer") return this.chooseCustomer();
@@ -682,22 +705,123 @@ class RMSPointOfSale {
 		} catch (error) { this.showError(error); }
 	}
 
+	loadExpenseCategoryStyles() {
+		const styleId = "rms-expense-category-styles";
+		const styleHref = `${window.location.origin}/assets/rms/css/expense_category_picker.css?v=expense-picker-4`;
+		let link = document.getElementById(styleId);
+		if (link?.href === styleHref && link.sheet) return Promise.resolve();
+		if (link) {
+			link.remove();
+			link = null;
+		}
+		return new Promise((resolve) => {
+			const finish = () => resolve();
+			if (!link) {
+				link = document.createElement("link");
+				link.id = styleId;
+				link.rel = "stylesheet";
+				link.href = styleHref;
+				link.onload = finish;
+				link.onerror = finish;
+				document.head.appendChild(link);
+				return;
+			}
+			link.addEventListener("load", finish, { once: true });
+			link.addEventListener("error", finish, { once: true });
+		});
+	}
+
+	renderStaticPicker(key, label, options, selectedValue) {
+		const selected = options.find((row) => row.value === selectedValue) || options[0];
+		return `<div class="rms-expense-category-picker rms-pos-static-picker" data-pos-picker="${key}"><label class="rms-pos-picker-label">${this.escape(label)}</label><button type="button" class="form-control" data-pos-picker-trigger="${key}" aria-haspopup="listbox" aria-expanded="false"><span data-pos-picker-value>${this.escape(selected?.label || __("Choose {0}", [label]))}</span><span class="rms-pos-picker-caret" aria-hidden="true">▾</span></button><div class="rms-expense-category-list" data-pos-picker-list="${key}" role="listbox" hidden>${options.map((row) => `<button type="button" class="rms-expense-category-option" role="option" tabindex="-1" data-pos-picker-option="${key}" data-pos-picker-option-value="${this.escape(row.value)}" aria-selected="${row.value === selected?.value}">${this.escape(row.label)}</button>`).join("")}</div></div>`;
+	}
+
+	bindStaticPicker(dialog, key, fieldname) {
+		const wrapper = dialog.$wrapper;
+		const triggerSelector = `[data-pos-picker-trigger="${key}"]`;
+		const listSelector = `[data-pos-picker-list="${key}"]`;
+		const optionSelector = `[data-pos-picker-option="${key}"]`;
+		const close = (focusTrigger = false) => {
+			const list = wrapper.find(listSelector)[0];
+			if (list) list.hidden = true;
+			wrapper.find(triggerSelector).attr("aria-expanded", "false");
+			if (focusTrigger) wrapper.find(triggerSelector).trigger("focus");
+		};
+		wrapper.on("click", triggerSelector, (event) => {
+			const trigger = event.currentTarget;
+			const list = wrapper.find(listSelector)[0];
+			const open = list.hidden;
+			list.hidden = !open;
+			trigger.setAttribute("aria-expanded", String(open));
+			if (open) wrapper.find(`${optionSelector}:not([hidden])`).first().trigger("focus");
+		});
+		wrapper.on("click", optionSelector, (event) => {
+			const option = event.currentTarget;
+			const value = option.dataset.posPickerOptionValue;
+			dialog.set_value(fieldname, value);
+			wrapper.find(optionSelector).attr("aria-selected", "false").removeClass("is-selected");
+			$(option).attr("aria-selected", "true").addClass("is-selected");
+			wrapper.find(`[data-pos-picker="${key}"] [data-pos-picker-value]`).text(option.textContent);
+			close(true);
+		});
+		wrapper.on("click", (event) => {
+			if (!event.target.closest(`[data-pos-picker="${key}"]`)) close();
+		});
+		wrapper.on("keydown", triggerSelector, (event) => {
+			if (["Enter", " ", "ArrowDown"].includes(event.key)) {
+				event.preventDefault();
+				const list = wrapper.find(listSelector)[0];
+				list.hidden = false;
+				event.currentTarget.setAttribute("aria-expanded", "true");
+				wrapper.find(`${optionSelector}:not([hidden])`).first().trigger("focus");
+			} else if (event.key === "Escape") close();
+		});
+		wrapper.on("keydown", optionSelector, (event) => {
+			const options = [...wrapper.find(`${optionSelector}:not([hidden])`)];
+			const index = options.indexOf(event.currentTarget);
+			if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+				event.preventDefault();
+				options[(index + (event.key === "ArrowDown" ? 1 : options.length - 1)) % options.length]?.focus();
+			} else if (event.key === "Enter" || event.key === " ") {
+				event.preventDefault();
+				event.currentTarget.click();
+			} else if (event.key === "Escape") close(true);
+		});
+	}
+
 	async openExpenses() {
 		if (!this.state.session || this.state.session.status !== "Open") return frappe.msgprint(__("Open a cashier session before recording an expense."));
 		try {
+			await this.loadExpenseCategoryStyles();
 			const context = await this.call("get_expense_context");
-			const methods = (this.state.session.payments || []).map((row) => row.mode_of_payment);
+			const methods = [...new Set((this.state.session.payments || []).map((row) => row.mode_of_payment).filter(Boolean))];
+			const categories = context.categories || [];
+			const paymentMethodPicker = this.renderStaticPicker("expense-payment-method", __("Mode of Payment"),
+				methods.map((method) => ({ value: method, label: method })), methods[0] || "");
+			const categoryPicker = categories.length
+				? `<div class="rms-expense-category-picker">
+					<input class="form-control" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" data-expense-category-search placeholder="${this.escape(__("Choose or search expense category"))}" autocomplete="off">
+					<div class="rms-expense-category-list" data-expense-category-list role="listbox" hidden>${categories.map((row) => {
+						const title = row.title || row.name;
+						return `<div class="rms-expense-category-option" role="option" tabindex="-1" data-expense-category="${this.escape(row.name)}" data-expense-search="${this.escape(`${title} ${row.name}`)}" aria-selected="false">${this.escape(title)}</div>`;
+					}).join("")}</div>
+					<p class="rms-expense-category-empty" data-expense-category-empty hidden>${this.escape(__("No matching expense categories."))}</p>
+				</div>`
+				: `<p class="rms-expense-category-empty">${this.escape(__("No enabled expense categories are configured for this Store."))}</p>`;
 			const fields = [
-				{ fieldtype: "Select", fieldname: "expense_category", label: __("Expense Category"),
-					options: (context.categories || []).map((row) => row.name).join("\n"), reqd: 1 },
+				{ fieldtype: "HTML", fieldname: "expense_category_picker", label: __("Expense Category"), options: categoryPicker },
+				{ fieldtype: "Data", fieldname: "expense_category", hidden: 1, reqd: 1 },
 				{ fieldtype: "Currency", fieldname: "amount", label: __("Amount"), options: context.currency, reqd: 1 },
-				{ fieldtype: "Select", fieldname: "mode_of_payment", label: __("Mode of Payment"), options: methods.join("\n"), reqd: 1 },
+				{ fieldtype: "HTML", fieldname: "payment_method_picker", options: paymentMethodPicker },
+				{ fieldtype: "Data", fieldname: "mode_of_payment", default: methods[0] || "", hidden: 1, reqd: 1 },
 				{ fieldtype: "Small Text", fieldname: "remarks", label: __("Notes") },
 				{ fieldtype: "Attach", fieldname: "attachment", label: __("Receipt Attachment") }
 			];
 			const dialog = new frappe.ui.Dialog({ title: __("Shift Expenses"), fields,
 				primary_action_label: __("Record Expense"), primary_action: async (values) => {
 					try {
+						if (!values.expense_category) return frappe.msgprint(__("Choose an Expense Category."));
+						if (!values.mode_of_payment) return frappe.msgprint(__("Choose a payment method."));
 						const result = await this.call("create_shift_expense", {
 							expense_category: values.expense_category, amount: values.amount,
 							mode_of_payment: values.mode_of_payment, remarks: values.remarks, attachment: values.attachment
@@ -709,6 +833,87 @@ class RMSPointOfSale {
 					} catch (error) { this.showError(error); }
 				}
 			});
+			dialog.$wrapper.addClass("rms-shift-expense-dialog");
+			this.bindStaticPicker(dialog, "expense-payment-method", "mode_of_payment");
+			dialog.$wrapper.on("input", "[data-expense-category-search]", (event) => {
+				const input = event.currentTarget;
+				const query = input.value.trim().toLocaleLowerCase();
+				dialog.set_value("expense_category", "");
+				input.setAttribute("aria-expanded", "true");
+				const options = dialog.$wrapper.find("[data-expense-category]");
+				let visible = 0;
+				options.each((_, option) => {
+					option.hidden = !option.dataset.expenseSearch.toLocaleLowerCase().includes(query);
+					if (!option.hidden) visible++;
+				});
+				dialog.$wrapper.find("[data-expense-category-list]").prop("hidden", false);
+				dialog.$wrapper.find("[data-expense-category-empty]").prop("hidden", visible > 0);
+			});
+			dialog.$wrapper.find("[data-expense-category-search]").on("focus", (event) => {
+				const input = event.currentTarget;
+				if (dialog.get_value("expense_category")) {
+					input.value = "";
+					dialog.set_value("expense_category", "");
+					dialog.$wrapper.find("[data-expense-category]").attr("aria-selected", "false").removeClass("is-selected");
+				}
+				input.setAttribute("aria-expanded", "true");
+				dialog.$wrapper.find("[data-expense-category]").prop("hidden", false);
+				dialog.$wrapper.find("[data-expense-category-list]").prop("hidden", false);
+				dialog.$wrapper.find("[data-expense-category-empty]").prop("hidden", true);
+			});
+			dialog.$wrapper.find("[data-expense-category-search]").on("blur", (event) => {
+				const input = event.currentTarget;
+				window.setTimeout(() => {
+					const list = dialog.$wrapper.find("[data-expense-category-list]")[0];
+					if (list && !list.contains(document.activeElement)) {
+						list.hidden = true;
+						input.setAttribute("aria-expanded", "false");
+					}
+				}, 0);
+			});
+			dialog.$wrapper.on("mousedown", "[data-expense-category]", (event) => event.preventDefault());
+			dialog.$wrapper.on("click", "[data-expense-category]", (event) => {
+				const option = event.currentTarget;
+				const input = dialog.$wrapper.find("[data-expense-category-search]")[0];
+				dialog.set_value("expense_category", option.dataset.expenseCategory);
+				dialog.$wrapper.find("[data-expense-category]").attr("aria-selected", "false").removeClass("is-selected");
+				$(option).attr("aria-selected", "true").addClass("is-selected");
+				input.value = option.textContent;
+				input.setAttribute("aria-expanded", "false");
+				dialog.$wrapper.find("[data-expense-category-list]").prop("hidden", true);
+				dialog.$wrapper.find("[data-expense-category-empty]").prop("hidden", true);
+			});
+			dialog.$wrapper.find("[data-expense-category-search]").on("keydown", (event) => {
+				const options = [...dialog.$wrapper.find("[data-expense-category]:not([hidden])")];
+				if (event.key === "Escape") {
+					dialog.$wrapper.find("[data-expense-category-list]").prop("hidden", true);
+					event.currentTarget.setAttribute("aria-expanded", "false");
+				} else if (event.key === "ArrowDown" && options.length) {
+					event.preventDefault();
+					options[0].focus();
+				} else if (event.key === "Enter" && options.length === 1) {
+					event.preventDefault();
+					options[0].click();
+				}
+			});
+			dialog.$wrapper.on("keydown", "[data-expense-category]", (event) => {
+				const options = [...dialog.$wrapper.find("[data-expense-category]:not([hidden])")];
+				const index = options.indexOf(event.currentTarget);
+				if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+					event.preventDefault();
+					options[(index + (event.key === "ArrowDown" ? 1 : options.length - 1)) % options.length]?.focus();
+				} else if (event.key === "Enter") {
+					event.preventDefault();
+					event.currentTarget.click();
+				} else if (event.key === "Escape") {
+					const input = dialog.$wrapper.find("[data-expense-category-search]")[0];
+					dialog.$wrapper.find("[data-expense-category-list]").prop("hidden", true);
+					input.setAttribute("aria-expanded", "false");
+					input.focus();
+				}
+			});
+			dialog.$wrapper.on("shown.bs.modal", () => document.body.classList.add("rms-expense-dialog-open"));
+			dialog.$wrapper.on("hidden.bs.modal", () => document.body.classList.remove("rms-expense-dialog-open"));
 			if (context.pending_expenses?.length) {
 				dialog.set_secondary_action_label(__("Authorize Pending Expense"));
 				dialog.set_secondary_action(() => { dialog.hide(); this.authorizePendingExpense(context.pending_expenses); });
@@ -735,49 +940,6 @@ class RMSPointOfSale {
 			}
 		});
 		dialog.show();
-	}
-
-	async reviewPendingExpenses() {
-		try {
-			const pending = await this.call("get_manager_pending_shift_expenses");
-			if (!pending?.length) return frappe.msgprint(__("There are no pending expenses in your assigned Stores."));
-			const rows = pending.map((row) => `<tr><td><b>${this.escape(row.name)}</b><small>${this.escape(row.store)} · ${this.escape(row.cashier_full_name || "")}</small></td><td>${this.escape(row.expense_category)}</td><td>${this.escape(format_currency(row.amount || 0, row.currency))}</td><td>${this.escape(row.mode_of_payment)}</td><td>${this.escape(frappe.datetime.str_to_user(row.creation))}</td></tr>`).join("");
-			const names = pending.map((row) => row.name);
-			const dialog = new frappe.ui.Dialog({ title: __("Pending POS Expenses"), size: "large", fields: [
-				{ fieldtype: "HTML", fieldname: "pending_summary", options: `<div class="rms-expense-review-list"><table><thead><tr><th>${__("Expense / Cashier")}</th><th>${__("Category")}</th><th>${__("Amount")}</th><th>${__("Payment Method")}</th><th>${__("Requested")}</th></tr></thead><tbody>${rows}</tbody></table></div>` },
-				{ fieldtype: "Link", fieldname: "expense_name", label: __("Pending Expense"), options: "Shift Expense", reqd: 1,
-					get_query: () => ({ filters: { name: ["in", names], status: "Pending Approval" } }) }
-			], primary_action_label: __("Issue Approval Code"), primary_action: async (values) => {
-				if (!values?.expense_name) return;
-				try {
-					const result = await this.call("issue_shift_expense_approval_code", { expense_name: values.expense_name });
-					dialog.hide();
-					const codeDialog = new frappe.ui.Dialog({ title: __("One Time Expense Approval Code"), fields: [
-						{ fieldtype: "Data", fieldname: "code", label: __("Share this code with the cashier"), read_only: 1, default: result.code },
-						{ fieldtype: "Datetime", fieldname: "expires_at", label: __("Expires At"), read_only: 1, default: result.expires_at }
-					], primary_action_label: __("Done"), primary_action: () => codeDialog.hide() });
-					codeDialog.show();
-				} catch (error) { this.showError(error); }
-			} });
-			dialog.set_secondary_action_label(__("Reject Expense"));
-			dialog.set_secondary_action(() => {
-				const values = dialog.get_values();
-				if (!values?.expense_name) return frappe.msgprint(__("Choose a pending expense first."));
-				const expenseName = values.expense_name;
-				dialog.hide();
-				const rejection = new frappe.ui.Dialog({ title: __("Reject Shift Expense"), fields: [
-					{ fieldtype: "Small Text", fieldname: "reason", label: __("Reason"), reqd: 1 }
-				], primary_action_label: __("Reject Expense"), primary_action: async (values) => {
-					try {
-						await this.call("reject_shift_expense", { expense_name: expenseName, reason: values.reason });
-						rejection.hide();
-						frappe.show_alert({ message: __("Expense rejected"), indicator: "orange" });
-					} catch (error) { this.showError(error); }
-				} });
-				rejection.show();
-			});
-			dialog.show();
-		} catch (error) { this.showError(error); }
 	}
 
 	async closeSession() {
@@ -963,8 +1125,10 @@ class RMSPointOfSale {
 		const methods = this.state.payment_config || [];
 		if (!methods.length && !this.paymentApprovalOnly) return frappe.msgprint(__("Configure payment methods on the POS Profile before taking payment."));
 		const guestPayment = this.activeGuestPayment;
-		const total = guestPayment ? Number(guestPayment.grand_total || 0) : Number(this.state.totals?.grand_total || 0);
+		const rawTotal = guestPayment ? Number(guestPayment.source_total ?? guestPayment.grand_total ?? 0) : Number(this.state.totals?.grand_total || 0);
+		const total = this.roundPosPayable(rawTotal);
 		const activeGuestCheck = guestPayment ? this.guestCheckState?.guest_checks?.find((row) => row.name === guestPayment.guest_check_name) : null;
+		this.paymentSourceTotal = rawTotal;
 		this.paymentTotal = total;
 		this.paymentDiscount = guestPayment
 			? { type: activeGuestCheck?.discount_type || "Percentage", value: Number(activeGuestCheck?.discount_value || 0), reason: activeGuestCheck?.discount_reason || "" }
@@ -976,19 +1140,28 @@ class RMSPointOfSale {
 		const canEditDiscount = this.state.permissions.can_apply_manual_discount || approvalOnly;
 		const firstGuestAmount = Math.floor(total * 50) / 100;
 		const activeOrderItemCount = (this.state.cart || []).filter((row) => row.order_item_name && Number(row.qty || 0) > Number(row.cancelled_qty || 0)).length;
+		const paymentItems = (this.state.cart || []).map((row) => ({ row, quantity: Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0)) })).filter(({ row, quantity }) => row.order_item_name && quantity > 0);
+		const paymentItemQuantity = paymentItems.reduce((sum, item) => sum + item.quantity, 0);
+		const paymentItemsButton = !approvalOnly && !guestPayment && this.guestCheckState?.order_name !== this.state.order_name && paymentItems.length
+			? `<button type="button" class="rms-screen-secondary" data-action="payment-open-items" aria-haspopup="dialog" aria-controls="rms-payment-items-dialog">${__("View items ({0})", [paymentItemQuantity])}</button>`
+			: "";
 		const methodFields = methods.map((row, index) => `<label class="rms-payment-method"><span>${this.escape(row.mode_of_payment)}${row.default ? ` <small>${__("Default")}</small>` : ""}</span><input type="number" min="0" step="0.01" data-payment-amount data-method="${this.escape(row.mode_of_payment)}" value="${index === 0 ? total.toFixed(2) : "0.00"}" aria-label="${__("Amount for")} ${this.escape(row.mode_of_payment)}"></label>`).join("");
 		this.paymentGuestMethods = methods;
 		this.paymentSplitMode = this.guestCheckState?.order_name === this.state.order_name ? "items" : "amount";
 		this.guestSplitFinalized = guestPayment ? true : this.guestCheckState?.order_name === this.state.order_name;
 		this.paymentGuests = this.guestCheckState?.order_name === this.state.order_name
-			? this.guestCheckState.guest_checks.map((row) => ({ check_name: row.name, name: row.guest_name, method: methods[0]?.mode_of_payment, amount: Number(row.grand_total || 0), due: Number(row.grand_total || 0), paid: row.status === "Paid" }))
+			? this.guestCheckState.guest_checks.map((row) => {
+				const due = row.status === "Paid" && row.payable_total !== undefined
+					? Number(row.payable_total || 0) : this.roundPosPayable(row.grand_total || 0);
+				return { check_name: row.name, name: row.guest_name, method: methods[0]?.mode_of_payment, amount: due, due, paid: row.status === "Paid" };
+			})
 			: methods.length ? [1, 2].map((number) => ({ name: __("Guest {0}", [number]), method: methods[0].mode_of_payment, amount: number === 1 ? firstGuestAmount : total - firstGuestAmount })) : [];
 		if (this.guestCheckState?.order_name === this.state.order_name) {
 			this.paymentItemAssignments = {};
 			this.guestCheckState.guest_checks.forEach((check, index) => (check.items || []).forEach((item) => { const allocation = this.paymentItemAssignments[item.name] ||= Array(this.guestCheckState.guest_checks.length).fill(0); allocation[index] = Number(item.qty || 0); }));
 		}
 		const guests = this.renderPaymentGuests();
-		const discountTools = canEditDiscount ? `<div class="rms-payment-discount-launch"><span>${guestPayment ? this.escape(__("Discount for {0}", [guestPayment.guest_name])) : __("Discount")}: <b data-discount-preview>${this.currency(guestPayment ? activeGuestCheck?.discount_amount || 0 : this.state.totals?.discount_amount || 0)}</b></span><button type="button" class="rms-screen-secondary" data-action="payment-open-discount" aria-label="${this.escape(guestPayment ? __("Add discount for {0}", [guestPayment.guest_name]) : __("Add discount"))}">${__("Add discount")}</button></div>` : "";
+		const discountTools = canEditDiscount ? `<div class="rms-payment-discount-launch"><span>${guestPayment ? this.escape(__("Discount for {0}", [guestPayment.guest_name])) : __("Discount")}: <b data-discount-preview>${this.currency(guestPayment ? activeGuestCheck?.discount_amount || 0 : this.state.totals?.discount_amount || 0)}</b></span><div class="rms-payment-tools-actions"><button type="button" class="rms-screen-secondary" data-action="payment-open-discount" aria-label="${this.escape(guestPayment ? __("Add discount for {0}", [guestPayment.guest_name]) : __("Add discount"))}">${__("Add discount")}</button></div></div>` : "";
 		const quick = this.renderSuggestedPaymentAmounts(total);
 		const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "C"].map((key) => `<button type="button" data-action="payment-key" data-key="${key}">${key}</button>`).join("");
 		const guestResplitButton = activeGuestCheck?.status === "Open" && (activeGuestCheck.items || []).filter((item) => Number(item.qty || 0) > 0).length >= 2
@@ -996,7 +1169,8 @@ class RMSPointOfSale {
 		const splitMarkup = guestPayment
 			? `<section class="rms-guest-payment-overview"><div class="rms-guest-payment-overview-head"><h3>${__("Order split")}</h3>${guestResplitButton}</div><div data-guest-payment-progress-container>${this.renderGuestPaymentProgress(Number(this.state.totals?.grand_total || 0))}</div><div data-split-checks-anchor><input type="checkbox" data-split-check-toggle hidden><div class="rms-guest-checks" data-guest-checks><div class="rms-split-toolbar" hidden><div><span>${__("Split by")}</span><div class="rms-split-mode-switch"><button type="button" data-action="payment-split-mode" data-mode="items">${__("By items")}</button><button type="button" data-action="payment-split-mode" data-mode="amount">${__("Equally")}</button></div></div></div><p data-split-description hidden></p><div data-payment-guests>${guests}</div><div class="rms-item-assignments" data-item-assignments hidden></div><p class="rms-split-balance" data-split-balance data-valid="false" aria-live="polite"></p></div></div></section>`
 			: `${this.guestSplitFinalized ? "" : `<div class="rms-split-check-launch"><button type="button" class="rms-screen-secondary" data-action="payment-open-split">${__("Split check")}</button></div>`}<div data-guest-payment-progress-container>${this.renderGuestPaymentProgress(total)}</div><input type="checkbox" data-split-check-toggle hidden><div data-split-checks-anchor><div class="rms-guest-checks" data-guest-checks hidden><div class="rms-split-toolbar"><div><span>${__("Split by")}</span><div class="rms-split-mode-switch" role="group" aria-label="${__("Split by")}"><button type="button" data-action="payment-split-mode" data-mode="items" aria-pressed="${this.paymentSplitMode === "items"}" ${activeOrderItemCount < 2 ? "disabled" : ""}>${__("By items")}</button><button type="button" data-action="payment-split-mode" data-mode="amount" aria-pressed="${this.paymentSplitMode === "amount"}">${__("Equally")}</button></div></div><div class="rms-split-actions"><button type="button" data-action="payment-guest-add">+ ${__("Add person")}</button><button type="button" data-action="payment-guest-remove">− ${__("Remove person")}</button></div></div><p class="rms-split-description" data-split-description>${__("Set each person's share of the bill.")}</p><div data-payment-guests>${guests}</div><div class="rms-item-assignments" data-item-assignments hidden></div><p class="rms-split-balance" data-split-balance data-valid="false" aria-live="polite"></p></div></div>`;
-		this.page.main.find('[data-screen="payment"]').html(`<header class="rms-workspace-head"><button class="rms-screen-back" data-action="payment-back">‹ ${__("Back to order")}</button><div><span class="rms-pos-eyebrow">${approvalOnly ? __("DISCOUNT APPROVAL") : __("CHECKOUT")}</span><h1>${approvalOnly ? __("Approve cashier discount") : __("Take Payment")}</h1><p>${this.escape(this.state.order_name || "")} · ${this.escape(guestPayment?.guest_name || this.state.order_type || "")}</p></div><strong class="rms-payment-total">${this.currency(total)}</strong></header><div class="rms-payment-layout"><section class="rms-payment-panel">${approvalOnly ? "" : `<h2>${__("Payment methods")}</h2><p>${__("Allocate the total across payment methods or guests.")}</p>`}${discountTools}${approvalOnly ? "" : `<div class="rms-payment-method-list">${methodFields}</div>${splitMarkup}<div class="rms-payment-shortcuts"><span>${__("Suggested payment amounts")}</span><div data-suggested-payment-amounts>${quick}</div></div><div class="rms-payment-sum">${__("Remaining")}: <b data-payment-remaining>${this.currency(total)}</b></div><div class="rms-payment-change" data-payment-change hidden>${__("Change")}: <b data-change-amount>${this.currency(0)}</b></div><div class="rms-payment-actions"><button class="rms-screen-secondary" data-action="payment-print-only">${__("Print only")}</button><button class="rms-screen-secondary" data-action="payment-pay-print">${__("Pay and print")}</button><button class="rms-screen-primary" data-action="payment-pay">${__("Pay only")}</button></div>`}</section>${approvalOnly ? "" : `<section class="rms-payment-panel rms-payment-keypad"><h2>${__("Keypad")}</h2><p>${__("Select an amount field, then enter the amount.")}</p><div>${keys}</div></section>`}</div><div data-discount-dialog-root></div><div data-split-dialog-root></div>`);
+		this.page.main.find('[data-screen="payment"]').html(`<header class="rms-workspace-head"><button class="rms-screen-back" data-action="payment-back">‹ ${__("Back to order")}</button><div><span class="rms-pos-eyebrow">${approvalOnly ? __("DISCOUNT APPROVAL") : __("CHECKOUT")}</span><h1>${approvalOnly ? __("Approve cashier discount") : __("Take Payment")}</h1><p>${this.escape(this.state.order_name || "")} · ${this.escape(guestPayment?.guest_name || this.state.order_type || "")}</p></div><strong class="rms-payment-total">${this.currency(total)}</strong></header><div class="rms-payment-layout"><section class="rms-payment-panel">${approvalOnly ? "" : `<div class="rms-payment-panel-head"><h2>${__("Payment methods")}</h2>${paymentItemsButton}</div><p>${__("Allocate the total across payment methods or guests.")}</p>`}${discountTools}${approvalOnly ? "" : `<div class="rms-payment-method-list">${methodFields}</div>${splitMarkup}<div class="rms-payment-shortcuts"><span>${__("Suggested payment amounts")}</span><div data-suggested-payment-amounts>${quick}</div></div><div class="rms-payment-sum">${__("Remaining")}: <b data-payment-remaining>${this.currency(total)}</b></div><div class="rms-payment-change" data-payment-change hidden>${__("Change")}: <b data-change-amount>${this.currency(0)}</b></div><div class="rms-payment-actions"><button class="rms-screen-secondary" data-action="payment-print-only">${__("Print only")}</button><button class="rms-screen-secondary" data-action="payment-pay-print">${__("Pay and print")}</button><button class="rms-screen-primary" data-action="payment-pay">${__("Pay only")}</button></div>`}</section>${approvalOnly ? "" : `<section class="rms-payment-panel rms-payment-keypad"><h2>${__("Keypad")}</h2><p>${__("Select an amount field, then enter the amount.")}</p><div>${keys}</div></section>`}</div><div data-discount-dialog-root></div><div data-split-dialog-root></div>`);
+		this.page.main.find('[data-screen="payment"]').append('<div data-payment-items-dialog-root></div>');
 		if (this.guestCheckState?.order_name !== this.state.order_name) this.paymentItemAssignments = {};
 		this.renderPaymentItemAssignments();
 		this.page.main.find(".rms-pos-shell").prop("hidden", true);
@@ -1038,16 +1212,22 @@ class RMSPointOfSale {
 		const check = this.guestCheckState?.order_name === this.state.order_name
 			? this.guestCheckState.guest_checks.find((row) => row.guest_name === guest?.name) : null;
 		if (!guest || !check || guest.paid || check.status === "Paid") return;
-		this.activeGuestPayment = { guest_check_name: check.name, guest_name: guest.name, grand_total: Number(check.grand_total || guest.due || 0), index };
+		const total = check.status === "Paid" ? Number(check.payable_total || check.grand_total || 0)
+			: this.roundPosPayable(check.grand_total || guest.due || 0);
+		this.activeGuestPayment = { guest_check_name: check.name, guest_name: guest.name,
+			grand_total: total, source_total: Number(check.grand_total || guest.due || 0), index };
 		this.showPaymentScreen();
 	}
 
 	renderGuestPaymentProgress(total) {
 		if (!this.guestSplitFinalized || this.paymentSplitMode !== "items" || this.guestCheckState?.order_name !== this.state.order_name) return "";
 		const checks = this.guestCheckState.guest_checks || [];
-		const paid = checks.reduce((sum, check) => sum + (check.status === "Paid" ? Number(check.grand_total || 0) : 0), 0);
-		const percent = total > 0 ? Math.max(0, Math.min(100, Math.round(paid / total * 100))) : 100;
-		return `<section class="rms-guest-payment-progress" aria-label="${__("Order payment progress")}"><div><span>${__("Paid amount")}</span><strong>${this.currency(paid)} <small>/ ${this.currency(total)}</small></strong></div><div class="rms-guest-payment-progress-track" role="progressbar" aria-label="${__("Paid")}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span style="width:${percent}%"></span></div><small>${percent}% ${__("paid")}</small></section>`;
+		const checkPayable = (check) => check.status === "Paid" && check.payable_total !== undefined
+			? Number(check.payable_total || 0) : this.roundPosPayable(check.grand_total || 0);
+		const paid = checks.reduce((sum, check) => sum + (check.status === "Paid" ? checkPayable(check) : 0), 0);
+		const payableTotal = checks.reduce((sum, check) => sum + checkPayable(check), 0);
+		const percent = payableTotal > 0 ? Math.max(0, Math.min(100, Math.round(paid / payableTotal * 100))) : 100;
+		return `<section class="rms-guest-payment-progress" aria-label="${__("Order payment progress")}"><div><span>${__("Paid amount")}</span><strong>${this.currency(paid)} <small>/ ${this.currency(payableTotal)}</small></strong></div><div class="rms-guest-payment-progress-track" role="progressbar" aria-label="${__("Paid")}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span style="width:${percent}%"></span></div><small>${percent}% ${__("paid")}</small></section>`;
 	}
 
 	renderPaymentGuests(setupOnly = false) {
@@ -1055,7 +1235,11 @@ class RMSPointOfSale {
 		const mode = this.paymentSplitMode || "amount";
 		const finalized = Boolean(this.guestSplitFinalized);
 		const groups = this.getPaymentItemGroups();
-		return (this.paymentGuests || []).map((guest, index) => {
+		const entries = (this.paymentGuests || []).map((guest, index) => ({ guest, index }));
+		const visibleEntries = this.activeGuestPayment && !this.paymentSplitSetupOpen
+			? entries.filter(({ guest }) => guest.check_name === this.activeGuestPayment.guest_check_name)
+			: entries;
+		return visibleEntries.map(({ guest, index }) => {
 			const guestName = this.escape(guest.name || __("Guest {0}", [index + 1]));
 			const currentPayment = guest.check_name && guest.check_name === this.activeGuestPayment?.guest_check_name;
 			const status = guest.paid ? `<span class="rms-guest-check-status is-paid">${__("Paid")}</span>` : currentPayment ? `<span class="rms-guest-check-status is-current">${__("Selected")}</span>` : `<span class="rms-guest-check-status">${__("Open")}</span>`;
@@ -1073,7 +1257,7 @@ class RMSPointOfSale {
 			const shareField = `<label>${mode === "items" ? __("Check total") : __("Share due")}<input type="number" data-guest-share data-manual-share="${guest.dueManual ? "1" : ""}" min="0" step="0.01" value="${Number(guest.due || guest.amount || 0).toFixed(2)}" ${mode === "items" || guest.paid || finalized || setupOnly ? "readonly" : ""}></label>`;
 			const lockedCheck = mode === "items" && finalized && !setupOnly;
 			const paymentFields = setupOnly || lockedCheck ? "" : `<label>${__("Payment method")}<select data-guest-method ${guest.paid ? "disabled" : ""}>${methods.map((row) => `<option value="${this.escape(row.mode_of_payment)}" ${row.mode_of_payment === guest.method ? "selected" : ""}>${this.escape(row.mode_of_payment)}</option>`).join("")}</select></label><label>${__("Paid Amount")}<input type="number" data-guest-amount data-manual="${guest.manual ? "1" : ""}" min="0" step="0.01" value="${Number(guest.amount || 0).toFixed(2)}" ${guest.paid ? "disabled" : ""}></label>`;
-			const checkActions = lockedCheck && !guest.paid ? `<div class="rms-guest-check-actions"><button type="button" data-action="guest-check-take-payment" data-guest-index="${index}">${__("Take Payment")}</button></div>` : "";
+			const checkActions = lockedCheck && !guest.paid && !currentPayment ? `<div class="rms-guest-check-actions"><button type="button" data-action="guest-check-take-payment" data-guest-index="${index}">${__("Take Payment")}</button></div>` : "";
 			return `<article class="rms-guest-check ${mode === "items" ? "is-item-check" : ""} ${currentPayment ? "is-current-payment" : ""}" data-guest-index="${index}"><header><div class="rms-guest-check-heading"><span class="rms-guest-check-number">${index + 1}</span><strong>${guestName}</strong>${status}</div></header><label class="rms-guest-name">${__("Guest name")}<input type="text" data-guest-name value="${guestName}" aria-label="${__("Guest {0}", [index + 1])}" ${guest.paid || finalized ? "disabled" : ""}></label>${itemList}<div class="rms-guest-check-fields">${shareField}${paymentFields}</div>${checkActions}</article>`;
 		}).join("");
 	}
@@ -1089,6 +1273,7 @@ class RMSPointOfSale {
 		if (!checks || !dialogRoot) return;
 		this.paymentSplitDraftBackup = {
 			mode: this.paymentSplitMode || "items", finalized: Boolean(this.guestSplitFinalized), total: this.paymentTotal,
+			sourceTotal: this.paymentSourceTotal,
 			resplitGuestIndex: this.paymentResplitGuestIndex, resplitItemNames: this.paymentResplitItemNames,
 			guests: (this.paymentGuests || []).map((guest) => ({ ...guest })),
 			assignments: Object.fromEntries(Object.entries(this.paymentItemAssignments || {}).map(([name, values]) => [name, Array.isArray(values) ? [...values] : values])),
@@ -1096,7 +1281,8 @@ class RMSPointOfSale {
 		};
 		this.paymentResplitGuestIndex = index;
 		this.paymentResplitItemNames = itemNames;
-		this.paymentTotal = Number(check.grand_total || 0);
+		this.paymentSourceTotal = Number(check.grand_total || 0);
+		this.paymentTotal = this.roundPosPayable(this.paymentSourceTotal);
 		this.paymentSplitMode = "items";
 		this.paymentSplitSetupOpen = true;
 		this.guestSplitFinalized = false;
@@ -1108,6 +1294,8 @@ class RMSPointOfSale {
 			const assigned = (check.items || []).find((item) => item.name === row.order_item_name);
 			return [row.order_item_name, [Number(assigned?.qty || 0), 0]];
 		}));
+		const guestList = checks.querySelector("[data-payment-guests]");
+		if (guestList) guestList.innerHTML = this.renderPaymentGuests(true);
 		dialogRoot.innerHTML = this.renderPaymentSplitDialog();
 		dialogRoot.querySelector("[data-split-modal-host]").append(checks);
 		checks.hidden = false;
@@ -1178,6 +1366,7 @@ class RMSPointOfSale {
 		if (backup) {
 			this.paymentSplitMode = backup.mode;
 			this.paymentTotal = backup.total;
+			this.paymentSourceTotal = backup.sourceTotal;
 			this.paymentResplitGuestIndex = backup.resplitGuestIndex ?? null;
 			this.paymentResplitItemNames = backup.resplitItemNames ?? null;
 			this.paymentGuests = backup.guests;
@@ -1265,7 +1454,8 @@ class RMSPointOfSale {
 
 	syncPaymentGuestFields() {
 		const cards = this.page.main[0]?.querySelectorAll(".rms-guest-check") || [];
-		cards.forEach((card, index) => {
+		cards.forEach((card, position) => {
+			const index = Number(card.dataset.guestIndex ?? position);
 			const guest = this.paymentGuests?.[index];
 			if (!guest) return;
 			guest.name = card.querySelector("[data-guest-name]")?.value || guest.name;
@@ -1398,7 +1588,7 @@ class RMSPointOfSale {
 	updateGuestSplitAmounts() {
 		if (!this.page.main[0]?.querySelector("[data-split-check-toggle]")?.checked) return;
 		const mode = this.paymentSplitMode || "amount";
-		const total = Number(this.paymentTotal || 0);
+		const total = Number((mode === "items" ? this.paymentSourceTotal : this.paymentTotal) || 0);
 		const sections = [...this.page.main[0].querySelectorAll(".rms-guest-check")];
 		const dues = sections.map(() => 0);
 		let valid = true;
@@ -1446,7 +1636,15 @@ class RMSPointOfSale {
 			message = valid ? __("Every item quantity is assigned once. Guests can pay separately.") : __("Assign every item quantity and give each guest an item.");
 		}
 		sections.forEach((section, index) => {
-			const due = Math.round((dues[index] || 0) * 100) / 100;
+			let due = Math.round((dues[index] || 0) * 100) / 100;
+			if (mode === "items") {
+				const savedCheck = this.guestCheckState?.order_name === this.state.order_name
+					? this.guestCheckState.guest_checks?.[index] : null;
+				const rawCheckTotal = this.guestSplitFinalized && savedCheck ? Number(savedCheck.grand_total || 0) : due;
+				due = savedCheck?.status === "Paid" && savedCheck.payable_total !== undefined
+					? Number(savedCheck.payable_total || 0) : this.roundPosPayable(rawCheckTotal);
+			}
+			if (this.paymentGuests?.[index]) this.paymentGuests[index].due = due;
 			const share = section.querySelector("[data-guest-share]");
 			share.value = due.toFixed(2);
 			const tender = section.querySelector("[data-guest-amount]");
@@ -1466,6 +1664,56 @@ class RMSPointOfSale {
 		root.querySelector("[data-discount-dialog]")?.focus();
 	}
 
+	renderPaymentItemsDialog() {
+		const groups = new Map();
+		for (const row of (this.state.cart || [])) {
+			const quantity = Math.max(0, Number(row.qty || 0) - Number(row.cancelled_qty || 0));
+			if (!row.order_item_name || quantity <= 0) continue;
+			const modifiers = (row.modifier_labels || []).map((modifier) => ({
+				title: modifier.title,
+				price: Number(modifier.price || 0),
+			}));
+			const unitPrice = Number(row.price || 0) + modifiers.reduce((sum, modifier) => sum + modifier.price, 0);
+			const modifierKey = modifiers.map((modifier) => [modifier.title, modifier.price]).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+			const key = JSON.stringify([
+				row.item_code || "", row.selling_product || "", row.title || row.item_name || row.order_item_name,
+				row.option_parent || "", row.uom || "", Number(row.price || 0), row.notes || "",
+				row.item_tax_template || "", row.tax_category || "", row.warehouse || "", modifierKey,
+			]);
+			const group = groups.get(key);
+			if (group) {
+				group.quantity += quantity;
+				group.lineTotal += unitPrice * quantity;
+			} else {
+				groups.set(key, { row, quantity, modifiers, unitPrice, lineTotal: unitPrice * quantity });
+			}
+		}
+		const items = [...groups.values()];
+		const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+		const rows = items.map(({ row, quantity, modifiers, unitPrice, lineTotal }) => {
+			const modifierMarkup = modifiers.length
+				? `<ul class="rms-payment-items-modifiers">${modifiers.map((modifier) => `<li>${this.escape(modifier.title)}${modifier.price ? ` · ${this.currency(modifier.price)}` : ""}</li>`).join("")}</ul>`
+				: "";
+			const noteMarkup = row.notes ? `<p class="rms-payment-items-note">${this.escape(row.notes)}</p>` : "";
+			return `<article class="rms-payment-items-row"><div class="rms-payment-items-description"><div class="rms-payment-items-title-line"><h3>${this.escape(row.title || row.item_name || row.order_item_name)}</h3><span>${quantity}${row.uom ? ` ${this.escape(row.uom)}` : ""} × ${this.currency(unitPrice)}</span></div>${modifierMarkup}${noteMarkup}</div><strong>${this.currency(lineTotal)}</strong></article>`;
+		}).join("");
+		const totals = this.state.totals || {};
+		return `<div class="rms-payment-items-backdrop" data-payment-items-backdrop><section id="rms-payment-items-dialog" class="rms-payment-items-dialog" role="dialog" aria-modal="true" aria-labelledby="rms-payment-items-title" tabindex="-1"><header class="rms-payment-items-header"><div><span class="rms-pos-eyebrow">${__("ORDER DETAILS")}</span><h2 id="rms-payment-items-title">${__("Order items")}</h2><p>${__("{0} items", [itemCount])}</p></div><button type="button" class="rms-screen-secondary" data-action="payment-close-items" aria-label="${__("Close")}">×</button></header><div class="rms-payment-items-dialog-body">${rows || `<p class="rms-payment-items-empty">${__("No order items to display.")}</p>`}</div><footer class="rms-payment-items-footer"><div><span>${__("Subtotal")}</span><b>${this.currency(totals.subtotal || 0)}</b></div>${Number(totals.discount_amount || 0) ? `<div><span>${__("Discount")}</span><b>− ${this.currency(totals.discount_amount)}</b></div>` : ""}<div><span>${__("Taxes")}</span><b>${this.currency(totals.tax_total || 0)}</b></div><div class="rms-payment-items-grand-total"><span>${__("Total")}</span><b>${this.currency(totals.grand_total ?? totals.total ?? 0)}</b></div></footer></section></div>`;
+	}
+
+	openPaymentItemsDialog() {
+		const root = this.page.main[0].querySelector("[data-payment-items-dialog-root]");
+		if (!root) return;
+		root.innerHTML = this.renderPaymentItemsDialog();
+		root.querySelector('[data-action="payment-close-items"]')?.focus();
+	}
+
+	closePaymentItemsDialog() {
+		const root = this.page?.main?.[0]?.querySelector("[data-payment-items-dialog-root]");
+		if (root) root.innerHTML = "";
+		this.page?.main?.[0]?.querySelector('[data-action="payment-open-items"]')?.focus();
+	}
+
 	closePaymentDiscountDialog(preserveApproval = false) {
 		const root = this.page?.main?.[0]?.querySelector("[data-discount-dialog-root]");
 		if (root) root.innerHTML = "";
@@ -1482,7 +1730,7 @@ class RMSPointOfSale {
 		const currentDiscount = this.activeGuestPayment ? activeGuestCheck?.discount_amount || 0 : this.state.totals?.discount_amount || 0;
 		const title = this.activeGuestPayment ? __("Discount for {0}", [this.activeGuestPayment.guest_name]) : __("Add Discount");
 		const percentageTicks = [0, 10, 20, 30, 50, 80, 100].map((tick) => `<span style="left:${tick}%">${tick}%</span>`).join("");
-		return `<div class="rms-discount-backdrop" data-action="payment-discount-backdrop"><section class="rms-discount-dialog" data-discount-dialog role="dialog" aria-modal="true" aria-labelledby="rms-discount-title" tabindex="-1"><header><h2 id="rms-discount-title">${title}</h2><button type="button" data-action="payment-discount-close" aria-label="${__("Close")}">×</button></header><div class="rms-discount-dialog-body"><div data-discount-edit-fields><div class="rms-discount-type-wrap"><span>${__("Discount type")}</span><input type="hidden" data-pay-discount-type value="${this.escape(type)}"><div class="rms-discount-type-switch" role="group" aria-label="${__("Discount type")}"><button type="button" data-action="payment-discount-type" data-type="Amount" aria-pressed="${type === "Amount"}">${__("Amount")}</button><button type="button" data-action="payment-discount-type" data-type="Percentage" aria-pressed="${type === "Percentage"}">${__("Percentage")}</button></div></div><div class="rms-discount-percentage" data-discount-range-wrap ${type === "Percentage" ? "" : "hidden"}><div class="rms-discount-value-heading"><span>${type === "Percentage" ? __("Discount %") : __("Discount amount")}</span><strong><b data-discount-percent-label>${type === "Percentage" ? value : 0}%</b></strong></div><input type="range" data-pay-discount-value="percentage" min="0" max="100" step="5" value="${type === "Percentage" ? value : 0}" aria-label="${__("Discount percentage")}"><div class="rms-discount-ticks" aria-hidden="true">${percentageTicks}</div></div><label class="rms-discount-amount-wrap" data-discount-amount-wrap ${type === "Amount" ? "" : "hidden"}>${__("Discount amount")}<span class="rms-discount-value-field"><input type="number" data-pay-discount-value="amount" min="0" max="${max}" step="0.01" value="${type === "Amount" ? value : 0}" aria-label="${__("Discount amount")}"><button type="button" data-action="payment-discount-clear" aria-label="${__("Clear discount amount")}">×</button></span></label><label class="rms-discount-reason">${__("Reason")}<input type="text" data-pay-discount-reason value="${this.escape(this.paymentDiscount.reason)}" placeholder="${__("Reason for discount")}"></label><div class="rms-discount-dialog-summary">${__("Discount")}: <b data-discount-preview>${this.currency(currentDiscount)}</b></div></div><div class="rms-discount-approval-feedback" data-discount-approval-feedback aria-live="polite"></div></div><footer><button type="button" class="rms-screen-secondary" data-action="payment-discount-close">${__("Cancel")}</button><button type="button" class="rms-screen-primary rms-discount-apply" data-action="payment-apply-discount" ${this.paymentDiscount.reason.trim() ? "" : "disabled"}>${__("Apply")}</button></footer></section></div>`;
+		return `<div class="rms-discount-backdrop" data-action="payment-discount-backdrop"><section class="rms-discount-dialog" data-discount-dialog role="dialog" aria-modal="true" aria-labelledby="rms-discount-title" tabindex="-1"><header><h2 id="rms-discount-title">${title}</h2><button type="button" data-action="payment-discount-close" aria-label="${__("Close")}">×</button></header><div class="rms-discount-dialog-body"><div data-discount-edit-fields><div class="rms-discount-type-wrap"><span>${__("Discount type")}</span><input type="hidden" data-pay-discount-type value="${this.escape(type)}"><div class="rms-discount-type-switch" role="group" aria-label="${__("Discount type")}"><button type="button" data-action="payment-discount-type" data-type="Amount" aria-pressed="${type === "Amount"}">${__("Amount")}</button><button type="button" data-action="payment-discount-type" data-type="Percentage" aria-pressed="${type === "Percentage"}">${__("Percentage")}</button></div></div><div class="rms-discount-percentage" data-discount-range-wrap ${type === "Percentage" ? "" : "hidden"}><div class="rms-discount-value-heading"><span>${type === "Percentage" ? __("Discount %") : __("Discount amount")}</span><strong><b data-discount-percent-label>${type === "Percentage" ? value : 0}%</b></strong></div><input type="range" data-pay-discount-value="percentage" min="0" max="100" step="5" value="${type === "Percentage" ? value : 0}" aria-label="${__("Discount percentage")}"><div class="rms-discount-ticks" aria-hidden="true">${percentageTicks}</div></div><label class="rms-discount-amount-wrap" data-discount-amount-wrap ${type === "Amount" ? "" : "hidden"}>${__("Discount amount")}<span class="rms-discount-value-field"><input type="number" data-pay-discount-value="amount" min="0" max="${max}" step="0.01" value="${type === "Amount" ? value : 0}" aria-label="${__("Discount amount")}"><button type="button" data-action="payment-discount-clear" aria-label="${__("Clear discount amount")}">×</button></span></label><label class="rms-discount-reason">${__("Reason")}<input type="text" data-pay-discount-reason value="${this.escape(this.paymentDiscount.reason)}" placeholder="${__("Reason for discount")}"></label><div class="rms-discount-dialog-summary">${__("Discount")}: <b data-discount-preview>${this.currency(currentDiscount)}</b></div></div><div class="rms-discount-approval-feedback" data-discount-approval-feedback aria-live="polite"></div></div><footer><button type="button" class="rms-screen-secondary" data-action="payment-clear-discount" data-applied-discount="${currentDiscount}">${__("Clear")}</button><button type="button" class="rms-screen-secondary" data-action="payment-discount-close">${__("Cancel")}</button><button type="button" class="rms-screen-primary rms-discount-apply" data-action="payment-apply-discount" ${this.paymentDiscount.reason.trim() ? "" : "disabled"}>${__("Apply")}</button></footer></section></div>`;
 	}
 
 	async printOpenOrderCheck() {
@@ -1516,10 +1764,14 @@ class RMSPointOfSale {
 
 	updateDiscountApplyState() {
 		const button = this.page?.main?.[0]?.querySelector("[data-action='payment-apply-discount']");
+		const type = this.page?.main?.[0]?.querySelector("[data-pay-discount-type]")?.value || "Percentage";
+		const value = Number(this.page?.main?.[0]?.querySelector(`[data-pay-discount-value="${type === "Amount" ? "amount" : "percentage"}"]`)?.value || 0);
+		const clearButton = this.page?.main?.[0]?.querySelector("[data-action='payment-clear-discount']");
+		if (clearButton) clearButton.disabled = !(Number(clearButton.dataset.appliedDiscount || 0) > 0 || value > 0);
 		if (!button || button.hidden) return;
 		const codeInput = this.page.main[0].querySelector("[data-discount-approval-code]");
 		button.disabled = codeInput ? !codeInput.value.trim()
-			: !this.page.main[0].querySelector("[data-pay-discount-reason]")?.value.trim();
+			: value > 0 && !this.page.main[0].querySelector("[data-pay-discount-reason]")?.value.trim();
 	}
 
 	setPaymentDiscountType(type) {
@@ -1542,6 +1794,8 @@ class RMSPointOfSale {
 		if (title) title.textContent = __("Add Discount");
 		const apply = this.page?.main?.[0]?.querySelector("[data-action='payment-apply-discount']");
 		if (apply) { apply.textContent = __("Apply"); apply.hidden = false; }
+		const clear = this.page?.main?.[0]?.querySelector("[data-action='payment-clear-discount']");
+		if (clear) clear.hidden = false;
 		this.updateDiscountApplyState();
 	}
 
@@ -1569,6 +1823,17 @@ class RMSPointOfSale {
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 	}
 
+	async clearAppliedPaymentDiscount() {
+		const type = this.page.main.find("[data-pay-discount-type]").val() || "Percentage";
+		const input = this.page.main[0].querySelector(`[data-pay-discount-value="${type === "Amount" ? "amount" : "percentage"}"]`);
+		const reason = this.page.main[0].querySelector("[data-pay-discount-reason]");
+		if (input) input.value = "0";
+		if (reason) reason.value = "";
+		this.paymentDiscountPreview = null;
+		this.clearDiscountApprovalPrompt();
+		await this.applyPaymentDiscount();
+	}
+
 	renderDiscountApprovalPrompt(approvers, selectedApprover = "", errorMessage = "", approvalCode = "", approvalMethod = this.paymentDiscountAuthMethod || "OTP") {
 		const feedback = this.page.main[0].querySelector("[data-discount-approval-feedback]");
 		if (!feedback) return;
@@ -1579,6 +1844,8 @@ class RMSPointOfSale {
 			if (editFields) editFields.hidden = true;
 			const applyButton = this.page.main[0].querySelector("[data-action='payment-apply-discount']");
 			if (applyButton) applyButton.hidden = true;
+			const clearButton = this.page.main[0].querySelector("[data-action='payment-clear-discount']");
+			if (clearButton) clearButton.hidden = true;
 			feedback.textContent = errorMessage || __("No POS Manager with access to this Store is available to approve the discount.");
 			return;
 		}
@@ -1607,7 +1874,9 @@ class RMSPointOfSale {
 					${errorMessage ? `<p class="rms-discount-error">${this.escape(errorMessage)}</p>` : ""}
 				</div>`;
 			const applyButton = this.page.main[0].querySelector("[data-action='payment-apply-discount']");
-		if (applyButton) { applyButton.textContent = __("Verify and Apply"); applyButton.hidden = false; this.updateDiscountApplyState(); }
+			if (applyButton) { applyButton.textContent = __("Verify and Apply"); applyButton.hidden = false; this.updateDiscountApplyState(); }
+			const clearButton = this.page.main[0].querySelector("[data-action='payment-clear-discount']");
+			if (clearButton) clearButton.hidden = true;
 			return;
 		}
 		const options = approvers.map((row) => `<button type="button" class="rms-discount-approver" data-action="payment-discount-approver" data-approver="${this.escape(row.user)}">${this.escape(row.full_name)}<small>${this.escape(row.user)}</small></button>`).join("");
@@ -1616,6 +1885,8 @@ class RMSPointOfSale {
 		feedback.innerHTML = `<div class="rms-discount-approval-flow"><div class="rms-discount-stepper"><b>1</b><i>›</i><span>2</span></div><h3>${this.escape(__("Select Authorizer"))}</h3><p>${this.escape(__("Select a manager to approve this discount."))}</p><div class="rms-discount-approver-list">${options}</div>${errorMessage ? `<p class="rms-discount-error">${this.escape(errorMessage)}</p>` : ""}</div>`;
 		const applyButton = this.page.main[0].querySelector("[data-action='payment-apply-discount']");
 		if (applyButton) { applyButton.textContent = __("Apply"); applyButton.hidden = true; }
+		const clearButton = this.page.main[0].querySelector("[data-action='payment-clear-discount']");
+		if (clearButton) clearButton.hidden = true;
 	}
 
 	queuePaymentDiscountPreview(showApprovalPrompt = false) {
@@ -1692,7 +1963,9 @@ class RMSPointOfSale {
 		const requestId = this.discountPreviewRequestId = (this.discountPreviewRequestId || 0) + 1;
 		const approvalCode = this.page.main[0].querySelector("[data-discount-approval-code]")?.value.trim() || "";
 		const reason = this.page.main[0].querySelector("[data-pay-discount-reason]")?.value.trim() || "";
-		if (!reason) {
+		const type = this.page.main.find("[data-pay-discount-type]").val() || "Percentage";
+		const value = Number(this.page.main[0].querySelector(`[data-pay-discount-value="${type === "Amount" ? "amount" : "percentage"}"]`)?.value || 0);
+		if (value > 0 && !reason) {
 			const feedback = this.page.main[0].querySelector("[data-discount-approval-feedback]");
 			if (feedback) feedback.textContent = __("Enter a reason for the discount.");
 			return;
@@ -1701,17 +1974,19 @@ class RMSPointOfSale {
 		await this.refreshPaymentDiscountPreview(requestId, approvalCode, true);
 		if (!this.paymentDiscountPreview || requestId !== this.discountPreviewRequestId) return;
 		this.paymentDiscount = this.paymentDiscountDraft || this.paymentDiscount;
-		this.paymentTotal = Number(this.paymentDiscountPreview.grand_total || 0);
+		this.paymentSourceTotal = Number(this.paymentDiscountPreview.grand_total || 0);
+		this.paymentTotal = this.roundPosPayable(this.paymentSourceTotal);
 		this.updateSuggestedPaymentAmounts();
 		if (this.activeGuestPayment) {
 			this.activeGuestPayment.grand_total = this.paymentTotal;
+			this.activeGuestPayment.source_total = this.paymentSourceTotal;
 			const activeCheck = this.guestCheckState?.guest_checks?.find((row) => row.name === this.activeGuestPayment.guest_check_name);
 			if (activeCheck) Object.assign(activeCheck, {
 				discount_type: this.paymentDiscount.type,
 				discount_value: this.paymentDiscount.value,
 				discount_reason: this.paymentDiscount.reason,
 				discount_amount: Number(this.paymentDiscountPreview.discount_amount || 0),
-				grand_total: this.paymentTotal,
+				grand_total: this.paymentSourceTotal,
 			});
 		}
 		const appliedDiscountLabel = this.page.main[0].querySelector(".rms-payment-discount-launch [data-discount-preview]");
@@ -1945,11 +2220,11 @@ class RMSPointOfSale {
 			|| (this.state.cross_session_edit && !this.state.permissions.can_edit_open_orders)) return;
 		const dialog = new frappe.ui.Dialog({ title: __("Cancel confirmed item"), fields: [
 			{ fieldtype: "Float", fieldname: "qty", label: __("Quantity to cancel"), default: Math.max(0, Number(row.qty) - Number(row.cancelled_qty || 0)), reqd: 1 },
-			{ fieldtype: "Small Text", fieldname: "reason", label: __("Reason"), reqd: 1, description: __("A POS Manager approval is recorded with the order and sent to preparation.") }
+			{ fieldtype: "Link", fieldname: "action_reason", label: __("Reason"), options: "POS Action Reason", reqd: 1, description: __("A POS Manager approval is recorded with the order and sent to preparation.") }
 		], primary_action_label: __("Cancel item"), primary_action: async (values) => {
 			dialog.disable_primary_action();
 			try {
-				const result = await this.call("cancel_confirmed_order_item", { order_name: this.state.order_name, item_name: row.order_item_name, qty: values.qty, reason: values.reason });
+				const result = await this.call("cancel_confirmed_order_item", { order_name: this.state.order_name, item_name: row.order_item_name, qty: values.qty, action_reason: values.action_reason });
 				if (result.status === "Cancelled") {
 					row.cancelled_qty = Number(result.cancelled_qty) || 0;
 					this.state.order_status = result.status;
@@ -1963,7 +2238,11 @@ class RMSPointOfSale {
 				dialog.hide(); frappe.show_alert({ message: __("Confirmed item cancellation recorded"), indicator: "orange" });
 			} catch (error) { dialog.enable_primary_action(); this.showError(error); }
 		} });
-		dialog.$wrapper.addClass("rms-pos-workflow-dialog"); dialog.show();
+		dialog.$wrapper.addClass("rms-pos-workflow-dialog");
+		dialog.fields_dict.action_reason.get_query = () => ({ filters: {
+			enabled: 1, applies_to: ["in", ["Both", "Confirmed Item Cancellation"]],
+		} });
+		dialog.show();
 	}
 
 	showError(error) {
@@ -1988,63 +2267,323 @@ class RMSPointOfSale {
 
 	async startReturnFlow() {
 		if (!this.state.session) return frappe.msgprint(__("Open a cashier session before processing a return."));
+		this.closeReturnSalesDialog();
 		try {
+			await this.ensureReturnSalesStyles();
 			const data = await this.call("get_returnable_sales", { store: this.state.store });
-			if (!data.invoices?.length) return frappe.msgprint(__("There are no returnable sales in this cashier session."));
-			const html = `<div class="rms-pos-open-list">${data.invoices.map((invoice) => `<div class="rms-pos-open-order"><span><b>${this.escape(invoice.name)}</b><small>${this.escape(invoice.customer)} · ${this.escape(invoice.posting_date)} · ${invoice.returnable_lines.length} ${__("items")}</small></span><strong>${this.currency(invoice.grand_total)}</strong><button class="btn btn-default btn-xs" data-return-invoice="${this.escape(invoice.name)}">${__("Select")}</button></div>`).join("")}</div>`;
-			const dialog = new frappe.ui.Dialog({ title: __("Return a Sale"), fields: [{ fieldtype: "HTML", fieldname: "sales_html", options: html }],
-				primary_action_label: __("Close"), primary_action: () => dialog.hide() });
-			dialog.show();
-			dialog.$wrapper.on("click", "[data-return-invoice]", async (event) => {
-				const invoice = data.invoices.find((row) => row.name === event.currentTarget.dataset.returnInvoice);
-				dialog.hide();
-				if (invoice) await this.openReturnItems(invoice, data.refund_methods || []);
+			if (!data.invoices?.length) return frappe.msgprint(__("There are no returnable POS invoices for this Store."));
+			const html = `<div class="rms-pos-return-sale-backdrop" data-return-sale-backdrop><section class="rms-pos-return-sale-dialog" role="dialog" aria-modal="true" aria-labelledby="rms-pos-return-sale-title"><header class="rms-pos-return-sale-header"><div><span>${__("RETURNS")}</span><h2 id="rms-pos-return-sale-title">${__("Return a Sale")}</h2><p>${__("Choose a POS invoice to return items from.")}</p></div><button type="button" data-return-sale-close aria-label="${__("Close")}">×</button></header><div class="rms-pos-return-sale-body"><label class="rms-pos-return-sale-search"><span class="sr-only">${__("Search POS invoices")}</span><input type="search" data-return-search placeholder="${this.escape(__("Search by POS Invoice, customer, or date"))}" autocomplete="off"></label><div class="rms-pos-return-sale-list">${data.invoices.map((invoice) => `<article class="rms-pos-return-sale-row" data-return-invoice-card data-search="${this.escape(`${invoice.name} ${invoice.customer || ""} ${invoice.posting_date || ""}`)}"><div class="rms-pos-return-sale-info"><strong>${this.escape(invoice.name)}</strong><span>${this.escape(invoice.customer || "")} · ${this.escape(invoice.posting_date || "")} · ${invoice.returnable_lines.length} ${__("items")}</span></div><strong class="rms-pos-return-sale-total">${this.currency(invoice.grand_total)}</strong><button type="button" class="btn btn-default" data-return-invoice="${this.escape(invoice.name)}">${__("Select")}</button></article>`).join("")}<p class="rms-pos-return-sale-empty" data-return-no-results hidden>${__("No matching POS invoices.")}</p></div></div><footer class="rms-pos-return-sale-footer"><button type="button" class="btn btn-default" data-return-sale-close>${__("Close")}</button></footer></section></div>`;
+			document.body.insertAdjacentHTML("beforeend", html);
+			const overlay = document.querySelector("[data-return-sale-backdrop]");
+			const search = overlay.querySelector("[data-return-search]");
+			search.focus();
+			search.addEventListener("input", () => {
+				const query = search.value.trim().toLocaleLowerCase();
+				const cards = [...overlay.querySelectorAll("[data-return-invoice-card]")];
+				let visible = 0;
+				cards.forEach((card) => {
+					card.hidden = !card.dataset.search.toLocaleLowerCase().includes(query);
+					if (!card.hidden) visible++;
+				});
+				overlay.querySelector("[data-return-no-results]").hidden = visible > 0;
+			});
+			overlay.addEventListener("click", async (event) => {
+				if (event.target === overlay || event.target.closest("[data-return-sale-close]")) {
+					this.closeReturnSalesDialog();
+					return;
+				}
+				const select = event.target.closest("[data-return-invoice]");
+				if (!select) return;
+				const invoice = data.invoices.find((row) => row.name === select.dataset.returnInvoice);
+				this.closeReturnSalesDialog();
+				if (invoice) await this.openReturnItems(invoice, data.refund_methods || [], data.action_reasons || []);
+			});
+			overlay.addEventListener("keydown", (event) => {
+				if (event.key === "Escape") this.closeReturnSalesDialog();
 			});
 		} catch (error) { this.showError(error); }
 	}
 
-	async openReturnItems(invoice, refundMethods) {
-		const rows = invoice.returnable_lines;
-		const html = `<div class="rms-pos-return-lines">${rows.map((row) => `<div class="rms-pos-open-order"><label><input type="checkbox" data-return-select="${this.escape(row.name)}"> ${this.escape(row.title || row.item_code)} <small>${this.escape(row.item_code)} · ${this.currency(row.rate)} / ${this.escape(row.uom || "")}</small></label><span>${__("Available")}: ${row.qty}</span><input type="number" data-return-qty="${this.escape(row.name)}" min="${row.must_be_whole_number ? 1 : 0.001}" max="${row.qty}" step="${row.must_be_whole_number ? 1 : "any"}" value="${row.qty}" aria-label="${__("Return quantity")}"><label><input type="checkbox" data-return-waste="${this.escape(row.name)}"> ${__("Is Waste")}</label></div>`).join("")}</div>`;
+	async ensureReturnSalesStyles() {
+		const version = "pos-a-56";
+		const href = `/assets/rms/css/point_of_sale.css?v=${version}`;
+		let link = [...document.querySelectorAll('link[rel="stylesheet"]')].find((node) => node.href.includes("/assets/rms/css/point_of_sale.css"));
+		if (link?.href.includes(`v=${version}`)) return;
+		if (!link) {
+			link = document.createElement("link");
+			link.rel = "stylesheet";
+			document.head.appendChild(link);
+		}
+		await new Promise((resolve) => {
+			const done = () => resolve();
+			link.addEventListener("load", done, { once: true });
+			link.addEventListener("error", done, { once: true });
+			link.href = href;
+			window.setTimeout(done, 2500);
+		});
+	}
+
+	closeReturnSalesDialog() {
+		document.querySelector("[data-return-sale-backdrop]")?.remove();
+	}
+
+	async openReturnItems(invoice, refundMethods, actionReasons, previous = null) {
+		const previousItems = new Map((previous?.items || []).map((row) => [row.source_pos_invoice_item, row]));
+		const groups = new Map();
+		invoice.returnable_lines.forEach((row) => {
+			const key = JSON.stringify([row.item_code, row.rate, row.uom]);
+			if (!groups.has(key)) groups.set(key, { ...row, qty: 0, lines: [], must_be_whole_number: true });
+			const group = groups.get(key);
+			group.qty += Number(row.qty || 0);
+			group.lines.push(row);
+			group.must_be_whole_number = group.must_be_whole_number && row.must_be_whole_number;
+		});
+		const items = [...groups.values()];
+		items.forEach((group) => {
+			group.initialQty = group.lines.reduce((total, line) => total + Number(previousItems.get(line.name)?.qty || 0), 0);
+			group.initialChecked = group.initialQty > 0;
+		});
+		const reasons = actionReasons || [];
+		const initialWaste = [...previousItems.values()].some((row) => row.is_waste);
+		const reasonPicker = `<div class="rms-expense-category-picker rms-pos-return-reason-picker"><input class="form-control" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" data-return-reason-search placeholder="${this.escape(__("Choose or search a return reason"))}" autocomplete="off"><div class="rms-expense-category-list" data-return-reason-list role="listbox" hidden>${reasons.map((row) => `<div class="rms-expense-category-option" role="option" tabindex="-1" data-return-reason="${this.escape(row.name)}" data-return-reason-search-text="${this.escape(`${row.reason} ${row.name}`)}" aria-selected="false">${this.escape(row.reason)}</div>`).join("")}</div><p class="rms-expense-category-empty" data-return-reason-empty hidden>${this.escape(reasons.length ? __("No matching return reasons.") : __("No enabled return reasons are configured."))}</p></div>`;
+		const html = `<div class="rms-pos-return-selection"><label class="rms-pos-waste-toggle rms-pos-return-waste"><input type="checkbox" data-return-waste${initialWaste ? " checked" : ""}><span>${__("Is Waste")}</span></label><div class="rms-pos-return-lines">${items.map((row, index) => {
+			const checked = row.initialChecked ? " checked" : "";
+			const disabled = row.initialChecked ? "" : " disabled";
+			const qty = row.initialChecked ? row.initialQty : row.qty;
+			return `<div class="rms-pos-return-line"><label class="rms-pos-return-item"><input type="checkbox" data-return-select="${index}"${checked}><span><b>${this.escape(row.title || row.item_code)}</b><small>${this.escape(row.item_code)} · ${this.currency(row.rate)} / ${this.escape(row.uom || "")}</small></span></label><span class="rms-pos-return-available">${__("Available")}: <b>${row.qty}</b></span><div class="rms-pos-qty rms-pos-return-qty" data-return-qty-control><button type="button" data-return-qty-adjust="-1" aria-label="${__("Decrease return quantity")}"${disabled}>−</button><input type="number" data-return-qty="${index}" min="${row.must_be_whole_number ? 1 : 0.001}" max="${row.qty}" step="${row.must_be_whole_number ? 1 : "any"}" value="${qty}" aria-label="${__("Return quantity")}"${disabled}><button type="button" data-return-qty-adjust="1" aria-label="${__("Increase return quantity")}"${disabled}>+</button></div></div>`;
+		}).join("")}</div></div>`;
 		const dialog = new frappe.ui.Dialog({ title: __("Select Return Items"), fields: [
 			{ fieldtype: "HTML", fieldname: "items_html", options: html },
-			{ fieldtype: "Small Text", fieldname: "reason", label: __("Reason") },
+			{ fieldtype: "HTML", fieldname: "reason_picker", label: __("Reason"), options: reasonPicker },
+			{ fieldtype: "Data", fieldname: "action_reason", hidden: 1, reqd: 1 },
 		], primary_action_label: __("Continue"), primary_action: async (values) => {
-			const selected = [...dialog.$wrapper[0].querySelectorAll("[data-return-select]:checked")].map((check) => {
-				const line = check.dataset.returnSelect;
-				const row = rows.find((item) => item.name === line);
-				const qty = Number(dialog.$wrapper[0].querySelector(`[data-return-qty="${CSS.escape(line)}"]`)?.value);
-				return { source_pos_invoice_item: line, qty, is_waste: Boolean(dialog.$wrapper[0].querySelector(`[data-return-waste="${CSS.escape(line)}"]`)?.checked), max: row?.qty };
+			const selected = [];
+			const invalid = [...dialog.$wrapper[0].querySelectorAll("[data-return-select]:checked")].some((check) => {
+				const index = Number(check.dataset.returnSelect);
+				const group = items[index];
+				const qty = Number(dialog.$wrapper[0].querySelector(`[data-return-qty="${index}"]`)?.value);
+				if (!group || !Number.isFinite(qty) || qty <= 0 || qty > group.qty) return true;
+				const isWaste = Boolean(dialog.$wrapper[0].querySelector("[data-return-waste]")?.checked);
+				let remaining = qty;
+				group.lines.forEach((line) => {
+					const lineQty = Math.min(remaining, Number(line.qty));
+					if (lineQty > 0) selected.push({ source_pos_invoice_item: line.name, qty: lineQty, is_waste: isWaste, max: line.qty });
+					remaining = Number((remaining - lineQty).toFixed(6));
+				});
+				return remaining > 0.000001;
 			});
-			if (!selected.length || selected.some((row) => !Number.isFinite(row.qty) || row.qty <= 0 || row.qty > row.max)) {
+			if (invalid || !selected.length || selected.some((row) => !Number.isFinite(row.qty) || row.qty <= 0 || row.qty > row.max)) {
 				return frappe.msgprint(__("Select valid quantities for at least one return item."));
 			}
+			if (!values.action_reason) return frappe.msgprint(__("Choose a return reason."));
 			try {
 				const preview = await this.call("preview_pos_return", { source_pos_invoice: invoice.name,
-					items: JSON.stringify(selected.map(({ max, ...row }) => row)) });
+					items: JSON.stringify(selected.map(({ max, ...row }) => row)), action_reason: values.action_reason });
 				dialog.hide();
-				await this.openReturnPayments(invoice, selected, values.reason, preview, refundMethods);
+				await this.openReturnPayments(invoice, selected, values.action_reason, preview, refundMethods, reasons);
 			} catch (error) { this.showError(error); }
+		} });
+		dialog.$wrapper.addClass("rms-pos-return-items-dialog");
+		dialog.$wrapper.on("input", "[data-return-reason-search]", (event) => {
+			const input = event.currentTarget;
+			const query = input.value.trim().toLocaleLowerCase();
+			dialog.set_value("action_reason", "");
+			input.setAttribute("aria-expanded", "true");
+			const options = dialog.$wrapper.find("[data-return-reason]");
+			let visible = 0;
+			options.each((_, option) => {
+				option.hidden = !option.dataset.returnReasonSearchText.toLocaleLowerCase().includes(query);
+				if (!option.hidden) visible++;
+			});
+			dialog.$wrapper.find("[data-return-reason-list]").prop("hidden", false);
+			dialog.$wrapper.find("[data-return-reason-empty]").prop("hidden", visible > 0);
+		});
+		dialog.$wrapper.find("[data-return-reason-search]").on("focus", (event) => {
+			const input = event.currentTarget;
+			if (dialog.get_value("action_reason")) {
+				input.value = "";
+				dialog.set_value("action_reason", "");
+				dialog.$wrapper.find("[data-return-reason]").attr("aria-selected", "false").removeClass("is-selected");
+			}
+			input.setAttribute("aria-expanded", "true");
+			dialog.$wrapper.find("[data-return-reason]").prop("hidden", false);
+			dialog.$wrapper.find("[data-return-reason-list]").prop("hidden", false);
+			dialog.$wrapper.find("[data-return-reason-empty]").prop("hidden", reasons.length > 0);
+		});
+		dialog.$wrapper.find("[data-return-reason-search]").on("blur", (event) => {
+			const input = event.currentTarget;
+			window.setTimeout(() => {
+				const list = dialog.$wrapper.find("[data-return-reason-list]")[0];
+				if (list && !list.contains(document.activeElement)) {
+					list.hidden = true;
+					input.setAttribute("aria-expanded", "false");
+				}
+			}, 0);
+		});
+		dialog.$wrapper.on("mousedown", "[data-return-reason]", (event) => event.preventDefault());
+		dialog.$wrapper.on("click", "[data-return-reason]", (event) => {
+			const option = event.currentTarget;
+			const input = dialog.$wrapper.find("[data-return-reason-search]")[0];
+			dialog.set_value("action_reason", option.dataset.returnReason);
+			dialog.$wrapper.find("[data-return-reason]").attr("aria-selected", "false").removeClass("is-selected");
+			$(option).attr("aria-selected", "true").addClass("is-selected");
+			input.value = option.textContent;
+			input.setAttribute("aria-expanded", "false");
+			dialog.$wrapper.find("[data-return-reason-list], [data-return-reason-empty]").prop("hidden", true);
+		});
+		dialog.$wrapper.find("[data-return-reason-search]").on("keydown", (event) => {
+			const options = [...dialog.$wrapper.find("[data-return-reason]:not([hidden])")];
+			if (event.key === "Escape") {
+				dialog.$wrapper.find("[data-return-reason-list]").prop("hidden", true);
+				event.currentTarget.setAttribute("aria-expanded", "false");
+			} else if (event.key === "ArrowDown" && options.length) {
+				event.preventDefault();
+				options[0].focus();
+			} else if (event.key === "Enter" && options.length === 1) {
+				event.preventDefault();
+				options[0].click();
+			}
+		});
+		dialog.$wrapper.on("keydown", "[data-return-reason]", (event) => {
+			const options = [...dialog.$wrapper.find("[data-return-reason]:not([hidden])")];
+			const index = options.indexOf(event.currentTarget);
+			if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+				event.preventDefault();
+				options[(index + (event.key === "ArrowDown" ? 1 : options.length - 1)) % options.length]?.focus();
+			} else if (event.key === "Enter") {
+				event.preventDefault();
+				event.currentTarget.click();
+			} else if (event.key === "Escape") {
+				const input = dialog.$wrapper.find("[data-return-reason-search]")[0];
+				dialog.$wrapper.find("[data-return-reason-list]").prop("hidden", true);
+				input.setAttribute("aria-expanded", "false");
+				input.focus();
+			}
+		});
+		dialog.$wrapper.on("change", "[data-return-select]", (event) => {
+			const check = event.currentTarget;
+			const index = check.dataset.returnSelect;
+			const control = dialog.$wrapper[0].querySelector(`[data-return-qty-control] [data-return-qty="${index}"]`)?.closest("[data-return-qty-control]");
+			if (!control) return;
+			const input = control.querySelector("[data-return-qty]");
+			input.disabled = !check.checked;
+			control.querySelectorAll("button").forEach((button) => { button.disabled = !check.checked; });
+			if (check.checked) {
+				const qty = Number(input.value || 0);
+				control.querySelector('[data-return-qty-adjust="-1"]').disabled = qty <= Number(input.min || 0.001);
+				control.querySelector('[data-return-qty-adjust="1"]').disabled = qty >= Number(input.max || 0);
+			}
+		});
+		dialog.$wrapper.on("click", "[data-return-qty-adjust]", (event) => {
+			const button = event.currentTarget;
+			const control = button.closest("[data-return-qty-control]");
+			const input = control?.querySelector("[data-return-qty]");
+			if (!input) return;
+			const min = Number(input.min || 0.001);
+			const max = Number(input.max || 0);
+			const step = input.step === "any" ? 0.001 : Number(input.step || 1);
+			const current = Number(input.value || min);
+			const next = Math.min(max, Math.max(min, current + Number(button.dataset.returnQtyAdjust) * step));
+			input.value = input.step === "any" ? String(Number(next.toFixed(3))) : String(next);
+			control.querySelector('[data-return-qty-adjust="-1"]').disabled = next <= min;
+			control.querySelector('[data-return-qty-adjust="1"]').disabled = next >= max;
+		});
+		dialog.$wrapper.find("[data-return-qty-control]").each((_, control) => {
+			const input = control.querySelector("[data-return-qty]");
+			const qty = Number(input?.value || 0);
+			const selected = control.closest(".rms-pos-return-line")?.querySelector("[data-return-select]")?.checked;
+			input.disabled = !selected;
+			control.querySelector('[data-return-qty-adjust="-1"]').disabled = !selected || qty <= Number(input?.min || 0.001);
+			control.querySelector('[data-return-qty-adjust="1"]').disabled = !selected || qty >= Number(input?.max || 0);
+		});
+		dialog.$wrapper.on("change input", "[data-return-qty]", (event) => {
+			const input = event.currentTarget;
+			const control = input.closest("[data-return-qty-control]");
+			const qty = Number(input.value || 0);
+			control.querySelector('[data-return-qty-adjust="-1"]').disabled = qty <= Number(input.min || 0.001);
+			control.querySelector('[data-return-qty-adjust="1"]').disabled = qty >= Number(input.max || 0);
+		});
+		dialog.show();
+		const previousReason = reasons.find((row) => row.name === previous?.reason);
+		if (previousReason) {
+			dialog.set_value("action_reason", previousReason.name);
+			const input = dialog.$wrapper.find("[data-return-reason-search]")[0];
+			input.value = previousReason.reason;
+			const option = [...dialog.$wrapper[0].querySelectorAll("[data-return-reason]")]
+				.find((row) => row.dataset.returnReason === previousReason.name);
+			if (option) $(option).attr("aria-selected", "true").addClass("is-selected");
+		}
+	}
+
+	async openReturnPayments(invoice, items, reason, preview, methods, actionReasons) {
+		if (!methods.length) return frappe.msgprint(__("Configure at least one POS Profile payment method with Allow In Returns enabled."));
+		const returnItems = items.map(({ max, ...row }) => row);
+		const initialMethod = methods[0].mode_of_payment;
+		const refundMethodPicker = this.renderStaticPicker("return-refund-method", __("Refund method"),
+			methods.map((row) => ({ value: row.mode_of_payment, label: row.mode_of_payment })), initialMethod);
+		const fields = [
+			{ fieldtype: "HTML", fieldname: "refund_summary", options: `<p>${__("Calculated ERPNext refund total")}: <strong>${this.currency(preview.refund_total)}</strong></p>` },
+			{ fieldtype: "HTML", fieldname: "refund_method_picker", options: refundMethodPicker },
+			{ fieldtype: "Data", fieldname: "mode_of_payment", default: initialMethod, hidden: 1, reqd: 1 },
+			{ fieldtype: "Currency", fieldname: "refund_amount", label: __("Refund amount"), default: preview.refund_total, read_only: 1 },
+		];
+		const dialog = new frappe.ui.Dialog({ title: __("Refund {0}", [invoice.name]), fields,
+			primary_action_label: __("Confirm"), primary_action: async (values) => {
+				if (!values.mode_of_payment) return frappe.msgprint(__("Choose a refund method."));
+				dialog.disable_primary_action();
+				const payments = [{ mode_of_payment: values.mode_of_payment, amount: Number(preview.refund_total) }];
+				try {
+					const result = await this.call("request_pos_return", { source_pos_invoice: invoice.name,
+						items: JSON.stringify(returnItems), payments: JSON.stringify(payments), action_reason: reason });
+					if (result.requires_manager_authorization) {
+						dialog.hide();
+						return this.openReturnManagerApproval(invoice, returnItems, reason, payments, result.approvers || []);
+					}
+					dialog.hide();
+					this.showReturnConfirmed(result, values.mode_of_payment);
+				} catch (error) { dialog.enable_primary_action(); this.showError(error); }
+			} });
+		dialog.$wrapper.addClass("rms-pos-return-payment-dialog");
+		this.bindStaticPicker(dialog, "return-refund-method", "mode_of_payment");
+		dialog.$wrapper.find(".modal-header").prepend(`<button type="button" class="rms-pos-return-back" data-return-payment-back aria-label="${__("Back to return items")}">←</button>`);
+		dialog.$wrapper.on("click", "[data-return-payment-back]", () => {
+			dialog.hide();
+			this.openReturnItems(invoice, methods, actionReasons, { items, reason });
+		});
+		dialog.show();
+	}
+
+	async openReturnManagerApproval(invoice, items, reason, payments, approvers) {
+		if (!approvers.length) return frappe.msgprint(__("No POS Manager with access to this Store is available to approve the return."));
+		const dialog = new frappe.ui.Dialog({ title: __("Manager approval"), fields: [
+			{ fieldtype: "HTML", fieldname: "approval_note", options: `<p>${__("A POS Manager must approve this return.")}<br><strong>${this.currency(payments.reduce((sum, row) => sum + row.amount, 0))}</strong> · ${this.escape(payments[0].mode_of_payment)}</p>` },
+			{ fieldtype: "Link", fieldname: "approval_approver", label: __("POS Manager"), options: "User", reqd: 1 },
+			{ fieldtype: "Password", fieldname: "approval_password", label: __("Manager approval code / password"), description: __("Enter the approval credential configured on the selected manager's POS User profile."), reqd: 1 },
+		], primary_action_label: __("Verify and Confirm"), primary_action: async (values) => {
+			dialog.disable_primary_action();
+			try {
+				const result = await this.call("request_pos_return", { source_pos_invoice: invoice.name,
+					items: JSON.stringify(items), payments: JSON.stringify(payments), action_reason: reason,
+					approval_approver: values.approval_approver, approval_password: values.approval_password });
+				dialog.hide();
+				this.showReturnConfirmed(result, payments[0].mode_of_payment);
+			} catch (error) { dialog.enable_primary_action(); this.showError(error); }
+		} });
+		dialog.$wrapper.addClass("rms-pos-return-approval-dialog");
+		dialog.fields_dict.approval_approver.get_query = () => ({ filters: {
+			name: ["in", approvers.map((row) => row.user)],
 		} });
 		dialog.show();
 	}
 
-	async openReturnPayments(invoice, items, reason, preview, methods) {
-		if (!methods.length) return frappe.msgprint(__("Configure at least one POS Profile payment method with Allow In Returns enabled."));
-		const fields = [{ fieldtype: "HTML", fieldname: "refund_summary", options: `<p>${__("Calculated ERPNext refund total")}: <strong>${this.currency(preview.refund_total)}</strong></p>` }, ...methods.map((row, index) => ({ fieldtype: "Currency", fieldname: `refund_${index}`,
-			label: __("Refund") + ` · ${row.mode_of_payment}`, default: index === 0 ? preview.refund_total : 0 }))];
-		const dialog = new frappe.ui.Dialog({ title: __("Refund {0}", [invoice.name]), fields,
-			primary_action_label: __("Request Manager Approval"), primary_action: async (values) => {
-				const payments = methods.map((row, index) => ({ mode_of_payment: row.mode_of_payment,
-					amount: Number(values[`refund_${index}`] || 0) })).filter((row) => row.amount > 0);
-				try {
-					const result = await this.call("request_pos_return", { source_pos_invoice: invoice.name,
-						items: JSON.stringify(items.map(({ max, ...row }) => row)), payments: JSON.stringify(payments), reason: reason || "" });
-					dialog.hide();
-					frappe.msgprint(__("Return {0} is pending manager approval. Refund total: {1}.", [result.name, this.currency(result.refund_total)]));
-				} catch (error) { this.showError(error); }
-			} });
-		dialog.show();
+	showReturnConfirmed(result, paymentMethod) {
+		const details = [
+			`${__("Credit note")}: <strong>${this.escape(result.return_pos_invoice || "—")}</strong>`,
+			`${__("Refund method")}: <strong>${this.escape(paymentMethod || "—")}</strong>`,
+			`${__("Refund total")}: <strong>${this.currency(result.refund_total)}</strong>`,
+		];
+		if (result.stock_entry) details.push(`${__("Stock Entry")}: <strong>${this.escape(result.stock_entry)}</strong>`);
+		frappe.msgprint({ title: __("Return confirmed"), message: `<p>${this.escape(result.name)}</p>${details.map((row) => `<p>${row}</p>`).join("")}` });
 	}
 
 	selectOptions(key, rows, selected, emptyLabel) {
@@ -2060,8 +2599,6 @@ class RMSPointOfSale {
 		root.find('[data-search]').prop("disabled", !this.state.session);
 		root.find('[data-action="scan"]').prop("disabled", !this.state.session);
 		root.find('[data-action="expenses"]').prop("disabled", !this.state.session);
-		const roles = frappe.user_roles || [];
-		root.find('[data-action="review-expenses"]').prop("hidden", !roles.some((role) => ["POS Manager", "System Manager"].includes(role)));
 		root.find("[data-capability]").each((_, element) => { element.hidden = !this.state.permissions[element.dataset.capability]; });
 		root.find('[data-action="session"]').prop("hidden", !this.state.session && !this.state.permissions.can_checkout);
 		root.find('[data-action="session"]').text(this.state.session ? __("Close Session") : __("Open Session"));

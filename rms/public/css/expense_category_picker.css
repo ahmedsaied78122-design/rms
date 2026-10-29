@@ -1,0 +1,90 @@
+.rms-shift-expense-dialog .rms-expense-category-picker {
+	position: relative;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-picker > input[type="search"] {
+	width: 100%;
+	min-height: 44px;
+	border: 1px solid #a8beb1 !important;
+	border-radius: 9px !important;
+	background: #fff !important;
+	color: #193638 !important;
+	padding: 9px 38px 9px 12px !important;
+	box-shadow: inset 0 1px 2px #16372c0a;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-picker > input[type="search"]:focus {
+	outline: 3px solid #c6e2d0;
+	border-color: #347858 !important;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-list:not([hidden]) {
+	position: absolute;
+	top: calc(100% + 5px);
+	left: 0;
+	right: 0;
+	z-index: 1060;
+	max-height: 220px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	border: 1px solid #b9cec2;
+	border-radius: 10px;
+	background: #fff;
+	padding: 5px;
+	box-shadow: 0 10px 26px #193d3d26;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-list[hidden],
+.rms-shift-expense-dialog .rms-expense-category-option[hidden],
+.rms-shift-expense-dialog [data-expense-category-empty][hidden] {
+	display: none !important;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-option {
+	min-height: 38px;
+	display: flex;
+	align-items: center;
+	margin: 0;
+	border-radius: 6px;
+	color: #24413e;
+	cursor: pointer;
+	padding: 8px 10px;
+	font-size: 13px;
+	font-weight: 550;
+	line-height: 1.35;
+	transition: background-color .12s ease, color .12s ease;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-option + .rms-expense-category-option {
+	border-top: 1px solid #edf2ee;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-option:hover,
+.rms-shift-expense-dialog .rms-expense-category-option:focus,
+.rms-shift-expense-dialog .rms-expense-category-option[aria-selected="true"] {
+	outline: none;
+	background: #eaf4ed;
+	color: #173d35;
+}
+
+.rms-shift-expense-dialog .rms-expense-category-empty:not([hidden]) {
+	position: absolute;
+	top: calc(100% + 5px);
+	left: 0;
+	right: 0;
+	z-index: 1061;
+	margin: 0;
+	border: 1px solid #b9cec2;
+	border-radius: 10px;
+	background: #fff;
+	color: #60766c;
+	padding: 13px;
+	box-shadow: 0 10px 26px #193d3d26;
+}
+
+body.rms-pos-active.rms-expense-dialog-open .modal-backdrop {
+	background-color: rgba(20, 48, 46, .44) !important;
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+}

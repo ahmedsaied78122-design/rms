@@ -7,7 +7,7 @@
     {"fieldname":"item_code","fieldtype":"Link","label":"Item","options":"Item","read_only":1,"in_list_view":1},
     {"fieldname":"uom","fieldtype":"Link","label":"UOM","options":"UOM","read_only":1},
     {"fieldname":"qty","fieldtype":"Float","label":"Quantity","reqd":1,"in_list_view":1},
-    {"fieldname":"is_waste","fieldtype":"Check","label":"Is Waste","default":"0","in_list_view":1},
+    {"fieldname":"is_waste","fieldtype":"Check","label":"Is Waste (Legacy)","default":"0","hidden":1},
     {"fieldname":"rate","fieldtype":"Currency","label":"Rate","read_only":1},
     {"fieldname":"amount","fieldtype":"Currency","label":"Amount","read_only":1,"in_list_view":1},
     {"fieldname":"warehouse","fieldtype":"Link","label":"Warehouse","options":"Warehouse","read_only":1}

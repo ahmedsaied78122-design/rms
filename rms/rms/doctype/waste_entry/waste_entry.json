@@ -6,10 +6,10 @@
   "allow_rename": 1,
   "autoname": "naming_series:",
   "naming_rule": "By \"Naming Series\" field",
-  "title_field": "name",
   "search_fields": "title",
   "sort_field": "modified",
   "sort_order": "DESC",
+  "title_field": "",
   "track_changes": 1,
   "field_order": [
     "waste_section",

@@ -1,0 +1,23 @@
+{
+  "doctype": "DocType",
+  "name": "POS Action Reason",
+  "module": "RMS",
+  "autoname": "hash",
+  "title_field": "reason",
+  "search_fields": "reason",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "field_order": ["reason", "applies_to", "enabled", "description"],
+  "fields": [
+    {"fieldname": "reason", "fieldtype": "Data", "label": "Reason", "reqd": 1, "unique": 1, "in_list_view": 1, "columns": 5},
+    {"fieldname": "applies_to", "fieldtype": "Select", "label": "Applies To", "options": "Both\nReturn\nConfirmed Item Cancellation", "default": "Both", "reqd": 1, "in_list_view": 1, "in_standard_filter": 1, "columns": 3},
+    {"fieldname": "enabled", "fieldtype": "Check", "label": "Enabled", "default": "1", "in_list_view": 1, "in_standard_filter": 1, "columns": 1},
+    {"fieldname": "description", "fieldtype": "Small Text", "label": "Description"}
+  ],
+  "permissions": [
+    {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1},
+    {"role": "POS Manager", "read": 1, "write": 1, "create": 1, "report": 1},
+    {"role": "POS Cashier", "read": 1}
+  ]
+}

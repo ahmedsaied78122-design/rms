@@ -5,15 +5,29 @@ const path = require("node:path");
 
 const sourcePath = path.join(__dirname, "point_of_sale.js");
 const source = `${fs.readFileSync(sourcePath, "utf8")}\nglobalThis.__RMSPointOfSale = RMSPointOfSale;`;
+const backOfficeExpenseSource = fs.readFileSync(path.join(__dirname, "../../../public/js/shift_expense.js"), "utf8");
 const styles = fs.readFileSync(path.join(__dirname, "../../../public/css/point_of_sale.css"), "utf8");
 
 async function run() {
+	assert.doesNotMatch(source, /data-action="review-expenses"|__\("Review Expenses"\)/, "keep the standalone Review Expenses screen out of the POS toolbar");
+	assert.doesNotMatch(source, /get_manager_pending_shift_expenses|issue_shift_expense_approval_code|reject_shift_expense|reviewPendingExpenses/, "keep manager expense review and approval actions out of POS");
+	assert.match(source, /set_secondary_action_label\(__\("Authorize Pending Expense"\)\)[\s\S]*?authorizePendingExpense\(context\.pending_expenses\)/, "keep the manager-code entry action for cashiers with pending expenses");
+	assert.match(backOfficeExpenseSource, /frm\.add_custom_button\(__\("Issue Approval Code"\)/, "issue manager approval codes from the Shift Expense back-office record");
+	assert.match(backOfficeExpenseSource, /frm\.add_custom_button\(__\("Reject Expense"\)/, "keep rejection in the Shift Expense back-office record");
+	assert.match(source, /class="rms-payment-panel-head">[\s\S]*?\$\{paymentItemsButton\}/, "place View items beside Payment methods above the discount row");
+	assert.doesNotMatch(source, /rms-payment-items-launch-row/, "do not render View items as a separate row");
 	assert.match(source, /data-pay-discount-value="percentage"[^>]*step="5"/, "percentage discount slider moves in five point steps");
 	assert.match(source, /const max = Number\(this\.activeGuestPayment\?\.grand_total \|\| this\.state\.totals\?\.grand_total \|\| 0\)/, "fixed discount input is capped at the selected check total");
 	assert.doesNotMatch(source, /Configured by Back Office for this Store/, "payment UI does not expose the configured discount scope");
 	assert.ok(source.includes('const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "C"]'), "place decimal before zero on the payment keypad");
 	assert.match(source, /data-action="payment-open-discount"/, "open discount controls in a dedicated dialog from checkout");
-	assert.match(source, /const discountTools = canEditDiscount \?/, "keep the discount dialog available while paying an individual guest check");
+	assert.match(source, /data-action="payment-open-items"/, "open ordinary order item details from checkout");
+	assert.match(source, /rms-payment-items-backdrop[\s\S]*rms-payment-items-dialog/, "show order items in a dedicated popup");
+	assert.match(styles, /\.rms-payment-items-dialog-body\s*\{[^}]*overflow-y:\s*auto/, "scroll long item lists inside the popup body");
+	assert.match(styles, /\.rms-payment-items-dialog\s*\{[^}]*max-height:\s*min\(86vh/, "keep a long items popup within the viewport");
+	assert.match(source, /this\.currency\(totals\.tax_total \|\| 0\)/, "show the saved order tax total in the items popup");
+	assert.match(styles, /\.rms-payment-panel-head\s*\{[^}]*justify-content:\s*space-between/, "align the order items action with the payment section heading");
+	assert.match(source, /const discountTools = canEditDiscount \?/, "keep discount controls available in checkout");
 	assert.match(source, /rms-discount-backdrop[\s\S]*rms-discount-dialog/, "render discount controls in a centered overlay dialog");
 	assert.match(source, /const title = this\.activeGuestPayment \? __\("Discount for \{0\}"/, "name the guest whose card discount is being edited");
 	assert.match(source, /const currentDiscount = this\.activeGuestPayment \? activeGuestCheck\?\.discount_amount/, "show the selected guest card's existing discount in the dialog");
@@ -57,7 +71,7 @@ async function run() {
 	assert.match(source, /this\.call\("pay_guest_check"/, "submit only the selected guest check for payment");
 	assert.ok(source.includes('this.call("pay_guest_check", { order_name: this.state.order_name, guest_check_name: activeGuestPayment.guest_check_name'), "submit multiple payment methods for the selected guest on its own payment screen");
 	assert.match(source, /pay_guest_check", \{ order_name: this\.state\.order_name, guest_check_name: activeGuestPayment\.guest_check_name, payments: JSON\.stringify\(payments\), discount_type:/, "submit the selected discount with a guest check payment");
-	assert.match(source, /this\.paymentTotal = Number\(this\.paymentDiscountPreview\.grand_total \|\| 0\)/, "use the selected guest check's discounted preview total directly");
+	assert.match(source, /this\.paymentSourceTotal = Number\(this\.paymentDiscountPreview\.grand_total \|\| 0\);[\s\S]*?this\.paymentTotal = this\.roundPosPayable\(this\.paymentSourceTotal\)/, "round the selected guest check's discounted preview total");
 	assert.match(source, /guest_check_name: this\.activeGuestPayment\?\.guest_check_name \|\| null/, "preview discounts within the selected guest check");
 	assert.match(source, /activeGuestCheck\?\.discount_value/, "reopen the selected guest check with its own discount settings");
 	assert.match(source, /renderGuestPaymentProgress\(total\)[\s\S]*?role="progressbar"/, "show cumulative paid progress on the confirmed split");
@@ -90,6 +104,15 @@ async function run() {
 	assert.doesNotMatch(source, /New items confirmed and sent to preparation|frappe\.show_alert\(\{ message: __\("New items confirmed/, "do not show a transient toast after confirming order items");
 	const discountInputHandler = source.slice(source.indexOf('root.addEventListener("input"'), source.indexOf('root.addEventListener("focusin"'));
 	assert.match(discountInputHandler, /queuePaymentDiscountPreview\(false\)/, "refresh the amount preview while editing without opening manager approval early");
+	const roundingHelper = Object.create(contextlessPosPrototype());
+	roundingHelper.state = { brand: "BRAND-1", brands: [{ name: "BRAND-1", pos_rounding_method: "Round Up" }] };
+	assert.equal(roundingHelper.roundPosPayable(80.49), 81, "Round Up turns 80.49 into 81 based on the selected Restaurant Brand");
+	assert.equal(roundingHelper.roundPosPayable(80.49, "Nearest"), 80, "Nearest turns 80.49 into 80");
+	assert.equal(roundingHelper.roundPosPayable(80.49, "Round Down"), 80, "Round Down turns 80.49 into 80");
+	assert.equal(roundingHelper.roundPosPayable(80.49, "No Rounding"), 80.49, "No Rounding preserves the fractional payable");
+	roundingHelper.state.brands[0].pos_rounding_method = "No Rounding";
+	assert.equal(roundingHelper.getPosRoundingMethod(), "No Rounding", "honor No Rounding configured on the Restaurant Brand");
+	assert.equal(roundingHelper.roundPosPayable(77.50, "Nearest"), 78, "Nearest rounds a half-pound tie up");
 	const helpers = Object.create(contextlessPosPrototype());
 	let errorToast;
 	const errorContext = vm.createContext({ frappe: { pages: { "point-of-sale": {} }, show_alert(config, duration) { errorToast = { config, duration }; } }, __: (value) => value, document: {}, window: {}, Event, setTimeout, clearTimeout });
@@ -191,6 +214,20 @@ async function run() {
 	pos.escape = (value) => String(value);
 	pos.currency = (value) => `${value} EGP`;
 	pos.showError = (error) => { throw error; };
+	const itemDialogUi = Object.create(context.__RMSPointOfSale.prototype);
+	itemDialogUi.state = { cart: [
+		{ order_item_name: "LEMON-1", item_code: "LEMON", title: "Mint Lemonade", qty: 1, price: 68, uom: "Nos", modifier_labels: [] },
+		{ order_item_name: "LEMON-2", item_code: "LEMON", title: "Mint Lemonade", qty: 2, price: 68, uom: "Nos", modifier_labels: [] },
+		{ order_item_name: "LEMON-3", item_code: "LEMON", title: "Mint Lemonade", qty: 3, price: 68, uom: "Nos", modifier_labels: [] },
+		{ order_item_name: "LEMON-MODIFIED", item_code: "LEMON", title: "Mint Lemonade", qty: 1, price: 68, uom: "Nos", modifier_labels: [{ title: "Extra Mint", price: 3 }] },
+		{ order_item_name: "WATER-1", item_code: "WATER", title: "Nile Valley Water 600 ml", qty: 1, price: 25, uom: "Nos", modifier_labels: [] },
+	], totals: { subtotal: 506, tax_total: 70.84, grand_total: 576.84 } };
+	itemDialogUi.escape = (value) => String(value);
+	itemDialogUi.currency = (value) => `${Number(value).toFixed(2)} EGP`;
+	const itemDialogHtml = itemDialogUi.renderPaymentItemsDialog();
+	assert.equal((itemDialogHtml.match(/class="rms-payment-items-row"/g) || []).length, 3, "group identical order lines while keeping modified items separate");
+	assert.match(itemDialogHtml, /Mint Lemonade[\s\S]*?6 Nos × 68\.00 EGP[\s\S]*?<strong>408\.00 EGP<\/strong>/, "show six identical lemonades as one quantity-six row");
+	assert.match(itemDialogHtml, /Extra Mint/, "keep modifier details on their distinct item row");
 	const splitUi = Object.create(context.__RMSPointOfSale.prototype);
 	splitUi.state = { cart: [
 		{ order_item_name: "ROW-LEMON", title: "Lemonade", qty: 1, price: 68 },
@@ -444,10 +481,13 @@ async function run() {
 	assert.equal(typeButtons[0].pressed, "true");
 	assert.equal(typeButtons[1].pressed, "false");
 	let reasonValue = "";
+	let discountValue = "10";
 	let applyDisabled = false;
 	const applyStateHelper = Object.create(contextlessPosPrototype());
 	applyStateHelper.page = { main: { 0: { querySelector(selector) {
 		if (selector === "[data-action='payment-apply-discount']") return { hidden: false, set disabled(value) { applyDisabled = value; } };
+		if (selector === "[data-pay-discount-type]") return { value: "Amount" };
+		if (selector === '[data-pay-discount-value="amount"]') return { value: discountValue };
 		if (selector === "[data-discount-approval-code]") return null;
 		if (selector === "[data-pay-discount-reason]") return { value: reasonValue };
 		return null;
