@@ -409,6 +409,25 @@ class TestOnboarding(unittest.TestCase):
 		self.db.set_single_value.assert_any_call("System Settings", "language", "en")
 		self.db.set_single_value.assert_any_call("System Settings", "time_zone", "UTC")
 
+	def test_migration_does_not_complete_a_failed_slave_with_company_scaffolds(self):
+		self.state()
+		self.db.get_value.return_value = "Failed"
+		with patch("frappe.clear_cache"):
+			setup.preserve_pending_slave_setup()
+		self.db.set_value.assert_any_call(
+			"Installed Application", {"app_name": "erpnext"}, "is_setup_complete", 0
+		)
+		self.db.set_single_value.assert_called_once_with(
+			"System Settings", "setup_complete", 0
+		)
+
+	def test_migration_keeps_a_completed_slave_complete(self):
+		self.state()
+		self.db.get_value.return_value = "Complete"
+		setup.preserve_pending_slave_setup()
+		self.db.set_value.assert_not_called()
+		self.db.set_single_value.assert_not_called()
+
 	def test_setup_receiver_authority_requires_replay_and_the_paired_identity(self):
 		self.state()
 		with patch("arab_streaming.streaming.context.replay_source", return_value=None):

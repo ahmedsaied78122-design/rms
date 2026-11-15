@@ -17,6 +17,24 @@ def install_defaults():
 			frappe.db.set_single_value("System Settings", field, default)
 
 
+def preserve_pending_slave_setup():
+	"""Company scaffolds must not make a migration finish an incomplete copy."""
+	state = _state()
+	if frappe.conf.get("arab_streaming_site_role") != "Slave" or not state.connection:
+		return
+	if (
+		frappe.db.get_value("Master Instance", state.connection, "syncing_status")
+		== "Complete"
+	):
+		return
+	for app in ("frappe", "erpnext"):
+		frappe.db.set_value(
+			"Installed Application", {"app_name": app}, "is_setup_complete", 0
+		)
+	frappe.db.set_single_value("System Settings", "setup_complete", 0)
+	frappe.clear_cache()
+
+
 def _administrator():
 	if frappe.session.user != "Administrator":
 		frappe.throw(

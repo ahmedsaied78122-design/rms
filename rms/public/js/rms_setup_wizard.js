@@ -162,6 +162,14 @@
 				const { message: status } = await call("slave_status");
 				if (!status.store) return status;
 				this.show_slave(); this.lock_slave_form();
+				await this.slave_form.set_value("master_url", status.master_url);
+				const store_field = this.slave_form.get_field("store");
+				store_field.df.options = [{ value: status.store, label: status.store }];
+				store_field.refresh();
+				await this.slave_form.set_value("store", status.store);
+				for (const name of ["access_key", "secret", "test_connection"]) {
+					this.slave_form.get_field(name).$wrapper.hide();
+				}
 				if (status.setup_complete) {
 					this.slave_progress.text(__("Synchronization complete. Opening RMS…"));
 					window.location.assign("/app"); return status;
