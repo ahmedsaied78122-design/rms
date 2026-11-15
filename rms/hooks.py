@@ -49,7 +49,29 @@ after_install = ["rms.onboarding.install_defaults", "rms.branding.apply_branding
 
 # Native controllers generate prices, audit journals and print jobs locally.
 arab_streaming_local_doctypes = ["Approval Challenge", "Print Dispatch Job", "RMS Sync Event", "RMS Sync Settings", "Item Price", "Loyalty Point Entry", "POS Invoice Merge Log"]
-arab_streaming_local_fields = {"POS Return": ["approval_challenge"]}
+# Optional HRMS/Lending extensions belong to those apps' local installations.
+# The RMS release contains ERPNext, Arab Streaming and RMS only.
+arab_streaming_local_fields = {
+	"POS Return": ["approval_challenge"],
+	"Company": [
+		"default_employee_advance_account", "default_expense_claim_payable_account",
+		"default_payroll_payable_account", "custom_hr_damage_component",
+		"custom_hr_damage_receivable", "custom_hr_internal_enabled",
+		"custom_hr_require_payroll_review", "custom_hr_saudi_policy_enabled",
+		"custom_hr_sick_deduction_component", "custom_hr_sick_leave_type",
+		"collection_offset_logic_based_on", "collection_offset_sequence_for_settlement_collection",
+		"collection_offset_sequence_for_standard_asset", "collection_offset_sequence_for_sub_standard_asset",
+		"collection_offset_sequence_for_written_off_asset", "days_past_due_threshold",
+		"interest_day_count_convention", "irac_provisioning_configuration",
+		"loan_classification_ranges", "loan_restructure_limit",
+		"min_days_bw_disbursement_first_repayment", "watch_period_post_loan_restructure_in_days",
+	],
+	"Item Default": [
+		"default_receivable_account", "default_suspense_account",
+		"default_waiver_account", "default_write_off_account",
+	],
+	"Customer": ["is_npa"],
+}
 arab_streaming_branch_resolvers = {"rms_store": "rms.streaming_policy.resolve_branch"}
 arab_streaming_managed_branch_routing = True
 arab_streaming_after_apply = ["rms.streaming_policy.remember_branch"]

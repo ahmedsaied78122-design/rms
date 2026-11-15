@@ -67,3 +67,14 @@ rolled-back test inserted/restored a Brand/Menu table cycle through native
 validation. Browser checks covered the first role screen, native Master slides,
 the company-free Slave form and real Instance Key Store discovery. These are
 bootstrap checks, not a financial lifecycle or 38-peer load certification.
+
+
+### Optional applications on the Master
+
+The four-app RMS release synchronizes ERPNext/RMS business fields. Company HRMS,
+local HR policy and Lending extensions, Lending Item Default accounts and Customer
+NPA status stay local through the explicit streaming field exclusions in hooks.
+This allows a Master with optional apps to serve a four-app Slave without creating
+foreign DocTypes or silently ignoring unknown fields. Other unknown fields still
+fail validation. After changing this contract, start a new immutable initial
+snapshot; Continue retains the old payload and is unsuitable for schema changes.
