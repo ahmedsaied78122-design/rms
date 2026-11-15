@@ -9,7 +9,10 @@ or connect an existing site automatically.
 Choosing Master continues the standard Frappe/ERPNext language, user and company
 slides. Successful setup configures the Master role and enables its streaming
 engine. The operator still creates the Stores/Branches and issues an enabled
-Instance Key for an approved non-Administrator integration user.
+Instance Key. Administrator is supported as its owner: the engine automatically
+prepares the synchronization identity and permissions. An enabled integration
+user can also be selected directly. Administrator ownership requires Arab
+Streaming 0.2.2 or later.
 
 ## Slave
 
