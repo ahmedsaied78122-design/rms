@@ -1,0 +1,1 @@
+frappe.query_reports["RMS Production Cost Allocation"] = RMSReporting.definition({"key": "overhead_manufacturing", "family": "overhead_manufacturing", "group_by": "item", "workspace": "Manufacturing"});

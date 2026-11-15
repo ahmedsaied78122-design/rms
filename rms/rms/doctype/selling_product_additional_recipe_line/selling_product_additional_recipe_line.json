@@ -19,7 +19,7 @@
       "options": "Item",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 2,
+      "columns": 4,
       "link_filters": "[[\"Item\", \"is_stock_item\", \"=\", 1], [\"Item\", \"disabled\", \"=\", 0]]"
     },
     {
@@ -38,7 +38,7 @@
       "options": "UOM",
       "fetch_from": "item.stock_uom",
       "read_only": 1,
-      "in_list_view": 1,
+      "in_list_view": 0,
       "columns": 2
     },
     {
@@ -46,7 +46,7 @@
       "fieldtype": "Currency",
       "label": "Cost",
       "read_only": 1,
-      "in_list_view": 1,
+      "in_list_view": 0,
       "columns": 2,
       "fetch_from": "item.valuation_rate"
     },
@@ -57,7 +57,7 @@
       "options": "",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 2,
+      "columns": 4,
       "description": "Select enabled Order Types. Choices are loaded from the Order Type records."
     }
   ],

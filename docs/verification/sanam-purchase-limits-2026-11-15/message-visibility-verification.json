@@ -1,0 +1,22 @@
+[
+  {
+    "doctype": "Purchase Invoice",
+    "case": "below",
+    "message": "frappe.exceptions.ValidationError: السطر 1 — الصنف 10101: صافي سعر الشراء 15.0 لكل كجم بعملة الشركة خارج النطاق المسموح. يرجى مراجعة السعر. السعر بعد الخصم وقبل الضريبة."
+  },
+  {
+    "doctype": "Purchase Invoice",
+    "case": "above",
+    "message": "frappe.exceptions.ValidationError: السطر 1 — الصنف 10101: صافي سعر الشراء 60.0 لكل كجم بعملة الشركة خارج النطاق المسموح. يرجى مراجعة السعر. السعر بعد الخصم وقبل الضريبة."
+  },
+  {
+    "doctype": "Purchase Receipt",
+    "case": "below",
+    "message": "frappe.exceptions.ValidationError: السطر 1 — الصنف 10603: صافي سعر الشراء 0.5 لكل كجم بعملة الشركة خارج النطاق المسموح. يرجى مراجعة السعر. السعر بعد الخصم وقبل الضريبة."
+  },
+  {
+    "doctype": "Purchase Receipt",
+    "case": "above",
+    "message": "frappe.exceptions.ValidationError: السطر 1 — الصنف 10603: صافي سعر الشراء 18.0 لكل كجم بعملة الشركة خارج النطاق المسموح. يرجى مراجعة السعر. السعر بعد الخصم وقبل الضريبة."
+  }
+]

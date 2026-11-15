@@ -353,7 +353,7 @@ async function run() {
 	assert.equal(hideCount, 0, "keep modifiers in the same modal as product options");
 
 	handlers["[data-modifier-key]"]({ currentTarget: {
-		dataset: { modifierKey: "MILK:WHOLE-MILK", group: "MILK" }, type: "radio", checked: true,
+		dataset: { modifierKey: JSON.stringify(["MILK", "WHOLE-MILK"]), group: "MILK" }, type: "radio", checked: true,
 	} });
 	await dialogConfig.primary_action({ quantity: 2, notes: "خفيف سكر" });
 	assert.equal(hideCount, 1, "close the modal only after adding the configured product");
@@ -410,7 +410,7 @@ async function run() {
 	assert.match(flowHtml, /Required/);
 	await assert.rejects(dialogConfig.primary_action({ quantity: 1 }), /Choose at least/);
 	assert.equal(pos.added, undefined, "the primary action cannot bypass a required modifier");
-	handlers["[data-modifier-key]"]({ currentTarget: { dataset: { modifierKey: "MILK:WHOLE-MILK", group: "MILK" }, type: "radio", checked: true } });
+	handlers["[data-modifier-key]"]({ currentTarget: { dataset: { modifierKey: JSON.stringify(["MILK", "WHOLE-MILK"]), group: "MILK" }, type: "radio", checked: true } });
 	assert.equal(primaryDisabled, false);
 	await dialogConfig.primary_action({ quantity: 4, notes: "Required choice" });
 	assert.equal(pos.added[4].qty, 4);

@@ -141,3 +141,16 @@ class TestModifierRulePayload(unittest.TestCase):
 		from rms.streaming import build_sync_payload
 		payload=build_sync_payload("Selling Product", {"name":"PRODUCT","modifier_groups":[{"modifier_group":"SAUCES","selection_requirement":"Optional","sequence_id":1}]})
 		self.assertEqual(payload["data"]["modifier_groups"][0]["selection_requirement"],"Optional")
+
+class TestProductModifierLimitJournal(unittest.TestCase):
+	def test_product_specific_limits_are_preserved_in_the_local_journal(self):
+		from rms.streaming import build_sync_payload
+		for minimum, maximum in ((1, 2), (0, 3)):
+			payload = build_sync_payload("Selling Product", {
+				"name": "PRODUCT", "modifier_groups": [{
+					"modifier_group": "SAUCES", "min_selections": minimum,
+					"max_selections": maximum, "sequence_id": 1,
+				}],
+			})
+			row = payload["data"]["modifier_groups"][0]
+			self.assertEqual((row["min_selections"], row["max_selections"]), (minimum, maximum))

@@ -19,7 +19,7 @@
       "options": "Modifier Group",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 2,
+      "columns": 3,
       "link_filters": "[[\"Modifier Group\", \"enabled\", \"=\", 1], [\"Modifier Group\", \"name\", \"in\", \"eval:(parent.modifier_groups || []).map(row => row.modifier_group).filter(Boolean)\"]]"
     },
     {
@@ -29,14 +29,14 @@
       "options": "Selling Product",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 2,
+      "columns": 3,
       "link_filters": "[[\"Selling Product\", \"enabled\", \"=\", 1], [\"Selling Product\", \"is_modifier\", \"=\", 1]]"
     },
     {
       "fieldname": "cost",
       "fieldtype": "Currency",
       "label": "Cost",
-      "in_list_view": 1,
+      "in_list_view": 0,
       "columns": 2,
       "read_only": 1
     },

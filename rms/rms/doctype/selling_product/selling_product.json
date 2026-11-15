@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -75,8 +75,8 @@
       "in_list_view": 1,
       "in_standard_filter": 1,
       "columns": 1,
-      "read_only_depends_on": "eval:!doc.__islocal",
-      "link_filters": "[[\"Product Category\",\"enabled\",\"=\",\"1\"],[\"Product Category\",\"item_group\",\"is\",\"set\"]]"
+      "link_filters": "[[\"Product Category\",\"enabled\",\"=\",\"1\"],[\"Product Category\",\"item_group\",\"is\",\"set\"]]",
+      "description": "Changes catalog navigation and inherited category defaults. The linked stock item's accounting group is retained."
     },
     {
       "fieldname": "uom",
@@ -321,7 +321,7 @@
       "fieldtype": "Table",
       "label": "Modifier Groups",
       "options": "Selling Product Modifier Group",
-      "description": "Choose the groups offered with this product. Default uses the group minimum; Optional and Required override it for this product."
+      "description": "Set the minimum and maximum choices for each group on this product. These limits are independent of other products."
     },
     {
       "fieldname": "modifier_options",
@@ -359,5 +359,6 @@
       "share": 1,
       "report": 1
     }
-  ]
+  ],
+  "show_title_field_in_link": 1
 }

@@ -125,3 +125,77 @@ console.log(
   console.error(error);
   process.exitCode = 1;
 });
+
+const classList = (...names) => {
+  const values = new Set(names);
+  return {
+    contains: (name) => values.has(name),
+    add: (...items) => items.forEach((x) => values.add(x)),
+    toggle(name, state) {
+      if (state) values.add(name);
+      else values.delete(name);
+    },
+  };
+};
+const panel = (name, hidden = false) => ({
+  df: { fieldname: name, label: name, hidden },
+  wrapper: { classList: classList(), getClientRects: () => [] },
+  is_collapsed: () => false,
+});
+const first = panel("first"),
+  second = panel("second"),
+  technical = panel("technical", true);
+const buttons = ["first", "second"].map((name) => ({
+  dataset: { section: name },
+  attributes: {},
+  setAttribute(k, v) {
+    this.attributes[k] = v;
+  },
+  removeAttribute(k) {
+    delete this.attributes[k];
+  },
+}));
+const panes = {
+  layout: { sections: [first, second, technical] },
+  __rmsExperience: { nav: { querySelectorAll: () => buttons } },
+};
+UX.selectSection(panes, first);
+assert.equal(first.wrapper.classList.contains("rms-form-pane-hidden"), false);
+assert.equal(second.wrapper.classList.contains("rms-form-pane-hidden"), true);
+assert.equal(buttons[0].attributes["aria-selected"], "true");
+UX.selectSection(panes, second);
+assert.equal(first.wrapper.classList.contains("rms-form-pane-hidden"), true);
+assert.equal(second.wrapper.classList.contains("rms-form-pane-hidden"), false);
+assert.equal(buttons[0].attributes["aria-selected"], "false");
+assert.equal(buttons[1].attributes["aria-selected"], "true");
+UX.selectSection(panes, technical);
+assert.equal(
+  panes.__rmsExperience.active,
+  "second",
+  "technical/dependency-hidden sections cannot be activated"
+);
+let forwarded;
+panes.fields_dict = { required: { section: first } };
+panes.scroll_to_field = function (...args) {
+  forwarded = args;
+  return true;
+};
+UX.installFieldReveal(panes);
+assert.equal(panes.scroll_to_field("required", 123), true);
+assert.equal(
+  panes.__rmsExperience.active,
+  "first",
+  "native validation scroll opens the owning section"
+);
+assert.equal(forwarded[1], 123, "native focus options pass through");
+const hiddenPaneControl = control("empty");
+hiddenPaneControl.wrapper.getClientRects = () => [];
+hiddenPaneControl.section = second;
+assert.equal(
+  UX.missingFields({ doc: { empty: "" }, fields: [hiddenPaneControl] }).length,
+  1,
+  "presentation-hidden sections still contribute required fields"
+);
+console.log(
+  "PASS: one section at a time, selected-state accessibility, native validation reveal and required guidance across hidden panes."
+);

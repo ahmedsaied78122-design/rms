@@ -62,7 +62,7 @@ async function accountTests() {
  assert.ok(html.includes('&lt;Cashier &amp; Manager&gt;'));
  assert.ok(!html.includes('<Cashier & Manager>'), 'user identity must be escaped');
  assert.match(englishMenu, /dir="ltr"/);
- assert.ok(!/[\u0600-\u06ff]/u.test(englishMenu), 'English account menu contains no hardcoded Arabic');
+ assert.ok(!/[\u0600-\u06ff]/u.test(englishMenu.replace('العربية', '')), 'English account menu contains no hardcoded Arabic');
  const translations = Object.fromEntries(fs.readFileSync(path.join(__dirname, '../../../translations/ar.csv'), 'utf8').trim().split(/\r?\n/).map(line => line.split(',')));
  context.__ = text => translations[text] || text;
  context.frappe.boot.lang = 'ar';pos.mount();
@@ -74,28 +74,31 @@ async function accountTests() {
  pos.flushDraftSave = async () => {events.push('save');};
  pos.ensureCurrentOrderActive = async () => {throw Error('Account actions must not depend on order status');};
  pos.showError = error => {events.push(error.message);};
+ pos.showMyAccount = () => events.push('in-pos-account');
  await pos.onAction('my-account');
- assert.equal(JSON.stringify(events), JSON.stringify(['save', ['route', 'Form', 'User', 'cashier@example.com']]));
+ assert.equal(JSON.stringify(events), JSON.stringify(['in-pos-account']), 'My Account opens in place without routing or saving the active draft');
+ assert.ok(!html.includes('POS Settings'));assert.ok(!html.includes('data-action="sale-settings"'));
+ assert.equal((html.match(/data-language=/g)||[]).length,2);
  events.length = 0;await pos.onAction('logout');
  assert.equal(JSON.stringify(events), JSON.stringify(['save', 'logout']), 'save before standard logout without closing the cashier session');
  pos.flushDraftSave = async () => {throw Error('Save failed');};
  events.length = 0;await pos.onAction('logout');
  assert.equal(JSON.stringify(events), JSON.stringify(['Save failed']), 'failed save keeps the user signed in');
- let dialog;
- context.frappe.ui = {Dialog: class {
-  constructor(options) {Object.assign(this, options);dialog = this;}
-  show() {} hide() {events.push('hide');}
-  get_primary_btn() {return {prop() {}};}
- }};
+ context.frappe.ui = {Dialog: class {constructor() {throw Error('Language must not open a dialog');}}};
  context.frappe.db = {set_value: async (...args) => {events.push(args);}};
  context.window.location = {reload: () => events.push('reload')};
- events.length = 0;await pos.onAction('language');await dialog.primary_action({language: 'en'});
- assert.equal(JSON.stringify(events), JSON.stringify(['hide']), 'unchanged language does not write or reload');
- events.length = 0;await dialog.primary_action({language: 'ar'});
- assert.equal(JSON.stringify(events), JSON.stringify(['Save failed']), 'failed save prevents language write and reload');
+ events.length = 0;await pos.changeLanguage('en');
+ assert.equal(JSON.stringify(events), JSON.stringify([]), 'unchanged language does not write or reload');
+ await pos.changeLanguage('fr');assert.equal(events.length,0,'only Arabic and English can be selected');
+ events.length = 0;await pos.changeLanguage('ar');
+ assert.equal(JSON.stringify(events), JSON.stringify(['Save failed']), 'failed draft save prevents language write and reload');
+ assert.equal(pos.languageChangePending,false);
  pos.flushDraftSave = async () => {events.push('save');};
- events.length = 0;await dialog.primary_action({language: 'ar'});
- assert.equal(JSON.stringify(events), JSON.stringify(['save', ['User', 'cashier@example.com', 'language', 'ar'], 'hide', 'reload']));
- console.log('PASS: translated English/Arabic account menu, escaped identity, own-account route, save-before-logout and language reload, failed-save protection.');
+ events.length = 0;await pos.changeLanguage('ar');
+ assert.equal(JSON.stringify(events), JSON.stringify(['save', ['User', 'cashier@example.com', 'language', 'ar'], 'reload']));
+ context.frappe.db.set_value=async()=>{throw Error('Language save failed');};
+ events.length=0;await pos.changeLanguage('ar');assert.equal(JSON.stringify(events),JSON.stringify(['save','Language save failed']));
+ assert.equal(pos.languageChangePending,false,'failed writes re-enable language choices');
+ console.log('PASS: translated English/Arabic account menu, escaped identity, in-POS account, direct Arabic/English choice, save-before-logout and language reload, failed-save protection.');
 }
 accountTests().catch(error => {console.error(error);process.exitCode = 1;});

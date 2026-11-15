@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-15",
+  "site": "rms.arab-erp.com",
+  "passed": true,
+  "requested_release_chain": [
+    "frappe",
+    "erpnext",
+    "arab_streaming",
+    "rms"
+  ],
+  "installed_apps": [
+    "frappe",
+    "erpnext",
+    "arab_streaming",
+    "rms",
+    "hrms",
+    "lending",
+    "rms_hr"
+  ],
+  "versions": {
+    "frappe": "15.122.0",
+    "erpnext": "15.122.0",
+    "arab_streaming": "0.2.0",
+    "rms": "0.1.0"
+  },
+  "native_installer": "bench --site rms.arab-erp.com install-app arab_streaming",
+  "schema_doctypes_verified": 28,
+  "workspaces": [
+    {
+      "name": "Arab Streaming",
+      "title": "Arab Streaming",
+      "is_hidden": 0
+    }
+  ],
+  "business_counts_unchanged": {
+    "POS Order": true,
+    "Cashier Session": true,
+    "Kitchen Ticket": true,
+    "POS Invoice": true,
+    "POS Return": true,
+    "Stock Ledger Entry": true,
+    "GL Entry": true
+  },
+  "streaming_role": null,
+  "streaming_enabled": false,
+  "peers_rules_keys_and_events": {
+    "Streaming Rule": 0,
+    "Master Instance": 0,
+    "Slave Instance": 0,
+    "Instance Key": 0,
+    "Dispatch Event": 0,
+    "Capture Event": 0
+  },
+  "disabled_transport_verified": true,
+  "site_health": true,
+  "release_group_control_panel_modified": false,
+  "scope": "Installed on the current RMS site and prepared repository dependency metadata. No cloud release group was created; no remote synchronization was configured or tested.",
+  "native_workspace_sidebar_verified": true,
+  "readonly_pos_bootstrap_catalog_configuration": true,
+  "catalog_products_checked": 62,
+  "backup_completed": true,
+  "backup_scope": "Native database and site configuration backup before app installation; contents remain private",
+  "dependency_validator": "Native Bench App.validate_app_dependencies passed for erpnext, arab_streaming and rms",
+  "native_dependency_install_idempotence_verified": true,
+  "source_python_requires": ">=3.10,<3.15",
+  "source_framework_range": ">=15.111.0,<16.0.0",
+  "served_app_asset_verified": true,
+  "workspace_url": "https://rms.arab-erp.com/app/arab-streaming"
+}

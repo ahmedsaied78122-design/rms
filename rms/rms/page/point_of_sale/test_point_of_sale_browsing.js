@@ -110,7 +110,7 @@ async function run() {
 	assert.match(tree.output['[data-role="products"]'].html, /data-product="Espresso"/);
 	// Browsing and moving back are read-only and must not await an order-state check.
 	tree.ensureCurrentOrderActive = () => { throw Error('Unexpected order-state check'); };
-	tree.call = async (method, args) => { assert.equal(method, "get_catalog");assert.equal(args.include_descendants, 0); return []; };
+	tree.call = async (method, args) => { assert.equal(method, "get_catalog");assert.equal(args.include_descendants, 1);assert.equal(args.full_menu, 1);assert.equal(args.category, null); return []; };
 	tree.state.search = 'old search';
 	await tree.selectCategory('Hot');
 	assert.equal(tree.state.search, '');assert.equal(tree.state.category, 'Hot');
@@ -172,12 +172,13 @@ async function run() {
 	assert.doesNotMatch(changing.output['[data-role="products"]'].html, /Old branch product/);
 	assert.match(changing.output['[data-role="products"]'].html, /Select a Store/);
 	// Rapid drill-down must not let a slower response restore a previous branch.
-	const racing = createPOS(), finish = {};
+	const racing = createPOS(); let finishMenu, menuCalls = 0;
 	racing.state.categories = [{name:'Root'}, {name:'A',parent_product_category:'Root'}, {name:'B',parent_product_category:'Root'}];
-	racing.call = (method,args) => new Promise(resolve => {finish[args.category] = resolve;});
+	racing.call = (method,args) => {menuCalls++;return new Promise(resolve => {finishMenu = resolve;});};
 	const older = racing.selectCategory('A');const newer = racing.selectCategory('B');
-	finish.B([{name:'Current',title:'Current',product_category:'B',price:25}]);await newer;
-	finish.A([{name:'Stale',title:'Stale',product_category:'A',price:25}]);await older;
+	assert.equal(menuCalls, 1, 'rapid category changes share one full-menu request');
+	finishMenu([{name:'Current',title:'Current',product_category:'B',price:25}, {name:'Stale',title:'Stale',product_category:'A',price:25}]);
+	await newer;await older;
 	assert.equal(racing.state.category, 'B');
 	assert.match(racing.output['[data-role="products"]'].html, /data-product="Current"/);
 	assert.doesNotMatch(racing.output['[data-role="products"]'].html, /data-product="Stale"/);

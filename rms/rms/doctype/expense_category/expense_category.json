@@ -3,7 +3,7 @@
   "name": "Expense Category",
   "module": "RMS",
   "engine": "InnoDB",
-  "autoname": "field:title",
+  "autoname": "",
   "title_field": "title",
   "search_fields": "title,company,expense_account",
   "sort_field": "title",
@@ -93,5 +93,7 @@
       "create": 1,
       "report": 1
     }
-  ]
+  ],
+  "naming_rule": "By script",
+  "show_title_field_in_link": 1
 }

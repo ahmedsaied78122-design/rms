@@ -1,0 +1,2031 @@
+{
+  "date": "2026-11-10",
+  "unit_tests": 489,
+  "test_modules": 44,
+  "modules": [
+    {
+      "module": "rms.test_workspace",
+      "tests": 4,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_stock",
+      "tests": 4,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_display_names",
+      "tests": 7,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_catalog_review",
+      "tests": 6,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_utils",
+      "tests": 4,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_form_queries",
+      "tests": 6,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_login_branding",
+      "tests": 3,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_expenses",
+      "tests": 11,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_interface_preferences",
+      "tests": 5,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_setup_validation",
+      "tests": 17,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.test_pos_rounding",
+      "tests": 14,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.analytics.test_analytics",
+      "tests": 29,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0,
+      "latest_targeted_rerun": true
+    },
+    {
+      "module": "rms.analytics.test_enterprise",
+      "tests": 17,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0,
+      "latest_targeted_rerun": true
+    },
+    {
+      "module": "rms.api.test_pos_order_state",
+      "tests": 3,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_session_close",
+      "tests": 6,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_order_notes",
+      "tests": 4,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_discount_notifications",
+      "tests": 6,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_streaming",
+      "tests": 9,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_customers",
+      "tests": 15,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_order_operations",
+      "tests": 93,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_approval_notifications",
+      "tests": 4,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_approval_delivery",
+      "tests": 2,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_item_cancellation",
+      "tests": 10,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_tax_template",
+      "tests": 11,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_operation_approval",
+      "tests": 13,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_printing",
+      "tests": 8,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_order_sync",
+      "tests": 2,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_profile_assignment",
+      "tests": 9,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.api.test_pos_pending_items",
+      "tests": 5,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.approval_challenge.test_approval_challenge",
+      "tests": 5,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.pos_order.test_pos_order_serialization",
+      "tests": 40,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.pos_user_store.test_pos_user_store",
+      "tests": 2,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.product_category.test_product_category",
+      "tests": 3,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.cashier_session.test_cashier_session",
+      "tests": 7,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.cashier_session.test_cashier_session_returns",
+      "tests": 12,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.selling_product.test_option_attributes",
+      "tests": 10,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.selling_product_modifier_group.test_selling_product_modifier_group",
+      "tests": 11,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.pos_return.test_pos_return",
+      "tests": 15,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.modifier_group.test_modifier_group",
+      "tests": 9,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.expense_category.test_expense_category",
+      "tests": 2,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.doctype.pos_user.test_pos_user",
+      "tests": 17,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.report.cashier_session_reconciliation.test_cashier_session_reconciliation",
+      "tests": 3,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.report.product_sales_summary.test_product_sales_summary",
+      "tests": 5,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "module": "rms.rms.report.pos_sales_summary.test_pos_sales_summary",
+      "tests": 5,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "exit": 0
+    }
+  ],
+  "extra_safe_tests": 16,
+  "skipped_live_integration": [
+    "actual naming counter allocation",
+    "Item / Item Price creation"
+  ],
+  "business_writes_created": false,
+  "browser_live_login": false,
+  "js_suites": [
+    {
+      "file": "rms/public/js/test_approval_notifications.js",
+      "exit": 0,
+      "output": "PASS: approval notification opens private popup without navigation, money and code appear, notes escape and expired codes hide.\n"
+    },
+    {
+      "file": "rms/public/js/test_rms_desk.js",
+      "exit": 0,
+      "output": "PASS: permitted workspaces, private routes, POS isolation, native alerts, saved-cart safety and accessible drawer keyboard behavior.\nPASS: self-language requests, Arabic/English targets, double-click protection, unsaved document/layout protection and error recovery.\n"
+    },
+    {
+      "file": "rms/public/js/test_rms_form_experience.js",
+      "exit": 0,
+      "output": "PASS: RMS parent form coverage, per-row scoped links, live scope changes and zero-safe required-field guidance.\nPASS: one section at a time, selected-state accessibility, native validation reveal and required guidance across hidden panes.\nPASS: dependent collapse flags and recipe edits preserve a valid configuration without deleting ingredient rows.\n"
+    },
+    {
+      "file": "rms/public/js/test_rms_management_workspace.js",
+      "exit": 0,
+      "output": "PASS: chart values, types, formatting, callbacks, explicit options, scoped integration, private modules and reversible widget ownership.\nPASS: native save ownership, binding, false results, error recovery, inactive behavior and edit/add guards.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_browsing.js",
+      "exit": 0,
+      "output": "PASS: menu loads and renders without a session; search works; sales remain protected; stale menus are discarded.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_cart_layout.js",
+      "exit": 0,
+      "output": "PASS: new items first, stable row actions, compact confirmed rows, one bulk action, collapsed cancellations and permission restrictions.\nPASS: rounded order summary matches payment, adjustment is explicit, exact totals stay intact, short order labels preserve complete API identifiers.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_cart_merging.js",
+      "exit": 0,
+      "output": "PASS: repeated products increase one row, saved IDs persist, identical drafts consolidate, options/notes stay distinct and prepared rows are protected.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_customers.js",
+      "exit": 0,
+      "output": "PASS: all phone fields editable; saved addresses editable; phone/address defaults selectable; IDs retained; failed saves preserve edits.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_header_actions.js",
+      "exit": 0,
+      "output": "PASS: grouped actions, keyboard focus, Escape isolation, live role visibility and session availability.\nPASS: translated English/Arabic account menu, escaped identity, own-account route, save-before-logout and language reload, failed-save protection.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_notes.js",
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_operation_permissions.js",
+      "exit": 0,
+      "output": "PASS: live permissions, direct actions, password/OTP requests, failed approval recovery, comments and cancellation.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_options.js",
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_order_lifecycle.js",
+      "exit": 0,
+      "output": "PASS: cancellation opens a new sale; only unsaved additions transfer with consent; stale saves and prompts cannot affect a later sale.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_order_notes.js",
+      "exit": 0,
+      "output": "PASS: whole-order comments save, clear, survive draft payloads, preserve failed edits and reject stale-sale callbacks.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_order_url.js",
+      "exit": 0,
+      "output": "PASS: encoded order URLs, payment links, new-sale cleanup, direct-link precedence, fresh tabs, Desk navigation and permission failures.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_resume.js",
+      "exit": 0,
+      "output": "PASS: takeaway defaults, new-sale reset, same-order/screen reload, closed-order checks, session and user isolation.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_return_reason.js",
+      "exit": 0,
+      "output": "PASS: missing return reason is identified inline, no incomplete preview, selection survives focus and reaches the refund preview.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_startup.js",
+      "exit": 0,
+      "output": "PASS: payment restores without waiting for menu; one order snapshot; one catalog request; parallel new-sale startup.\n"
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_sync.js",
+      "exit": 0,
+      "output": "PASS: realtime refresh, polling recovery, three-way draft merge, conflict handling and stale-response isolation.\n"
+    }
+  ],
+  "browser": {
+    "checks": [
+      {
+        "name": "native query report and data table available",
+        "ok": true
+      },
+      {
+        "name": "en light 390 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en light 390 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 375,
+          "width": 390,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en light 390 filters expand",
+        "ok": true
+      },
+      {
+        "name": "en light 768 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en light 768 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 753,
+          "width": 768,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en light 768 filters expand",
+        "ok": true
+      },
+      {
+        "name": "en light 1024 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en light 1024 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1009,
+          "width": 1024,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en light 1024 filters expand",
+        "ok": true
+      },
+      {
+        "name": "en light 1440 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en light 1440 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1425,
+          "width": 1440,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en light 1440 filters expand",
+        "ok": true
+      },
+      {
+        "name": "en dark 390 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en dark 390 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 375,
+          "width": 390,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en dark 390 filters expand",
+        "ok": true
+      },
+      {
+        "name": "en dark 768 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en dark 768 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 753,
+          "width": 768,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en dark 768 filters expand",
+        "ok": true
+      },
+      {
+        "name": "en dark 1024 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en dark 1024 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1009,
+          "width": 1024,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en dark 1024 filters expand",
+        "ok": true
+      },
+      {
+        "name": "en dark 1440 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "en dark 1440 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1425,
+          "width": 1440,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "en dark 1440 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar light 390 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar light 390 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 375,
+          "width": 390,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar light 390 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar light 768 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar light 768 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 753,
+          "width": 768,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar light 768 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar light 1024 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar light 1024 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1009,
+          "width": 1024,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar light 1024 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar light 1440 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar light 1440 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1425,
+          "width": 1440,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar light 1440 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar dark 390 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar dark 390 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 375,
+          "width": 390,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar dark 390 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar dark 768 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar dark 768 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 753,
+          "width": 768,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar dark 768 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar dark 1024 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar dark 1024 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1009,
+          "width": 1024,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar dark 1024 filters expand",
+        "ok": true
+      },
+      {
+        "name": "ar dark 1440 compact filters",
+        "ok": true,
+        "details": {
+          "controls": 14,
+          "advanced": 9
+        }
+      },
+      {
+        "name": "ar dark 1440 fits viewport",
+        "ok": true,
+        "details": {
+          "scroll": 1425,
+          "width": 1440,
+          "table": true,
+          "chart": true
+        }
+      },
+      {
+        "name": "ar dark 1440 filters expand",
+        "ok": true
+      },
+      {
+        "name": "date shortcut updates native filters",
+        "ok": true
+      },
+      {
+        "name": "explorer action routes correctly",
+        "ok": true
+      },
+      {
+        "name": "ledger_details native controls render",
+        "ok": true
+      },
+      {
+        "name": "recipe_compare native controls render",
+        "ok": true
+      },
+      {
+        "name": "overhead_manufacturing native controls render",
+        "ok": true
+      },
+      {
+        "name": "number card company currency and count formatting",
+        "ok": true
+      },
+      {
+        "name": "supplier ledger party follows selected type",
+        "ok": true
+      },
+      {
+        "name": "month view disables unsupported previous-period comparison",
+        "ok": true
+      },
+      {
+        "name": "recipe comparison selects multiple native product values",
+        "ok": true
+      },
+      {
+        "name": "en 390 explorer renders",
+        "ok": true
+      },
+      {
+        "name": "en 390 dashboard button routes",
+        "ok": true
+      },
+      {
+        "name": "en 390 explorer fits",
+        "ok": true,
+        "details": {
+          "scroll": 375,
+          "width": 390
+        }
+      },
+      {
+        "name": "en 390 search filters",
+        "ok": true
+      },
+      {
+        "name": "en 390 workspace filters",
+        "ok": true
+      },
+      {
+        "name": "en 768 explorer renders",
+        "ok": true
+      },
+      {
+        "name": "en 768 dashboard button routes",
+        "ok": true
+      },
+      {
+        "name": "en 768 explorer fits",
+        "ok": true,
+        "details": {
+          "scroll": 753,
+          "width": 768
+        }
+      },
+      {
+        "name": "en 768 search filters",
+        "ok": true
+      },
+      {
+        "name": "en 768 workspace filters",
+        "ok": true
+      },
+      {
+        "name": "en 1440 explorer renders",
+        "ok": true
+      },
+      {
+        "name": "en 1440 dashboard button routes",
+        "ok": true
+      },
+      {
+        "name": "en 1440 explorer fits",
+        "ok": true,
+        "details": {
+          "scroll": 1425,
+          "width": 1440
+        }
+      },
+      {
+        "name": "en 1440 search filters",
+        "ok": true
+      },
+      {
+        "name": "en 1440 workspace filters",
+        "ok": true
+      },
+      {
+        "name": "ar 390 explorer renders",
+        "ok": true
+      },
+      {
+        "name": "ar 390 dashboard button routes",
+        "ok": true
+      },
+      {
+        "name": "ar 390 explorer fits",
+        "ok": true,
+        "details": {
+          "scroll": 375,
+          "width": 390
+        }
+      },
+      {
+        "name": "ar 390 search filters",
+        "ok": true
+      },
+      {
+        "name": "ar 390 workspace filters",
+        "ok": true
+      },
+      {
+        "name": "ar 768 explorer renders",
+        "ok": true
+      },
+      {
+        "name": "ar 768 dashboard button routes",
+        "ok": true
+      },
+      {
+        "name": "ar 768 explorer fits",
+        "ok": true,
+        "details": {
+          "scroll": 753,
+          "width": 768
+        }
+      },
+      {
+        "name": "ar 768 search filters",
+        "ok": true
+      },
+      {
+        "name": "ar 768 workspace filters",
+        "ok": true
+      },
+      {
+        "name": "ar 1440 explorer renders",
+        "ok": true
+      },
+      {
+        "name": "ar 1440 dashboard button routes",
+        "ok": true
+      },
+      {
+        "name": "ar 1440 explorer fits",
+        "ok": true,
+        "details": {
+          "scroll": 1425,
+          "width": 1440
+        }
+      },
+      {
+        "name": "ar 1440 search filters",
+        "ok": true
+      },
+      {
+        "name": "ar 1440 workspace filters",
+        "ok": true
+      },
+      {
+        "name": "no browser exceptions",
+        "ok": true,
+        "details": []
+      }
+    ],
+    "errors": [],
+    "native": true,
+    "liveLogin": false
+  },
+  "form_browser": {
+    "method": "Actual native Form cleanup, Layout, controls, populated grids, ScriptManager, validation and save; RPC/persistence mocked locally, no live authentication or business writes.",
+    "checks": [
+      "One visible section, selected tab and keyboard navigation",
+      "All 24 parent forms open one visible pane",
+      "Saved product name editable; native save and fixture reload retain new title and stable product/item IDs",
+      "Native populated modifier grid: inline price edit, Add Row and native save retain values",
+      "Native required-field validation reveals the hidden owning pane",
+      {
+        "lang": "en",
+        "theme": "light",
+        "width": 320,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "light",
+        "width": 390,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "light",
+        "width": 768,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "light",
+        "width": 1024,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "light",
+        "width": 1500,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "dark",
+        "width": 320,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "dark",
+        "width": 390,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "dark",
+        "width": 768,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "dark",
+        "width": 1024,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "en",
+        "theme": "dark",
+        "width": 1500,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "light",
+        "width": 320,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "light",
+        "width": 390,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "light",
+        "width": 768,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "light",
+        "width": 1024,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "light",
+        "width": 1500,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "dark",
+        "width": 320,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "dark",
+        "width": 390,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "dark",
+        "width": 768,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "dark",
+        "width": 1024,
+        "panes": 1,
+        "overflow": false
+      },
+      {
+        "lang": "ar",
+        "theme": "dark",
+        "width": 1500,
+        "panes": 1,
+        "overflow": false
+      },
+      "Phone native row editor opens/closes without page overflow",
+      {
+        "populatedGridTypes": [
+          "Selling Product Price Rule",
+          "Selling Product Recipe Line",
+          "Selling Product Additional Recipe Line",
+          "Selling Product Store Availability",
+          "Selling Product Store Order Type Exclusion",
+          "Selling Product Modifier Group",
+          "Selling Product Modifier Option",
+          "Selling Product Print Route",
+          "Store Brand Assignment",
+          "Store Order Type Tax",
+          "Store Working Hour",
+          "Store User Assignment",
+          "POS User Store",
+          "POS User Brand",
+          "POS User Order Type",
+          "POS User Preparation Area",
+          "Brand Menu Assignment",
+          "Store Menu Category",
+          "Order Type Account Mapping",
+          "Cashier Session Payment",
+          "POS Order Item",
+          "POS Order Guest Check",
+          "POS Order Item Cancellation",
+          "POS Return Item",
+          "POS Return Payment",
+          "Kitchen Ticket Item",
+          "Waste Entry Item",
+          "Selling Product Option",
+          "POS Order Payment",
+          "POS Order Item Modifier",
+          "POS Order Item Recipe Line",
+          "Order Type MultiSelect Option"
+        ],
+        "legacySchemaFixtures": [
+          "POS Order Item Modifier",
+          "POS Order Item Recipe Line",
+          "Order Type MultiSelect Option"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "native_endpoints": {
+    "native_permissions": true,
+    "user_changed": false,
+    "read_only": true,
+    "catalog_reports": 248,
+    "checks": [
+      {
+        "type": "report_script",
+        "name": "RMS Sales Ledger",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Sales Pulse",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Sales Timeline",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Store Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Brand Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Order Type Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Payment Mix",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Customer Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Customer Value",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Cashier Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Area Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Table Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Category Revenue",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Product Revenue",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Product Sales Ledger",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Discount Review",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Rounding Review",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Return Review",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Daily Operations",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Order Notes",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Item Cancellations",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Table Occupancy",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Kitchen Performance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Print Activity",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Product Margin",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Margin Movement",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Daily Margin Pulse",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Menu Engineering",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Product Price Impact",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Planned Margin",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Margin Scenarios",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Unused Products",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Recipe Coverage",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Ingredient Trace",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Recipe Consumption",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Live Availability",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Inventory Movement",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Draft Count Variance",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Stock Repost Review",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Request Fulfillment",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Purchase Requests",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Valuation Timeline",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Purchase Price Changes",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Customer Invoice History",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Customer Revenue Cohorts",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Purchase Invoice Lines",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Supplier Item Purchases",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Asset Purchase Review",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Ledger with Items",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Stock Sales Issues",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Material Issues",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Production Pulse",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Production Cost Allocation",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Sales Cost Allocation",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Recipe Comparison",
+        "ok": true
+      },
+      {
+        "type": "report_script",
+        "name": "RMS Trading Flow",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Supplier Purchase Leaders",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Production Completion",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Revenue Trend",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Payment Distribution",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Product Leaders",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Category Leaders",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Cashier Leaders",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Table Leaders",
+        "ok": true
+      },
+      {
+        "type": "chart",
+        "name": "RMS Order Type Mix",
+        "ok": true
+      },
+      {
+        "type": "card",
+        "name": "today_sales",
+        "ok": true
+      },
+      {
+        "type": "card",
+        "name": "today_invoices",
+        "ok": true
+      },
+      {
+        "type": "card",
+        "name": "today_average",
+        "ok": true
+      },
+      {
+        "type": "card",
+        "name": "month_sales",
+        "ok": true
+      },
+      {
+        "type": "card",
+        "name": "month_invoices",
+        "ok": true
+      },
+      {
+        "type": "card",
+        "name": "month_average",
+        "ok": true
+      }
+    ]
+  },
+  "sql_smoke": [
+    {
+      "key": "invoices",
+      "rows": 13,
+      "columns": 17,
+      "ok": true
+    },
+    {
+      "key": "daily_sales",
+      "rows": 2,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "timeline",
+      "rows": 2,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "stores",
+      "rows": 1,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "brands",
+      "rows": 1,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "order_types",
+      "rows": 1,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "payments",
+      "rows": 2,
+      "columns": 4,
+      "ok": true
+    },
+    {
+      "key": "customers",
+      "rows": 1,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "customer_value",
+      "rows": 1,
+      "columns": 14,
+      "ok": true
+    },
+    {
+      "key": "cashiers",
+      "rows": 1,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "areas",
+      "rows": 1,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "tables",
+      "rows": 1,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "categories",
+      "rows": 8,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "products",
+      "rows": 14,
+      "columns": 15,
+      "ok": true
+    },
+    {
+      "key": "product_ledger",
+      "rows": 20,
+      "columns": 16,
+      "ok": true
+    },
+    {
+      "key": "discounts",
+      "rows": 2,
+      "columns": 17,
+      "ok": true
+    },
+    {
+      "key": "rounding",
+      "rows": 2,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "returns",
+      "rows": 6,
+      "columns": 14,
+      "ok": true
+    },
+    {
+      "key": "business_day",
+      "rows": 8,
+      "columns": 4,
+      "ok": true
+    },
+    {
+      "key": "notes",
+      "rows": 8,
+      "columns": 6,
+      "ok": true
+    },
+    {
+      "key": "cancellations",
+      "rows": 15,
+      "columns": 11,
+      "ok": true
+    },
+    {
+      "key": "occupancy",
+      "rows": 24,
+      "columns": 9,
+      "ok": true
+    },
+    {
+      "key": "kitchen",
+      "rows": 4,
+      "columns": 10,
+      "ok": true
+    },
+    {
+      "key": "printing",
+      "rows": 0,
+      "columns": 6,
+      "ok": true
+    },
+    {
+      "key": "margin",
+      "rows": 14,
+      "columns": 19,
+      "ok": true
+    },
+    {
+      "key": "margin_change",
+      "rows": 14,
+      "columns": 22,
+      "ok": true
+    },
+    {
+      "key": "daily_margin",
+      "rows": 14,
+      "columns": 19,
+      "ok": true
+    },
+    {
+      "key": "engineering",
+      "rows": 14,
+      "columns": 21,
+      "ok": true
+    },
+    {
+      "key": "price_impact",
+      "rows": 14,
+      "columns": 9,
+      "ok": true
+    },
+    {
+      "key": "planned_margin",
+      "rows": 2,
+      "columns": 8,
+      "ok": true
+    },
+    {
+      "key": "margin_scenarios",
+      "rows": 7,
+      "columns": 15,
+      "ok": true
+    },
+    {
+      "key": "dormant",
+      "rows": 0,
+      "columns": 6,
+      "ok": true
+    },
+    {
+      "key": "no_recipe",
+      "rows": 113,
+      "columns": 7,
+      "ok": true
+    },
+    {
+      "key": "ingredient_trace",
+      "rows": 0,
+      "columns": 11,
+      "ok": true
+    },
+    {
+      "key": "consumption",
+      "rows": 4,
+      "columns": 7,
+      "ok": true
+    },
+    {
+      "key": "availability",
+      "rows": 5,
+      "columns": 8,
+      "ok": true
+    },
+    {
+      "key": "inventory",
+      "rows": 5,
+      "columns": 38,
+      "ok": true
+    },
+    {
+      "key": "draft_counts",
+      "rows": 0,
+      "columns": 13,
+      "ok": true
+    },
+    {
+      "key": "reposts",
+      "rows": 0,
+      "columns": 20,
+      "ok": true
+    },
+    {
+      "key": "fulfillment",
+      "rows": 0,
+      "columns": 11,
+      "ok": true
+    },
+    {
+      "key": "purchase_requests",
+      "rows": 0,
+      "columns": 11,
+      "ok": true
+    },
+    {
+      "key": "valuation",
+      "rows": 34,
+      "columns": 17,
+      "ok": true
+    },
+    {
+      "key": "purchase_prices",
+      "rows": 0,
+      "columns": 12,
+      "ok": true
+    },
+    {
+      "key": "erp_customers",
+      "rows": 1,
+      "columns": 11,
+      "ok": true
+    },
+    {
+      "key": "customer_cohorts",
+      "rows": 1,
+      "columns": 9,
+      "ok": true
+    },
+    {
+      "key": "purchase_lines",
+      "rows": 0,
+      "columns": 14,
+      "ok": true
+    },
+    {
+      "key": "purchase_summary",
+      "rows": 0,
+      "columns": 8,
+      "ok": true
+    },
+    {
+      "key": "asset_purchases",
+      "rows": 0,
+      "columns": 14,
+      "ok": true
+    },
+    {
+      "key": "ledger_details",
+      "rows": 55,
+      "columns": 17,
+      "ok": true
+    },
+    {
+      "key": "stock_sales",
+      "rows": 1,
+      "columns": 7,
+      "ok": true
+    },
+    {
+      "key": "material_issues",
+      "rows": 5,
+      "columns": 7,
+      "ok": true
+    },
+    {
+      "key": "production",
+      "rows": 0,
+      "columns": 18,
+      "ok": true
+    },
+    {
+      "key": "overhead_manufacturing",
+      "rows": 0,
+      "columns": 8,
+      "ok": true
+    },
+    {
+      "key": "overhead_sales",
+      "rows": 3,
+      "columns": 8,
+      "ok": true
+    },
+    {
+      "key": "recipe_compare",
+      "rows": 6,
+      "columns": 11,
+      "ok": true
+    },
+    {
+      "key": "trade_flow",
+      "rows": 3,
+      "columns": 9,
+      "ok": true
+    }
+  ],
+  "variants": [
+    {
+      "key": "production",
+      "variant": [
+        "production_view"
+      ],
+      "rows": 0,
+      "ok": true
+    },
+    {
+      "key": "production",
+      "variant": [
+        "production_view"
+      ],
+      "rows": 0,
+      "ok": true
+    },
+    {
+      "key": "availability",
+      "variant": [
+        "include_recipe"
+      ],
+      "rows": 14,
+      "ok": true
+    },
+    {
+      "key": "availability",
+      "variant": [
+        "include_recipe",
+        "item"
+      ],
+      "rows": 0,
+      "ok": true
+    },
+    {
+      "key": "consumption",
+      "variant": [
+        "include_waste"
+      ],
+      "rows": 5,
+      "ok": true
+    },
+    {
+      "key": "daily_sales",
+      "variant": [
+        "compare_previous"
+      ],
+      "rows": 2,
+      "ok": true
+    },
+    {
+      "key": "margin",
+      "variant": [
+        "compare_previous"
+      ],
+      "rows": 14,
+      "ok": true
+    },
+    {
+      "key": "invoices",
+      "variant": [
+        "group_by",
+        "compare_previous"
+      ],
+      "rows": 20,
+      "ok": true
+    },
+    {
+      "key": "margin_scenarios",
+      "variant": [
+        "product"
+      ],
+      "rows": 7,
+      "ok": true
+    },
+    {
+      "key": "recipe_compare",
+      "variant": [
+        "product"
+      ],
+      "rows": 0,
+      "ok": true
+    },
+    {
+      "key": "inventory",
+      "variant": [
+        "item_group"
+      ],
+      "rows": 1,
+      "ok": true
+    }
+  ],
+  "installation": {
+    "installed_reports": 56,
+    "charts": 9,
+    "number_cards": 6,
+    "dashboard": "RMS Business Review",
+    "workspace_count": 23,
+    "workspace_idempotent": true,
+    "permissions_unchanged": true,
+    "original_permission_baseline_unchanged": true
+  },
+  "http_assets": [
+    {
+      "asset": "js/rms_reporting.js",
+      "status": 200,
+      "matches_local_source": true
+    },
+    {
+      "asset": "css/rms_reporting.css",
+      "status": 200,
+      "matches_local_source": true
+    },
+    {
+      "asset": "js/rms_form_experience.js",
+      "status": 200,
+      "matches_local_source": true
+    },
+    {
+      "endpoint": "ping",
+      "status": 200,
+      "ok": true
+    }
+  ]
+}

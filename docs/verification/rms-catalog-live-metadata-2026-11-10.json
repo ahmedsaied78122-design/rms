@@ -1,0 +1,13 @@
+{
+  "site": "rms.arab-erp.com",
+  "date": "2026-11-10",
+  "category_editable": true,
+  "product_local_limit_fields": true,
+  "legacy_shared_limit_fields_hidden": true,
+  "migration_recorded_once": true,
+  "migrated_rows_at_application": 152,
+  "migration_effective_limits_verified": true,
+  "all_effective_role_permissions_unchanged": true,
+  "source_archive_sha256": "ac0afbe4e669c3f5b2ce87ff0eae5c7f72b491ddce33eb8eb3cd381938d78388",
+  "production_business_records_created_for_testing": 0
+}

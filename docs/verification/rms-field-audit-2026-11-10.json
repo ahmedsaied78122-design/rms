@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-10",
+  "doctypes": 56,
+  "parent_forms": 24,
+  "child_tables": 32,
+  "checks": {
+    "fields": 562,
+    "link_targets": 181,
+    "link_filters": 91,
+    "depends_on": 33,
+    "mandatory_depends_on": 13,
+    "collapsible_depends_on": 26,
+    "read_only_depends_on": 24,
+    "fetch_paths": 17
+  },
+  "errors": [],
+  "limitations": [
+    "Structural audit and isolated controller/UI tests do not certify live accounting, stock, printing, external delivery or every configured business combination.",
+    "Working hours are reference data; POS time restriction is not implemented.",
+    "Delivery Included is metadata only; courier/zone/fee workflows are not implemented.",
+    "RMS synchronization captures local events only."
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "doctype": "Report",
+  "name": "RMS Request Fulfillment",
+  "report_name": "RMS Request Fulfillment",
+  "ref_doctype": "Material Request",
+  "report_type": "Script Report",
+  "module": "RMS",
+  "is_standard": "Yes",
+  "disabled": 0,
+  "roles": [
+    {
+      "role": "System Manager"
+    },
+    {
+      "role": "POS Manager"
+    },
+    {
+      "role": "Sales Manager"
+    },
+    {
+      "role": "Accounts Manager"
+    },
+    {
+      "role": "Stock Manager"
+    },
+    {
+      "role": "Purchase Manager"
+    },
+    {
+      "role": "Manufacturing User"
+    }
+  ]
+}

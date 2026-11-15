@@ -739,3 +739,545 @@ Unable to resolve currency for generated Price List {0}.,تعذر تحديد ع�
 Unit of Measure and Maintain Stock must match the linked ERPNext Item.,يجب أن تطابق وحدة القياس وإعداد متابعة المخزون بيانات الصنف المخزني المرتبط.
 With Recipe requires at least one Base Recipe row.,أضف مكوّنًا واحدًا على الأقل عند تفعيل وصفة المكونات.
 {0} must be available in at least one assigned Store.,يجب أن يكون {0} متاحًا في فرع مخصص واحد على الأقل.
+Daily operations,التشغيل اليومي
+"Orders, shifts, expenses and approvals.",الطلبات والشيفتات والمصروفات والموافقات.
+Products and menus,المنتجات والمنيو
+"Build your catalog, variations and modifier choices.",تنظيم الأصناف والأحجام وخيارات الإضافات.
+Stores and cashier access,الفروع وصلاحيات الكاشير
+"Brands, stores, order types and cashier assignments.",العلامات التجارية والفروع وأنواع الطلب وربط الكاشير.
+Dining and preparation,الصالات والتحضير
+"Dining spaces, preparation areas and kitchen progress.",تنظيم الصالات والترابيزات ومناطق التحضير ومتابعة المطبخ.
+Payments and operational rules,الدفع وقواعد التشغيل
+"Payment methods, expense accounts and operation reasons.",طرق الدفع وحسابات المصروفات وأسباب الإلغاء والمرتجعات.
+Stock and waste,المخزون والهالك
+"Stock items, warehouse balances and product waste.",الأصناف المخزنية والمخازن وحركات المخزون والهالك.
+Printing and devices,الطباعة والأجهزة
+"Printers, delivery jobs and print formats.",الطابعات ومهام الطباعة وتنسيقات المستندات.
+Operational reports,تقارير التشغيل
+"Sales, product performance and till reconciliation.",المبيعات وأداء الأصناف وتسوية الشيفتات.
+System and synchronization,النظام والمزامنة
+"Change capture, technical logs and system user access.",تسجيل التغييرات والسجلات الفنية ومستخدمي النظام.
+Approval Requests,طلبات الموافقة
+POS Orders,طلبات نقطة البيع
+POS Returns,مرتجعات نقطة البيع
+Kitchen Tickets,تذاكر المطبخ
+Cashier POS Profiles,إعدادات الكاشير
+Option Attributes,خصائص الخيارات
+Units of Measure,وحدات القياس
+Modes of Payment,طرق الدفع
+Void and Return Reasons,أسباب الإلغاء والمرتجعات
+Sales Tax Templates,قوالب ضرائب المبيعات
+Cost Centers,مراكز التكلفة
+Stock Items,الأصناف المخزنية
+Stock Movements,حركات المخزون
+Warehouses,المخازن
+Print Dispatch Jobs,مهام إرسال الطباعة
+Print Formats,تنسيقات الطباعة
+Synchronization Settings,إعدادات المزامنة
+Synchronization Events,أحداث المزامنة
+User Accounts,حسابات المستخدمين
+Access Roles,أدوار الصلاحيات
+Find a screen or setting,ابحث عن شاشة أو إعداد
+"Browse by task, or search by name.",تصفح حسب المهمة أو ابحث بالاسم.
+{0} matching links,عدد الروابط المطابقة: {0}
+No matching screens. Try another name.,لا توجد شاشات مطابقة. جرّب اسمًا آخر.
+"Your RMS operations and setup, organized in one place.",تشغيل وإعدادات RMS، منظمة في مكان واحد.
+Point of Sale,نقطة البيع
+Table Management,إدارة الترابيزات
+Kitchen Display,شاشة المطبخ
+Selling Products,الأصناف البيعية
+Cashier Sessions,شيفتات الكاشير
+Stores,الفروع
+Product Categories,أقسام المنتجات
+Store Menus,قوائم المنيو
+POS Users,مستخدمو نقطة البيع
+Dining Areas,الصالات
+Dining Tables,الترابيزات
+Preparation Areas,مناطق التحضير
+Expense Categories,تصنيفات المصروفات
+Shift Expenses,مصروفات الشيفت
+Print Devices,الطابعات
+Print Dispatch Queue,متابعة مهام الطباعة
+Waste Entries,سجلات الهالك
+POS Sales Summary,ملخص مبيعات نقطة البيع
+Product Sales Summary,ملخص مبيعات الأصناف
+Cashier Session Reconciliation,تسوية شيفتات الكاشير
+Saved for reference. POS does not currently block orders outside these hours.,محفوظة كمرجع. نقطة البيع لا تمنع الطلبات تلقائيًا خارج هذه المواعيد.
+"Marks this order type for delivery. Courier assignment, delivery zones and delivery fees are not configured by this checkbox.",يصنّف نوع الطلب كتوصيل. هذا الخيار لا يضبط إسناد المندوبين أو مناطق التوصيل أو رسومه.
+Enter a name.,اكتب الاسم.
+Cost,التكلفة
+Editing Row,تعديل الصف
+Delete,حذف
+Duplicate,تكرار
+Move,نقل
+Quantity,الكمية
+Collapse,طي
+Close row,إغلاق الصف
+Save,حفظ
+Close,إغلاق
+No.,م
+Changes catalog navigation and inherited category defaults. The linked stock item's accounting group is retained.,يغيّر قسم المنيو والإعدادات الموروثة منه، مع الاحتفاظ بالتصنيف المحاسبي للصنف المخزني المرتبط.
+Minimum distinct choices for this product. 0 makes this group optional.,أقل عدد اختيارات مختلفة لهذا الصنف. 0 يجعل المجموعة اختيارية.
+Maximum distinct choices for this product. 1 allows one choice; 0 allows any number.,أقصى عدد اختيارات مختلفة لهذا الصنف. 1 لاختيار واحد؛ 0 دون حد أقصى.
+Set the minimum and maximum choices for each group on this product. These limits are independent of other products.,حدّد أقل وأقصى عدد اختيارات لكل مجموعة في هذا الصنف، بشكل مستقل عن بقية الأصناف.
+Selection limits must be whole numbers zero or greater.,حدود الاختيارات يجب أن تكون أعدادًا صحيحة تساوي صفرًا أو أكثر.
+A modifier product can only appear once in the same group on this product.,لا يمكن تكرار نفس الإضافة داخل المجموعة نفسها لهذا الصنف.
+Minimum Selections cannot exceed the available choices on this product.,الحد الأدنى للاختيارات لا يمكن أن يزيد عن الاختيارات المتاحة لهذا الصنف.
+Set the group display. Configure its minimum and maximum choices separately on each product.,اضبط عرض المجموعة، وحدّد الحد الأدنى والأقصى للاختيارات بشكل مستقل داخل كل صنف.
+The selected Modifier Group is disabled.,مجموعة الإضافات المختارة غير مفعّلة.
+Modifier quantities must be greater than zero.,كميات الإضافات يجب أن تكون أكبر من صفر.
+RMS Sales Ledger,سجل مبيعات RMS
+RMS Sales Pulse,نبض المبيعات
+RMS Sales Timeline,اتجاه المبيعات عبر الوقت
+RMS Store Performance,أداء الفروع
+RMS Brand Performance,أداء العلامات التجارية
+RMS Order Type Performance,أداء أنواع الطلب
+RMS Payment Mix,توزيع طرق الدفع
+RMS Customer Performance,أداء العملاء
+RMS Customer Value,قيمة العملاء
+RMS Cashier Performance,أداء الكاشير
+RMS Area Performance,أداء صالات البيع
+RMS Table Performance,أداء الطاولات
+RMS Category Revenue,إيرادات الأقسام
+RMS Product Revenue,إيرادات الأصناف
+RMS Product Sales Ledger,سجل بيع الأصناف
+RMS Discount Review,مراجعة الخصومات
+RMS Rounding Review,مراجعة فروق التقريب
+RMS Return Review,مراجعة المرتجعات
+RMS Daily Operations,ملخص يوم التشغيل
+RMS Order Notes,ملاحظات الطلبات
+RMS Item Cancellations,إلغاءات الأصناف
+RMS Table Occupancy,إشغال الطاولات
+RMS Kitchen Performance,أداء المطبخ
+RMS Print Activity,نشاط الطباعة
+RMS Product Margin,ربحية الأصناف الفعلية
+RMS Margin Movement,تغير هوامش الربح
+RMS Daily Margin Pulse,نبض الربحية اليومي
+RMS Menu Engineering,تحليل محفظة الأصناف
+RMS Product Price Impact,أثر أسعار البيع
+RMS Planned Margin,الربحية المخططة
+RMS Margin Scenarios,سيناريوهات ربحية الإضافات
+RMS Unused Products,الأصناف الراكدة
+RMS Recipe Coverage,الأصناف بدون وصفات
+RMS Ingredient Trace,تتبع المكونات في الوصفات
+RMS Recipe Consumption,استهلاك مكونات الوصفات
+RMS Live Availability,الأرصدة والطاقة البيعية
+RMS Inventory Movement,ملخص حركة المخزون
+RMS Draft Count Variance,فروق مسودات الجرد
+RMS Stock Repost Review,فحص إعادة تقييم المخزون
+RMS Request Fulfillment,تنفيذ طلبات التحويل
+RMS Purchase Requests,طلبات الشراء المعلقة
+RMS Valuation Timeline,تتبع تقييم المخزون
+RMS Purchase Price Changes,تغير أسعار الشراء
+RMS Revenue Trend,اتجاه إيرادات RMS
+RMS Payment Distribution,توزيع تحصيلات RMS
+RMS Product Leaders,الأصناف الأعلى إيرادًا
+RMS Category Leaders,الأقسام الأعلى إيرادًا
+RMS Cashier Leaders,أداء فريق الكاشير
+RMS Table Leaders,الطاولات الأعلى إيرادًا
+RMS Order Type Mix,توزيع إيرادات أنواع الطلب
+RMS Business Review,لوحة أداء الأعمال
+RMS Insights,تقارير وتحليلات RMS
+Report Explorer,مستكشف التقارير
+A clearer view of your business,صورة أوضح لأعمالك
+"Find a report, explore the details and follow the numbers back to their documents.",اعثر على تقريرك، واستكشف التفاصيل، وارجع من الأرقام إلى مستنداتها.
+Find a report,ابحث عن تقرير
+All Reports,كل التقارير
+{0} reports,{0} تقرير
+No matching reports,لا توجد تقارير مطابقة
+Unable to load reports. Refresh to try again.,تعذر تحميل التقارير. أعد المحاولة من زر التحديث.
+Today Business Sales,مبيعات يوم التشغيل الحالي
+Today Sales Invoices,فواتير يوم التشغيل الحالي
+Today Average Invoice,متوسط فاتورة يوم التشغيل
+Month Business Sales,مبيعات شهر التشغيل الحالي
+Month Sales Invoices,فواتير شهر التشغيل الحالي
+Month Average Invoice,متوسط فاتورة شهر التشغيل
+Today,اليوم
+Last 7 Days,آخر ٧ أيام
+This Month,هذا الشهر
+Compare Previous Period,مقارنة بالفترة السابقة
+Previous Period,الفترة السابقة
+Period Change,فرق الفترة
+Period Change %,نسبة تغير الفترة
+Date Basis,أساس الفترة
+Selected Dates,التواريخ المحددة
+Current Business Day,يوم التشغيل الحالي
+Current Business Month,شهر التشغيل الحالي
+Include Credit Notes,تضمين إشعارات الدائن
+Sales Invoices,فواتير البيع
+Credit Notes,إشعارات الدائن
+Modifier Quantity,كمية الإضافات
+Gross Revenue,الإيراد قبل الخصم
+Allocated Discount,الخصم الموزع
+Net Revenue,صافي الإيراد
+Net Collected,صافي التحصيل
+Rounding Difference,فرق التقريب
+Average Invoice,متوسط الفاتورة
+Contribution %,نسبة المساهمة
+Hour,الساعة
+Week,الأسبوع
+Month,الشهر
+Invoice and Product,الفاتورة والصنف
+Posted Cost,التكلفة المرحلة
+Valued Net Revenue,الإيراد المكتمل التقييم
+Valued Gross Profit,ربح البنود المكتملة التقييم
+Unvalued Lines,بنود لم يكتمل تقييمها
+Pending Valuation,بانتظار التقييم
+Gross Margin %,هامش الربح الإجمالي
+Sales Mix %,نسبة مزيج المبيعات
+Portfolio Position,تصنيف الصنف
+Star,نجم
+Volume Driver,محرك مبيعات
+Opportunity,فرصة نمو
+Review,يحتاج مراجعة
+No Positive Sales,بدون مبيعات موجبة
+Visit Days,أيام الزيارات
+Note Scope,مستوى الملاحظة
+Original Invoice,الفاتورة الأصلية
+Returned Line Value,قيمة البند المرتجع
+Refund (once per return),مبلغ الرد مرة واحدة لكل مرتجع
+Cancelled Item Value,قيمة الصنف الملغى
+Ready Tickets,تذاكر جاهزة
+Cancelled Tickets,تذاكر ملغاة
+Average Queue Minutes,متوسط الانتظار بالدقائق
+Average Preparation Minutes,متوسط التحضير بالدقائق
+Average Handoff Minutes,متوسط التسليم بالدقائق
+Tickets Above Analysis Target,تذاكر تجاوزت الزمن المحدد للتحليل
+Analysis Target Minutes,زمن التحضير المستهدف للتحليل بالدقائق
+Printed Receipts,إيصالات مطبوعة
+Failed Jobs,مهام فاشلة
+Attempts,المحاولات
+Available Minutes,الدقائق المتاحة
+Occupied Minutes,دقائق الإشغال
+Utilization %,نسبة الإشغال
+Table Visits,دورات استخدام الطاولة
+Missing Closing Timestamps,إغلاقات بلا توقيت محفوظ
+Use Configured Working Hours,احتساب مواعيد العمل المحددة فقط
+Quantity per Product,الكمية لكل صنف
+Ingredient,المكون
+Ingredient Cost,تكلفة المكون
+Current Unit Cost,تكلفة الوحدة الحالية
+Planned Selling Price,سعر البيع المخطط
+Planned Cost,التكلفة المخططة
+Planned Gross Profit,الربح الإجمالي المخطط
+Planned Margin %,هامش الربح المخطط
+Scenario,السيناريو
+Base Product,الصنف الأساسي
+One Modifier,إضافة واحدة
+Selection Range,نطاق الاختيارات
+Minimum Price,أقل سعر
+Maximum Price,أعلى سعر
+Minimum Cost,أقل تكلفة
+Maximum Cost,أعلى تكلفة
+Product Status,حالة الصنف
+Last Sale,آخر بيع
+Days Without Sales,أيام بدون بيع
+Reference Unit Price,سعر الوحدة المرجعي
+Realized Unit Price,سعر الوحدة المحقق
+Reference Revenue,الإيراد المرجعي
+Price Impact,أثر السعر
+Price Impact %,نسبة أثر السعر
+Include Modifiers,تضمين الإضافات
+Include Waste,تضمين الهالك
+Consumed Quantity,الكمية المستهلكة
+Returned Quantity,الكمية المرتجعة
+Waste Quantity,كمية الهالك
+Net Consumption,صافي الاستهلاك
+Show Recipe Capacity,عرض الطاقة البيعية للوصفات
+Recipe Capacity,الكمية الممكن تحضيرها
+Available Quantity,الكمية المتاحة
+Unit Value,قيمة الوحدة
+Opening Quantity,كمية أول المدة
+Opening Value,قيمة أول المدة
+Incoming Quantity,الكمية الواردة
+Outgoing Quantity,الكمية المنصرفة
+Closing Quantity,كمية آخر المدة
+Closing Value,قيمة آخر المدة
+Value Change,التغير في القيمة
+Hide Zero Balances,إخفاء الأرصدة الصفرية
+Previous Quantity,الكمية السابقة
+Balance Quantity,كمية الرصيد
+Previous Valuation Rate,معدل التقييم السابق
+Diagnostic,نتيجة الفحص
+Quantity Variance,فرق الكمية
+Value Variance,فرق القيمة
+Pending Rate Recalculation,بانتظار إعادة احتساب التقييم
+Quantity Balance Mismatch,عدم تطابق رصيد الكمية
+Stock Value Mismatch,عدم تطابق قيمة المخزون
+Counted Quantity,الكمية المجرودة
+Ledger Quantity,كمية الدفتر
+Counted Rate,معدل الجرد
+Ledger Value,القيمة الدفترية
+Minimum Quantity Variance,أقل فرق كمية
+Minimum Value Variance,أقل فرق قيمة
+Request Date,تاريخ الطلب
+Required Date,التاريخ المطلوب
+Requested Quantity,الكمية المطلوبة
+Ordered Quantity,الكمية المطلوبة للشراء
+Pending Quantity,الكمية المعلقة
+Transferred Quantity,الكمية المحولة فعليًا
+Unfulfilled Quantity,الكمية غير المنفذة
+Purchased Quantity,الكمية المشتراة
+Purchase Value,قيمة المشتريات
+Minimum Unit Price,أقل سعر وحدة
+Maximum Unit Price,أعلى سعر وحدة
+Weighted Average Price,متوسط السعر المرجح
+Previous Period Price,سعر الفترة السابقة
+Unit Price Change,فرق سعر الوحدة
+Price Change %,نسبة تغير السعر
+Posted Expenses,المصروفات المرحلة
+Metric,المؤشر
+Open Sessions,شيفتات مفتوحة
+Require a Closed Business Day,اشتراط إقفال يوم التشغيل
+Sign in to view this report.,سجل الدخول لعرض التقرير.
+You do not have permission to view this report.,ليست لديك صلاحية عرض هذا التقرير.
+This Company is not available to you.,هذه الشركة غير متاحة لك.
+Choose a Company before running this report.,اختر الشركة قبل تشغيل التقرير.
+Choose a date range of one year or less.,اختر فترة سنة واحدة أو أقل.
+Choose a supported report grouping.,اختر أسلوب تجميع مدعومًا.
+One or more selected Stores are not available to you.,فرع أو أكثر من الفروع المختارة غير متاح لك.
+Choose valid report filter values.,اختر قيمًا صحيحة لفلاتر التقرير.
+Choose an existing Product Category.,اختر قسم أصناف موجودًا.
+Choose a Warehouse in the selected Company.,اختر مخزنًا تابعًا للشركة المحددة.
+This report contains too many records. Narrow the dates or filters.,التقرير يحتوي على سجلات كثيرة. قلل الفترة أو حدد الفلاتر.
+Unknown RMS report.,تقرير RMS غير معروف.
+Unknown dashboard metric.,مؤشر لوحة البيانات غير معروف.
+Invalid analytics filters.,فلاتر التحليل غير صحيحة.
+Choose an Ingredient to trace its recipes.,اختر مكونًا لعرض الوصفات التي تستخدمه.
+Choose an existing Item Group.,اختر مجموعة أصناف موجودة.
+Dormant days must be greater than zero.,أيام الركود يجب أن تكون أكبر من صفر.
+Target minutes must be zero or greater.,الزمن المستهدف يجب أن يساوي صفرًا أو أكثر.
+Choose one business day for Daily Operations.,اختر يوم تشغيل واحدًا لملخص التشغيل اليومي.
+This business day still has open orders or cashier sessions.,يوم التشغيل ما زال يحتوي على طلبات أو شيفتات مفتوحة.
+Kitchen Ticket quantities must be greater than zero.,كميات تذكرة المطبخ يجب أن تكون أكبر من صفر.
+Dining Area must be enabled and belong to the selected Store.,صالة الطاولات يجب أن تكون مفعلة وتابعة للفرع المحدد.
+Planning uses the current recipe and Item valuation. Choose a Store and Order Type to include their price rules and packaging.,التخطيط يستخدم الوصفة وتقييم المكونات الحاليين. حدد الفرع ونوع الطلب لتضمين أسعارهما والتغليف.
+Actual margin uses posted stock valuations. Pending consolidation or missing historical movement allocations remain blank.,الربح الفعلي يعتمد على تقييمات المخزون المرحلة. تظل القيمة فارغة عند انتظار التجميع أو غياب بيانات التكلفة التاريخية.
+Delay uses the optional analysis target entered above. Blank means no target; historical product preparation targets are not stored in RMS.,يُقاس التأخير مقابل الزمن الذي تحدده للتحليل. تركه فارغًا يعني عدم تحديد زمن مستهدف؛ لا يحتفظ RMS حاليًا بأزمنة تحضير تاريخية لكل صنف.
+Overlapping checks count as one occupied period. Closures without a saved event timestamp are counted separately. Working-hours filtering uses the current configured schedule.,الفواتير المتداخلة تُحسب فترة إشغال واحدة. تُوضح الإغلاقات التي لا تحمل توقيتًا محفوظًا بشكل مستقل. فلتر المواعيد يستخدم جدول العمل الحالي.
+Consumption is attributed from saved recipe quantities and posted stock movements. Unvalued movements are excluded; waste is included only when selected.,يُربط الاستهلاك بكميات الوصفات المحفوظة وحركات المخزون المرحلة. تُستبعد الحركات غير المقيمة، ويُضمَّن الهالك عند اختياره فقط.
+Purchases Quantity,كمية المشتريات
+Purchases Value,قيمة المشتريات
+Purchase Returns Quantity,كمية مرتجعات الشراء
+Purchase Returns Value,قيمة مرتجعات الشراء
+Sales Issues Quantity,كمية صرف المبيعات
+Sales Issues Value,قيمة صرف المبيعات
+Sales Returns Quantity,كمية مرتجعات البيع
+Sales Returns Value,قيمة مرتجعات البيع
+Transfers In Quantity,كمية التحويلات الواردة
+Transfers In Value,قيمة التحويلات الواردة
+Transfers Out Quantity,كمية التحويلات الصادرة
+Transfers Out Value,قيمة التحويلات الصادرة
+Production In Quantity,كمية وارد الإنتاج
+Production In Value,قيمة وارد الإنتاج
+Production Out Quantity,كمية منصرف الإنتاج
+Production Out Value,قيمة منصرف الإنتاج
+Recipe Consumption Quantity,كمية استهلاك الوصفات
+Recipe Consumption Value,قيمة استهلاك الوصفات
+Waste Value,قيمة الهالك
+Reconciliation Quantity,كمية تسويات الجرد
+Reconciliation Value,قيمة تسويات الجرد
+Other Receipts Quantity,كمية الوارد الآخر
+Other Receipts Value,قيمة الوارد الآخر
+Other Issues Quantity,كمية المنصرف الآخر
+Other Issues Value,قيمة المنصرف الآخر
+RMS Customer Invoice History,سجل فواتير العملاء
+RMS Customer Revenue Cohorts,تحليل إيرادات العملاء الجدد والمتكررين
+RMS Purchase Invoice Lines,تفاصيل أصناف فواتير الشراء
+RMS Supplier Item Purchases,مشتريات الأصناف حسب المورد
+RMS Asset Purchase Review,مراجعة مشتريات الأصول
+RMS Ledger with Items,دفتر الأستاذ وتفاصيل الأصناف
+RMS Stock Sales Issues,صرف مخزون المبيعات
+RMS Material Issues,تحليل صرف المواد
+RMS Production Pulse,متابعة الإنتاج
+RMS Production Cost Allocation,توزيع تكاليف الإنتاج
+RMS Sales Cost Allocation,توزيع تكاليف المبيعات
+RMS Recipe Comparison,مقارنة وصفات الأصناف
+RMS Trading Flow,حركة المبيعات والمشتريات
+RMS Supplier Purchase Leaders,أعلى الأصناف شراءً من الموردين
+RMS Production Completion,إنجاز أوامر الإنتاج
+Actual Completion,الإكمال الفعلي
+Actual Operating Cost,تكلفة التشغيل الفعلية
+Allocated Overhead,المصروفات غير المباشرة الموزعة
+Allocated Refund,المبلغ المسترد الموزع
+Allocation Quantity,كمية أساس التوزيع
+Average Document Value,متوسط قيمة المستند
+Average New Customer Revenue,متوسط إيراد العميل الجديد
+Average Repeat Customer Revenue,متوسط إيراد العميل المتكرر
+Average Revenue per Customer,متوسط الإيراد لكل عميل
+Choose Customer or Supplier as the party type.,اختر عميلًا أو موردًا كنوع للطرف.
+Choose Selected Dates before comparing periods.,اختر «التواريخ المحددة» قبل مقارنة الفترات.
+Choose a Selling Product to inspect modifier scenarios.,اختر صنف بيع لاستعراض سيناريوهات الإضافات.
+Choose an Expense Account for overhead allocation.,اختر حساب مصروفات لتوزيع التكاليف غير المباشرة.
+Choose an Overhead Expense Account and Cost Center for this allocation scenario.,اختر حساب المصروفات غير المباشرة ومركز التكلفة لسيناريو التوزيع.
+Choose an accessible Account or Cost Center in this Company.,اختر حسابًا أو مركز تكلفة متاحًا لك في هذه الشركة.
+Choose daily grouping to compare equal date periods.,اختر التجميع اليومي لمقارنة فترتين متساويتين.
+"Clear product, customer, cashier, brand and order type filters before including unattributed waste.",امسح فلاتر الصنف والعميل والكاشير والعلامة ونوع الطلب قبل إضافة الهالك غير المنسوب لصنف معين.
+Completed on Time,اكتمل في الموعد
+Default Selling Price,سعر البيع الافتراضي
+First Purchase,أول شراء
+Invoice Revenue Including Tax,قيمة الفواتير شاملة الضريبة
+Last Purchase,آخر شراء
+Net Purchase Value,صافي قيمة المشتريات
+Net Purchased Quantity,صافي الكمية المشتراة
+Net Quantity,صافي الكمية
+Net Sales Value,صافي قيمة المبيعات
+Net Sold Quantity,صافي الكمية المباعة
+Net Tender Amount,صافي المقبوض حسب وسيلة الدفع
+New Customer Revenue,إيرادات العملاء الجدد
+New Customers,عملاء جدد
+Operating Cost Variance,فرق تكلفة التشغيل
+Overhead Expense Account,حساب المصروفات غير المباشرة
+Planned Completion,موعد الإكمال المخطط
+Planned Operating Cost,تكلفة التشغيل المخططة
+Planned Quantity,الكمية المخططة
+Posted Direct Cost,التكلفة المباشرة المرحلة
+Posted Issue Value,قيمة الصرف المرحلة
+Process Loss %,نسبة فاقد التصنيع
+Process Loss Quantity,كمية فاقد التصنيع
+Produced Quantity,الكمية المنتجة
+Production Completion %,نسبة إنجاز الإنتاج
+Production uses submitted Work Orders by planned start date. Unfinished orders have no on-time completion result.,يعرض أوامر الإنتاج المعتمدة حسب تاريخ البدء المخطط. لا تُحتسب نتيجة الالتزام بالموعد للأوامر التي لم تكتمل.
+Remaining Quantity,الكمية المتبقية
+Repeat Customer Revenue,إيرادات العملاء المتكررين
+Repeat Customers,عملاء متكررون
+Sales Less Purchases,المبيعات ناقص المشتريات
+"Sales less purchases is a period flow comparison, not gross profit. Stock purchased in another period is not treated as current cost of sales.",الفرق بين المبيعات والمشتريات مقارنة لحركة الفترة وليس مجمل الربح؛ فالمخزون المشترى في فترة أخرى لا يمثل تكلفة مبيعات الفترة الحالية.
+Scenario Total Cost,إجمالي تكلفة السيناريو
+Scenario Unit Cost,تكلفة الوحدة في السيناريو
+This party is not available to you.,هذا الطرف غير متاح لك.
+Unsupported inventory report.,تقرير مخزون غير مدعوم.
+Voucher Item Details,تفاصيل أصناف المستند
+Your POS User account is disabled.,حساب مستخدم نقطة البيع الخاص بك معطل.
+Analysis only: the selected overhead account balance is allocated by positive stock-unit quantity across the filtered items. It does not post expenses or change stock valuations. Direct costs without stock movements remain blank.,لأغراض التحليل فقط: يوزع رصيد حساب المصروفات المحدد حسب الكميات الموجبة بوحدات المخزون للأصناف المعروضة. لا يرحل مصروفات أو يغير تقييم المخزون. تظل التكلفة المباشرة فارغة عند عدم وجود حركة مخزون.
+Loading…,جارٍ التحميل…
+More Filters,فلاتر إضافية
+All,الكل
+Amount,المبلغ
+Asset Category,فئة الأصل
+Brand,العلامة التجارية
+Cancelled By,ألغاه
+Cashier,الكاشير
+Circular Sub Recipe detected for Item {0}.,توجد دورة مغلقة في الوصفة الفرعية للصنف {0}.
+Comment,تعليق
+Company,الشركة
+Cost Center,مركز التكلفة
+Count,العدد
+Credit Note,إشعار دائن
+Customer,العميل
+Customer Group,مجموعة العملاء
+Customer Name,اسم العميل
+Document,المستند
+Document Type,نوع المستند
+Expense Account,حساب المصروفات
+Fixed Asset,أصل ثابت
+Gross Profit,مجمل الربح
+Group By,تجميع حسب
+Invoice,الفاتورة
+Invoices,الفواتير
+Issued Quantity,الكمية المصروفة
+Item,الصنف
+Item Group,مجموعة الأصناف
+Item Name,اسم الصنف
+Material Request,طلب مواد
+Mode of Payment,طريقة الدفع
+No active submitted BOM exists for Sub Recipe Item {0}.,لا توجد قائمة مواد فعالة ومعتمدة للصنف الفرعي {0}.
+Notes,الملاحظات
+Open Orders,الطلبات المفتوحة
+Operations,العمليات
+Order,الطلب
+Order Type,نوع الطلب
+Party,الطرف
+Party Type,نوع الطرف
+Payments,المدفوعات
+Posting Date,تاريخ الترحيل
+Posting Time,وقت الترحيل
+Print Jobs,مهام الطباعة
+Purchase Invoice,فاتورة شراء
+Quantity Change,التغير في الكمية
+Quantity Sold,الكمية المباعة
+Reason,السبب
+Recipe component does not exist.,مكوّن الوصفة غير موجود.
+Refresh,تحديث
+Return,المرتجع
+Section,القسم
+Start Date must be on or before End Date.,يجب أن يسبق تاريخ البداية تاريخ النهاية أو يساويه.
+Status,الحالة
+Stock Entry,إذن مخزون
+Stock Reconciliation,تسوية مخزون
+Stock UOM,وحدة المخزون
+Stock Value,قيمة المخزون
+Supplier,المورد
+Table Name,اسم الطاولة
+Taxes,الضرائب
+To Date,إلى تاريخ
+UOM,وحدة القياس
+Unassigned,غير محدد
+Valuation Rate,سعر التقييم
+Warehouse,المخزن
+Work Order,أمر إنتاج
+Workspace,مساحة العمل
+Actual Start,البدء الفعلي
+Business Dashboard,لوحة مؤشرات الأعمال
+Choose a supported production view.,اختر عرض إنتاج مدعومًا.
+Inspected By,فحص بواسطة
+Inspection Date,تاريخ الفحص
+Inspections,الفحوص
+Job Card,بطاقة تشغيل
+Job Cards,بطاقات التشغيل
+Job Cards use their posting date. Recorded minutes exclude running time that has not yet been saved in a time log.,يعرض بطاقات التشغيل حسب تاريخ الترحيل. الدقائق المسجلة لا تشمل وقت التشغيل الجاري الذي لم يحفظ في سجل الوقت بعد.
+Movement Source,مصدر الحركة
+One or more report filters are outside your POS User scope.,فلتر أو أكثر خارج نطاق صلاحيات مستخدم نقطة البيع الخاص بك.
+Operation,العملية
+Planned Minutes,الدقائق المخططة
+Production View,عرض الإنتاج
+Quality Inspection,فحص جودة
+Quality Inspections,فحوص الجودة
+Recorded Minutes,الدقائق المسجلة
+Reference Document,المستند المرجعي
+Reference Type,نوع المرجع
+Sample Size,حجم العينة
+Submitted manufacturing inspections by inspection date. The sample size is not a count of rejected production units.,يعرض فحوص التصنيع المعتمدة حسب تاريخ الفحص. حجم العينة لا يمثل عدد وحدات الإنتاج المرفوضة.
+Time Variance Minutes,فرق الوقت بالدقائق
+Verified By,تحقق بواسطة
+Work Orders,أوامر الإنتاج
+Workstation,محطة العمل
+Sales follow POS scope. Posted expenses require expense report permission and remain Store-level; they are not allocated by Brand or Order Type.,المبيعات تتبع نطاق مستخدم نقطة البيع. المصروفات المرحلة تتطلب صلاحية تقارير المصروفات وتعرض على مستوى الفرع، ولا توزع حسب البراند أو نوع الطلب.
+POS Settings,إعدادات نقطة البيع
+Sale setup,إعداد البيع
+Store and brand,الفرع والعلامة التجارية
+No brands available,لا توجد علامات تجارية متاحة
+No order types available,لا توجد أنواع طلب متاحة
+Close the cashier session to change the Store.,أغلق وردية الكاشير لتغيير الفرع.
+Choose the Store and Brand for this register.,اختر الفرع والعلامة التجارية لنقطة البيع.
+Price List {0} already exists. Resolve the duplicate before renaming this Order Type.,قائمة الأسعار {0} موجودة بالفعل. عالج التكرار قبل تغيير معرّف نوع الطلب.
+Streaming Branch,فرع الاستريمينج
+Branch identity used to route this Store and its POS documents when Arab Streaming is configured.,الفرع المستخدم لتوجيه بيانات المتجر ومستندات نقطة البيع عند ربط الاستريمينج.
+A Streaming Branch can be linked to only one Store.,لا يمكن ربط فرع الاستريمينج بأكثر من متجر واحد.
+Unlink the streaming pairing before changing this Store's Streaming Branch.,افصل ارتباط الاستريمينج قبل تغيير الفرع المرتبط بهذا المتجر.
+This transaction belongs to a different streaming Branch.,هذه الحركة تخص فرع استريمينج آخر.
+The transaction Company does not match the paired Store.,شركة الحركة لا تطابق شركة المتجر المرتبط.
+Streaming cannot transfer a transaction to another Branch.,لا يمكن نقل حركة متزامنة إلى فرع آخر.
+Only authenticated streaming may assign an imported transaction Branch.,تعيين فرع الحركة المستقبلة متاح لخدمة الاستريمينج الموثّقة فقط.
+A paired Branch is required for this transaction.,يجب ربط فرع بهذه الحركة.
+This RMS Branch resolver is reserved for ERP transactions.,تحديد الفرع بهذه الطريقة مخصص لحركات النظام فقط.
+Only authenticated upstream streaming can apply an RMS replica.,استقبال نسخة المستند متاح للاستريمينج الموثّق من الفرع إلى الماستر فقط.
+Invalid numeric value in streaming snapshot.,توجد قيمة رقمية غير صحيحة في المستند المستقبَل.
+A required streaming reference is missing.,يوجد مرجع مطلوب مفقود في المستند المستقبَل.
+Streaming snapshot references inconsistent business records.,توجد مراجع غير متطابقة في المستند المستقبَل.
+Streaming snapshot amounts do not reconcile.,مبالغ المستند المستقبَل غير متطابقة.
+The original session dates are required.,تواريخ الوردية الأصلية مطلوبة.
+The session payment snapshot is required.,بيانات وسائل الدفع الأصلية للوردية مطلوبة.
+Duplicate payment method in streaming snapshot.,توجد وسيلة دفع مكررة في المستند المستقبَل.
+The original session closing date is required.,تاريخ إقفال الوردية الأصلي مطلوب.
+The order snapshot must include items and its business date.,يجب أن يتضمن الطلب الأصناف وتاريخ يوم العمل الأصلي.
+Cancelled quantities exceed the order quantity.,الكميات الملغاة تتجاوز كمية الطلب.
+Return items and refund payments are required.,أصناف المرتجع ومدفوعات الاسترداد مطلوبة.
+Each returned line must belong to the source invoice exactly once.,يجب أن ينتمي كل سطر مرتجع إلى الفاتورة الأصلية دون تكرار.
+Returned quantity exceeds the sold quantity.,كمية المرتجع تتجاوز الكمية المباعة.
+The original waste component snapshot is required.,مكونات الهالك الأصلية مطلوبة.
+Waste components do not match the original stock movement.,مكونات الهالك لا تطابق حركة المخزون الأصلية.
+Waste quantities do not match the original stock movement.,كميات الهالك لا تطابق حركة المخزون الأصلية.
+Only a completed POS closing can be replicated.,يمكن استقبال إقفال نقطة البيع المكتمل فقط.
+The consolidated Sales Invoice does not contain this POS Invoice.,فاتورة المبيعات المجمعة لا تتضمن فاتورة نقطة البيع هذه.
+The replicated invoice payable does not match a supported rounding rule.,المبلغ المستحق في الفاتورة المستقبلة لا يطابق قاعدة تقريب مدعومة.

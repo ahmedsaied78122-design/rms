@@ -41,7 +41,7 @@ SYNC_SCHEMA = {
 			"additional_recipe": ("Selling Product Additional Recipe Line", ["item", "qty", "order_types"]),
 			"store_availability": ("Selling Product Store Availability", ["store"]),
 			"store_order_type_exclusions": ("Selling Product Store Order Type Exclusion", ["store", "order_type"]),
-			"modifier_groups": ("Selling Product Modifier Group", ["modifier_group", "selection_requirement", "sequence_id"]),
+			"modifier_groups": ("Selling Product Modifier Group", ["modifier_group", "selection_requirement", "min_selections", "max_selections", "sequence_id"]),
 			"modifier_options": ("Selling Product Modifier Option", ["modifier_group", "modifier_product", "selling_price", "sequence_id"]),
 			"print_routes": ("Selling Product Print Route", ["store", "preparation_area"]),
 		},

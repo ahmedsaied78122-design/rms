@@ -125,6 +125,14 @@ assert.equal(
   "pie categories need separate colors even when there is only one dataset"
 );
 assert.equal(new Set(pie.colors).size, 3);
+assert.equal(Studio.directoryMatch("طلبَات نُقطة البيع", "طلبات بيع"), true);
+assert.equal(Studio.directoryMatch("إعدادات الكاشير", "اعدادات"), true);
+assert.equal(
+  Studio.directoryMatch("/app/pos-profile Cashier Profiles", "POS PROFILE"),
+  true
+);
+assert.equal(Studio.directoryMatch("Products and menus", "cashier"), false);
+assert.equal(Studio.directoryMatch("Any screen", "  "), true);
 assert.equal(Studio.group({ name: "Accounting", public: 1 }), "Business");
 assert.equal(Studio.group({ name: "My page", public: 0 }), "Personal");
 assert.equal(
@@ -145,6 +153,7 @@ const badge = {
   },
 };
 const widget = {
+  querySelectorAll: () => [],
   querySelector: (selector) =>
     selector === "[data-rms-widget-badge]" ? badge : null,
   classList: { remove() {} },

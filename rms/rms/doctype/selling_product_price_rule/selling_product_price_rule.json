@@ -18,7 +18,7 @@
       "label": "Store",
       "options": "Store",
       "in_list_view": 1,
-      "columns": 2,
+      "columns": 3,
       "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]"
     },
     {
@@ -55,7 +55,7 @@
       "default": "100",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 2
+      "columns": 1
     }
   ],
   "permissions": [],

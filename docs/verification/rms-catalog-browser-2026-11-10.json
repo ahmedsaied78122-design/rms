@@ -1,0 +1,13 @@
+{
+  "method": "Actual native form/grid/Dialog controls and production POS methods with local mocked RPC/cart persistence; no login or production business records.",
+  "checks": [
+    "Saved product category and local minimum/maximum editable through native controls; save and reload retain values",
+    "Actual POS dialog: product-specific 1–2, maximum disabling, optional clearing and add",
+    "Actual POS dialog: product-specific 0–3, maximum disabling, optional clearing and add",
+    "Actual POS dialog: product-specific 0–1, maximum disabling, optional clearing and add",
+    "Forced dialog primary action rejects missing required choices",
+    "Nested option selection handles colon IDs and optional radio Clear correctly",
+    "20 POS viewport/theme/language combinations fit 320–1500px"
+  ],
+  "errors": []
+}

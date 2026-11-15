@@ -71,6 +71,8 @@
   };
   const workspaceIcons = {
     Home: "overview",
+    Management: "overview",
+    الإدارة: "overview",
     Accounting: "finance",
     Buying: "purchase",
     Selling: "sales",
@@ -171,6 +173,10 @@
     }
     releaseWidgets() {
       for (const [node, marker] of this.portals) {
+        node.classList.remove("rms-directory-filtered");
+        node
+          .querySelectorAll(".rms-directory-filtered")
+          .forEach((item) => item.classList.remove("rms-directory-filtered"));
         node.querySelector("[data-rms-widget-badge]")?.remove();
         node.querySelector(".rms-edit-card-tools")?.remove();
         node.classList.remove("rms-chart-wide");
@@ -255,6 +261,33 @@
       this.editToolbar
         .querySelector("[data-rms-discard-layout]")
         .addEventListener("click", () => this.runNativeAction("secondary"));
+      this.directory = document.createElement("div");
+      this.directory.className = "rms-workspace-directory";
+      this.directory.hidden = true;
+      const search = document.createElement("label");
+      search.innerHTML = svg("search");
+      this.directoryInput = document.createElement("input");
+      this.directoryInput.type = "search";
+      this.directoryInput.autocomplete = "off";
+      this.directoryInput.addEventListener("input", () =>
+        this.shell.scheduleSync()
+      );
+      this.directoryInput.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape" || !this.directoryInput.value) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this.directoryInput.value = "";
+        this.shell.scheduleSync();
+      });
+      this.directoryInput.setAttribute(
+        "aria-controls",
+        "rms-workspace-directory-results"
+      );
+      search.append(this.directoryInput);
+      this.directoryStatus = document.createElement("span");
+      this.directoryStatus.setAttribute("role", "status");
+      this.directoryStatus.setAttribute("aria-live", "polite");
+      this.directory.append(search, this.directoryStatus);
       this.footnote = document.createElement("div");
       this.footnote.className = "rms-studio-footnote";
       this.footnote.innerHTML = `<span>RMS</span><div class="rms-studio-footer-tools"><span data-rms-studio-footer></span><details class="rms-workspace-options"><summary></summary><div><button type="button" data-rms-edit-layout>${svg(
@@ -277,7 +310,12 @@
           this.footnote.querySelector("details").open = false;
           host.querySelector(".btn-new-workspace:not(.hide)")?.click();
         });
-      this.root.append(this.hero, this.editToolbar, this.footnote);
+      this.root.append(
+        this.hero,
+        this.editToolbar,
+        this.directory,
+        this.footnote
+      );
       host.prepend(this.root);
     }
     prepareNativeEditing() {
@@ -532,6 +570,8 @@
       this.heroSignature = signature;
       const descriptions = {
         Home: "Your people, operations and numbers. One connected view.",
+        Management: "Your RMS operations and setup, organized in one place.",
+        الإدارة: "Your RMS operations and setup, organized in one place.",
         Stock:
           "A clear view of your inventory, warehouses and stock movements.",
         Accounting: "Accounts, cash flow and financial performance, connected.",
@@ -612,6 +652,87 @@
         return ["activity", "Latest activity", "Keep work moving"];
       return ["content", "Your workspace", null];
     }
+    static directoryMatch(text, query) {
+      const normalize = (value) =>
+        String(value || "")
+          .normalize("NFKD")
+          .replace(/[\u064b-\u065f\u0670\u0640\u0300-\u036f]/g, "")
+          .replace(/[إأآ]/g, "ا")
+          .replace(/ى/g, "ي")
+          .replace(/[-_/]/g, " ")
+          .toLocaleLowerCase();
+      const haystack = normalize(text);
+      return normalize(query)
+        .trim()
+        .split(/\s+/)
+        .every((word) => haystack.includes(word));
+    }
+    updateDirectory(active, ws) {
+      const isHub = ["Management", "الإدارة"].includes(active);
+      this.root.classList.toggle("rms-operations-hub", isHub);
+      const enabled = isHub && ws.is_read_only !== false;
+      this.directory.hidden = !enabled;
+      this.directoryInput.placeholder = __("Find a screen or setting");
+      this.directoryInput.setAttribute(
+        "aria-label",
+        __("Find a screen or setting")
+      );
+      const query = enabled ? this.directoryInput.value.trim() : "";
+      let matched = 0;
+      for (const node of this.portals.keys()) {
+        const links = [...node.querySelectorAll("a.link-item")];
+        const title = node.querySelector(".widget-title")?.textContent || "";
+        const groupMatch =
+          query && RMSWorkspaceStudio.directoryMatch(title, query);
+        const searchable = (item) => {
+          let href = item.getAttribute("href") || "";
+          try {
+            href = decodeURIComponent(href);
+          } catch (_) {
+            /* Native labels still work. */
+          }
+          return `${item.textContent} ${href.replace(/[-_/]/g, " ")}`;
+        };
+        let visible = !query;
+        if (links.length) {
+          let count = 0;
+          for (const link of links) {
+            const show =
+              !query ||
+              groupMatch ||
+              RMSWorkspaceStudio.directoryMatch(searchable(link), query);
+            link.classList.toggle("rms-directory-filtered", !show);
+            if (show && !link.hidden && !link.classList.contains("hide"))
+              count++;
+          }
+          matched += count;
+          visible = count > 0;
+        } else {
+          visible =
+            !query ||
+            RMSWorkspaceStudio.directoryMatch(
+              `${title} ${node.dataset.widgetName || ""} ${searchable(node)}`,
+              query
+            );
+          if (
+            query &&
+            visible &&
+            node.classList.contains("shortcut-widget-box")
+          )
+            matched++;
+        }
+        node.classList.toggle("rms-directory-filtered", !visible);
+      }
+      const resources = this.sections.get("resources");
+      if (resources) resources.id = "rms-workspace-directory-results";
+      const status = query
+        ? matched
+          ? __("{0} matching links", [matched])
+          : __("No matching screens. Try another name.")
+        : __("Browse by task, or search by name.");
+      if (this.directoryStatus.textContent !== status)
+        this.directoryStatus.textContent = status;
+    }
     decorateBadge(node, active) {
       const badge = node.querySelector("[data-rms-widget-badge]");
       if (!badge) return;
@@ -624,17 +745,33 @@
           node.querySelector(".widget-title")?.textContent.trim() ||
             __("Key figures")
         );
-      const icon = /stock|warehouse|item|inventory|مخزون|مستودع|صنف/.test(name)
-        ? "inventory"
-        : /sales|invoice|selling|بيع|فاتور/.test(name)
-        ? "sales"
-        : /supplier|purchase|buying|شراء|مورد/.test(name)
-        ? "purchase"
-        : /customer|employee|user|عميل|عملاء|موظف/.test(name)
-        ? "people"
-        : /account|cash|bank|حساب|نقد/.test(name)
-        ? "finance"
-        : RMSWorkspaceStudio.workspaceIcon({ name: active });
+      const hubIcons = {
+        "Daily operations": "overview",
+        "Products and menus": "sales",
+        "Stores and cashier access": "people",
+        "Dining and preparation": "tools",
+        "Payments and operational rules": "finance",
+        "Stock and waste": "inventory",
+        "Printing and devices": "tools",
+        "Operational reports": "chart",
+        "System and synchronization": "connections",
+      };
+      const group = Object.keys(hubIcons).find((key) =>
+        [key.toLowerCase(), __(key).toLowerCase()].includes(name.trim())
+      );
+      const icon =
+        (group && hubIcons[group]) ||
+        (/stock|warehouse|item|inventory|مخزون|مستودع|صنف/.test(name)
+          ? "inventory"
+          : /sales|invoice|selling|بيع|فاتور/.test(name)
+            ? "sales"
+            : /supplier|purchase|buying|شراء|مورد/.test(name)
+              ? "purchase"
+              : /customer|employee|user|عميل|عملاء|موظف/.test(name)
+                ? "people"
+                : /account|cash|bank|حساب|نقد/.test(name)
+                  ? "finance"
+                  : RMSWorkspaceStudio.workspaceIcon({ name: active }));
       if (badge.dataset.rmsIcon === icon) return;
       badge.dataset.rmsIcon = icon;
       badge.innerHTML = svg(icon);
@@ -656,14 +793,14 @@
         const icon = /stock|warehouse|item|inventory|مخزون/.test(name)
           ? "inventory"
           : /sales|invoice|selling|بيع/.test(name)
-          ? "sales"
-          : /supplier|purchase|buying|شراء/.test(name)
-          ? "purchase"
-          : /customer|employee|user|عميل/.test(name)
-          ? "people"
-          : /account|cash|bank|حساب/.test(name)
-          ? "finance"
-          : "overview";
+            ? "sales"
+            : /supplier|purchase|buying|شراء/.test(name)
+              ? "purchase"
+              : /customer|employee|user|عميل/.test(name)
+                ? "people"
+                : /account|cash|bank|حساب/.test(name)
+                  ? "finance"
+                  : "overview";
         badge.innerHTML = svg(icon);
         node.prepend(badge);
       }
@@ -797,12 +934,14 @@
           this.portals.delete(node);
         }
       for (const node of this.portals.keys()) this.decorateBadge(node, active);
+      this.updateDirectory(active, ws);
       for (const [kind, content] of this.sections) {
         const count = [...content.children].filter(
           (node) =>
             !node.hidden &&
             !node.classList.contains("hidden") &&
             !node.classList.contains("hide") &&
+            !node.classList.contains("rms-directory-filtered") &&
             node.style.display !== "none"
         ).length;
         content.parentElement.hidden = !count;

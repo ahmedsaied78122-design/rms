@@ -36,7 +36,7 @@
       "label": "Cashier POS Profile",
       "options": "POS Profile",
       "in_list_view": 1,
-      "columns": 3,
+      "columns": 5,
       "description": "Assign a separate accounting POS Profile when this Store needs concurrent cashier sessions. Leave blank to use the Store default.",
       "link_filters": "[[\"POS Profile\",\"company\",\"=\",\"eval:doc.store_company\"],[\"POS Profile\",\"disabled\",\"=\",\"0\"]]",
       "read_only_depends_on": "eval:!doc.store"
@@ -47,7 +47,7 @@
       "label": "Default Store",
       "default": "0",
       "in_list_view": 1,
-      "columns": 3,
+      "columns": 1,
       "description": "POS opens this Store by default when the cashier has no active session. Assign one default Store per POS User."
     }
   ],

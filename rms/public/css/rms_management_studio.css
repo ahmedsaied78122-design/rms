@@ -1310,10 +1310,15 @@ body.rms-management .rms-system-welcome-toast.desk-alert {
 }
 @media (prefers-reduced-motion: no-preference) {
   .rms-workspace-studio .shortcut-widget-box {
-    transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
+    transition:
+      transform 0.15s,
+      background-color 0.15s,
+      border-color 0.15s;
   }
   .rms-management-link {
-    transition: background-color 0.13s, color 0.13s;
+    transition:
+      background-color 0.13s,
+      color 0.13s;
   }
 }
 /* Explicit component selectors override the engine's nested widget typography. */
@@ -2065,5 +2070,120 @@ body.rms-management .graph-svg-tip .tooltip-value * {
 @media (max-width: 600px) {
   .rms-system-welcome-toast.desk-alert {
     top: calc(76px + env(safe-area-inset-top, 0px)) !important;
+  }
+}
+
+/* The RMS hub uses permission-filtered native cards, with a local screen finder. */
+.rms-workspace-directory {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 0 20px;
+}
+.rms-workspace-directory[hidden] {
+  display: none;
+}
+.rms-workspace-directory label {
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  max-width: 460px;
+  gap: 9px;
+  margin: 0;
+  padding-inline: 12px;
+  border: 1px solid var(--rms-border);
+  border-radius: 11px;
+  background: var(--rms-panel);
+  color: var(--rms-muted);
+}
+.rms-workspace-directory label:focus-within {
+  border-color: #7b9d65;
+  box-shadow: 0 0 0 3px #bed86526;
+}
+.rms-workspace-directory svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+}
+.rms-workspace-directory input {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--rms-text);
+  font: inherit;
+  font-size: 12px;
+}
+.rms-workspace-directory input::placeholder {
+  color: var(--rms-muted);
+}
+.rms-workspace-directory [role="status"] {
+  color: var(--rms-muted);
+  font-size: 11px;
+}
+.rms-directory-filtered {
+  display: none !important;
+}
+.rms-operations-hub .rms-studio-resources .rms-studio-grid {
+  align-items: start;
+}
+.rms-operations-hub .links-widget-box {
+  padding: 17px 15px 12px;
+}
+.rms-operations-hub .links-widget-box > .rms-widget-badge {
+  margin-bottom: 9px;
+}
+.rms-operations-hub .links-widget-box .widget-head {
+  margin-bottom: 6px;
+}
+.rms-operations-hub .links-widget-box .link-item {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+.rms-operations-hub .links-widget-box .link-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 6px;
+}
+.rms-operations-hub .links-widget-box .link-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.rms-operations-hub .links-widget-box .link-content > svg {
+  flex-shrink: 0;
+  margin-inline-start: auto !important;
+}
+@media (max-width: 767px) {
+  .rms-workspace-directory label {
+    max-width: none;
+  }
+  .rms-workspace-directory input {
+    font-size: 16px;
+  }
+}
+.rms-operations-hub .rms-studio-resources .rms-studio-grid,
+.rms-operations-hub .rms-studio-shortcuts .rms-studio-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 1000px) {
+  .rms-operations-hub .rms-studio-resources .rms-studio-grid,
+  .rms-operations-hub .rms-studio-shortcuts .rms-studio-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .rms-operations-hub .rms-studio-resources .rms-studio-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 420px) {
+  .rms-operations-hub .rms-studio-shortcuts .rms-studio-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -3,6 +3,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
+from rms.streaming_replica import upstream, validate as validate_replica
+
 from rms.snapshots import parse_json_rows
 
 
@@ -27,11 +29,16 @@ def normalize_return_rounding(invoice, method=None):
 
 class POSReturn(Document):
 	def before_insert(self):
+		if upstream(self):
+			return
 		if self.status not in (None, "", "Pending Approval"):
 			frappe.throw(_("A new POS Return must start Pending Approval."))
 		self.status = "Pending Approval"
 
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		if self.is_new() or self.get_doc_before_save() is None:
 			self.validate_request()
 			return

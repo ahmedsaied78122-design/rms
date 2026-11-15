@@ -71,6 +71,46 @@ class TestPOSUser(unittest.TestCase):
 			with self.assertRaisesRegex(frappe.ValidationError, "enabled Stores"):
 				POSUser.validate_stores(user)
 
+	def test_parent_save_rejects_a_profile_from_another_company(self):
+		user = self.make_pos_user()
+		user.stores[0].pos_profile = "PROFILE-OTHER"
+		def get_value(doctype, filters, fields, **kwargs):
+			if doctype == "POS Profile":
+				return frappe._dict(company="OTHER-COMPANY", disabled=0)
+			if isinstance(fields, list):
+				return frappe._dict(company="STORE-COMPANY", enabled=1)
+			return "STORE-1"
+		with patch("frappe.db.get_value", side_effect=get_value):
+			with self.assertRaisesRegex(frappe.ValidationError, "assigned Store Company"):
+				POSUser.validate_stores(user)
+
+	def test_parent_save_checks_each_cashier_profile_assignment(self):
+		user = self.make_pos_user()
+		user.stores[0].pos_profile = "PROFILE-1"
+		user.append("stores", {"store": "STORE-2", "pos_profile": "PROFILE-2"})
+		def get_value(doctype, filters, fields, **kwargs):
+			if doctype == "POS Profile":
+				return frappe._dict(company="COMPANY", disabled=int(filters == "PROFILE-2"))
+			if isinstance(fields, list):
+				return frappe._dict(company="COMPANY", enabled=1)
+			return "ENABLED-STORE"
+		with patch("frappe.db.get_value", side_effect=get_value):
+			with self.assertRaisesRegex(frappe.ValidationError, "assigned Store Company"):
+				POSUser.validate_stores(user)
+
+	def test_parent_save_accepts_matching_profile_or_store_fallback(self):
+		user = self.make_pos_user()
+		for profile in (None, "MATCHING-PROFILE"):
+			user.stores[0].pos_profile = profile
+			def get_value(doctype, filters, fields, **kwargs):
+				if doctype == "POS Profile":
+					return frappe._dict(company="COMPANY", disabled=0)
+				if isinstance(fields, list):
+					return frappe._dict(company="COMPANY", enabled=1)
+				return "STORE-1"
+			with patch("frappe.db.get_value", side_effect=get_value):
+				POSUser.validate_stores(user)
+
 	def test_pos_user_allows_only_one_default_store(self):
 		user = self.make_pos_user()
 		user.stores[0].default_store = 1

@@ -25,7 +25,7 @@
       "fieldtype": "Data",
       "label": "Attribute Value",
       "in_list_view": 1,
-      "columns": 3
+      "columns": 4
     },
     {
       "fieldname": "sequence_id",
@@ -33,7 +33,7 @@
       "label": "Display Order",
       "default": "0",
       "in_list_view": 1,
-      "columns": 3,
+      "columns": 2,
       "description": "Lower numbers appear first."
     }
   ],

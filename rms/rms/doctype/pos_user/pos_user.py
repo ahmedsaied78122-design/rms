@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
+from rms.rms.doctype.pos_user_store.pos_user_store import POSUserStore
+
 
 class POSUser(Document):
 	def on_update(self):
@@ -86,3 +88,5 @@ class POSUser(Document):
 			seen.add(row.store)
 			if not frappe.db.get_value("Store", {"name": row.store, "enabled": 1}, "name"):
 				frappe.throw(_("Select enabled Stores only."))
+			# Native parent saves validate child field types, not child controller hooks.
+			POSUserStore.validate(row)

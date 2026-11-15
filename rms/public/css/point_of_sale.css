@@ -678,28 +678,28 @@ html body.rms-pos-active .navbar {
 .rms-pos-categories button { min-height: 30px; padding: 0 10px; }
 .rms-pos-product-grid { padding-top: 12px; }
 /* Older Desk Page scripts can remain in localStorage across a stylesheet update. */
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) {
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) {
 	display: grid;
 	grid-template-columns: auto minmax(0, 1fr);
 	grid-template-rows: 40px auto minmax(0, 1fr);
 	column-gap: 10px;
 }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-heading { display: none; }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-view-switch { grid-area: 1 / 1; width: auto; margin: 0; padding: 3px; }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-view-switch button { min-width: 86px; height: 32px; }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar { grid-area: 1 / 2; min-width: 0; margin: 0; }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar .rms-pos-search { height: 40px; margin: 0; }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar .rms-pos-scan { width: 40px; height: 40px; flex-basis: 40px; }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-categories { grid-area: 2 / 1 / auto / -1; }
-.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-product-grid { grid-area: 3 / 1 / auto / -1; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-heading { display: none; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-view-switch { grid-area: 1 / 1; width: auto; margin: 0; padding: 3px; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-view-switch button { min-width: 86px; height: 32px; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar { grid-area: 1 / 2; min-width: 0; margin: 0; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar .rms-pos-search { height: 40px; margin: 0; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar .rms-pos-scan { width: 40px; height: 40px; flex-basis: 40px; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-categories { grid-area: 2 / 1 / auto / -1; }
+.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-product-grid { grid-area: 3 / 1 / auto / -1; }
 @media (max-width: 600px) {
 	.rms-pos-catalog-controls { flex-wrap: wrap; gap: 8px; }
 	.rms-pos-catalog-controls .rms-pos-toolbar { order: 3; flex-basis: 100%; }
 	.rms-pos-catalog-controls .rms-pos-catalog-count { margin-inline-start: auto; }
-	.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) { grid-template-columns: minmax(0, 1fr); grid-template-rows: 40px 40px auto minmax(0, 1fr); row-gap: 8px; }
-	.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar { grid-area: 2 / 1; }
-	.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-categories { grid-area: 3 / 1; margin: 0; }
-	.rms-pos-catalog:not(:has(> .rms-pos-catalog-controls)) > .rms-pos-product-grid { grid-area: 4 / 1; }
+	.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) { grid-template-columns: minmax(0, 1fr); grid-template-rows: 40px 40px auto minmax(0, 1fr); row-gap: 8px; }
+	.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-toolbar { grid-area: 2 / 1; }
+	.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-categories { grid-area: 3 / 1; margin: 0; }
+	.rms-pos-catalog:has(> .rms-pos-toolbar):not(:has(> .rms-pos-catalog-controls)) > .rms-pos-product-grid { grid-area: 4 / 1; }
 }
 
 /* Desk search and page navigation belong to the back-office shell. The POS has its own
@@ -1553,7 +1553,7 @@ body.rms-pos-active .rms-pos-compact-options .modal-content { overflow: visible;
 .rms-pos-compact-options .rms-pos-modifier-group { min-width: 0; padding: 10px; margin: 0; }
 .rms-pos-compact-options .rms-pos-modifier-group > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-top: 7px; }
 .rms-pos-compact-options .rms-pos-modifier-group summary, .rms-pos-compact-options .rms-pos-modifier-group h4 { margin: 0; font-size: 12px; }
-.rms-pos-compact-options .rms-pos-modifier { display: grid; grid-template-columns: 15px minmax(0, 1fr); gap: 3px 6px; align-items: center; min-height: 48px; padding: 7px 8px; margin: 0; border: 1px solid #dce6de; border-radius: 7px; background: #fff; line-height: 1.3; cursor: pointer; }
+.rms-pos-compact-options .rms-pos-modifier { display: grid; grid-template-columns: 15px minmax(0, 1fr); gap: 3px 6px; align-items: center; min-height: 48px; padding: 7px 8px; margin: 0; border: 1px solid #dce6de; border-radius: 7px; background: #fff; color: #254841; line-height: 1.3; cursor: pointer; }
 .rms-pos-compact-options .rms-pos-modifier input { grid-row: 1 / 3; width: 15px; height: 15px; margin: 0; accent-color: #286a53; }
 .rms-pos-compact-options .rms-pos-modifier span { min-width: 0; overflow-wrap: anywhere; }
 .rms-pos-compact-options .rms-pos-modifier b { grid-column: 2; color: #286a53; font-size: 10px; }
@@ -1699,3 +1699,95 @@ body.rms-pos-active .rms-pos-compact-options .modal-content { overflow: visible;
  .rms-pos-categories button, .rms-pos-category-branch button { transition: none; }
  .is-nav-open .rms-pos-category-rail { animation: none; }
 }
+
+.rms-pos-clear-modifiers {
+ margin-inline-start:auto; padding:2px 7px; border:1px solid #b5cbc0; border-radius:6px;
+ background:transparent; color:inherit; font-size:11px; line-height:1.6;
+}
+
+/* Register settings stay in the user menu; Order Type uses the header space. */
+.rms-pos-topbar { min-height: 64px; }
+.rms-pos-topbar > .rms-pos-brand { flex-basis: 145px; }
+.rms-pos-topbar .rms-pos-header-actions { flex-basis: auto; margin-inline-start: auto; }
+.rms-pos-setup-entry-copy { display: grid; flex: 1; min-width: 0; gap: 3px; }
+.rms-pos-setup-entry-copy strong { font-size: 12px; }
+.rms-pos-setup-entry-copy small { overflow: hidden; color: #6b8075; font-size: 10px; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+.rms-pos-setup-panel { position: absolute; z-index: 25; top: calc(100% + 9px); right: 0; width: min(300px, calc(100vw - 24px)); max-height: calc(100dvh - 110px); overflow-y: auto; padding: 14px; border: 1px solid #d9e4db; border-radius: 12px; color: #244d42; background: #fff; box-shadow: 0 14px 42px #102b2833; text-align: start; }
+.rms-pos-catalog > .rms-pos-categories { margin-top: 0; margin-bottom: 10px; }
+.rms-pos-setup-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; font-size: 13px; }
+.rms-pos-setup-heading > strong { flex: 1; }
+[dir="rtl"] .rms-pos-setup-back span { transform: scaleX(-1); }
+.rms-pos-setup-heading button { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 7px; color: #526963; background: #f0f5ef; font-size: 22px; }
+.rms-pos-setup-panel .rms-pos-context-fields { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 12px; }
+.rms-pos-setup-panel .rms-pos-context-fields label { grid-column: auto; color: #526963; font-size: 11px; }
+.rms-pos-setup-panel .rms-pos-context-fields select { height: 40px; color: #244d42; background: #f8fbf8; border-color: #cddcd1; }
+.rms-pos-setup-panel .rms-pos-context-fields select:disabled { color: #526963; background: #edf2ed; opacity: .8; cursor: not-allowed; }
+.rms-pos-setup-panel > p { margin: 12px 0 0; color: #6b8075; font-size: 11px; line-height: 1.6; }
+.rms-pos-setup-heading button:focus-visible { outline: 2px solid #85a967; outline-offset: 2px; }
+
+/* A compact header keeps the daily controls together and the menu unobstructed. */
+.rms-pos-header-tools { display: flex; flex: 1 1 560px; align-items: center; gap: 10px; min-width: 0; max-width: 720px; }
+.rms-pos-topbar .rms-pos-header-actions { flex: 0 0 auto; }
+.rms-pos-order-picker { position: relative; flex: 0 0 174px; min-width: 0; }
+.rms-pos-order-type-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 6px 12px; border: 1px solid #e4f39c; border-radius: 9px; background: #d7e981; color: #153b32; text-align: start; cursor: pointer; }
+.rms-pos-order-type-toggle > span { display: grid; gap: 2px; min-width: 0; }
+.rms-pos-order-type-toggle small { font-size: 9px; font-weight: 400; line-height: 1.2; }
+.rms-pos-order-type-toggle strong { overflow: hidden; font-size: 11px; font-weight: 700; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
+.rms-pos-order-type-toggle > svg { flex: 0 0 16px; }
+.rms-pos-order-type-toggle:hover:not(:disabled), .rms-pos-order-type-toggle[aria-expanded="true"] { background: #e2f29c; border-color: #f1ffc4; }
+.rms-pos-order-type-toggle:focus-visible { outline: 2px solid #f0ffc0; outline-offset: 3px; }
+.rms-pos-order-type-toggle:disabled { opacity: .55; cursor: not-allowed; }
+.rms-pos-order-type-list { position: absolute; z-index: 30; top: calc(100% + 9px); left: 0; width: max(100%, 220px); max-width: calc(100vw - 24px); overflow-y: auto; padding: 6px; border: 1px solid #d4e2d6; border-radius: 12px; background: #fff; color: #244d42; box-shadow: 0 12px 32px #102b2833; text-align: start; }
+.rms-pos-order-type-list [role="option"] { display: flex; align-items: center; justify-content: space-between; gap: 18px; width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 7px; background: transparent; color: #36594a; text-align: start; font-size: 11px; font-weight: 700; overflow-wrap: anywhere; }
+.rms-pos-order-type-list [role="option"] > svg { flex: 0 0 17px; visibility: hidden; }
+.rms-pos-order-type-list [role="option"][aria-selected="true"] { background: #edf4df; color: #234a36; font-weight: 700; }
+.rms-pos-order-type-list [aria-selected="true"] > svg { visibility: visible; }
+.rms-pos-order-type-list [role="option"]:hover { background: #f1f6ee; }
+.rms-pos-order-type-list [role="option"]:focus-visible { outline: 2px solid #709a72; outline-offset: -2px; background: #edf4df; }
+.rms-pos-header-tools .rms-pos-view-switch { flex: 0 0 auto; width: auto; margin: 0; padding: 3px; gap: 3px; border-color: #496466; border-radius: 9px; background: #1f4140; }
+.rms-pos-header-tools .rms-pos-view-switch button { min-width: 68px; height: 34px; padding-inline: 9px; border-radius: 6px; color: #bdd1c8; font-size: 11px; }
+.rms-pos-header-tools .rms-pos-view-switch button.is-active { background: #eef4df; color: #244d42; box-shadow: none; }
+.rms-pos-header-tools .rms-pos-view-switch button:focus-visible { outline: 2px solid #d7e981; outline-offset: -2px; }
+.rms-pos-header-tools .rms-pos-toolbar { display: flex; flex: 1 1 230px; align-items: center; gap: 0; min-width: 130px; max-width: 330px; height: 40px; margin: 0; border: 1px solid #496466; border-radius: 9px; background: #224447; }
+.rms-pos-header-tools .rms-pos-toolbar:focus-within { border-color: #b5d580; box-shadow: 0 0 0 2px #d7e98122; }
+.rms-pos-header-tools .rms-pos-search { flex: 1 1 0; min-width: 0; height: 38px; margin: 0; padding-inline: 10px 5px; gap: 7px; border: 0; background: transparent; color: #c2d6c9; }
+.rms-pos-header-tools .rms-pos-search:focus-within { outline: none; }
+.rms-pos-header-tools .rms-pos-search input { min-width: 0; padding: 0; color: #f4f6ef; font-size: 12px; font-weight: 400; }
+.rms-pos-header-tools .rms-pos-search input::placeholder { color: #b2c9be; opacity: 1; }
+.rms-pos-header-tools .rms-pos-scan { flex: 0 0 32px; width: 32px; height: 26px; margin-inline-end: 3px; padding: 0; border: 0; border-inline-start: 1px solid #496466; border-radius: 0; background: transparent; color: #d7e981; font-size: 17px; }
+.rms-pos-header-tools .rms-pos-scan:focus-visible { outline: 2px solid #d7e981; outline-offset: -2px; }
+.rms-pos-catalog > .rms-pos-categories { margin-bottom: 0; }
+@media (max-width: 1279px) {
+ .rms-pos-header-tools { display: grid; grid-template-columns: 174px auto minmax(0, 1fr); order: 3; flex-basis: 100%; max-width: none; }
+ .rms-pos-header-tools .rms-pos-toolbar { justify-self: end; width: 100%; max-width: 420px; }
+}
+@media (max-width: 700px) {
+ .rms-pos-header-tools { grid-template-columns: minmax(145px, 1fr) auto; gap: 8px; }
+ .rms-pos-header-tools .rms-pos-toolbar { grid-column: 1 / -1; max-width: none; }
+ .rms-pos-header-tools .rms-pos-view-switch button { min-width: 58px; padding-inline: 7px; }
+ .rms-pos-order-type-toggle { min-height: 44px; }
+}
+@media (max-width: 600px) {
+ .rms-pos-topbar > .rms-pos-brand { flex-basis: 100px; }
+ .rms-pos-topbar > .rms-pos-brand small { display: none; }
+ .rms-pos-header-actions .rms-pos-user-name { display: none; }
+ .rms-pos-topbar .rms-pos-header-actions { flex: 1 1 100%; justify-content: flex-end; }
+}
+
+/* The cashier account stays in the register; language is a direct two-way choice. */
+.rms-pos-account-identity { display: flex; align-items: center; gap: 10px; padding-block: 3px 8px; }
+.rms-pos-account-identity .rms-pos-user-avatar { width: 40px; height: 40px; font-size: 16px; }
+.rms-pos-account-identity > div { min-width: 0; }
+.rms-pos-account-identity strong { display: block; color: #244d42; font-size: 13px; overflow-wrap: anywhere; }
+.rms-pos-account-identity small { display: block; margin-top: 3px; color: #6b8075; font-size: 10px; overflow-wrap: anywhere; }
+.rms-pos-setup-panel .rms-pos-session-status { max-width: none; margin: 3px 0 14px; color: #6a8073; }
+.rms-pos-setup-panel > .rms-pos-account-caption { margin: 0 0 10px; padding-top: 12px; border-top: 1px solid #e3ebe3; color: #526d5d; font-size: 11px; font-weight: 700; }
+.rms-pos-language-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px; color: #526d5d; font-size: 12px; }
+.rms-pos-language-row > span { display: inline-flex; align-items: center; gap: 8px; }
+.rms-pos-language-row > span svg { width: 17px; height: 17px; color: #688474; }
+.rms-pos-language-choices { display: flex; gap: 3px; padding: 3px; border: 1px solid #dbe5d9; border-radius: 8px; background: #f0f5ed; }
+.rms-pos-language-choices button { min-width: 61px; min-height: 34px; padding: 4px 8px; border: 0; border-radius: 5px; background: transparent; color: #526d5d; font-size: 11px; font-weight: 600; }
+.rms-pos-language-choices button.is-active { background: #244d42; color: #fff; }
+.rms-pos-language-choices button:hover:not(:disabled):not(.is-active) { background: #e3ecd9; }
+.rms-pos-language-choices button:focus-visible { outline: 2px solid #85a967; outline-offset: -2px; }
+.rms-pos-language-choices button:disabled { opacity: .5; cursor: wait; }

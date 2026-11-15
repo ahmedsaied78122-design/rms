@@ -1,11 +1,19 @@
+import math
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, now_datetime
 from erpnext.stock.stock_ledger import is_negative_stock_allowed
 
+from rms.streaming_replica import upstream, validate as validate_replica
+
 from rms.recipe import get_recipe_components
-from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import get_minimum_selections, get_maximum_selections
+from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import (
+	allows_multiple_selections,
+	get_maximum_selections,
+	get_minimum_selections,
+)
 from rms.snapshots import parse_json_rows, serialize_json_rows
 from rms.taxes import apply_order_discount, apply_order_tax_template, prevent_pos_item_price_autoinsert
 from rms.utils import get_business_date
@@ -177,6 +185,8 @@ class POSOrder(Document):
 		self.name, self.naming_series = next_pos_order_name(self.store)
 
 	def before_insert(self):
+		if upstream(self):
+			return
 		self.status = "Open"
 		self.business_date = (
 			frappe.db.get_value("Cashier Session", self.cashier_session, "business_date")
@@ -184,6 +194,9 @@ class POSOrder(Document):
 		) or get_business_date(self.store)
 
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		self.normalize_check_label()
 		previous = self.get_doc_before_save()
 		if previous:
@@ -549,7 +562,7 @@ class POSOrder(Document):
 					frappe.throw(_("Selected option product does not belong to the Option Parent."))
 			if product.product_category not in self.get_brand_menu_categories():
 				frappe.throw(_("Product {0} is not available on a Menu for this Brand.").format(product.title))
-			if not row.qty or row.qty <= 0:
+			if not row.qty or not math.isfinite(row.qty) or row.qty <= 0:
 				frappe.throw(_("Product quantities must be greater than zero."))
 			if frappe.db.get_value("UOM", row.uom, "must_be_whole_number") and row.qty % 1:
 				frappe.throw(_("Unit {0} does not allow fractional quantities.").format(row.uom))
@@ -587,7 +600,7 @@ class POSOrder(Document):
 					) or frappe._dict()
 			single_selection_groups = {
 				group.modifier_group for group in product.modifier_groups
-				if not modifier_group_settings[group.modifier_group].allow_multiple_selections
+				if not allows_multiple_selections(modifier_group_settings[group.modifier_group], group)
 			}
 			minimum_selections = {
 				group.modifier_group: get_minimum_selections(group, modifier_group_settings[group.modifier_group].min_selections)
@@ -595,7 +608,7 @@ class POSOrder(Document):
 				if modifier_group_settings[group.modifier_group].enabled
 			}
 			maximum_selections = {
-				group.modifier_group: get_maximum_selections(modifier_group_settings[group.modifier_group])
+				group.modifier_group: get_maximum_selections(modifier_group_settings[group.modifier_group], group)
 				for group in product.modifier_groups
 				if modifier_group_settings[group.modifier_group].enabled
 			}
@@ -612,6 +625,8 @@ class POSOrder(Document):
 					item.modifier_group for item in product.modifier_groups
 				}:
 					frappe.throw(_("Modifier Group is not configured for this product."))
+				if not modifier_group_settings[modifier_row.modifier_group].enabled:
+					frappe.throw(_("The selected Modifier Group is disabled."))
 				option = next(
 					(
 						item
@@ -634,7 +649,9 @@ class POSOrder(Document):
 					for entry in modifier_product.store_order_type_exclusions
 				):
 					frappe.throw(_("Modifier {0} is disabled for this Order Type.").format(modifier_product.title))
-				modifier_row.qty = modifier_row.qty or 1
+				modifier_row.qty = flt(modifier_row.qty or 1)
+				if not math.isfinite(modifier_row.qty) or modifier_row.qty <= 0:
+					frappe.throw(_("Modifier quantities must be greater than zero."))
 				modifier_row.selling_price = option.selling_price or 0
 				modifier_row.item = modifier_product.item
 				modifier_defaults = modifier_product.get_effective_defaults(self.store)

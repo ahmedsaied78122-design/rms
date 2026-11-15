@@ -3,11 +3,15 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, now_datetime
 
+from rms.streaming_replica import upstream, validate as validate_replica
+
 from rms.utils import get_business_date
 
 
 class CashierSession(Document):
 	def before_insert(self):
+		if upstream(self):
+			return
 		self.user = self.user or frappe.session.user
 		self.load_store_defaults()
 		self.status = "Open"
@@ -16,6 +20,9 @@ class CashierSession(Document):
 		self.load_payment_methods()
 
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		self.validate_context()
 		self.validate_open_session()
 		self.validate_payments()

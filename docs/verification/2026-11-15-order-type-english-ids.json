@@ -1,0 +1,100 @@
+{
+  "date": "2026-11-15",
+  "site": "rms.arab-erp.com",
+  "passed": true,
+  "method": "Native frappe.rename_doc; no merges or permission bypass",
+  "renamed": [
+    {
+      "old_id": "صالة",
+      "id": "Dine In",
+      "title": "Dine In",
+      "rules_and_account_mappings_preserved": true
+    },
+    {
+      "old_id": "تيك أواي",
+      "id": "Takeaway",
+      "title": "Takeaway",
+      "rules_and_account_mappings_preserved": true
+    },
+    {
+      "old_id": "توصيل",
+      "id": "Delivery",
+      "title": "Delivery",
+      "rules_and_account_mappings_preserved": true
+    }
+  ],
+  "link_audit": [
+    {
+      "doctype": "POS User",
+      "fieldname": "retail_order_type",
+      "references_updated": 1
+    },
+    {
+      "doctype": "POS Order",
+      "fieldname": "order_type",
+      "references_updated": 20
+    },
+    {
+      "doctype": "Order Type MultiSelect Option",
+      "fieldname": "order_type",
+      "references_updated": 0
+    },
+    {
+      "doctype": "POS User Order Type",
+      "fieldname": "order_type",
+      "references_updated": 0
+    },
+    {
+      "doctype": "Selling Product Price Rule",
+      "fieldname": "order_type",
+      "references_updated": 91
+    },
+    {
+      "doctype": "Selling Product Store Order Type Exclusion",
+      "fieldname": "order_type",
+      "references_updated": 0
+    },
+    {
+      "doctype": "Store Order Type Tax",
+      "fieldname": "order_type",
+      "references_updated": 9
+    },
+    {
+      "doctype": "Store Working Hour",
+      "fieldname": "order_type",
+      "references_updated": 0
+    },
+    {
+      "doctype": "Waste Entry",
+      "fieldname": "order_type",
+      "references_updated": 0
+    }
+  ],
+  "dynamic_link_fields_verified": 1,
+  "catalog_contexts_verified": 3,
+  "legacy_defaults": 0,
+  "search_rebuild_queued": true,
+  "generated_price_lists_renamed": {
+    "RMS-SALES-EGP-ANY-STORE--ANY-BRAND-EB26F67C3E4EB0": "RMS-SALES-EGP-ANY-STORE-DELIVERY-ANY-BRAND-EE8853D36BE619"
+  },
+  "item_price_records_preserved": 91,
+  "price_list_link_fields_verified": 25,
+  "fresh_connection_readback": [
+    {
+      "name": "Dine In",
+      "title": "Dine In"
+    },
+    {
+      "name": "Takeaway",
+      "title": "Takeaway"
+    },
+    {
+      "name": "Delivery",
+      "title": "Delivery"
+    }
+  ],
+  "pos_bootstrap_verified": true,
+  "search_rebuilt_synchronously": true,
+  "site_health": true,
+  "focused_unit_tests_passed": 6
+}

@@ -14,7 +14,11 @@ from frappe.utils import cint, flt, now_datetime, nowdate
 from rms.stock import create_material_issue
 from rms.snapshots import parse_json_rows, serialize_json_rows
 from rms.rms.doctype.pos_order.pos_order import get_active_order_item_qty, validate_confirmed_item_cancellation
-from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import get_minimum_selections, get_maximum_selections
+from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import (
+	allows_multiple_selections,
+	get_maximum_selections,
+	get_minimum_selections,
+)
 from rms.taxes import (
 	allow_rms_cashier_session_pos_invoice,
 	apply_order_discount as _apply_order_discount,
@@ -551,7 +555,7 @@ def get_default_pos_store(allowed_stores, user=None):
 
 
 @frappe.whitelist()
-def get_catalog(store, brand, order_type, category=None, search=None, limit=100, include_descendants=1):
+def get_catalog(store, brand, order_type, category=None, search=None, limit=100, include_descendants=1, full_menu=0):
 	require_pos_role()
 	assert_store_access(store)
 	if brand not in {row["name"] for row in get_brands(store)}:
@@ -596,7 +600,8 @@ def get_catalog(store, brand, order_type, category=None, search=None, limit=100,
 		or_filters=or_filters,
 		fields=["name", "title", "product_category", "image", "item", "selling_price", "uom", "sequence_id", "has_options", "is_modifier", "can_be_sold_separately"],
 		order_by="sequence_id asc, title asc",
-		limit_page_length=min(max(int(limit), 1), 200),
+		# The register filters a complete, scoped menu locally; ordinary searches stay bounded.
+		limit_page_length=0 if cint(full_menu) else min(max(int(limit), 1), 200),
 	)
 	children = {field: {} for field in ('selling_prices', 'store_availability', 'store_order_type_exclusions')}
 	names = [row.name for row in products if row.name not in option_products and not (row.is_modifier and not row.can_be_sold_separately)]
@@ -670,9 +675,9 @@ def get_product_configuration(product, store, brand, order_type):
 				choices.append({"name": option.modifier_product, "title": product_info.title, "cost": option.cost,
 					"selling_price": option.selling_price or 0, "sequence_id": option.sequence_id})
 		groups.append({"name": row.modifier_group, "title": group.title, "allow_collapse": bool(group.allow_collapse),
-			"allow_multiple_selections": bool(group.allow_multiple_selections),
+			"allow_multiple_selections": allows_multiple_selections(group, row),
 			"min_selections": get_minimum_selections(row, group.min_selections),
-			"max_selections": get_maximum_selections(group),
+			"max_selections": get_maximum_selections(group, row),
 			"collapsed_by_default": bool(group.collapsed_by_default), "sequence_id": row.sequence_id,
 			"options": sorted(choices, key=lambda option: (option["sequence_id"], option["title"]))})
 	product_price = None if doc.has_options else doc.resolve_price(store, order_type, brand, strict=False)

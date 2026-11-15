@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -64,7 +64,8 @@
       "fieldname": "delivery_included",
       "fieldtype": "Check",
       "label": "Delivery Included",
-      "default": "0"
+      "default": "0",
+      "description": "Marks this order type for delivery. Courier assignment, delivery zones and delivery fees are not configured by this checkbox."
     },
     {
       "fieldname": "require_table",
@@ -105,5 +106,6 @@
       "share": 1,
       "report": 1
     }
-  ]
+  ],
+  "show_title_field_in_link": 1
 }

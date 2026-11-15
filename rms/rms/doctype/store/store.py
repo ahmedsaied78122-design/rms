@@ -6,9 +6,22 @@ from frappe.model.document import Document
 class Store(Document):
 	def validate(self):
 		self.store_code = (self.store_code or "").strip()
+		self.validate_streaming_branch()
 		self.validate_brands()
 		self.validate_defaults()
 		self.validate_order_type_taxes()
+
+	def validate_streaming_branch(self):
+		previous = self.get_doc_before_save()
+		if self.get("streaming_branch") and frappe.db.exists("Store", {
+			"streaming_branch": self.streaming_branch, "name": ["!=", self.name or ""],
+		}):
+			frappe.throw(_("A Streaming Branch can be linked to only one Store."))
+		if previous and previous.get("streaming_branch") and previous.streaming_branch != self.get("streaming_branch"):
+			for doctype, field in (("Master Instance", "restaurant_branch"),
+				("Slave Instance", "restaurant_branch"), ("Streaming Peer State", "active_branch")):
+				if frappe.db.exists(doctype, {field: previous.streaming_branch}):
+					frappe.throw(_("Unlink the streaming pairing before changing this Store's Streaming Branch."))
 
 	def validate_brands(self):
 		brands = [row.restaurant_brand for row in self.brands if row.restaurant_brand]

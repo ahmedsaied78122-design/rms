@@ -210,3 +210,143 @@ body.rms-management .rms-custom-form .rms-form-guide {
 body.rms-management .rms-custom-form .rms-form-guide {
   background: linear-gradient(120deg, var(--rms-surface), var(--rms-hover));
 }
+
+/* One visible parent section, with native controls and validation inside it. */
+.rms-custom-form .rms-form-pane-hidden {
+  display: none !important;
+}
+.rms-custom-form .rms-form-pane > .section-head {
+  display: none;
+}
+.rms-custom-form .rms-form-guide > div {
+  min-width: 0;
+}
+.rms-custom-form .rms-form-guide p {
+  overflow-wrap: anywhere;
+}
+.rms-custom-form .rms-form-section-link[aria-selected="true"] {
+  background: var(--rms-citrus);
+  color: #19362a;
+}
+/* Parent field spacing must not change editable grid cell geometry. */
+.rms-custom-form .grid-row .frappe-control {
+  margin-bottom: 0 !important;
+}
+.rms-custom-form .grid-heading-row .static-area,
+.rms-custom-form .grid-body .data-row .static-area {
+  padding-block: 0;
+  line-height: 22px;
+}
+.rms-custom-form .grid-body .editable-row .form-control,
+.rms-custom-form .grid-body .editable-row .like-disabled-input {
+  min-height: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 8px;
+  font-size: 12px;
+  line-height: 22px;
+}
+.rms-custom-form .grid-body .editable-row .checkbox {
+  margin: 0;
+  padding: 0;
+}
+.rms-custom-form .grid-body .editable-row .checkbox label {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rms-custom-form .grid-body .editable-row .checkbox input {
+  margin: 0;
+}
+.rms-custom-form .grid-heading-row .grid-static-col {
+  white-space: nowrap;
+}
+.rms-custom-form .form-grid-container {
+  min-width: 0;
+  max-width: 100%;
+}
+.rms-custom-form .form-in-grid .form-section {
+  margin: 0 !important;
+  border: 0 !important;
+  box-shadow: none;
+  padding: 12px 4px !important;
+}
+.rms-custom-form .form-in-grid .section-body {
+  gap: 12px 0;
+}
+@media (max-width: 767px) {
+  .rms-custom-form .form-grid-container {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+  .rms-custom-form .form-grid {
+    overflow: visible;
+    min-width: 600px;
+  }
+  .rms-custom-form .form-grid:has(.grid-row-open) {
+    min-width: 0 !important;
+  }
+  .rms-custom-form .form-grid:has(.grid-row-open) > .grid-heading-row {
+    display: none;
+  }
+  .rms-custom-form .form-grid:has(.grid-row-open) > .grid-body {
+    min-width: 0;
+  }
+  .rms-custom-form .grid-body .editable-row .form-control {
+    font-size: 16px;
+  }
+}
+.rms-custom-form .grid-heading-row .static-area {
+  line-height: 20px;
+}
+.rms-custom-form .grid-row .form-in-grid .frappe-control {
+  margin-bottom: 14px !important;
+}
+/* Hover remains distinct from the selected section. */
+.rms-form-section-link:hover:not([aria-selected="true"]) {
+  background: var(--rms-hover);
+  color: var(--rms-text);
+  border-color: #9bb77d;
+}
+.rms-form-section-link:hover:not([aria-selected="true"]) > span:first-child {
+  color: var(--rms-muted);
+}
+.rms-custom-form .grid-heading-row {
+  height: auto;
+  min-height: 34px;
+}
+.rms-custom-form .grid-heading-row .data-row {
+  align-items: stretch;
+}
+.rms-custom-form .grid-heading-row .grid-static-col,
+.rms-custom-form .grid-heading-row .row-index,
+.rms-custom-form .grid-heading-row .row-check {
+  height: auto;
+  min-height: 34px;
+  white-space: normal;
+}
+.rms-custom-form .grid-heading-row .static-area {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  line-height: 17px;
+}
+@media (min-width: 768px) {
+  .rms-form-sections {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+}
+@media (max-width: 767px) {
+  .rms-custom-form
+    .form-grid:has(.grid-row-open)
+    .grid-body
+    > .rows
+    > .grid-row:not(.grid-row-open) {
+    display: none;
+  }
+}

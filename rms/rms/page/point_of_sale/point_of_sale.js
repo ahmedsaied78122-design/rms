@@ -242,6 +242,7 @@ class RMSPointOfSale {
 			language: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a20 20 0 0 1 0 18 20 20 0 0 1 0-18"/>',
 			apps: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
 			logout: '<path d="M9 4H4v16h5M14 8l4 4-4 4M8 12h13"/>',
+			settings: '<path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="3" fill="currentColor" stroke="none"/>',
 		};
 		return `<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || ""}</svg>`;
 	}
@@ -252,10 +253,15 @@ class RMSPointOfSale {
 			<section class="rms-pos-shell" aria-label="${__("Point of Sale")}">
 				<header class="rms-pos-topbar">
 					<div class="rms-pos-brand"><span class="rms-pos-mark" aria-hidden="true">R</span><div><strong>RMS</strong><small>${__("Restaurant & Retail")}</small></div></div>
-					<div class="rms-pos-context-fields" aria-label="${__("Sale setup")}">
-						<label>${__("Store")}<select data-select="store"><option value="">${__("Select Store")}</option></select></label>
-						<label>${__("Brand")}<select data-select="brand" disabled></select></label>
-						<label>${__("Order Type")}<select data-select="order_type" disabled></select></label>
+					<div class="rms-pos-header-tools">
+						<div class="rms-pos-order-picker" data-order-type-picker>
+							<select data-select="order_type" hidden tabindex="-1" aria-hidden="true" disabled></select>
+							<button type="button" class="rms-pos-order-type-toggle" data-order-type-toggle aria-haspopup="listbox" aria-controls="rms-pos-order-types" aria-expanded="false" disabled><span><small>${__("Order Type")}</small><strong data-role="order-type-label"></strong></span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+							<div class="rms-pos-order-type-list" id="rms-pos-order-types" data-order-type-list role="listbox" aria-label="${__("Order Type")}" hidden></div>
+						</div>
+						<div class="rms-pos-view-switch" role="tablist" aria-label="${__("Menu view")}"><button type="button" role="tab" data-catalog-mode="categories">${__("Categories")}</button><button type="button" role="tab" data-catalog-mode="products" aria-selected="true">${__("Products")}</button></div>
+						<div class="rms-pos-toolbar"><label class="rms-pos-search"><span aria-hidden="true">⌕</span><input data-search type="search" placeholder="${__("Search products or scan a barcode")}" disabled autocomplete="off" aria-label="${__("Search products or scan a barcode")}"></label><button type="button" class="rms-pos-scan" data-action="scan" disabled aria-label="${__("Focus barcode search")}">▦</button></div>
+						<span class="rms-pos-catalog-count sr-only" data-role="catalog-count"></span>
 					</div>
 					<div class="rms-pos-header-actions">
 						<button class="rms-pos-quiet-action" data-action="open-orders" data-capability="can_view_open_orders">${__("Open Orders")}</button>
@@ -273,10 +279,21 @@ class RMSPointOfSale {
 								<button type="button" role="menuitem" tabindex="-1" data-action="sales-history" data-capability="can_view_sales_history">${this.userMenuIcon("history")}${__("Sales History")}</button>
 								<button type="button" role="menuitem" tabindex="-1" data-action="operation-approvals" data-capability="can_approve_discount">${this.userMenuIcon("approvals")}${__("Approvals")}</button>
 								<span class="rms-pos-actions-caption rms-pos-actions-divider" role="presentation">${__("Account")}</span>
-								<button type="button" role="menuitem" tabindex="-1" data-action="my-account">${this.userMenuIcon("account")}${__("My Account")}</button>
-								<button type="button" role="menuitem" tabindex="-1" data-action="language">${this.userMenuIcon("language")}${__("Language")}</button>
+								<button type="button" role="menuitem" tabindex="-1" data-action="my-account">${this.userMenuIcon("account")}<span class="rms-pos-setup-entry-copy"><strong>${__("My Account")}</strong><small data-role="setup-summary"></small></span><span aria-hidden="true">›</span></button>
+								<div class="rms-pos-language-row"><span>${this.userMenuIcon("language")}${__("Language")}</span><div class="rms-pos-language-choices" role="group" aria-label="${__("Language")}"><button type="button" role="menuitemradio" tabindex="-1" data-language="ar" lang="ar" aria-checked="false">العربية</button><button type="button" role="menuitemradio" tabindex="-1" data-language="en" lang="en" aria-checked="false">English</button></div></div>
 								<button type="button" role="menuitem" tabindex="-1" data-action="switch-apps">${this.userMenuIcon("apps")}${__("Back to Apps")}</button>
 								<button type="button" role="menuitem" tabindex="-1" class="rms-pos-actions-signout" data-action="logout">${this.userMenuIcon("logout")}${__("Sign Out")}</button>
+							</div>
+							<div class="rms-pos-setup-panel" id="rms-pos-setup-panel" data-pos-setup role="dialog" aria-label="${__("My Account")}" hidden>
+								<div class="rms-pos-setup-heading"><button type="button" class="rms-pos-setup-back" data-setup-back aria-label="${__("User Menu")}"><span aria-hidden="true">‹</span></button><strong>${__("My Account")}</strong><button type="button" data-setup-close aria-label="${__("Close")}">×</button></div>
+								<div class="rms-pos-account-identity"><span class="rms-pos-user-avatar" aria-hidden="true">${identity.initial}</span><div><strong>${identity.name}</strong><small>${this.escape(frappe.session?.user || "")}</small></div></div>
+								<div class="rms-pos-session-status" data-role="context"></div>
+								<p class="rms-pos-account-caption">${__("Store and brand")}</p>
+								<div class="rms-pos-context-fields">
+									<label>${__("Store")}<select data-select="store"></select></label>
+									<label>${__("Brand")}<select data-select="brand" disabled></select></label>
+								</div>
+								<p data-role="setup-hint"></p>
 							</div>
 						</div>
 					</div>
@@ -284,11 +301,8 @@ class RMSPointOfSale {
 				<div class="rms-pos-layout">
 					<main class="rms-pos-catalog">
 						<div class="rms-pos-heading sr-only"><h1>${__("Menu")}</h1><p data-role="catalog-hint">${__("Select a Store, Brand and Order Type to browse the menu.")}</p></div>
-						<div class="rms-pos-catalog-controls">
-						<div class="rms-pos-view-switch" role="tablist" aria-label="${__("Menu view")}"><button type="button" role="tab" data-catalog-mode="categories">${__("Categories")}</button><button type="button" role="tab" data-catalog-mode="products" aria-selected="true">${__("Products")}</button></div>
-						<div class="rms-pos-toolbar"><label class="rms-pos-search"><span aria-hidden="true">⌕</span><input data-search type="search" placeholder="${__("Search products or scan a barcode")}" disabled autocomplete="off" aria-label="${__("Search products or scan a barcode")}"></label><button type="button" class="rms-pos-scan" data-action="scan" disabled aria-label="${__("Focus barcode search")}">▦</button></div>
-						<span class="rms-pos-catalog-count" data-role="catalog-count"></span></div>
 						<nav class="rms-pos-categories" data-role="categories" aria-label="${__("Product categories")}"></nav>
+
 						<div class="rms-pos-category-browser" data-category-browser>
 							<div class="rms-pos-category-context" data-role="category-context" hidden></div>
 							<div class="rms-pos-catalog-results">
@@ -319,6 +333,7 @@ class RMSPointOfSale {
 		const menu = root?.querySelector("[data-actions-menu]");
 		const toggle = root?.querySelector("[data-more-toggle]");
 		if (!menu || !toggle) return;
+		if (open) this.closeMyAccount();
 		menu.hidden = !open;
 		toggle.setAttribute("aria-expanded", String(open));
 		if (open) {
@@ -336,7 +351,7 @@ class RMSPointOfSale {
 
 	actionsMenuItems() {
 		const menu = this.page.main[0]?.querySelector("[data-actions-menu]");
-		return [...(menu?.querySelectorAll('[role="menuitem"]') || [])].filter(item => !item.hidden && !item.disabled);
+		return [...(menu?.querySelectorAll('[role="menuitem"], [role="menuitemradio"]') || [])].filter(item => !item.hidden && !item.disabled);
 	}
 
 	handleActionsMenuKey(event) {
@@ -372,6 +387,8 @@ class RMSPointOfSale {
 		const root = this.page.main.get(0);
 		this.actionsMenuOutsideClick = event => {
 			if (!event.target.closest("[data-more-actions]")) this.setActionsMenuOpen(false);
+			if (!event.target.closest("[data-more-actions]")) this.closeMyAccount();
+			if (!event.target.closest("[data-order-type-picker]")) this.setOrderTypePickerOpen(false);
 			if (this.categoryNavOpen && !event.target.closest('[data-role="subcategories"], [data-category-nav-toggle], [data-category], [data-category-back]')) this.setCategoryNavigationOpen(false);
 		};
 		document.addEventListener("click", this.actionsMenuOutsideClick);
@@ -387,11 +404,16 @@ class RMSPointOfSale {
 			const select = event.target.closest("[data-select]");
 			if (!select) return;
 			const key = select.dataset.select;
+			if (key === "store" && this.state.session) {
+				select.value = this.state.store || "";
+				return;
+			}
 			if (["brand", "order_type"].includes(key) && (this.state.cart.length || this.state.order_name)) {
 				select.value = this.state[key] || "";
 				return frappe.msgprint(__("Finish or start a new sale before changing the Brand or Order Type."));
 			}
 			this.state[key] = select.value || null;
+			if (["store", "brand", "order_type"].includes(key)) this.renderSaleSetup();
 			if (key === "store") this.onStoreChanged();
 			if (key === "brand") this.onBrandChanged();
 			if (key === "order_type") this.onOrderTypeChanged();
@@ -429,6 +451,10 @@ class RMSPointOfSale {
 		});
 		root.addEventListener("focusin", (event) => { if (event.target.matches("[data-payment-amount], [data-guest-amount], [data-guest-share]")) { this.paymentInput = event.target; this.paymentKeypadInput = null; } });
 		root.addEventListener("keydown", (event) => {
+			if (this.handleOrderTypePickerKey(event)) return;
+			if (event.key === "Escape" && root.querySelector("[data-pos-setup]")?.hidden === false) {
+				event.preventDefault(); event.stopPropagation(); this.closeMyAccount(true); return;
+			}
 			if (this.handleActionsMenuKey(event)) return;
 			if (this.handleCategoryNavigationKey(event)) return;
 			if (event.target.matches('[data-action="cart-tab"]') && ["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
@@ -449,9 +475,24 @@ class RMSPointOfSale {
 		root.addEventListener("click", (event) => { if (event.target.matches("[data-split-dialog-backdrop]")) this.closePaymentSplitDialog(); });
 		root.addEventListener("click", (event) => { if (event.target.matches("[data-payment-items-backdrop]")) this.closePaymentItemsDialog(); });
 		root.addEventListener("click", async (event) => {
+			const language = event.target.closest("[data-language]");
+			if (language) { if (!language.disabled) return this.changeLanguage(language.dataset.language); return; }
+			if (event.target.closest("[data-order-type-toggle]")) { this.setOrderTypePickerOpen(!this.orderTypePickerOpen); return; }
+			const typeOption = event.target.closest("[data-order-type-option]");
+			if (typeOption) {
+				const select = root.querySelector('[data-select="order_type"]');
+				if (!select || select.disabled || !this.state.order_types.some(row => row.name === typeOption.dataset.orderTypeOption)) return;
+				this.setOrderTypePickerOpen(false, true);
+				select.value = typeOption.dataset.orderTypeOption;
+				select.dispatchEvent(new Event("change", { bubbles: true }));
+				return;
+			}
+			if (event.target.closest("[data-setup-close]")) { this.closeMyAccount(true); return; }
+			if (event.target.closest("[data-setup-back]")) { this.closeMyAccount(); this.setActionsMenuOpen(true); root.querySelector('[data-action="my-account"]')?.focus(); return; }
 			const moreToggle = event.target.closest("[data-more-toggle]");
 			if (moreToggle) {
 				const menu = root.querySelector("[data-actions-menu]");
+				if (root.querySelector("[data-pos-setup]")?.hidden === false) { this.closeMyAccount(true); return; }
 				this.setActionsMenuOpen(menu.hidden, menu.hidden ? "first" : null);
 				return;
 			}
@@ -628,15 +669,55 @@ class RMSPointOfSale {
 
 	async onDiningAreaChanged() { this.state.dining_table = null; await this.loadTables(); this.saveDraft(); }
 
+	catalogScopeKey() {
+		return JSON.stringify([this.state.store, this.state.brand, this.state.order_type]);
+	}
+
+	async loadMenuSnapshot() {
+		const key = this.catalogScopeKey();
+		if (this.menuSnapshot?.key !== key) this.menuSnapshot = { key, products: null, refreshAt: 0, promise: null };
+		const snapshot = this.menuSnapshot;
+		// Every category uses the same complete, scoped menu. A refresh never blanks it.
+		this.state.products = snapshot.products || [];
+		this.state.catalog_loading = !snapshot.products;
+		this.renderProducts();
+		if (snapshot.products && Date.now() < snapshot.refreshAt) return snapshot.products;
+		if (!snapshot.promise) {
+			snapshot.promise = this.call("get_catalog", {
+				store: this.state.store, brand: this.state.brand, order_type: this.state.order_type,
+				category: null, search: "", include_descendants: 1, full_menu: 1,
+			}, { silent: Boolean(snapshot.products) }).then(products => {
+				snapshot.products = products || [];
+				snapshot.refreshAt = Date.now() + 30000;
+				return snapshot.products;
+			}).catch(error => {
+				snapshot.refreshAt = Date.now() + 5000;
+				const denied = ["PermissionError", "AuthenticationError"].includes(error?.exc_type || error?.responseJSON?.exc_type);
+				if (denied) snapshot.products = null;
+				if ((!snapshot.products || denied) && this.menuSnapshot === snapshot && this.catalogScopeKey() === key && !this.state.search) this.showError(error);
+				return snapshot.products || [];
+			}).finally(() => { snapshot.promise = null; });
+		}
+		const products = await snapshot.promise;
+		if (this.menuSnapshot === snapshot && this.catalogScopeKey() === key && !this.state.search) {
+			this.state.products = products;
+			this.state.catalog_loading = false;
+			this.renderProducts();
+		}
+		return products;
+	}
+
 	async loadCatalog() {
 		if (!this.state.store || !this.state.brand || !this.state.order_type) {
 			this.catalogRequestId++;
+			this.menuSnapshot = null;
 			this.state.products = [];
 			this.state.catalog_loading = false;
 			this.renderProducts();
 			return [];
 		}
 		const requestId = ++this.catalogRequestId;
+		if (!this.state.search) return this.loadMenuSnapshot();
 		this.state.catalog_loading = true;
 		this.renderProducts();
 		try {
@@ -785,9 +866,10 @@ class RMSPointOfSale {
 	modifierGroupHtml(group, choices) {
 		const minimum = Number(group.min_selections || 0);
 		const maximum = Number(group.max_selections || 0);
-		const range = maximum && group.allow_multiple_selections ? (minimum ? `${minimum}–${maximum}` : __("Up to {0}", [maximum])) : `${minimum}+`;
-		const required = minimum || (maximum && group.allow_multiple_selections) ? `<span class="rms-pos-modifier-required">${minimum ? __("Required") + " · " : ""}${range}</span>` : "";
-		const heading = `${this.escape(group.title)}${required}`;
+		const range = maximum ? (minimum === maximum ? `${minimum}` : minimum ? `${minimum}–${maximum}` : __("Up to {0}", [maximum])) : `${minimum}+`;
+		const required = minimum || maximum ? `<span class="rms-pos-modifier-required">${minimum ? __("Required") + " · " : ""}<bdi>${this.escape(range)}</bdi></span>` : "";
+		const clear = minimum === 0 ? `<button type="button" class="rms-pos-clear-modifiers" data-clear-modifiers="${this.escape(group.name)}">${__("Clear")}</button>` : "";
+		const heading = `${this.escape(group.title)}${required}${clear}`;
 		if (group.allow_collapse === false || group.allow_collapse === 0) return `<section class="rms-pos-modifier-group"><h4>${heading}</h4><div>${choices}</div></section>`;
 		const open = minimum > 0 || (group.collapsed_by_default != null && !group.collapsed_by_default);
 		return `<details class="rms-pos-modifier-group"${open ? " open" : ""}><summary>${heading}</summary><div>${choices}</div></details>`;
@@ -799,7 +881,7 @@ class RMSPointOfSale {
 		const selections = [];
 		const modifierSelections = new Set();
 		const chosenModifiers = () => [...modifierSelections].map(key => {
-			const [modifier_group, modifier_product] = key.split(":");
+			const [modifier_group, modifier_product] = JSON.parse(key);
 			return { modifier_group, modifier_product, qty: 1 };
 		});
 		let selectedConfig = null;
@@ -821,7 +903,7 @@ class RMSPointOfSale {
 				modifiers = selectedConfig.modifier_groups.map((group, depth) => {
 					const type = group.allow_multiple_selections ? "checkbox" : "radio";
 					const choices = group.options.map((option) => {
-						const key = `${group.name}:${option.name}`;
+						const key = JSON.stringify([group.name, option.name]);
 						return `<label class="rms-pos-modifier"><input type="${type}" name="rms-modifier-${depth}-${this.escape(group.name)}" data-modifier="${this.escape(option.name)}" data-group="${this.escape(group.name)}" data-modifier-key="${this.escape(key)}" data-price="${Number(option.selling_price) || 0}" ${modifierSelections.has(key) ? "checked" : ""}><span>${this.escape(option.title)}</span><b>${this.currency(option.selling_price)}</b></label>`;
 					}).join("");
 					return this.modifierGroupHtml(group, choices);
@@ -871,13 +953,18 @@ class RMSPointOfSale {
 			const key = event.currentTarget.dataset.modifierKey;
 			if (event.currentTarget.checked) {
 				if (event.currentTarget.type === "radio") {
-					const groupPrefix = `${event.currentTarget.dataset.group}:`;
-					for (const selected of modifierSelections) if (selected.startsWith(groupPrefix)) modifierSelections.delete(selected);
+					const groupName = event.currentTarget.dataset.group;
+					for (const selected of modifierSelections) if (JSON.parse(selected)[0] === groupName) modifierSelections.delete(selected);
 				}
 				modifierSelections.add(key);
 			}
 			else modifierSelections.delete(key);
 			updatePrimaryAction();
+		});
+		dialog.$wrapper.on("click.rmsPosOptions", "[data-clear-modifiers]", (event) => {
+			event.preventDefault(); event.stopPropagation();
+			for (const key of modifierSelections) if (JSON.parse(key)[0] === event.currentTarget.dataset.clearModifiers) modifierSelections.delete(key);
+			renderFlow();
 		});
 		dialog.$wrapper.on("hidden.bs.modal.rmsPosOptions", () => dialog.$wrapper.off(".rmsPosOptions"));
 		dialog.show();
@@ -916,6 +1003,13 @@ class RMSPointOfSale {
 		};
 		this.bindQuantityKeypad(dialog, update);
 		dialog.$wrapper.on("change.rmsPosModifiers", "[data-modifier]", update);
+		dialog.$wrapper.on("click.rmsPosModifiers", "[data-clear-modifiers]", (event) => {
+			event.preventDefault(); event.stopPropagation();
+			dialog.$wrapper.find("[data-modifier]").each((_, input) => {
+				if (input.dataset.group === event.currentTarget.dataset.clearModifiers) input.checked = false;
+			});
+			update();
+		});
 		dialog.$wrapper.on("hidden.bs.modal.rmsPosModifiers", () => dialog.$wrapper.off(".rmsPosModifiers"));
 		update();
 	}
@@ -1047,15 +1141,23 @@ class RMSPointOfSale {
 			if (event.doctype === "POS Order" && event.name === this.state.order_name && event.modified !== this.orderModified) this.scheduleOrderSync();
 		};
 		frappe.realtime?.on("doc_update", this.orderSyncHandler);
-		this.permissionSyncHandler = () => this.refreshPosPermissions();
+		this.permissionSyncHandler = () => {
+			this.menuSnapshot = null;
+			this.refreshPosPermissions();
+			this.loadCatalog();
+		};
 		frappe.realtime?.on("rms_pos_permissions_changed", this.permissionSyncHandler);
 		const refresh = () => {
 			if (document.visibilityState !== "hidden" && document.body.classList.contains("rms-pos-active")) this.refreshPosPermissions();
+			if (document.visibilityState !== "hidden" && document.body.classList.contains("rms-pos-active")
+				&& this.menuSnapshot?.products && !this.menuSnapshot.promise && Date.now() >= this.menuSnapshot.refreshAt && !this.state.search) this.loadCatalog();
 			if (this.state.order_name && document.visibilityState !== "hidden" && document.body.classList.contains("rms-pos-active")) this.syncCurrentOrder();
 		};
 		this.orderSyncRefresh = refresh;
 		this.orderSyncReconnect = () => {
 			if (this.state.order_name && frappe.realtime?.socket) frappe.realtime.emit("doc_subscribe", "POS Order", this.state.order_name);
+			this.menuSnapshot = null;
+			this.loadCatalog();
 			refresh();
 		};
 		frappe.realtime?.on("connect", this.orderSyncReconnect);
@@ -1082,6 +1184,7 @@ class RMSPointOfSale {
 		this.permissionRefreshPromise = this.call("get_pos_permissions", {}, {silent:true}).then(permissions => {
 			if (JSON.stringify(permissions) !== JSON.stringify(this.state.permissions)) {
 				this.state.permissions = permissions;
+				this.menuSnapshot = null;
 				this.renderHeaderActions(); this.renderFields(); this.renderCart();
 			}
 		}).catch(() => {}).finally(() => { this.permissionRefreshPromise = null; });
@@ -1286,39 +1389,37 @@ class RMSPointOfSale {
 		dialog.show();
 	}
 	async onAccountAction(action) {
-		if (action === "language") return this.showLanguageDialog();
+		if (action === "my-account") return this.showMyAccount();
 		try {
 			await this.flushDraftSave();
-			if (action === "my-account") return frappe.set_route("Form", "User", frappe.session.user);
-			// Use the Desk logout flow. The cashier shift remains available to resume.
 			if (action === "logout") return frappe.app.logout();
 		} catch (error) { this.showError(error); }
 	}
 
-	showLanguageDialog() {
-		const dialog = new frappe.ui.Dialog({
-			title: __("Language"),
-			fields: [{ fieldtype: "Link", fieldname: "language", label: __("Language"), options: "Language",
-				default: frappe.boot.lang, reqd: 1, get_query: () => ({ filters: { enabled: 1 } }),
-				description: __("The page will reload after saving your language.") }],
-			primary_action_label: __("Save"),
-			primary_action: async (values) => {
-				if (values.language === frappe.boot.lang) { dialog.hide(); return; }
-				dialog.get_primary_btn().prop("disabled", true);
-				try {
-					await this.flushDraftSave();
-					await frappe.db.set_value("User", frappe.session.user, "language", values.language);
-					dialog.hide();
-					window.location.reload();
-				} catch (error) { this.showError(error); }
-				finally { dialog.get_primary_btn().prop("disabled", false); }
-			},
-		});
-		dialog.show();
+	renderLanguageChoices() {
+		const current = frappe.boot?.lang === "ar" ? "ar" : "en";
+		for (const button of this.page.main[0]?.querySelectorAll?.("[data-language]") || []) {
+			const active = button.dataset.language === current;
+			button.setAttribute("aria-checked", String(active));
+			button.classList.toggle("is-active", active);
+			button.disabled = Boolean(this.languageChangePending);
+		}
+	}
+
+	async changeLanguage(language) {
+		if (!["ar", "en"].includes(language) || language === frappe.boot?.lang || this.languageChangePending) return;
+		this.languageChangePending = true;
+		this.renderLanguageChoices();
+		try {
+			await this.flushDraftSave();
+			await frappe.db.set_value("User", frappe.session.user, "language", language);
+			window.location.reload();
+		} catch (error) { this.showError(error); }
+		finally { this.languageChangePending = false; this.renderLanguageChoices(); }
 	}
 
 	async onAction(action, data) {
-		if (["my-account", "language", "logout"].includes(action)) return this.onAccountAction(action);
+		if (["my-account", "logout"].includes(action)) return this.onAccountAction(action);
 		if (action === "cart-tab" && ["pending", "confirmed"].includes(data.tab)) {
 			this.cartTab = data.tab; this.renderCart();
 			this.page.main.find(`[data-action="cart-tab"][data-tab="${data.tab}"]`).trigger?.("focus");
@@ -3229,7 +3330,7 @@ class RMSPointOfSale {
 			const [categories, tables, products] = await Promise.all([
 				this.call("get_categories", { brand: this.state.brand, store: this.state.store }),
 				this.call("get_tables", { store: this.state.store, dining_area: this.state.dining_area }),
-				this.call("get_catalog", { store: this.state.store, brand: this.state.brand, order_type: this.state.order_type, category: null, search: "", limit: 200 }),
+				this.loadCatalog(),
 				checksPromise,
 			]);
 			Object.assign(this.state, {categories, tables, products});
@@ -3773,21 +3874,119 @@ class RMSPointOfSale {
 		frappe.msgprint({ title: __("Return confirmed"), message: `<p>${this.escape(result.name)}</p>${details.map((row) => `<p>${row}</p>`).join("")}` });
 	}
 
+	renderOrderTypePicker() {
+		const picker = this.page.main[0]?.querySelector("[data-order-type-picker]");
+		if (!picker) return;
+		const toggle = picker.querySelector("[data-order-type-toggle]");
+		const list = picker.querySelector("[data-order-type-list]");
+		const selected = this.state.order_types.find(row => row.name === this.state.order_type);
+		const label = selected?.title || selected?.name || this.state.order_type || __("No order types available");
+		picker.querySelector('[data-role="order-type-label"]').textContent = label;
+		toggle.setAttribute("aria-label", `${__("Order Type")}: ${label}`);
+		toggle.disabled = Boolean(this.state.bootstrap_loading || !this.state.store || !this.state.order_types.length);
+		const focused = document.activeElement?.dataset?.orderTypeOption;
+		list.innerHTML = this.state.order_types.map(row => `<button type="button" role="option" tabindex="-1" data-order-type-option="${this.escape(row.name)}" aria-selected="${row.name === this.state.order_type}"><span>${this.escape(row.title || row.name)}</span><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>`).join("");
+		if (toggle.disabled) this.setOrderTypePickerOpen(false);
+		else if (focused && this.orderTypePickerOpen) [...list.children].find(row => row.dataset.orderTypeOption === focused)?.focus();
+	}
+
+	setOrderTypePickerOpen(open, focus = false) {
+		const picker = this.page.main[0]?.querySelector("[data-order-type-picker]");
+		if (!picker) return;
+		const toggle = picker.querySelector("[data-order-type-toggle]");
+		const list = picker.querySelector("[data-order-type-list]");
+		open = Boolean(open && !toggle.disabled);
+		this.orderTypePickerOpen = open;
+		list.hidden = !open;
+		toggle.setAttribute("aria-expanded", String(open));
+		if (open) {
+			list.style.left = "0px";
+			const rect = list.getBoundingClientRect();
+			if (rect.left < 12) list.style.left = `${12 - rect.left}px`;
+			else if (rect.right > window.innerWidth - 12) list.style.left = `${window.innerWidth - 12 - rect.right}px`;
+			list.style.maxHeight = `${Math.max(0, Math.min(320, window.innerHeight - rect.top - 12))}px`;
+			if (focus) (list.querySelector('[aria-selected="true"]') || list.firstElementChild)?.focus();
+		} else if (focus) toggle.focus();
+	}
+
+	handleOrderTypePickerKey(event) {
+		const picker = event.target.closest("[data-order-type-picker]");
+		if (!picker) return false;
+		if (event.key === "Escape" && this.orderTypePickerOpen) {
+			event.preventDefault(); event.stopPropagation(); this.setOrderTypePickerOpen(false, true); return true;
+		}
+		if (event.key === "Tab" && this.orderTypePickerOpen) { this.setOrderTypePickerOpen(false, true); return false; }
+		if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return false;
+		event.preventDefault();
+		const wasOpen = this.orderTypePickerOpen;
+		this.setOrderTypePickerOpen(true);
+		const options = [...picker.querySelectorAll("[data-order-type-option]")];
+		if (!options.length || !this.orderTypePickerOpen) return true;
+		const current = options.indexOf(event.target);
+		const selected = Math.max(0, options.findIndex(row => row.getAttribute("aria-selected") === "true"));
+		const index = event.key === "Home" ? 0 : event.key === "End" ? options.length - 1
+			: !wasOpen || current < 0 ? selected : (current + (event.key === "ArrowUp" ? -1 : 1) + options.length) % options.length;
+		options[index].focus();
+		return true;
+	}
+
+	showMyAccount() {
+		const root = this.page.main[0];
+		const setup = root?.querySelector("[data-pos-setup]");
+		if (!setup) return;
+		this.setActionsMenuOpen(false);
+		this.renderSaleSetup();
+		setup.hidden = false;
+		setup.style.right = "0px";
+		const rect = setup.getBoundingClientRect();
+		setup.style.maxHeight = `${Math.max(0, window.innerHeight - rect.top - 12)}px`;
+		if (rect.left < 12) setup.style.right = `${rect.left - 12}px`;
+		else if (rect.right > window.innerWidth - 12) setup.style.right = `${rect.right - window.innerWidth + 12}px`;
+		const toggle = root.querySelector("[data-more-toggle]");
+		toggle?.setAttribute("aria-expanded", "true");
+		toggle?.setAttribute("aria-controls", "rms-pos-setup-panel");
+		toggle?.setAttribute("aria-haspopup", "dialog");
+		setup.querySelector("select:not(:disabled), [data-setup-back]")?.focus();
+	}
+
+	closeMyAccount(focus = false) {
+		const root = this.page.main[0];
+		const setup = root?.querySelector("[data-pos-setup]");
+		if (!setup || setup.hidden) return;
+		setup.hidden = true;
+		const toggle = root.querySelector("[data-more-toggle]");
+		toggle?.setAttribute("aria-expanded", "false");
+		toggle?.setAttribute("aria-controls", "rms-pos-actions-menu");
+		toggle?.setAttribute("aria-haspopup", "menu");
+		if (focus) toggle?.focus();
+	}
+
+	renderSaleSetup() {
+		const root = this.page.main;
+		root.find('[data-select="store"]').html(this.selectOptions("store", this.state.stores, this.state.store, this.state.store ? null : __("Select Store"))).prop("disabled", Boolean(this.state.session || this.state.bootstrap_loading));
+		root.find('[data-select="brand"]').html(this.selectOptions("brand", this.state.brands, this.state.brand, this.state.brands.length ? null : __("No brands available"))).prop("disabled", Boolean(this.state.bootstrap_loading || !this.state.store || !this.state.brands.length));
+		root.find('[data-select="order_type"]').html(this.selectOptions("order_type", this.state.order_types, this.state.order_type, this.state.order_types.length ? null : __("No order types available"))).prop("disabled", Boolean(this.state.bootstrap_loading || !this.state.store || !this.state.order_types.length));
+		this.renderOrderTypePicker();
+		const store = this.state.stores.find(row => row.name === this.state.store);
+		const brand = this.state.brands.find(row => row.name === this.state.brand);
+		const summary = [store?.title || this.state.store, brand?.title || this.state.brand].filter(Boolean).join(" · ");
+		root.find('[data-role="setup-summary"]').text(summary || __("Store and brand")).attr?.("title", summary);
+		root.find('[data-role="setup-hint"]').text(this.state.session ? __("Close the cashier session to change the Store.") : __("Choose the Store and Brand for this register."));
+	}
+
 	selectOptions(key, rows, selected, emptyLabel) {
-		return `<option value="">${this.escape(emptyLabel)}</option>${rows.map((row) => `<option value="${this.escape(row.name)}" ${row.name === selected ? "selected" : ""}>${this.escape(row.title || row.name)}</option>`).join("")}`;
+		return `${emptyLabel ? `<option value="">${this.escape(emptyLabel)}</option>` : ""}${rows.map((row) => `<option value="${this.escape(row.name)}" ${row.name === selected ? "selected" : ""}>${this.escape(row.title || row.name)}</option>`).join("")}`;
 	}
 
 	render() {
 		const root = this.page.main;
 		root.toggleClass?.("rms-pos-restoring", Boolean(this.state.bootstrap_loading && this.state.restoring_order));
-		root.find('[data-select="store"]').html(this.selectOptions("store", this.state.stores, this.state.store, __("Select Store")));
-		root.find('[data-select="store"]').prop("disabled", Boolean(this.state.session));
-		root.find('[data-select="brand"]').html(this.selectOptions("brand", this.state.brands, this.state.brand, __("Select Brand"))).prop("disabled", !this.state.store || !this.state.brands.length);
-		root.find('[data-select="order_type"]').html(this.selectOptions("order_type", this.state.order_types, this.state.order_type, __("Select Order Type"))).prop("disabled", !this.state.store || !this.state.order_types.length);
+		this.renderSaleSetup();
 		const canBrowseMenu = Boolean(this.state.store && this.state.brand && this.state.order_type);
 		root.find('[data-search]').prop("disabled", !canBrowseMenu);
 		root.find('[data-action="scan"]').prop("disabled", !canBrowseMenu);
 		this.renderHeaderActions();
+		this.renderLanguageChoices();
 		root.find('[data-action="session"]').prop("hidden", !this.state.session && !this.state.permissions.can_checkout);
 		root.find('[data-action="session"]').text(this.state.session ? __("Close Session") : __("Open Session"));
 		root.find('[data-role="context"]').html(this.state.session ? `<span class="rms-pos-live is-on"></span><span>${__("Cashier session open")} · ${this.escape(this.state.session.business_date)}</span>` : `<span class="rms-pos-live"></span><span>${__("Cashier session closed")}</span>`);
@@ -3796,6 +3995,7 @@ class RMSPointOfSale {
 	}
 
 	updateOrderTypeFields() {
+		this.renderOrderTypePicker();
 		const orderType = this.state.order_types.find((row) => row.name === this.state.order_type);
 		this.page.main.find('[data-role="reference-wrap"]').prop("hidden", !orderType?.require_external_reference);
 		this.page.main.find('[data-role="dining-wrap"]').prop("hidden", !orderType?.require_table);

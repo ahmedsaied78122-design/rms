@@ -6,8 +6,10 @@
   "engine": "InnoDB",
   "field_order": [
     "modifier_group",
-    "selection_requirement",
-    "sequence_id"
+    "min_selections",
+    "max_selections",
+    "sequence_id",
+    "selection_requirement"
   ],
   "fields": [
     {
@@ -21,14 +23,24 @@
       "link_filters": "[[\"Modifier Group\",\"enabled\",\"=\",\"1\"]]"
     },
     {
-      "fieldname": "selection_requirement",
-      "fieldtype": "Select",
-      "label": "Selection Requirement",
-      "options": "Default\nOptional\nRequired",
-      "default": "Default",
+      "fieldname": "min_selections",
+      "fieldtype": "Int",
+      "label": "Minimum Selections",
+      "default": "0",
+      "non_negative": 1,
       "in_list_view": 1,
-      "columns": 3,
-      "description": "Default uses the Modifier Group minimum. Optional allows skipping this group for this product. Required needs at least one choice for this product."
+      "columns": 2,
+      "description": "Minimum distinct choices for this product. 0 makes this group optional."
+    },
+    {
+      "fieldname": "max_selections",
+      "fieldtype": "Int",
+      "label": "Maximum Selections",
+      "default": "1",
+      "non_negative": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "description": "Maximum distinct choices for this product. 1 allows one choice; 0 allows any number."
     },
     {
       "fieldname": "sequence_id",
@@ -36,8 +48,20 @@
       "label": "Display Order",
       "default": "0",
       "in_list_view": 1,
-      "columns": 3,
+      "columns": 2,
       "description": "Lower numbers appear first."
+    },
+    {
+      "fieldname": "selection_requirement",
+      "fieldtype": "Select",
+      "label": "Selection Requirement",
+      "options": "Default\nOptional\nRequired",
+      "default": "Default",
+      "in_list_view": 0,
+      "columns": 4,
+      "description": "Default uses the Modifier Group minimum. Optional allows skipping this group for this product. Required needs at least one choice for this product.",
+      "hidden": 1,
+      "read_only": 1
     }
   ],
   "permissions": [],

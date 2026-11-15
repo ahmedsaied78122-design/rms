@@ -4,7 +4,7 @@ app_publisher = "RMS Project"
 app_description = "Integrated enterprise resource planning"
 app_email = ""
 app_license = "MIT"
-required_apps = ["erpnext"]
+required_apps = ["erpnext", "arab_streaming"]
 app_logo_url = "/assets/rms/images/rms-mark.svg"
 app_home = "/rms"
 
@@ -21,27 +21,51 @@ add_to_apps_screen = [
 ]
 
 app_include_js = [
-	"/assets/rms/js/rms_management_workspace.js?v=studio-9",
-	"/assets/rms/js/rms_desk.js?v=desk-a-90",
-	"/assets/rms/js/rms_form_experience.js?v=forms-2",
+	"/assets/rms/js/rms_reporting.js?v=analytics-4",
+	"/assets/rms/js/rms_management_workspace.js?v=studio-10",
+	"/assets/rms/js/rms_desk.js?v=desk-a-99",
+	"/assets/rms/js/rms_form_experience.js?v=forms-6",
 	"/assets/rms/js/approval_notifications.js?v=4",
 ]
 app_include_css = [
 	"/assets/rms/css/rms_desk.css?v=desk-a-15",
-	"/assets/rms/css/point_of_sale.css?v=pos-a-101",
-	"/assets/rms/css/rms_management_studio.css?v=studio-14",
-	"/assets/rms/css/rms_form_experience.css?v=forms-2",
+	"/assets/rms/css/point_of_sale.css?v=pos-a-109",
+	"/assets/rms/css/rms_management_studio.css?v=studio-15",
+	"/assets/rms/css/rms_form_experience.css?v=forms-5",
+	"/assets/rms/css/rms_reporting.css?v=analytics-4",
 ]
 update_website_context = "rms.interface_preferences.website_context"
 
-after_migrate = ["rms.setup.ensure_pos_roles", "rms.branding.apply_branding"]
-after_install = "rms.branding.apply_branding"
+after_migrate = ["rms.setup.ensure_pos_roles", "rms.branding.apply_branding", "rms.analytics.install.ensure_analytics", "rms.streaming_policy.ensure_defaults"]
+after_install = ["rms.branding.apply_branding", "rms.streaming_policy.ensure_defaults"]
+
+# Native controllers generate prices, audit journals and print jobs locally.
+arab_streaming_local_doctypes = ["Approval Challenge", "Print Dispatch Job", "RMS Sync Event", "RMS Sync Settings", "Item Price", "Loyalty Point Entry", "POS Invoice Merge Log"]
+arab_streaming_local_fields = {"POS Return": ["approval_challenge"]}
+arab_streaming_branch_resolvers = {"rms_store": "rms.streaming_policy.resolve_branch"}
+arab_streaming_managed_branch_routing = True
+arab_streaming_after_apply = ["rms.streaming_policy.remember_branch"]
+arab_streaming_default_providers = ["rms.streaming_policy.connection_defaults"]
 
 from rms.streaming import doc_events as rms_sync_doc_events
 
-doc_events = {**rms_sync_doc_events, "Sales Invoice": {
+doc_events = {**rms_sync_doc_events, "POS Closing Entry": {
+	"on_change": "rms.streaming_closing.capture_native_change",
+}, "POS Invoice": {
+	"on_change": "rms.streaming_closing.capture_native_change",
+	"before_validate": "rms.streaming_closing.preserve_invoice_rounding",
+}, "Sales Invoice": {
 	"before_validate": ["rms.pos_rounding.preserve_consolidated_pos_no_rounding", "rms.stock.prevent_duplicate_return_stock"],
 }}
+
+from rms.naming import TITLE_MASTERS as _rms_title_masters
+
+for _doctype in _rms_title_masters:
+	doc_events[_doctype] = {
+		**doc_events.get(_doctype, {}),
+		"autoname": "rms.naming.name_from_title",
+		"before_validate": "rms.naming.validate_display_title",
+	}
 
 extend_doctype_class = {
 	"POS Invoice": "rms.pos_rounding.POSInvoiceRoundingMixin",
@@ -52,7 +76,7 @@ extend_doctype_class = {
 import frappe as _frappe
 
 if int(_frappe.__version__.split(".")[0]) < 16:
-	override_doctype_class = {"POS Invoice": "rms.pos_invoice.RMSPOSInvoice"}
+	override_doctype_class = {"POS Invoice": "rms.pos_invoice.RMSPOSInvoice", "POS Closing Entry": "rms.streaming_closing.RMSPOSClosingEntry"}
 
 # Transaction Deletion Record must keep RMS catalog and setup records intact.
 company_data_to_be_ignored = [

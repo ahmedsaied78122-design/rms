@@ -15,7 +15,7 @@
     ],
     "Modifier Group": [
       "Modifier rules",
-      "Set the minimum and maximum choices, then decide how this group appears in the cashier screen.",
+      "Set the group display. Configure its minimum and maximum choices separately on each product.",
     ],
     "Product Category": [
       "Organize your catalog",
@@ -153,11 +153,81 @@
     }
   }
   const element = (value) => value?.[0] || value;
-  const visible = (control) =>
-    !!control &&
-    !control.df?.hidden &&
-    control.get_status?.() !== "None" &&
-    !!element(control.wrapper)?.getClientRects().length;
+  // Presentation panes must not hide required fields from validation guidance.
+  const visible = (control) => {
+    const df = control?.df || {};
+    const section = control?.section;
+    return (
+      !!control &&
+      !df.hidden &&
+      !df.hidden_due_to_dependency &&
+      control.get_status?.() !== "None" &&
+      !section?.df?.hidden &&
+      !section?.df?.hidden_due_to_dependency &&
+      !element(control.wrapper)?.closest?.(".hide-control")
+    );
+  };
+  function availableSections(frm) {
+    return (frm.layout?.sections || []).filter((section) => {
+      const wrapper = element(section.wrapper);
+      return (
+        section.df?.label &&
+        !section.df.hidden &&
+        !section.df.hidden_due_to_dependency &&
+        wrapper &&
+        !wrapper.classList.contains("hide-control") &&
+        !wrapper.classList.contains("empty-section")
+      );
+    });
+  }
+  function selectSection(frm, section, { scroll = false, focus = false } = {}) {
+    const ui = frm.__rmsExperience;
+    if (!ui || !section || !availableSections(frm).includes(section)) return;
+    const changed = ui.active !== section.df.fieldname;
+    ui.active = section.df.fieldname;
+    for (const candidate of frm.layout.sections || []) {
+      const wrapper = element(candidate.wrapper);
+      if (!wrapper) continue;
+      wrapper.classList.add("rms-form-pane");
+      wrapper.classList.toggle("rms-form-pane-hidden", candidate !== section);
+      if (candidate === section && candidate.is_collapsed?.())
+        candidate.collapse?.(false);
+    }
+    ui.nav.querySelectorAll("button").forEach((button) => {
+      const active = button.dataset.section === ui.active;
+      button.setAttribute("aria-selected", String(active));
+      button.tabIndex = active ? 0 : -1;
+      if (active) button.setAttribute("aria-current", "step");
+      else button.removeAttribute("aria-current");
+      if (active && focus) button.focus();
+      if (active && changed)
+        button.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    });
+    if (changed)
+      requestAnimationFrame(() => {
+        section.fields_list?.forEach((control) => control.grid?.refresh());
+      });
+    if (scroll)
+      element(section.wrapper)?.scrollIntoView({
+        block: "nearest",
+        behavior: "auto",
+      });
+  }
+  function revealField(frm, control) {
+    if (!control) return;
+    selectSection(frm, control.section);
+    jump(control.section, control);
+  }
+  function installFieldReveal(frm) {
+    if (frm.__rmsFieldReveal || typeof frm.scroll_to_field !== "function")
+      return;
+    const native = frm.scroll_to_field;
+    frm.__rmsFieldReveal = true;
+    frm.scroll_to_field = function (fieldname, ...args) {
+      selectSection(this, this.fields_dict[fieldname]?.section);
+      return native.call(this, fieldname, ...args);
+    };
+  }
   function missingFields(frm) {
     return (frm.fields || []).filter((control) => {
       const df = control.df || {};
@@ -181,11 +251,23 @@
     });
     control?.$input?.trigger?.("focus");
   }
+  let formSequence = 0;
   function render(frm) {
     const wrapper = element(frm.wrapper);
     const layout = element(frm.layout?.wrapper);
     if (!wrapper || !layout || !guides[frm.doctype]) return;
-    wrapper.classList.add("rms-custom-form");
+    // Legacy live-only fields have no retail execution path in this app.
+    // Preserve their stored values without presenting inactive controls.
+    const inactive = {
+      "POS User": ["retail_section", "retail_mode", "retail_order_type"],
+      "POS Order": ["is_retail", "retail_sale_id"],
+    };
+    for (const name of inactive[frm.doctype] || []) {
+      if (frm.fields_dict[name]?.df && !frm.fields_dict[name].df.hidden)
+        frm.set_df_property?.(name, "hidden", 1);
+    }
+    wrapper.classList.add("rms-custom-form", "rms-form-paged");
+    installFieldReveal(frm);
     let ui = frm.__rmsExperience;
     if (!ui || !ui.root.isConnected) {
       const root = document.createElement("section");
@@ -204,6 +286,7 @@
       root.append(copy, progress, nav);
       layout.prepend(root);
       ui = frm.__rmsExperience = {
+        id: `rms-form-${++formSequence}`,
         root,
         title,
         detail,
@@ -212,6 +295,10 @@
         nav,
       };
       let pending;
+      window
+        .jQuery?.(wrapper)
+        .off("refresh-fields.rms-form-panes")
+        .on("refresh-fields.rms-form-panes", () => schedule(frm));
       for (const event of ["input", "change"])
         layout.addEventListener(event, () => {
           clearTimeout(pending);
@@ -219,7 +306,7 @@
         });
       progress.addEventListener("click", () => {
         const first = missingFields(frm)[0];
-        if (first) jump(first.section, first);
+        if (first) revealField(frm, first);
       });
     }
     const text = (node, value) => {
@@ -242,13 +329,7 @@
     ui.progress.disabled = !missing.length;
     ui.progress.hidden = operational.has(frm.doctype) && !missing.length;
     ui.progress.classList.toggle("is-complete", !missing.length);
-    const sections = (frm.layout.sections || []).filter(
-      (section) =>
-        section.df?.label &&
-        !section.df.hidden &&
-        !element(section.wrapper)?.classList.contains("hide-control") &&
-        element(section.wrapper)?.getClientRects().length
-    );
+    const sections = availableSections(frm);
     const signature = JSON.stringify(
       sections.map((section) => [section.df.fieldname, __(section.df.label)])
     );
@@ -259,24 +340,45 @@
         const button = document.createElement("button");
         button.type = "button";
         button.className = "rms-form-section-link";
+        button.dataset.section = section.df.fieldname;
+        button.id = `${ui.id}-tab-${index}`;
+        button.setAttribute("role", "tab");
+        const panel = element(section.wrapper);
+        panel.id = `${ui.id}-panel-${index}`;
+        panel.setAttribute("role", "tabpanel");
+        panel.setAttribute("aria-labelledby", button.id);
+        button.setAttribute("aria-controls", panel.id);
         const number = document.createElement("span");
         number.textContent = String(index + 1).padStart(2, "0");
         number.setAttribute("aria-hidden", "true");
         const label = document.createElement("span");
         label.textContent = __(section.df.label);
         button.append(number, label);
-        button.addEventListener("click", () => {
-          jump(section);
-          ui.nav
-            .querySelectorAll("button")
-            .forEach((node) => node.removeAttribute("aria-current"));
-          button.setAttribute("aria-current", "location");
+        button.addEventListener("click", () => selectSection(frm, section));
+        button.addEventListener("keydown", (event) => {
+          const rtl = document.documentElement.dir === "rtl";
+          let next;
+          if (event.key === "Home") next = 0;
+          else if (event.key === "End") next = sections.length - 1;
+          else if (event.key === "ArrowRight")
+            next = (index + (rtl ? -1 : 1) + sections.length) % sections.length;
+          else if (event.key === "ArrowLeft")
+            next = (index + (rtl ? 1 : -1) + sections.length) % sections.length;
+          if (next === undefined) return;
+          event.preventDefault();
+          selectSection(frm, sections[next], { focus: true });
         });
         ui.nav.append(button);
       });
     }
     ui.nav.hidden = sections.length < 2;
     ui.nav.setAttribute("aria-label", __("Form sections"));
+    ui.nav.setAttribute("role", "tablist");
+    selectSection(
+      frm,
+      sections.find((section) => section.df.fieldname === ui.active) ||
+        sections[0]
+    );
   }
   const schedule = (frm) => {
     if (frm.__rmsFormRefreshPending) return;
@@ -290,6 +392,9 @@
     guides,
     setupQueries,
     missingFields,
+    availableSections,
+    selectSection,
+    installFieldReveal,
     render,
     query,
   };

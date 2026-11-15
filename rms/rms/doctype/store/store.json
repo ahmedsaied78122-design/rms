@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -16,6 +16,7 @@
     "title",
     "store_code",
     "company",
+    "streaming_branch",
     "rms_column_identity_section_1",
     "enabled",
     "operating_day_end",
@@ -74,6 +75,15 @@
       "in_list_view": 1,
       "in_standard_filter": 1,
       "columns": 3
+    },
+    {
+      "fieldname": "streaming_branch",
+      "fieldtype": "Link",
+      "label": "Streaming Branch",
+      "options": "Branch",
+      "no_copy": 1,
+      "description": "The branch identity used to route this Store and its POS documents during streaming.",
+      "unique": 1
     },
     {
       "fieldname": "rms_column_identity_section_1",
@@ -172,7 +182,7 @@
       "fieldtype": "Table",
       "label": "Working Hours",
       "options": "Store Working Hour",
-      "description": "Record operating time ranges for each day, optionally by order type."
+      "description": "Saved for reference. POS does not currently block orders outside these hours."
     },
     {
       "fieldname": "users_section",
@@ -241,5 +251,6 @@
       "share": 1,
       "report": 1
     }
-  ]
+  ],
+  "show_title_field_in_link": 1
 }

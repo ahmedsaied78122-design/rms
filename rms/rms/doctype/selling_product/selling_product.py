@@ -9,7 +9,10 @@ from frappe.model.document import Document
 from frappe.model.naming import make_autoname
 
 from rms.recipe import get_additional_recipe_order_types
-from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import get_minimum_selections
+from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import (
+	get_minimum_selections,
+	validate_product_limits,
+)
 
 
 class SellingProduct(Document):
@@ -28,12 +31,15 @@ class SellingProduct(Document):
 
 	def on_update(self):
 		if self.item and frappe.db.exists("Item", self.item):
+			values = {
+				"disabled": 0 if self.enabled else 1,
+				"allow_negative_stock": int(bool(self.allow_negative_stock)),
+			}
+			if self.has_value_changed("title"):
+				values["item_name"] = self.title
 			frappe.db.set_value(
 				"Item", self.item,
-				{
-					"disabled": 0 if self.enabled else 1,
-					"allow_negative_stock": int(bool(self.allow_negative_stock)),
-				},
+				values,
 				update_modified=False,
 			)
 			self.sync_erpnext_prices()
@@ -46,8 +52,19 @@ class SellingProduct(Document):
 		warehouse = None
 		if self.default_store == store:
 			warehouse = self.default_warehouse
-		if not warehouse:
-			warehouse = category.default_warehouse
+		if not warehouse and category.default_warehouse:
+			# A menu category may be shared by stores in different companies.
+			# Inherit its warehouse only when it is valid for the active store.
+			category_warehouse = frappe.db.get_value(
+				"Warehouse", category.default_warehouse, ["company", "is_group", "disabled"], as_dict=True
+			)
+			if (
+				category_warehouse
+				and category_warehouse.company == store_doc.company
+				and not category_warehouse.is_group
+				and not category_warehouse.disabled
+			):
+				warehouse = category.default_warehouse
 		if not warehouse:
 			warehouse = store_doc.default_warehouse
 
@@ -102,12 +119,8 @@ class SellingProduct(Document):
 		)
 		if not category or not category.enabled or not category.item_group:
 			frappe.throw(_("Select an enabled Product Category with an Item Group."))
-		if self.item and frappe.db.exists("Item", self.item):
-			item_group = frappe.db.get_value("Item", self.item, "item_group")
-			if item_group != category.item_group:
-				frappe.throw(
-					_("The Product Category Item Group cannot change after the linked Item is created.")
-				)
+		# Menu navigation can change independently of the existing stock item's
+		# accounting classification. Category defaults still resolve at sale time.
 
 	def validate_item_ownership(self):
 		if self.item and frappe.db.exists(
@@ -511,7 +524,7 @@ class SellingProduct(Document):
 
 	def validate_modifiers(self):
 		for row in self.modifier_groups:
-			get_minimum_selections(row)
+			validate_product_limits(row)
 		groups = [row.modifier_group for row in self.modifier_groups if row.modifier_group]
 		if len(groups) != len(set(groups)):
 			frappe.throw(_("A Modifier Group can only be added once."))
@@ -520,12 +533,19 @@ class SellingProduct(Document):
 				frappe.throw(_("Modifier Group {0} is disabled.").format(frappe.bold(group)))
 
 		configured = set(groups)
+		choices = {group: set() for group in groups}
 		for row in self.modifier_options:
 			if row.modifier_group not in configured:
 				frappe.throw(_("Every Modifier Option must belong to a Modifier Group enabled on this product."))
+			if row.modifier_product in choices[row.modifier_group]:
+				frappe.throw(_("A modifier product can only appear once in the same group on this product."))
+			choices[row.modifier_group].add(row.modifier_product)
 			modifier = frappe.db.get_value(
 				"Selling Product", row.modifier_product, ["enabled", "is_modifier", "item"], as_dict=True
 			)
 			if not modifier or not modifier.enabled or not modifier.is_modifier:
 				frappe.throw(_("Modifier Options must reference enabled products marked Is Modifier."))
 			row.cost = frappe.db.get_value("Item", modifier.item, "valuation_rate") or 0
+		for row in self.modifier_groups:
+			if get_minimum_selections(row) > len(choices.get(row.modifier_group, set())):
+				frappe.throw(_("Minimum Selections cannot exceed the available choices on this product."))
