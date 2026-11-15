@@ -5,6 +5,14 @@ app_description = "Integrated enterprise resource planning"
 app_email = ""
 app_license = "MIT"
 required_apps = ["erpnext", "arab_streaming"]
+setup_wizard_requires = "assets/rms/js/rms_setup_wizard.js"
+setup_wizard_success = "rms.onboarding.master_setup_success"
+override_whitelisted_methods = {
+	"frappe.desk.page.setup_wizard.setup_wizard.setup_complete": "rms.onboarding.complete_master",
+	"arab_streaming.api.connection.branches": "rms.onboarding.master_choices",
+}
+arab_streaming_after_initial_sync = ["rms.onboarding.finish_slave"]
+arab_streaming_defer_initial_links = ["rms.onboarding.defer_initial_links"]
 app_logo_url = "/assets/rms/images/rms-mark.svg"
 app_home = "/rms"
 
@@ -36,8 +44,8 @@ app_include_css = [
 ]
 update_website_context = "rms.interface_preferences.website_context"
 
-after_migrate = ["rms.setup.ensure_pos_roles", "rms.branding.apply_branding", "rms.analytics.install.ensure_analytics", "rms.streaming_policy.ensure_defaults"]
-after_install = ["rms.branding.apply_branding", "rms.streaming_policy.ensure_defaults"]
+after_migrate = ["rms.onboarding.install_defaults", "rms.setup.ensure_pos_roles", "rms.branding.apply_branding", "rms.analytics.install.ensure_analytics", "rms.streaming_policy.ensure_defaults"]
+after_install = ["rms.onboarding.install_defaults", "rms.branding.apply_branding", "rms.streaming_policy.ensure_defaults"]
 
 # Native controllers generate prices, audit journals and print jobs locally.
 arab_streaming_local_doctypes = ["Approval Challenge", "Print Dispatch Job", "RMS Sync Event", "RMS Sync Settings", "Item Price", "Loyalty Point Entry", "POS Invoice Merge Log"]
@@ -77,6 +85,13 @@ import frappe as _frappe
 
 if int(_frappe.__version__.split(".")[0]) < 16:
 	override_doctype_class = {"POS Invoice": "rms.pos_invoice.RMSPOSInvoice", "POS Closing Entry": "rms.streaming_closing.RMSPOSClosingEntry"}
+
+override_doctype_class = {
+	**globals().get("override_doctype_class", {}),
+	"Company": "rms.setup_company.RMSSetupCompany",
+	"Account": "rms.setup_company.RMSSetupAccount",
+	"Cost Center": "rms.setup_company.RMSSetupCostCenter",
+}
 
 # Transaction Deletion Record must keep RMS catalog and setup records intact.
 company_data_to_be_ignored = [

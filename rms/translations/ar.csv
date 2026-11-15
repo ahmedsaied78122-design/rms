@@ -1281,3 +1281,27 @@ Waste quantities do not match the original stock movement.,كميات الهال
 Only a completed POS closing can be replicated.,يمكن استقبال إقفال نقطة البيع المكتمل فقط.
 The consolidated Sales Invoice does not contain this POS Invoice.,فاتورة المبيعات المجمعة لا تتضمن فاتورة نقطة البيع هذه.
 The replicated invoice payable does not match a supported rounding rule.,المبلغ المستحق في الفاتورة المستقبلة لا يطابق قاعدة تقريب مدعومة.
+Choose installation type,اختيار نوع النظام
+"Set up a central Master, or connect a Slave to an existing Master.",جهّز نظام ماستر مركزي، أو اربط هذا السليف بماستر موجود.
+Installation Type,نوع النظام
+Connect this Slave,ربط هذا السليف
+Company and Store settings will be copied from the Master. You do not need to create a company here.,سيتم جلب الشركة وإعدادات المتجر من الماستر، ولا تحتاج إلى إنشاء شركة هنا.
+Master URL,رابط الماستر
+The HTTPS address of the existing Master.,عنوان HTTPS للماستر الموجود.
+Access Key,مفتاح الاتصال
+Secret,الرمز السري
+"Use an Instance Key issued by the Master, not your login password.",استخدم مفتاح Instance Key الصادر من الماستر، وليس كلمة مرور تسجيل الدخول.
+Test connection and load Stores,اختبار الاتصال وجلب المتاجر
+Only available Stores with an enabled Streaming Branch are listed.,تظهر المتاجر المتاحة المرتبطة بفرع مفعّل للمزامنة فقط.
+This Slave URL,رابط هذا السليف
+Connect and synchronize,الربط والمزامنة
+Resume synchronization,استكمال المزامنة
+Connection verified. Select the Store to continue.,نجح اختبار الاتصال. اختر المتجر للمتابعة.
+Connection could not be verified. Check the Master URL and Instance Key.,تعذّر التحقق من الاتصال. راجع رابط الماستر ومفتاح الاتصال.
+Connecting to the Master and preparing the initial copy…,جارٍ الاتصال بالماستر وتجهيز النسخ الأولي…
+Synchronization complete. Opening RMS…,اكتملت المزامنة. جارٍ فتح RMS…
+Synchronizing {0}: {1}%,جارٍ مزامنة {0}: {1}٪
+Connection interrupted. Checking synchronization again…,انقطع الاتصال. جارٍ التحقق من حالة المزامنة مجددًا…
+"Enter the Master URL, Access Key and Secret first.",أدخل رابط الماستر ومفتاح الاتصال والرمز السري أولًا.
+Setup has not started. Check the connection details and try again.,لم يبدأ الإعداد. راجع بيانات الاتصال وحاول مجددًا.
+Connection saved. Use Resume synchronization to finish setup.,تم حفظ الاتصال. استخدم استكمال المزامنة لإكمال الإعداد.
