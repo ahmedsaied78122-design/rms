@@ -101,8 +101,22 @@ async function run() {
  denied.showError = error => { displayedError = error.message; };
  await denied.openOrderRoute(denied.readOrderRoute());
  assert.equal(displayedError, 'Permission denied');
- assert.equal(denied.state.order_name, undefined);
+ assert.equal(denied.state.order_name, null);
  assert.equal(new URL(location.href).searchParams.get('order'), 'DENIED');
+
+ // A forbidden branch link must leave the permitted Store selector usable.
+ const recovered = register();
+ recovered.pendingResumeContext={store:'OLD',order_name:'OTHER-ORDER'};
+ recovered.call=async method=>{
+  if(method==='get_order')throw new Error('Permission denied');
+  assert.equal(method,'get_bootstrap');
+  return {store:{name:'LOCAL'},stores:[{name:'LOCAL'},{name:'OTHER-LOCAL'}],brands:[],order_types:[],session:null};
+ };
+ recovered.showError=()=>{};
+ await recovered.openOrderRoute(recovered.readOrderRoute());
+ assert.equal(recovered.state.store,'LOCAL');assert.equal(recovered.state.stores.length,2);
+ assert.equal(recovered.state.order_name,null);assert.equal(recovered.pendingResumeContext,null);
+ assert.equal(new URL(location.href).searchParams.has('order'),false);
 
  // A link to a closed order clears the bookmark instead of retaining an old order.
  location.href = 'https://rms.arab-erp.com/app/point-of-sale?order=CLOSED';

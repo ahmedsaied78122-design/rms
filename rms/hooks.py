@@ -31,7 +31,7 @@ add_to_apps_screen = [
 app_include_js = [
 	"/assets/rms/js/rms_reporting.js?v=analytics-4",
 	"/assets/rms/js/rms_management_workspace.js?v=studio-10",
-	"/assets/rms/js/rms_desk.js?v=desk-a-100",
+	"/assets/rms/js/rms_desk.js?v=desk-a-101",
 	"/assets/rms/js/rms_form_experience.js?v=forms-6",
 	"/assets/rms/js/approval_notifications.js?v=4",
 ]

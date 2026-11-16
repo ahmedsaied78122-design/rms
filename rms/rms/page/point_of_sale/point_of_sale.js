@@ -107,8 +107,8 @@ class RMSPointOfSale {
 			this.pendingResumeContext = { ...route, store: order.store, from_url: true };
 			restored = await this.loadBootstrap(order.store);
 		} catch (error) {
-			this.state.bootstrap_loading = false;
-			this.render();
+			this.clearUnavailableStoreContext();
+			restored = await this.loadBootstrap();
 			this.showError(error);
 		} finally {
 			this.openingOrderRoute = false;
@@ -527,8 +527,9 @@ class RMSPointOfSale {
 		this.state.bootstrap_loading = true;
 		this.state.restoring_order = Boolean(this.pendingResumeContext || this.pendingLaunchContext?.order_name || this.openingOrderRoute);
 		try {
-			const data = await this.call("get_bootstrap", { store });
-			store = data.store?.name || store;
+			const data = await this.call("get_bootstrap", { store, allow_store_fallback: 1 });
+			if (data.store_selection_reset) this.clearUnavailableStoreContext();
+			store = data.store?.name || (data.store_selection_reset ? null : store);
 			let catalogPromise;
 			this.state.stores = data.stores || [];
 			this.state.permissions = data.permissions || {};
@@ -562,6 +563,9 @@ class RMSPointOfSale {
 					catalogPromise = this.loadCatalog();
 				}
 				await this.loadContextDetails();
+			} else {
+				Object.assign(this.state, { store: null, session: null, brands: [], order_types: [],
+					brand: null, order_type: null, categories: [], products: [] });
 			}
 			const restoring = Boolean(this.pendingResumeContext || this.pendingLaunchContext?.order_name);
 			if (restoring) {
@@ -587,6 +591,14 @@ class RMSPointOfSale {
 			this.showError(error);
 			return false;
 		}
+	}
+
+	clearUnavailableStoreContext() {
+		this.pendingResumeContext = this.pendingResumeOrder = this.pendingLaunchContext = null;
+		Object.assign(this.state, { order_name: null, order_status: null, cart: [], session: null,
+			customer: null, dining_area: null, dining_table: null, category: null, products: [], categories: [] });
+		try { sessionStorage.removeItem("rms-pos-launch-context"); } catch (_) {}
+		this.rememberCurrentScreen("sale");
 	}
 
 	async applyLaunchContext() {

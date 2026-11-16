@@ -20,6 +20,7 @@ class TestPOSProfileAssignment(unittest.TestCase):
 				patch("rms.api.pos.get_order_types", return_value=[]), \
 				patch("rms.api.pos.frappe.get_all", return_value=stores), \
 				patch("rms.api.pos.assert_store_access"), \
+				patch("rms.api.pos._user_has_store_access", return_value=True), \
 				patch("rms.api.pos.get_active_pos_user", return_value="POS-USER-1"), \
 				patch("rms.api.pos.frappe.db.get_value", return_value="STORE-2"), \
 				patch("rms.api.pos.get_user_session", return_value=None):

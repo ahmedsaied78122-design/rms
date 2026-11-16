@@ -1,7 +1,7 @@
 // Drop the legacy duplicate-loaded Page cache once, without touching saved sales.
 (() => {
 	try {
-		const key = "rms-page-cache-v82";
+		const key = "rms-page-cache-v83";
 		if (localStorage.getItem(key) !== "1") {
 			localStorage.removeItem("_page:point-of-sale");
 			localStorage.removeItem("_page:kitchen-display");

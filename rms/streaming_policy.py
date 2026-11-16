@@ -5,6 +5,13 @@ import hashlib
 import frappe
 from frappe import _
 
+
+def is_store_operated_locally(store):
+	from arab_streaming.streaming.ownership import can_operate_branch
+
+	return can_operate_branch(frappe.db.get_value("Store", store, "streaming_branch"))
+
+
 MASTER_DATA = (
 	"Branch",
 	"Fiscal Year",

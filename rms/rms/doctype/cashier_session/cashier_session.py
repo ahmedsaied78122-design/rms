@@ -110,10 +110,9 @@ class CashierSession(Document):
 	def validate_open_session(self):
 		if self.status not in ("Open", "Closing"):
 			return
-		filters = {"user": self.user, "status": ["in", ["Open", "Closing"]]}
-		if self.name:
-			filters["name"] = ["!=", self.name]
-		if frappe.db.exists("Cashier Session", filters):
+		from rms.api.pos import get_user_session
+
+		if get_user_session(local_only=True, user=self.user, exclude=self.name):
 			frappe.throw(_("This cashier already has an open session. Close it before opening another."))
 
 	def validate_payments(self):

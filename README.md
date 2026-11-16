@@ -1,8 +1,14 @@
+POS startup now lists only Stores this site can operate. The Master keeps local
+branches selectable while paired Slave branches are excluded; a Slave offers its
+paired branch only. Stale saved selections fall back without restoring another
+branch's order. Replicated Slave sessions and Opening Entries are excluded from
+the Master's local till checks, while a second local session stays blocked.
+
 # RMS Frappe app
 
 First-run setup now starts with Master/Slave selection. Master keeps the native
 company wizard; Slave uses a master URL, Instance Key and Store, then copies its
-setup through Arab Streaming. This release requires Arab Streaming **0.2.15+** and matching
+setup through Arab Streaming. This release requires Arab Streaming **0.2.16+** and matching
 RMS code on the master. See [first-run setup](docs/SETUP_WIZARD.md).
 
 The [2026-11-16 Master/Slave audit](docs/verification/streaming-audit-2026-11-16/README.md)

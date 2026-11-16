@@ -346,10 +346,19 @@ def assert_store_access(store_name):
 	return store
 
 
-def get_user_session(store_name=None):
-	filters = {"user": frappe.session.user, "status": ["in", ["Open", "Closing"]]}
+def get_user_session(store_name=None, *, local_only=False, user=None, exclude=None):
+	filters = {"user": user or frappe.session.user, "status": ["in", ["Open", "Closing"]]}
 	if store_name:
 		filters["store"] = store_name
+	if exclude:
+		filters["name"] = ["!=", exclude]
+	if local_only:
+		from rms.streaming_policy import is_store_operated_locally
+
+		for row in frappe.get_all("Cashier Session", filters=filters, fields=["name", "store"], order_by="creation desc"):
+			if is_store_operated_locally(row.store):
+				return frappe.get_doc("Cashier Session", row.name)
+		return None
 	name = frappe.db.get_value("Cashier Session", filters, "name")
 	return frappe.get_doc("Cashier Session", name) if name else None
 
@@ -507,22 +516,28 @@ def get_categories(brand, store=None):
 
 
 @frappe.whitelist()
-def get_bootstrap(store=None):
+def get_bootstrap(store=None, allow_store_fallback=0):
 	require_pos_role()
 	permissions = get_pos_capabilities()
-	store_rows = frappe.get_all("Store", filters={"enabled": 1}, fields=["name", "title", "store_code"])
-	allowed_stores = []
-	for row in store_rows:
-		try:
-			assert_store_access(row.name)
-			allowed_stores.append(row)
-		except frappe.PermissionError:
-			continue
+	from arab_streaming.streaming.ownership import can_operate_branch
+
+	store_rows = frappe.get_all("Store", filters={"enabled": 1}, fields=["name", "title", "store_code", "streaming_branch"])
+	# A successful bootstrap must not contain frappe.throw messages from stores
+	# that were merely excluded from the selector.
+	allowed_stores = [row for row in store_rows if can_operate_branch(row.get("streaming_branch"))
+		and _user_has_store_access(frappe.session.user, row.name)]
+	allowed_names = {row.name for row in allowed_stores}
 	default_store = get_default_pos_store(allowed_stores)
+	selection_reset = False
 
 	if not store:
 		active_session = get_user_session()
-		store = active_session.store if active_session else default_store
+		store = active_session.store if active_session and active_session.store in allowed_names else default_store
+	elif store not in allowed_names and cint(allow_store_fallback):
+		# Only selection/navigation falls back. Every operational API still uses
+		# assert_store_access and cannot operate the excluded store.
+		store = default_store
+		selection_reset = True
 	if store:
 		assert_store_access(store)
 		store_row = frappe.db.get_value("Store", store, ["name", "title", "store_code", "pos_profile", "operating_day_end"], as_dict=True)
@@ -536,10 +551,10 @@ def get_bootstrap(store=None):
 			"session": serialize_session(session) if session else None,
 			"currency": frappe.db.get_value("Company", frappe.db.get_value("Store", store, "company"), "default_currency"),
 			"permissions": permissions,
+			"store_selection_reset": selection_reset,
 		}
-	session = get_user_session()
 	return {"stores": allowed_stores, "default_store": default_store,
-		"session": serialize_session(session) if session else None, "permissions": permissions}
+		"store": None, "session": None, "permissions": permissions, "store_selection_reset": selection_reset}
 
 
 def serialize_session(session):
@@ -1212,18 +1227,16 @@ def get_kitchen_board(store, preparation_area=None):
 @frappe.whitelist()
 def get_kitchen_stores():
 	require_kitchen_capability("can_access_kitchen")
+	from arab_streaming.streaming.ownership import can_operate_branch
+
 	result = []
-	for row in frappe.get_all("Store", filters={"enabled": 1}, fields=["name", "title"], ignore_permissions=True):
-		try:
-			assert_store_access(row.name)
-			if frappe.get_all("Preparation Area", filters={"store": row.name, "enabled": 1, "has_kds": 1}, pluck="name"):
-				allowed = get_pos_user_scope_values("preparation_area")
-				areas = frappe.get_all("Preparation Area", filters={"store": row.name, "enabled": 1, "has_kds": 1}, pluck="name")
-				if allowed is not None and not (allowed & set(areas)):
-					continue
-				result.append(row)
-		except frappe.PermissionError:
+	for row in frappe.get_all("Store", filters={"enabled": 1}, fields=["name", "title", "streaming_branch"], ignore_permissions=True):
+		if not can_operate_branch(row.get("streaming_branch")) or not _user_has_store_access(frappe.session.user, row.name):
 			continue
+		allowed = get_pos_user_scope_values("preparation_area")
+		areas = frappe.get_all("Preparation Area", filters={"store": row.name, "enabled": 1, "has_kds": 1}, pluck="name")
+		if areas and (allowed is None or allowed & set(areas)):
+			result.append(row)
 	return result
 
 
@@ -1270,13 +1283,21 @@ def open_session(store, opening_amounts=None):
 	existing_session = get_user_session(store_doc.name)
 	if existing_session:
 		return {**existing_session.as_dict(), "resumed": True}
-	other_session = get_user_session()
+	other_session = get_user_session(local_only=True)
 	if other_session:
 		frappe.throw(_("You already have an open cashier session at {0}. Return to that Store to continue it.").format(other_session.store))
 	amounts = frappe.parse_json(opening_amounts or "{}")
 	user_openings = frappe.get_all("POS Opening Entry", filters={
 		"user": frappe.session.user, "status": "Open", "docstatus": 1,
-	}, fields=["name", "pos_profile"], limit_page_length=2)
+	}, fields=["name", "pos_profile"], limit_page_length=0)
+	from rms.streaming_policy import is_store_operated_locally
+
+	# A replicated or historical Slave session is not this site's till. Its
+	# Opening Entry must never be attached to a different local Store.
+	user_openings = [row for row in user_openings if not (
+		(session_store := frappe.db.get_value("Cashier Session", {"pos_opening_entry": row.name}, "store"))
+		and not is_store_operated_locally(session_store)
+	)]
 	profile_name = get_pos_profile_for_store(store_doc.name, frappe.session.user)
 	if user_openings:
 		opening = next((row for row in user_openings if row.pos_profile == profile_name), None)

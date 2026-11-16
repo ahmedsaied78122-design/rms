@@ -40,6 +40,21 @@ async function run(){
  const opening=fresh.loadBootstrap();await new Promise(resolve=>setImmediate(resolve));
  assert.equal(startedMenu,true,'new-sale catalog starts alongside context data');
  finishContext();await opening;
+	const stale=register(),staleCalls=[];
+	stale.pendingResumeContext={store:'SLAVE-STORE',order_name:'FOREIGN-ORDER',session:'REMOTE-SESSION'};
+	stale.state.cart=[{name:'old-line'}];stale.state.order_name='FOREIGN-ORDER';
+	stale.call=async(method,args)=>{
+		staleCalls.push(method);assert.equal(args.allow_store_fallback,1);
+		return {store_selection_reset:true,store:{name:'LOCAL-STORE'},stores:[{name:'LOCAL-STORE'}],brands:[],order_types:[],session:null};
+	};
+	await stale.loadBootstrap('SLAVE-STORE');
+	assert.equal(stale.state.store,'LOCAL-STORE');assert.equal(stale.state.order_name,null);
+	assert.equal(stale.state.cart.length,0);assert.equal(stale.pendingResumeContext,null);
+	assert.equal(staleCalls.includes('get_order'),false,'a disallowed saved order must never be restored');
+	const empty=register();empty.state.store='OLD';
+	empty.call=async()=>({store_selection_reset:true,store:null,stores:[],session:null});
+	empty.loadContextDetails=async()=>assert.fail('no foreign store context should load');
+	await empty.loadBootstrap('OLD');assert.equal(empty.state.store,null);assert.equal(empty.state.bootstrap_loading,false);
  console.log('PASS: payment restores without waiting for menu; one order snapshot; one catalog request; parallel new-sale startup.');
 }
 run().catch(error=>{console.error(error);process.exitCode=1;});
