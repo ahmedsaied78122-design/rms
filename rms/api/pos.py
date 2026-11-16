@@ -1239,12 +1239,17 @@ def set_kitchen_ticket_status(ticket_name, status):
 		if ticket.status != "Cancelled":
 			frappe.throw(_("Only cancelled Kitchen Tickets can acknowledge a cancellation."))
 		if not ticket.cancellation_acknowledged_at:
+			from copy import deepcopy
+			from arab_streaming.streaming.outbox import notify_persisted_change
+
+			before_acknowledgment = deepcopy(ticket)
 			ticket.cancellation_acknowledged_at = now_datetime()
 			ticket.cancellation_acknowledged_by = frappe.session.user
 			frappe.db.set_value("Kitchen Ticket", ticket.name, {
 				"cancellation_acknowledged_at": ticket.cancellation_acknowledged_at,
 				"cancellation_acknowledged_by": ticket.cancellation_acknowledged_by,
 			})
+			notify_persisted_change(before_acknowledgment)
 		return {"name": ticket.name, "status": ticket.status, "acknowledged": True}
 	ticket.set_status(status)
 	return {"name": ticket.name, "status": ticket.status}
@@ -2112,6 +2117,9 @@ def update_order_item_notes(order_name, item_name, notes):
 	frappe.db.set_value("POS Order Item", row.name, "notes", notes, update_modified=True)
 	modified = now_datetime()
 	frappe.db.set_value("POS Order", doc.name, {"modified": modified, "modified_by": frappe.session.user}, update_modified=False)
+	from arab_streaming.streaming.outbox import notify_persisted_change
+
+	notify_persisted_change(doc)
 	doc.modified = modified
 	doc.notify_update()
 	return {"name": row.name, "notes": notes, "modified": str(modified)}

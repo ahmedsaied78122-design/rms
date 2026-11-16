@@ -75,3 +75,11 @@ Store using that profile. The paired branch selects its own profile association;
 a persisted RMS wrapper's Store remains authoritative, and unrelated branches
 and mismatched Companies remain rejected. Verified by the shared-profile and
 foreign-wrapper regression checks.
+
+RMS's SQL-only line note and kitchen cancellation-acknowledgment paths notify the
+engine of their persisted parent changes before commit (Arab Streaming 0.2.9+).
+Operational branch resolution uses the installed rms_operation_store resolver,
+which reads structural Store ownership after the RMS API has authorized the
+operation. POS/Kitchen operators do not need broad Desk access to Store setup.
+Existing standard operational rules using store.streaming_branch are upgraded
+explicitly; unrelated operator conditions and other rule fields are preserved.

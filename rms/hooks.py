@@ -72,7 +72,7 @@ arab_streaming_local_fields = {
 	],
 	"Customer": ["is_npa"],
 }
-arab_streaming_branch_resolvers = {"rms_store": "rms.streaming_policy.resolve_branch"}
+arab_streaming_branch_resolvers = {"rms_store": "rms.streaming_policy.resolve_branch", "rms_operation_store": "rms.streaming_policy.resolve_operation_branch"}
 arab_streaming_managed_branch_routing = True
 arab_streaming_after_apply = ["rms.streaming_policy.remember_branch"]
 arab_streaming_default_providers = ["rms.streaming_policy.connection_defaults"]

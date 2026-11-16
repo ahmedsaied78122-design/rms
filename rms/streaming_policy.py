@@ -169,7 +169,7 @@ def defaults():
 				doctype_name=dt,
 				direction="Slave to Master",
 				scope="Branch",
-				branch_field="store.streaming_branch",
+				branch_field="app:rms_operation_store",
 				priority=120 + index,
 				lock_documents=1,
 				lock_documents_after_submit=1,
@@ -377,3 +377,11 @@ def remember_branch(peer, source, target, config):
 			branches=[{"branch": branch}],
 		)
 	).insert(ignore_permissions=True)
+
+
+def resolve_operation_branch(document, config, peer=None, incoming=False):
+	"""Resolve an RMS API-authorized operation without requiring Desk Store access."""
+	if document.get("doctype") not in RMS_OPERATIONS:
+		frappe.throw(_("This resolver is reserved for RMS operational documents."))
+	store = document.get("store")
+	return _store_branches({store}) if store else set()

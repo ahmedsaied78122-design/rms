@@ -987,6 +987,7 @@ class TestPOSOrderOperations(unittest.TestCase):
 				patch("frappe.get_doc", return_value=ticket), patch("frappe.get_roles", return_value=["Kitchen Operator"]), \
 				patch("frappe.session", frappe._dict(user="omar@example.com")), \
 				patch("rms.api.pos.now_datetime", return_value="2026-10-20 12:00:00"), \
+				patch("arab_streaming.streaming.outbox.notify_persisted_change") as notify, \
 				patch("frappe.db.set_value") as set_value:
 			try:
 				result = set_kitchen_ticket_status("TICKET-1", "Acknowledge Cancellation")
@@ -1000,6 +1001,7 @@ class TestPOSOrderOperations(unittest.TestCase):
 			"cancellation_acknowledged_by": "omar@example.com",
 		})
 		ticket.save.assert_not_called()
+		self.assertIsNone(notify.call_args.args[0].cancellation_acknowledged_at)
 
 	def test_active_kitchen_ticket_cannot_acknowledge_a_cancellation(self):
 		ticket = frappe.new_doc("Kitchen Ticket")
