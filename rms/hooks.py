@@ -44,8 +44,8 @@ app_include_css = [
 ]
 update_website_context = "rms.interface_preferences.website_context"
 
-after_migrate = ["rms.onboarding.install_defaults", "rms.setup.ensure_pos_roles", "rms.branding.apply_branding", "rms.analytics.install.ensure_analytics", "rms.streaming_policy.ensure_defaults", "rms.onboarding.preserve_pending_slave_setup"]
-after_install = ["rms.onboarding.install_defaults", "rms.branding.apply_branding", "rms.streaming_policy.ensure_defaults"]
+after_migrate = ["rms.onboarding.install_defaults", "rms.setup.ensure_streaming_reference_roles", "rms.setup.ensure_pos_roles", "rms.branding.apply_branding", "rms.analytics.install.ensure_analytics", "rms.streaming_policy.ensure_defaults", "rms.onboarding.preserve_pending_slave_setup"]
+after_install = ["rms.onboarding.install_defaults", "rms.setup.ensure_streaming_reference_roles", "rms.branding.apply_branding", "rms.streaming_policy.ensure_defaults"]
 
 # Native controllers generate prices, audit journals and print jobs locally.
 arab_streaming_local_doctypes = ["Approval Challenge", "Print Dispatch Job", "RMS Sync Event", "RMS Sync Settings", "Item Price", "Loyalty Point Entry", "POS Invoice Merge Log"]

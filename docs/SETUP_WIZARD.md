@@ -85,3 +85,12 @@ Authenticated Arab Streaming replay reuses the readable ERPNext Item already
 resolved by the native dependency importer. It does not create a second Item.
 Ordinary manual Item selection remains rejected; the usual product validation
 still checks unique Item ownership, UOM, stock settings and other product rules.
+
+
+### Optional application role references — 2026-11-16
+
+Installation/migration creates missing Expense Approver, Leave Approver and Loan
+Manager Role names with desk access disabled and no permission definitions. These
+resolve User references from Masters with HRMS/Lending installed. Existing roles
+and their permissions are untouched. This does not install those apps or import
+Role/DocPerm definitions through the streaming protocol.
