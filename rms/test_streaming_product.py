@@ -90,3 +90,17 @@ class TestOperationalReplicaPermissions(unittest.TestCase):
 				self.assertTrue(fn(frappe._dict(owner='cashier'),ptype='create'))
 			with patch('frappe.session',frappe._dict(user='cashier')),patch('frappe.get_roles',return_value=[]),patch('rms.streaming_replica.upstream',return_value=False):
 				self.assertFalse(fn(frappe._dict(owner='cashier',flags={'streaming_source':'forged'}),ptype='create'))
+
+
+class TestPaidKitchenLifecycle(unittest.TestCase):
+	def test_paid_order_can_finish_kitchen_work_without_reopening_sale(self):
+		from rms.rms.doctype.kitchen_ticket.kitchen_ticket import KitchenTicket
+		from rms.rms.doctype.pos_order.pos_order import POSOrder
+		with patch('frappe.db',Mock()) as db:
+			db.get_value.side_effect=[frappe._dict(store='S',status='Paid'),frappe._dict(store='S',enabled=1,has_kds=1,has_printer=0)]
+			KitchenTicket.validate_context(frappe._dict(pos_order='O',store='S',preparation_area='A'))
+		for state in ['Paid','Cancelled']:
+			order=Mock(status=state)
+			POSOrder.set_kitchen_status(order,'Ready')
+			order.save.assert_not_called()
+			self.assertEqual(order.status,state)

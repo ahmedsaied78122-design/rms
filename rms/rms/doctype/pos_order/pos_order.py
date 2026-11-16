@@ -994,6 +994,8 @@ class POSOrder(Document):
 		return created
 
 	def set_kitchen_status(self, status):
+		if self.status in ("Paid", "Cancelled"):
+			return
 		if status not in ("In Preparation", "Ready"):
 			frappe.throw(_("Unsupported POS Order kitchen status."))
 		self.status = status

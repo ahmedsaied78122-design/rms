@@ -27,6 +27,7 @@ class KitchenTicket(Document):
 			"Confirmed",
 			"In Preparation",
 			"Ready",
+			"Paid",
 		):
 			frappe.throw(_("Kitchen Ticket must belong to a confirmed POS Order for the same Store."))
 		area = frappe.db.get_value(
