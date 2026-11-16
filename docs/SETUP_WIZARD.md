@@ -78,3 +78,10 @@ This allows a Master with optional apps to serve a four-app Slave without creati
 foreign DocTypes or silently ignoring unknown fields. Other unknown fields still
 fail validation. After changing this contract, start a new immutable initial
 snapshot; Continue retains the old payload and is unsuitable for schema changes.
+
+### Replicated Selling Product Items — 2026-11-16
+
+Authenticated Arab Streaming replay reuses the readable ERPNext Item already
+resolved by the native dependency importer. It does not create a second Item.
+Ordinary manual Item selection remains rejected; the usual product validation
+still checks unique Item ownership, UOM, stock settings and other product rules.

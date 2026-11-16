@@ -84,6 +84,13 @@ class SellingProduct(Document):
 
 	def create_erpnext_item(self):
 		if self.item:
+			from arab_streaming.streaming.context import replay_source
+
+			if replay_source():
+				# The authenticated replay resolves this dependency before inserting
+				# the product. Reuse its identity; normal ownership/UOM checks follow.
+				frappe.get_doc("Item", self.item).check_permission("read")
+				return
 			frappe.throw(_("The ERPNext Item is created automatically and cannot be selected manually."))
 
 		if not self.product_category or not self.uom:
