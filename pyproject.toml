@@ -14,4 +14,4 @@ build-backend = "flit_core.buildapi"
 [tool.bench.frappe-dependencies]
 frappe = ">=15.111.0,<16.0.0"
 erpnext = ">=15.111.0,<16.0.0"
-arab_streaming = ">=0.2.1,<0.3.0"
+arab_streaming = ">=0.2.15,<0.3.0"

@@ -2,7 +2,7 @@
 
 First-run setup now starts with Master/Slave selection. Master keeps the native
 company wizard; Slave uses a master URL, Instance Key and Store, then copies its
-setup through Arab Streaming. This requires Arab Streaming **0.2.1+** and matching
+setup through Arab Streaming. This release requires Arab Streaming **0.2.15+** and matching
 RMS code on the master. See [first-run setup](docs/SETUP_WIZARD.md).
 
 Custom Restaurant and Retail operations app for ERPNext. All custom DocTypes,

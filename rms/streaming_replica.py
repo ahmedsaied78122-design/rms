@@ -236,7 +236,9 @@ def cancel_waste(doc):
 	stock = linked("Stock Entry", doc.stock_entry)
 	if stock.docstatus == 1:
 		validate_waste(doc, linked("Store", doc.store), stock_status=1)
-		stock.cancel()  # Normal permissions, backlinks, stock and accounting reversal.
+		from arab_streaming.streaming.companions import cancel
+
+		cancel(stock)  # Native reversal plus its original addressed cancellation checkpoint.
 	validate(doc)
 
 

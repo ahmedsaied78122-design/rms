@@ -310,11 +310,13 @@ class TestRMSStreamingSnapshots(unittest.TestCase):
 			patch.object(replica, "linked", side_effect=lambda dt, name: stock if dt == "Stock Entry" else "store"),
 			patch.object(replica, "validate_waste") as before,
 			patch.object(replica, "validate") as after,
+			patch("arab_streaming.streaming.companions.cancel", side_effect=lambda target: target.cancel()) as native,
 		):
 			replica.cancel_waste(doc)
 			replica.cancel_waste(doc)
 			before.assert_called_once_with(doc, "store", stock_status=1)
 			self.assertEqual(after.call_count, 2)
+			native.assert_called_once_with(stock)
 		stock.cancel.assert_called_once_with()
 
 	def test_waste_cancel_rejects_wrong_components_before_reversal(self):
