@@ -117,5 +117,17 @@
   ],
   "individual_live_mutation_of_every_field": false,
   "all_business_variants_live_certified": false,
-  "ledger_history_note": "One pre-fix cancelled stock ledger row differs in derived running quantity; movement values, GL and final balances match. Original ledgers retained."
+  "ledger_history_note": "One pre-fix cancelled stock ledger row differs in derived running quantity; movement values, GL and final balances match. Original ledgers retained.",
+  "preexisting_core_worktree_differences": {
+    "master": {
+      "frappe_modified_files": 1,
+      "erpnext_modified_files": 7
+    },
+    "slave": {
+      "frappe_modified_files": 0,
+      "erpnext_modified_files": 0
+    },
+    "changed_or_discarded_by_this_audit": false,
+    "release_commits_match": true
+  }
 }
