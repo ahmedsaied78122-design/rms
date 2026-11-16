@@ -52,3 +52,10 @@ def ensure_pos_roles():
 		for order in legacy_orders:
 			if order.dining_area or order.dining_table:
 				frappe.db.set_value("POS Order", order.name, {"dining_area": None, "dining_table": None}, update_modified=False)
+
+
+def ensure_stock_type_translation():
+	"""Declare the shared descriptive field used by the Master's stock setup."""
+	if not frappe.db.exists("Custom Field", {"dt":"Stock Entry Type","fieldname":"custom_arabic_name"}):
+		from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+		create_custom_fields({"Stock Entry Type":[{"fieldname":"custom_arabic_name","label":"Arabic Name","fieldtype":"Data","insert_after":"purpose"}]})

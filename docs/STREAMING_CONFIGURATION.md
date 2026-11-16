@@ -90,3 +90,7 @@ copy. ERPNext's skipped interactive setup does not create all standard stock
 purposes automatically. Existing linked Slaves receive a normal Preserve Existing
 copy of these definitions; generated Stock Ledger/GL records remain local results
 of their native Stock Entry controllers.
+
+The shared Stock Entry Type Arabic-name field is explicitly declared on installation
+and migration. Existing field definitions are preserved. This is an explicit RMS
+compatibility field, not unrestricted schema replication from a peer.
