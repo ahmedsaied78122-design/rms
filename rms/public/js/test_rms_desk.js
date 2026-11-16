@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const cache = new Map([['_page:point-of-sale', 'old'], ['_page:kitchen-display', 'old'], ['saved-cart', 'keep']]);
-let route = [], modal = false, alerts = [], toasts = [];
+let route = [], modal = false;
 const context = {
  window: {location: {pathname: '/app/home'}},
  document: {readyState: 'loading', addEventListener() {}, querySelector: () => modal ? {} : null},
@@ -13,7 +13,7 @@ const context = {
   get_route: () => route,
   get_meta: name => ({module: name === 'Selling Product' ? 'Selling' : 'RMS'}),
   utils: {escape_html: s => s.replaceAll('<', '&lt;').replaceAll('>', '&gt;')},
-  show_alert: (options, duration) => {alerts.push({options, duration}); return {addClass: () => {}};}, ui: {},
+  ui: {},
  },
  __: (text, args = []) => text.replace(/\{(\d+)\}/g, (_, i) => args[i]),
 };
@@ -54,16 +54,6 @@ assert.equal(shell.activeWorkspace(pages, shell.routeState()), 'My Space');
 route = ['query-report', 'POS Sales Summary'];
 context.frappe.query_report = {report_doc: {module: 'Selling'}};
 assert.equal(shell.activeWorkspace(pages, shell.routeState()), 'Selling');
-shell.showWelcome(); shell.showWelcome();
-assert.equal(alerts.length, 1, 'v15 welcome uses the supported alert exactly once');
-assert.equal(alerts[0].options.message, 'كسم فوديستا', 'the configured Arabic message replaces the personalized greeting');
-assert.equal(alerts[0].duration, 8);
-assert.equal(alerts[0].options.subtitle, '', 'the previous greeting description is removed');
-context.window.__rmsSystemWelcomeShown = false;
-context.frappe.ui.toast = options => toasts.push(options);
-shell.showWelcome(); assert.equal(toasts.length, 1, 'the newer optional toast remains supported');
-context.window.__rmsSystemWelcomeShown = false;context.frappe.boot.user.name = 'Guest';
-shell.showWelcome(); assert.equal(toasts.length, 1, 'guests never receive a Desk welcome');
 shell.drawerOpen = true; shell.compact = {matches: true};
 let closeArgs, prevented = 0;
 shell.setDrawerOpen = (...args) => {closeArgs = args;};
@@ -88,7 +78,7 @@ context.document.activeElement = first;
 assert.equal(shell.handleKey(key('Tab', {shiftKey:true})), true); assert.equal(focused, 'last');
 shell.drawerOpen = false;
 assert.equal(shell.handleKey(key('Tab')), false, 'closed navigation does not intercept keyboard actions');
-console.log('PASS: permitted workspaces, private routes, POS isolation, native alerts, saved-cart safety and accessible drawer keyboard behavior.');
+console.log('PASS: permitted workspaces, private routes, POS isolation, saved-cart safety and accessible drawer keyboard behavior.');
 
 async function testLanguageSwitch() {
  const requests=[];let reloads=0,messages=0;

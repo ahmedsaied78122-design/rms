@@ -948,10 +948,6 @@ body.rms-management .dropdown-menu {
 body.rms-management .dropdown-menu .dropdown-item {
   border-radius: 8px;
 }
-body.rms-management .rms-system-welcome-toast.desk-alert {
-  top: 94px;
-  border-radius: 15px;
-}
 /* Desktop mini navigation; tablet and phone keep the full-width working area. */
 @media (min-width: 1200px) {
   body.rms-management.rms-nav-collapsed .rms-management-sidebar {
@@ -1288,9 +1284,6 @@ body.rms-management .rms-system-welcome-toast.desk-alert {
   body.rms-management .layout-main-section {
     border-radius: 15px;
   }
-  body.rms-management .rms-system-welcome-toast.desk-alert {
-    top: 78px;
-  }
 }
 @media (pointer: coarse) {
   .rms-management-link,
@@ -1592,14 +1585,6 @@ body.rms-management .rms-language-item {
     line-height: 1.2;
   }
 }
-.rms-system-welcome-toast[dir="rtl"] {
-  text-align: right;
-}
-.rms-system-welcome-toast[dir="rtl"] .close {
-  inset-inline-start: auto;
-  inset-inline-end: 12px;
-  top: 13px;
-}
 /* This image animates itself, before application JavaScript has loaded. */
 .splash img[src*="/rms-loading.svg"] {
   width: 160px;
@@ -1611,15 +1596,6 @@ body.rms-management .rms-language-item {
   .splash img[src*="/rms-loading.svg"] {
     content: url("/assets/rms/images/rms-loading-static.svg");
   }
-}
-/* Place the Arabic toast using page direction, independently of its text direction. */
-.rms-system-welcome-toast.desk-alert {
-  left: auto;
-  right: 18px;
-}
-html[dir="rtl"] .rms-system-welcome-toast.desk-alert {
-  right: auto;
-  left: 18px;
 }
 /* Readable chart details, including the engine's nested labels and value spans. */
 body.rms-management .graph-svg-tip {
@@ -1724,32 +1700,7 @@ body.rms-management .graph-svg-tip .svg-pointer {
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
-/* A non-blocking Arabic welcome centered below the top bar. */
-.rms-system-welcome-toast.desk-alert {
-  left: 50% !important;
-  right: auto !important;
-  top: calc(92px + env(safe-area-inset-top, 0px)) !important;
-  bottom: auto;
-  transform: translateX(-50%);
-  width: min(420px, calc(100vw - 28px));
-  box-shadow: 0 22px 80px #122c2540;
-  animation: rms-welcome-appear 0.2s ease-out both;
-}
-@keyframes rms-welcome-appear {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .rms-system-welcome-toast.desk-alert {
-    animation: none;
-  }
-}
+
 /* The rail already has its own toggle. Phones retain one panel-shaped entry. */
 @media (min-width: 1200px) {
   body.rms-management .rms-management-toggle {
@@ -2034,9 +1985,6 @@ body.rms-studio-editing .rms-workspace-studio .widget {
     display: none;
   }
 }
-.rms-system-welcome-toast.desk-alert {
-  left: 50vw !important;
-}
 body.rms-management .graph-svg-tip .tooltip-value * {
   color: #fff !important;
 }
@@ -2067,12 +2015,6 @@ body.rms-management .graph-svg-tip .tooltip-value * {
 .rms-workspace-studio .shortcut-widget-box > .widget-footer:empty {
   display: none;
 }
-@media (max-width: 600px) {
-  .rms-system-welcome-toast.desk-alert {
-    top: calc(76px + env(safe-area-inset-top, 0px)) !important;
-  }
-}
-
 /* The RMS hub uses permission-filtered native cards, with a local screen finder. */
 .rms-workspace-directory {
   display: flex;

@@ -180,12 +180,6 @@ body.rms-management .modal-header, body.rms-management .modal-footer { border-co
 body.rms-management .modal-body { padding: 20px; }
 body.rms-management .modal-title { color: var(--rms-text); font-size: 17px; font-weight: 650; }
 body.rms-management .datepickers-container, body.rms-management .datepicker { color: var(--rms-text); }
-.rms-system-welcome-toast.desk-alert { position: fixed; top: 72px; bottom: auto; inset-inline-end: 18px; width: min(390px, calc(100vw - 30px)); padding: 13px 14px; border: 1px solid #cbdcc0; border-radius: 11px; background: #f8fcf0; color: #294e35; box-shadow: 0 10px 32px #18352120; }
-.rms-system-welcome-toast.desk-alert { --icon-stroke: #4b664c; --heading-color: #294e35; --text-color: #294e35; --text-light: #617b5d; --text-muted: #617b5d; }
-.rms-system-welcome-toast.desk-alert .alert-message-container { padding: 0; padding-inline-end: 18px; }
-.rms-system-welcome-toast.desk-alert .alert-message-container .alert-message { color: #294e35; font-size: 12px; font-weight: 650; }
-.rms-system-welcome-toast.desk-alert .alert-message-container .alert-subtitle { padding-inline: 28px 0; color: #617b5d; font-size: 11px; line-height: 1.7; }
-body.rms-nav-open .rms-system-welcome-toast { visibility: hidden; pointer-events: none; }
 /* Collapsing the desktop rail leaves content and native charts room to resize. */
 @media (min-width: 1200px) {
  body.rms-management.rms-nav-collapsed .rms-management-sidebar { padding-inline: 9px; }

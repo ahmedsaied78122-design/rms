@@ -446,7 +446,6 @@
 			this.updateSearch();
 			this.updateLanguage();
 			this.updateControls();
-			this.showWelcome();
 			if (changed) requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
 			return true;
 		}
@@ -522,22 +521,6 @@
 			if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); return true; }
 			if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); return true; }
 			return false;
-		}
-
-		showWelcome() {
-			if (window.__rmsSystemWelcomeShown || !frappe.boot?.user?.name || frappe.boot.user.name === "Guest") return;
-			const message = "كسم فوديستا";
-			const description = "";
-			let notification;
-			if (typeof frappe.ui?.toast === "function") {
-				notification = frappe.ui.toast({ message, description, type: "success", duration: 8000, id: "rms-system-welcome" });
-			} else if (typeof frappe.show_alert === "function") {
-				notification = frappe.show_alert({ message: frappe.utils.escape_html(message), subtitle: frappe.utils.escape_html(description), indicator: "green" }, 8);
-			} else return;
-			const element = notification?.$el || notification;
-			element?.addClass?.("rms-system-welcome-toast");
-			element?.attr?.({ dir: "rtl", lang: "ar", "aria-label": "رسالة ترحيب من RMS" });
-			window.__rmsSystemWelcomeShown = true;
 		}
 	}
 
