@@ -346,7 +346,8 @@ def assert_store_access(store_name):
 	return store
 
 
-def get_user_session(store_name=None, *, local_only=False, user=None, exclude=None):
+def get_user_session(store_name=None, *, local_only=True, user=None, exclude=None):
+	"""Return this site's till; replicated branch sessions remain reporting data."""
 	filters = {"user": user or frappe.session.user, "status": ["in", ["Open", "Closing"]]}
 	if store_name:
 		filters["store"] = store_name

@@ -145,5 +145,5 @@ class TestPOSBranchSelection(unittest.TestCase):
             ),
             patch("frappe.get_doc", return_value="local-session") as get_doc,
         ):
-            self.assertEqual(pos.get_user_session(local_only=True), "local-session")
+            self.assertEqual(pos.get_user_session(), "local-session")
             get_doc.assert_called_once_with("Cashier Session", "LOCAL")
