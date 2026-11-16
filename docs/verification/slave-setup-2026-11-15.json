@@ -34,5 +34,6 @@
     "last_observed_uom_checkpoint": 49
   },
   "completion_verified": false,
-  "remaining": "Remote SSH and site became unreachable during import (Cloudflare 1033). Restore the device/tunnel connection, resume the saved copy if needed and verify full import plus completed setup."
+  "remaining": "Remote SSH and site became unreachable during import (Cloudflare 1033). Restore the device/tunnel connection, resume the saved copy if needed and verify full import plus completed setup.",
+  "follow_up_report": "slave-setup-2026-11-16.json"
 }

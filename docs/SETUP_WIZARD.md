@@ -94,3 +94,15 @@ Manager Role names with desk access disabled and no permission definitions. Thes
 resolve User references from Masters with HRMS/Lending installed. Existing roles
 and their permissions are untouched. This does not install those apps or import
 Role/DocPerm definitions through the streaming protocol.
+
+
+### Live Slave completion verified — 2026-11-16
+
+The existing Saied Slave completed its saved native initial-copy run: 859 roots,
+all checkpoints complete, Master export Complete, receiver progress 100 and setup
+complete. Received Item 142 and Selling Product 135; no missing or duplicate
+product Item links. Browser login opens the application, and the selected branch
+POS catalog returned 62 products, 27 categories and 3 order types. No sales or
+accounting transactions were created for verification. The service was active and
+enabled, and the public site returned HTTP 200. Focused tests: 29 passed.
+See `docs/verification/slave-setup-2026-11-16.json` for the non-secret checks.
