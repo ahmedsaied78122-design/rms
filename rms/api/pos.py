@@ -63,6 +63,10 @@ def get_pos_return_permission_query(user=None):
 def has_pos_return_permission(doc, user=None, permission_type=None, ptype=None):
 	permission_type = ptype or permission_type
 	user = user or frappe.session.user
+	from rms.streaming_replica import upstream
+
+	if user == frappe.session.user and upstream(doc):
+		return True  # Normal DocPerms still apply; only the interactive role veto is lifted.
 	roles = set(frappe.get_roles(user))
 	if user == "Administrator" or "System Manager" in roles:
 		return True
@@ -112,6 +116,10 @@ def get_approval_challenge_permission_query(user=None):
 def has_shift_expense_permission(doc, user=None, permission_type=None, ptype=None):
 	permission_type = ptype or permission_type
 	user = user or frappe.session.user
+	from rms.streaming_replica import upstream
+
+	if user == frappe.session.user and upstream(doc):
+		return True  # Normal DocPerms still apply; only the interactive role veto is lifted.
 	roles = set(frappe.get_roles(user))
 	if user == "Administrator" or "System Manager" in roles:
 		return True

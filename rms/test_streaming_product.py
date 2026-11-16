@@ -80,3 +80,13 @@ class TestSharedProfileBranch(unittest.TestCase):
 				if blocked:
 					with self.assertRaises(frappe.PermissionError):policy.resolve_branch(doc,{})
 				else:self.assertEqual(policy.resolve_branch(doc,{}),{'A'})
+
+
+class TestOperationalReplicaPermissions(unittest.TestCase):
+	def test_only_server_replay_lifts_interactive_return_and_expense_role_veto(self):
+		from rms.api.pos import has_pos_return_permission,has_shift_expense_permission
+		for fn in [has_pos_return_permission,has_shift_expense_permission]:
+			with patch('frappe.session',frappe._dict(user='integration@example.invalid')),patch('frappe.get_roles',return_value=['Arab Streaming example']),patch('rms.streaming_replica.upstream',return_value=True):
+				self.assertTrue(fn(frappe._dict(owner='cashier'),ptype='create'))
+			with patch('frappe.session',frappe._dict(user='cashier')),patch('frappe.get_roles',return_value=[]),patch('rms.streaming_replica.upstream',return_value=False):
+				self.assertFalse(fn(frappe._dict(owner='cashier',flags={'streaming_source':'forged'}),ptype='create'))
