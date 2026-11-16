@@ -1,0 +1,40 @@
+{
+  "master": {
+    "state": {
+      "store": "NASR",
+      "choices": [
+        "NASR",
+        "TAGAMOA"
+      ],
+      "order": null,
+      "session": false,
+      "products": 62,
+      "categories": 27
+    },
+    "stores_selected_successfully": [
+      "NASR",
+      "TAGAMOA"
+    ],
+    "selector_enabled": true,
+    "server_message_count": 0,
+    "page_errors": []
+  },
+  "slave": {
+    "state": {
+      "store": "MAADI",
+      "choices": [
+        "MAADI"
+      ],
+      "order": null,
+      "session": false,
+      "products": 62,
+      "categories": 27
+    },
+    "stores_selected_successfully": [
+      "MAADI"
+    ],
+    "selector_enabled": true,
+    "server_message_count": 0,
+    "page_errors": []
+  }
+}

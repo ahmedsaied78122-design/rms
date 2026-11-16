@@ -3,6 +3,7 @@ branches selectable while paired Slave branches are excluded; a Slave offers its
 paired branch only. Stale saved selections fall back without restoring another
 branch's order. Replicated Slave sessions and Opening Entries are excluded from
 the Master's local till checks, while a second local session stays blocked.
+See the [branch selector verification](docs/verification/pos-branch-selector-2026-11-16/README.md).
 
 # RMS Frappe app
 

@@ -1,0 +1,28 @@
+{
+  "master": {
+    "bootstrap_status": 200,
+    "bootstrap_server_messages": false,
+    "context_status_by_branch": {
+      "MAADI": 403,
+      "NASR": 200,
+      "TAGAMOA": 200
+    },
+    "strict_blocked_bootstrap_status": 403,
+    "navigation_fallback_status": 200,
+    "kitchen_selector_status": 200,
+    "kitchen_server_messages": false
+  },
+  "slave": {
+    "bootstrap_status": 200,
+    "bootstrap_server_messages": false,
+    "context_status_by_branch": {
+      "MAADI": 200,
+      "NASR": 403,
+      "TAGAMOA": 403
+    },
+    "strict_blocked_bootstrap_status": 403,
+    "navigation_fallback_status": 200,
+    "kitchen_selector_status": 200,
+    "kitchen_server_messages": false
+  }
+}
