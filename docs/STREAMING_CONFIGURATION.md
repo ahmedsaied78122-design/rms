@@ -83,3 +83,10 @@ which reads structural Store ownership after the RMS API has authorized the
 operation. POS/Kitchen operators do not need broad Desk access to Store setup.
 Existing standard operational rules using store.streaming_branch are upgraded
 explicitly; unrelated operator conditions and other rule fields are preserved.
+
+
+Stock Entry Type is part of the downstream setup profile and fresh-Slave initial
+copy. ERPNext's skipped interactive setup does not create all standard stock
+purposes automatically. Existing linked Slaves receive a normal Preserve Existing
+copy of these definitions; generated Stock Ledger/GL records remain local results
+of their native Stock Entry controllers.

@@ -20,6 +20,7 @@ MASTER_DATA = (
 	"Account",
 	"Cost Center",
 	"Warehouse",
+	"Stock Entry Type",
 	"Mode of Payment",
 	"Tax Category",
 	"Item Tax Template",
