@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
-from rms.streaming_replica import upstream, validate as validate_replica
+from rms.streaming_replica import cancel_waste, upstream, validate as validate_replica
 
 from rms.recipe import get_recipe_components
 from rms.stock import create_material_issue
@@ -96,7 +96,7 @@ class WasteEntry(Document):
 
 	def on_cancel(self):
 		if upstream(self):
-			validate_replica(self)
+			cancel_waste(self)
 			return
 		if self.stock_entry and frappe.db.get_value("Stock Entry", self.stock_entry, "docstatus") == 1:
 			stock_entry = frappe.get_doc("Stock Entry", self.stock_entry)

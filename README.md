@@ -39,7 +39,7 @@ peer connections and synchronization rules are separate site configuration;
 installation alone does not activate remote synchronization. RMS's local sync
 journal remains a separate facility.
 
-RMS also seeds an editable general streaming profile: 41 master-to-branch rules,
+RMS also seeds an editable general streaming profile: 42 master-to-branch rules,
 12 branch-to-master rules and 5 bidirectional customer/reference rules. It adds
 only the approved optional Store-to-Branch field and app-owned branch routing;
 it does not select a site role, enable transport, provision credentials or pair

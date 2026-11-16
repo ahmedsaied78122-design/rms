@@ -279,7 +279,7 @@ class TestRMSStreamingSnapshots(unittest.TestCase):
 					(doc.status, doc.get("business_date"), doc.get("opened_at")), before
 				)
 
-	def test_waste_replay_does_not_create_or_cancel_another_stock_movement(self):
+	def test_waste_replay_never_creates_another_stock_movement(self):
 		doc = frappe.new_doc("Waste Entry")
 		with (
 			patch(
@@ -291,11 +291,48 @@ class TestRMSStreamingSnapshots(unittest.TestCase):
 			patch(
 				"rms.rms.doctype.waste_entry.waste_entry.create_material_issue"
 			) as create,
+			patch("rms.rms.doctype.waste_entry.waste_entry.cancel_waste") as cancel,
 		):
 			doc.on_submit()
 			doc.on_cancel()
 		create.assert_not_called()
-		self.assertEqual(validator.call_count, 2)
+		validator.assert_called_once_with(doc)
+		cancel.assert_called_once_with(doc)
+
+	def test_waste_cancel_reverses_existing_movement_once_with_native_cancel(self):
+		doc = frappe._dict(doctype="Waste Entry", docstatus=2, stock_entry="STE", store="S")
+		stock = Mock(docstatus=1)
+		def cancelled():
+			stock.docstatus = 2
+		stock.cancel.side_effect = cancelled
+		with (
+			patch.object(replica, "upstream", return_value=True),
+			patch.object(replica, "linked", side_effect=lambda dt, name: stock if dt == "Stock Entry" else "store"),
+			patch.object(replica, "validate_waste") as before,
+			patch.object(replica, "validate") as after,
+		):
+			replica.cancel_waste(doc)
+			replica.cancel_waste(doc)
+			before.assert_called_once_with(doc, "store", stock_status=1)
+			self.assertEqual(after.call_count, 2)
+		stock.cancel.assert_called_once_with()
+
+	def test_waste_cancel_rejects_wrong_components_before_reversal(self):
+		doc = frappe._dict(doctype="Waste Entry", docstatus=2, stock_entry="STE", store="S")
+		stock = Mock(docstatus=1)
+		with (
+			patch.object(replica, "upstream", return_value=True),
+			patch.object(replica, "linked", return_value=stock),
+			patch.object(replica, "validate_waste", side_effect=frappe.ValidationError("mismatch")),
+		):
+			with self.assertRaises(frappe.ValidationError):
+				replica.cancel_waste(doc)
+		stock.cancel.assert_not_called()
+
+	def test_posted_flags_cannot_authorize_waste_child_cancellation(self):
+		doc = frappe._dict(doctype="Waste Entry", docstatus=2, flags={"streaming_target_docstatus":2})
+		with self.assertRaises(frappe.ValidationError):
+			replica.cancel_waste(doc)
 
 	def test_waste_snapshot_must_match_existing_native_stock_movement(self):
 		doc = SimpleNamespace(

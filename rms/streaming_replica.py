@@ -225,7 +225,22 @@ def validate_return(doc, store):
 		same(actual, requested)
 
 
-def validate_waste(doc, store):
+def cancel_waste(doc):
+	"""Cancel the existing movement while the native parent is already cancelled.
+
+	The child's earlier Cancel event can be blocked by this still-active parent.
+	Native parent cancellation stores docstatus=2 before on_cancel, so cancelling
+	the validated child here follows the same atomic order as the source.
+	"""
+	require(upstream(doc) and doc.docstatus == 2, "Only an upstream waste cancellation is allowed.")
+	stock = linked("Stock Entry", doc.stock_entry)
+	if stock.docstatus == 1:
+		validate_waste(doc, linked("Store", doc.store), stock_status=1)
+		stock.cancel()  # Normal permissions, backlinks, stock and accounting reversal.
+	validate(doc)
+
+
+def validate_waste(doc, store, stock_status=None):
 	number(doc.quantity, positive=True)
 	require(bool(doc.items), "The original waste component snapshot is required.")
 	for row in doc.items:
@@ -236,7 +251,7 @@ def validate_waste(doc, store):
 	if desired in (1, 2):
 		stock = linked("Stock Entry", doc.stock_entry)
 		same(stock.company, store.company)
-		same(stock.docstatus, desired)
+		same(stock.docstatus, desired if stock_status is None else stock_status)
 		same(stock.purpose, "Material Issue")
 		expected, actual = Counter(), Counter()
 		for row in doc.items:
