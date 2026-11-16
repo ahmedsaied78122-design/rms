@@ -60,3 +60,12 @@
 لم يتم اختبار نقل فعلي بين موقعين أو قبول دورة مالية موزعة، لعدم وجود سليف مرتبط. إعداد القواعد الحالي لا يعني اكتمال هذا الاختبار.
 
 الأدلة: [نتيجة التحقق](verification/2026-11-15-rms-streaming-policy.json)، [مصفوفة المرجع](verification/2026-11-15-rms-streaming-reference-matrix.json).
+
+### Interactive branch writer gate — 2026-11-16
+
+POS Store authorization now calls Arab Streaming 0.2.7's branch writer guard.
+A paired branch is unavailable for interactive POS on the Master, including for
+Administrator. A Slave can select only its own paired branch. This remains true
+when transport is paused; explicit unlinking is required to transfer ownership.
+Catalog administration and authenticated incoming replicas retain their normal
+separate permissions. Deploy the engine before the RMS consumer.

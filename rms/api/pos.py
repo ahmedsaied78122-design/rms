@@ -315,9 +315,12 @@ def create_cashier_session_for_opening(store, profile_name, opening, opening_amo
 
 
 def assert_store_access(store_name):
-	store = frappe.db.get_value("Store", store_name, ["name", "enabled", "pos_profile", "company"], as_dict=True)
+	store = frappe.db.get_value("Store", store_name, ["name", "enabled", "pos_profile", "company", "streaming_branch"], as_dict=True)
 	if not store or not store.enabled:
 		frappe.throw(_("Choose an enabled Store."))
+	from arab_streaming.streaming.ownership import assert_local_branch_writer
+
+	assert_local_branch_writer(store.get("streaming_branch"))
 	pos_user = get_active_pos_user(frappe.session.user)
 	if pos_user:
 		if not frappe.db.exists("POS User Store", {
