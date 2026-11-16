@@ -1,0 +1,19 @@
+{
+  "master": {
+    "peer_displays_store": true,
+    "branch_field_hidden": true,
+    "store_links_back_to_peer": true,
+    "manual_scope_field_hidden": true,
+    "browser_errors": []
+  },
+  "slave": {
+    "peer_displays_store": true,
+    "branch_field_hidden": true,
+    "link_dialog_uses_store_only": true,
+    "available_store_count": 2,
+    "native_store_option_selection_passed": true,
+    "store_links_back_to_peer": true,
+    "manual_scope_field_hidden": true,
+    "browser_errors": []
+  }
+}

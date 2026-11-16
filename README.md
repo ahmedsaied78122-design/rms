@@ -2,6 +2,7 @@ Slave setup and connection forms use **Store** as the only business selection.
 RMS creates its internal routing identity automatically, preserves existing
 pairings, and shows the peer connection from the Store. No manual Branch setup
 or selection is needed. This requires Arab Streaming 0.2.17 on both sites.
+See the [Store-only connection verification](docs/verification/store-only-connection-2026-11-16/README.md).
 
 POS startup now lists only Stores this site can operate. The Master keeps local
 branches selectable while paired Slave branches are excluded; a Slave offers its
