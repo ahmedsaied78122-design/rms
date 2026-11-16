@@ -1,0 +1,13 @@
+{
+  "master": {
+    "login_status": 200,
+    "get_bootstrap_status": 403,
+    "get_pos_context_status": 403
+  },
+  "slave": {
+    "login_status": 200,
+    "get_bootstrap_status": 200,
+    "get_pos_context_status": 200,
+    "other_branch_status": 403
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "receiver_stopped": true,
+  "source_save_committed": true,
+  "dispatch_status_while_offline": "Pending",
+  "dispatch_event": "n4rgpuuiij",
+  "dispatch_status_after_recovery": "Applied"
+}

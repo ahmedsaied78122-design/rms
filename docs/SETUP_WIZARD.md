@@ -1,7 +1,7 @@
 # First-run Master and Slave setup
 
 The first Setup Wizard screen selects `Master` or `Slave`. Use matching RMS source
-on both sites and Arab Streaming 0.2.1 or later. Installation does not select a role
+on both sites and Arab Streaming 0.2.15 or later. Installation does not select a role
 or connect an existing site automatically.
 
 ## Master

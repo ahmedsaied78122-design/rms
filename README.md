@@ -5,6 +5,10 @@ company wizard; Slave uses a master URL, Instance Key and Store, then copies its
 setup through Arab Streaming. This release requires Arab Streaming **0.2.15+** and matching
 RMS code on the master. See [first-run setup](docs/SETUP_WIZARD.md).
 
+The [2026-11-16 Master/Slave audit](docs/verification/streaming-audit-2026-11-16/README.md)
+records live POS, password, accounting, stock and recovery checks, the field matrix,
+and the scenarios that were not exercised live.
+
 Custom Restaurant and Retail operations app for ERPNext. All custom DocTypes,
 controllers, Desk pages, translations and migrations belong here; ERPNext core
 DocTypes remain untouched.
