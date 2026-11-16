@@ -314,7 +314,7 @@ def resolve_branch(document, config, peer=None, incoming=False):
 	role = frappe.conf.get("arab_streaming_site_role")
 	if role == "Slave":
 		peers = frappe.get_all(
-			"Master Instance", filters={"enabled": 1}, pluck="restaurant_branch"
+			"Master Instance", filters={"connection_status": "Connected"}, pluck="restaurant_branch"
 		)
 		if len(set(peers)) == 1:
 			paired = peers[0]

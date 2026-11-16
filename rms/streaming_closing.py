@@ -67,6 +67,12 @@ class RMSPOSClosingEntry(POSClosingEntry):
 
 def capture_native_change(doc, method=None):
 	"""Native consolidation uses db_set: capture its committed business state."""
+	# Arab Streaming 0.2.9 owns native db_set changes. Ordinary ORM lifecycle
+	# callbacks are already captured by its on_update/on_submit/on_cancel hooks.
+	if getattr(doc, "_arab_streaming_dbset_before", None) is not None or getattr(doc, "_action", None) in (
+		"save", "submit", "cancel", "update_after_submit"
+	):
+		return
 	if doc.docstatus and doc.doctype in ("POS Closing Entry", "POS Invoice"):
 		from arab_streaming.streaming.outbox import capture
 
