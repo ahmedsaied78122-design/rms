@@ -1,8 +1,19 @@
 import frappe
 
 
+def ensure_streaming_reference_roles():
+	"""Resolve optional-app User role references without importing permissions."""
+	for role in ("Expense Approver", "Leave Approver", "Loan Manager"):
+		if not frappe.db.exists("Role", role):
+			frappe.get_doc({"doctype": "Role", "role_name": role, "desk_access": 0}).insert(
+				ignore_permissions=True
+			)
+
+
 def ensure_pos_roles():
 	"""Install the operational roles referenced by POS API permission checks."""
+	from rms.stock import ensure_void_stock_entry_type
+	ensure_void_stock_entry_type()
 	for role_name in ("POS Cashier", "POS Manager", "Kitchen Operator"):
 		if not frappe.db.exists("Role", role_name):
 			frappe.get_doc({"doctype": "Role", "role_name": role_name, "desk_access": 1}).insert(ignore_permissions=True)
@@ -41,3 +52,10 @@ def ensure_pos_roles():
 		for order in legacy_orders:
 			if order.dining_area or order.dining_table:
 				frappe.db.set_value("POS Order", order.name, {"dining_area": None, "dining_table": None}, update_modified=False)
+
+
+def ensure_stock_type_translation():
+	"""Declare the shared descriptive field used by the Master's stock setup."""
+	if not frappe.db.exists("Custom Field", {"dt":"Stock Entry Type","fieldname":"custom_arabic_name"}):
+		from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+		create_custom_fields({"Stock Entry Type":[{"fieldname":"custom_arabic_name","label":"Arabic Name","fieldtype":"Data","insert_after":"purpose"}]})

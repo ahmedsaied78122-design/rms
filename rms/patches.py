@@ -42,3 +42,43 @@ def enable_negative_stock_by_default():
 
 	frappe.clear_cache(doctype="Item")
 	frappe.clear_cache(doctype="Selling Product")
+
+
+def initialize_pos_operation_permissions():
+	"""Preserve direct manager actions once; later checkbox changes stay authoritative."""
+	for row in frappe.get_all('POS User',fields=['name','user']):
+		manager=bool(set(frappe.get_roles(row.user)) & {'POS Manager','System Manager'})
+		frappe.db.set_value('POS User',row.name,dict(can_void_items=int(manager),can_void_waste=int(manager),can_return_waste=int(manager)),update_modified=False)
+
+
+def migrate_product_modifier_limits():
+	"""Freeze legacy effective limits on product rows before retiring shared editing."""
+	from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import (
+		get_maximum_selections,
+		get_minimum_selections,
+	)
+
+	rows = frappe.get_all(
+		"Selling Product Modifier Group", fields=["name", "modifier_group", "selection_requirement"]
+	)
+	groups = {
+		group.name: group
+		for group in frappe.get_all(
+			"Modifier Group", fields=["name", "min_selections", "max_selections", "allow_multiple_selections"]
+		)
+	}
+	# Child-table schema only: no parent role permission declarations are reimported.
+	frappe.reload_doc("rms", "doctype", "selling_product_modifier_group", force=True)
+	for row in rows:
+		group = groups.get(row.modifier_group, frappe._dict())
+		frappe.db.set_value(
+			"Selling Product Modifier Group", row.name,
+			{
+				"min_selections": get_minimum_selections(row, group.get("min_selections") or 0),
+				"max_selections": get_maximum_selections(group),
+			},
+			update_modified=False,
+		)
+	for doctype in ("Selling Product Modifier Group", "Selling Product"):
+		frappe.db.set_value("DocType", doctype, "modified", frappe.utils.now_datetime(), update_modified=False)
+		frappe.clear_cache(doctype=doctype)

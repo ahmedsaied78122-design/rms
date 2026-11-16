@@ -5,30 +5,258 @@
   "autoname": "naming_series:",
   "naming_rule": "By \"Naming Series\" field",
   "track_changes": 1,
-  "field_order": ["naming_series", "status", "store", "cashier_session", "source_pos_invoice", "customer", "is_waste", "items", "payments", "refund_total", "return_pos_invoice", "stock_entry", "approved_by", "approved_at", "rejected_by", "rejected_at", "action_reason", "reason"],
+  "field_order": [
+    "rms_return_section",
+    "naming_series",
+    "status",
+    "source_pos_invoice",
+    "customer",
+    "rms_column_rms_return_section_1",
+    "store",
+    "cashier_session",
+    "is_waste",
+    "action_reason",
+    "reason",
+    "comment",
+    "rms_items_section",
+    "items",
+    "rms_refund_section",
+    "payments",
+    "refund_total",
+    "rms_audit_section",
+    "approved_by",
+    "approved_at",
+    "rms_column_rms_audit_section_1",
+    "rejected_by",
+    "rejected_at",
+    "rms_documents_section",
+    "return_pos_invoice",
+    "stock_entry",
+    "waste_stock_entry",
+    "approval_challenge"
+  ],
   "fields": [
-    {"fieldname":"naming_series","fieldtype":"Select","label":"Series","options":"RMS-RET-.YYYY.-","default":"RMS-RET-.YYYY.-","hidden":1},
-    {"fieldname":"status","fieldtype":"Select","label":"Status","options":"Pending Approval\nApproved\nRejected","default":"Pending Approval","read_only":1,"in_list_view":1,"in_standard_filter":1},
-    {"fieldname":"store","fieldtype":"Link","label":"Store","options":"Store","read_only":1,"in_list_view":1,"link_filters":"[[\"Store\",\"enabled\",\"=\",\"1\"]]"},
-    {"fieldname":"cashier_session","fieldtype":"Link","label":"Cashier Session","options":"Cashier Session","read_only":1,"in_list_view":1},
-    {"fieldname":"source_pos_invoice","fieldtype":"Link","label":"Source POS Invoice","options":"POS Invoice","read_only":1,"reqd":1},
-    {"fieldname":"customer","fieldtype":"Link","label":"Customer","options":"Customer","read_only":1},
-    {"fieldname":"is_waste","fieldtype":"Check","label":"Is Waste","default":"0","read_only":1,"in_list_view":1},
-    {"fieldname":"items","fieldtype":"Table","label":"Returned Items","options":"POS Return Item","reqd":1},
-    {"fieldname":"payments","fieldtype":"Table","label":"Refund Payments","options":"POS Return Payment","reqd":1},
-    {"fieldname":"refund_total","fieldtype":"Currency","label":"Refund Total","read_only":1,"in_list_view":1},
-    {"fieldname":"return_pos_invoice","fieldtype":"Link","label":"Return POS Invoice","options":"POS Invoice","read_only":1},
-    {"fieldname":"stock_entry","fieldtype":"Link","label":"Returned Stock Entry","options":"Stock Entry","read_only":1},
-    {"fieldname":"approved_by","fieldtype":"Link","label":"Approved By","options":"User","read_only":1},
-    {"fieldname":"approved_at","fieldtype":"Datetime","label":"Approved At","read_only":1},
-    {"fieldname":"rejected_by","fieldtype":"Link","label":"Rejected By","options":"User","read_only":1},
-    {"fieldname":"rejected_at","fieldtype":"Datetime","label":"Rejected At","read_only":1},
-    {"fieldname":"action_reason","fieldtype":"Link","label":"Reason","options":"POS Action Reason","link_filters":"[[\"POS Action Reason\",\"enabled\",\"=\",\"1\"]]"},
-    {"fieldname":"reason","fieldtype":"Small Text","label":"Reason Snapshot","read_only":1,"description":"Recorded text snapshot retained for return history."}
+    {
+      "fieldname": "rms_return_section",
+      "fieldtype": "Section Break",
+      "label": "Return request"
+    },
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "RMS-RET-.YYYY.-",
+      "default": "RMS-RET-.YYYY.-",
+      "hidden": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Pending Approval\nApproved\nRejected",
+      "default": "Pending Approval",
+      "read_only": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "source_pos_invoice",
+      "fieldtype": "Link",
+      "label": "Source POS Invoice",
+      "options": "POS Invoice",
+      "read_only": 1,
+      "reqd": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rms_column_rms_return_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "store",
+      "fieldtype": "Link",
+      "label": "Store",
+      "options": "Store",
+      "read_only": 1,
+      "in_list_view": 1,
+      "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "cashier_session",
+      "fieldtype": "Link",
+      "label": "Cashier Session",
+      "options": "Cashier Session",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "is_waste",
+      "fieldtype": "Check",
+      "label": "Is Waste",
+      "default": "0",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "action_reason",
+      "fieldtype": "Link",
+      "label": "Reason",
+      "options": "POS Action Reason",
+      "link_filters": "[[\"POS Action Reason\", \"enabled\", \"=\", 1], [\"POS Action Reason\", \"applies_to\", \"in\", [\"Return\", \"Both\"]]]",
+      "reqd": 0,
+      "read_only_depends_on": "eval:!doc.__islocal",
+      "mandatory_depends_on": "eval:doc.__islocal"
+    },
+    {
+      "fieldname": "reason",
+      "fieldtype": "Small Text",
+      "label": "Reason Snapshot",
+      "read_only": 1,
+      "description": "Recorded text snapshot retained for return history."
+    },
+    {
+      "fieldname": "comment",
+      "fieldtype": "Small Text",
+      "label": "Comment",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rms_items_section",
+      "fieldtype": "Section Break",
+      "label": "Returned items"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Returned Items",
+      "options": "POS Return Item",
+      "reqd": 1,
+      "description": "Add rows here. Open a row to see all its settings.",
+      "read_only_depends_on": "eval:!doc.__islocal"
+    },
+    {
+      "fieldname": "rms_refund_section",
+      "fieldtype": "Section Break",
+      "label": "Refund payments"
+    },
+    {
+      "fieldname": "payments",
+      "fieldtype": "Table",
+      "label": "Refund Payments",
+      "options": "POS Return Payment",
+      "reqd": 1,
+      "description": "Add rows here. Open a row to see all its settings.",
+      "read_only_depends_on": "eval:!doc.__islocal"
+    },
+    {
+      "fieldname": "refund_total",
+      "fieldtype": "Currency",
+      "label": "Refund Total",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "rms_audit_section",
+      "fieldtype": "Section Break",
+      "label": "Approval history",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
+    },
+    {
+      "fieldname": "approved_by",
+      "fieldtype": "Link",
+      "label": "Approved By",
+      "options": "User",
+      "read_only": 1
+    },
+    {
+      "fieldname": "approved_at",
+      "fieldtype": "Datetime",
+      "label": "Approved At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rms_column_rms_audit_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "rejected_by",
+      "fieldtype": "Link",
+      "label": "Rejected By",
+      "options": "User",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rejected_at",
+      "fieldtype": "Datetime",
+      "label": "Rejected At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rms_documents_section",
+      "fieldtype": "Section Break",
+      "label": "Linked system documents",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
+    },
+    {
+      "fieldname": "return_pos_invoice",
+      "fieldtype": "Link",
+      "label": "Return POS Invoice",
+      "options": "POS Invoice",
+      "read_only": 1
+    },
+    {
+      "fieldname": "stock_entry",
+      "fieldtype": "Link",
+      "label": "Returned Stock Entry",
+      "options": "Stock Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "waste_stock_entry",
+      "fieldtype": "Link",
+      "label": "Waste Stock Entry",
+      "options": "Stock Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "approval_challenge",
+      "fieldtype": "Link",
+      "label": "Manager Approval",
+      "read_only": 1,
+      "options": "Approval Challenge"
+    }
   ],
   "permissions": [
-    {"role":"System Manager","read":1,"write":1,"create":1,"submit":1,"cancel":1,"delete":1,"report":1},
-    {"role":"POS Manager","read":1,"write":1,"create":1,"submit":1,"report":1},
-    {"role":"POS Cashier","read":1,"create":1}
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1,
+      "delete": 1,
+      "report": 1
+    },
+    {
+      "role": "POS Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "report": 1
+    },
+    {
+      "role": "POS Cashier",
+      "read": 1,
+      "create": 1
+    }
   ]
 }

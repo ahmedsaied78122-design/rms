@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-15",
+  "site": "slave-rms1.arab-erp.com",
+  "source_repositories": {
+    "rms": "00JIMMY00/rms",
+    "arab_streaming": "00JIMMY00/arab_streaming"
+  },
+  "deployed_commits": {
+    "rms": "d6fac38",
+    "arab_streaming": "658b968",
+    "frappe": "b0b5b99",
+    "erpnext": "bfd8100"
+  },
+  "versions": {
+    "frappe": "15.122.0",
+    "erpnext": "15.122.0",
+    "arab_streaming": "0.2.6"
+  },
+  "checks": {
+    "focused_image_selection_tests": 13,
+    "onboarding_tests": 24,
+    "real_source_snapshot_artifacts_validated": 1249,
+    "initial_copy_roots": 859,
+    "protected_builtin_user_artifacts": 0,
+    "independent_ledger_artifacts": 0,
+    "public_browser_saved_master_and_store_displayed": true,
+    "public_browser_credentials_hidden": true,
+    "remote_service_active_before_connection_loss": true,
+    "last_observed_received_counts": {
+      "Company": 1,
+      "Account": 34,
+      "Cost Center": 2
+    },
+    "last_observed_uom_checkpoint": 49
+  },
+  "completion_verified": false,
+  "remaining": "Remote SSH and site became unreachable during import (Cloudflare 1033). Restore the device/tunnel connection, resume the saved copy if needed and verify full import plus completed setup.",
+  "follow_up_report": "slave-setup-2026-11-16.json"
+}

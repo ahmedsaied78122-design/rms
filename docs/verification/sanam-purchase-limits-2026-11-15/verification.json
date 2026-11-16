@@ -1,0 +1,326 @@
+{
+  "local": [
+    {
+      "case": "below minimum",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "minimum inclusive",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "within bounds",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "maximum inclusive",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "above maximum",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "both open",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "blank open",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "minimum only rejects",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "minimum only unbounded above",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "maximum only zero permitted",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "maximum only rejects",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "free rate blocked by minimum",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "rice 40kg exact min",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "rice 40kg below",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "rice 40kg above",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "fractional 340g within",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "fractional 340g above",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "foreign currency converted",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "invalid conversion rejected",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "no calculated base price rejected",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "nonpurchasable bounds ignored",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "small-price below",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "small-price equality",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "all-zero open rate",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "reversed bounds",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "negative minimum",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "negative maximum",
+      "result": "pass",
+      "expected_blocked": true
+    },
+    {
+      "case": "equal bounds",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "minimum only",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "maximum only",
+      "result": "pass",
+      "expected_blocked": false
+    },
+    {
+      "case": "blank",
+      "result": "pass",
+      "expected_blocked": false
+    }
+  ],
+  "remote": [
+    {
+      "case": "minimum allowed",
+      "status": "passed",
+      "http_status": 200,
+      "expected_blocked": false
+    },
+    {
+      "case": "maximum allowed",
+      "status": "passed",
+      "http_status": 200,
+      "expected_blocked": false
+    },
+    {
+      "case": "below minimum",
+      "status": "passed",
+      "http_status": 417,
+      "expected_blocked": true
+    },
+    {
+      "case": "above maximum",
+      "status": "passed",
+      "http_status": 417,
+      "expected_blocked": true
+    },
+    {
+      "case": "converted 1.8kg minimum",
+      "status": "passed",
+      "http_status": 200,
+      "expected_blocked": false
+    },
+    {
+      "case": "converted 1.8kg below",
+      "status": "passed",
+      "http_status": 417,
+      "expected_blocked": true
+    },
+    {
+      "case": "converted 1.8kg maximum",
+      "status": "passed",
+      "http_status": 200,
+      "expected_blocked": false
+    },
+    {
+      "case": "converted 1.8kg above",
+      "status": "passed",
+      "http_status": 417,
+      "expected_blocked": true
+    },
+    {
+      "case": "maximum only zero allowed",
+      "status": "passed",
+      "http_status": 200,
+      "expected_blocked": false
+    },
+    {
+      "case": "maximum only above rejected",
+      "status": "passed",
+      "http_status": 417,
+      "expected_blocked": true
+    },
+    {
+      "case": "open bounds large allowed",
+      "status": "passed",
+      "http_status": 200,
+      "expected_blocked": false
+    },
+    {
+      "case": "open bounds zero allowed",
+      "status": "passed",
+      "http_status": 200,
+      "expected_blocked": false
+    }
+  ],
+  "workflow": [
+    {
+      "doctype": "Purchase Invoice",
+      "case": "below",
+      "item_code": "10101",
+      "rate": 15.0,
+      "minimum": 30.0,
+      "maximum": 50.0,
+      "status": "rejected by installed server event",
+      "http_status": 417
+    },
+    {
+      "doctype": "Purchase Invoice",
+      "case": "above",
+      "item_code": "10101",
+      "rate": 60.0,
+      "minimum": 30.0,
+      "maximum": 50.0,
+      "status": "rejected by installed server event",
+      "http_status": 417
+    },
+    {
+      "doctype": "Purchase Receipt",
+      "case": "below",
+      "item_code": "10603",
+      "rate": 0.5,
+      "minimum": 1.0,
+      "maximum": 8.0,
+      "status": "rejected by installed server event",
+      "http_status": 417
+    },
+    {
+      "doctype": "Purchase Receipt",
+      "case": "above",
+      "item_code": "10603",
+      "rate": 18.0,
+      "minimum": 1.0,
+      "maximum": 8.0,
+      "status": "rejected by installed server event",
+      "http_status": 417
+    },
+    {
+      "doctype": "Item",
+      "case": "inverted bounds rejected; stored bounds unchanged",
+      "status": "passed"
+    }
+  ],
+  "browser": {
+    "item": "10101",
+    "purchase_enabled": {
+      "custom_minimum_purchase_rate": {
+        "label": "الحد الأدنى لسعر الشراء",
+        "value": 30,
+        "dependency_hidden": false,
+        "visible": true
+      },
+      "custom_maximum_purchase_rate": {
+        "label": "الحد الأقصى لسعر الشراء",
+        "value": 50,
+        "dependency_hidden": false,
+        "visible": true
+      }
+    },
+    "purchase_disabled": {
+      "custom_minimum_purchase_rate": {
+        "label": "الحد الأدنى لسعر الشراء",
+        "value": 30,
+        "dependency_hidden": true,
+        "visible": false
+      },
+      "custom_maximum_purchase_rate": {
+        "label": "الحد الأقصى لسعر الشراء",
+        "value": 50,
+        "dependency_hidden": true,
+        "visible": false
+      }
+    },
+    "restored": {
+      "custom_minimum_purchase_rate": {
+        "label": "الحد الأدنى لسعر الشراء",
+        "value": 30,
+        "dependency_hidden": false,
+        "visible": true
+      },
+      "custom_maximum_purchase_rate": {
+        "label": "الحد الأقصى لسعر الشراء",
+        "value": 50,
+        "dependency_hidden": false,
+        "visible": true
+      }
+    },
+    "saved": false
+  }
+}

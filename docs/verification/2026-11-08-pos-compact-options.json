@@ -1,0 +1,35 @@
+{
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "behavior": {
+    "options": "Compact side-by-side cards with all chosen levels on one screen",
+    "option_heading": "Selling Product.option_attribute linked to Item Attribute",
+    "choice_label": "Selling Product Option.attribute_value with legacy product-title fallback",
+    "choose_options_copy_removed": true,
+    "modifier_groups": "All groups initially closed; expand individually; optional modifiers may be skipped",
+    "quantity_and_notes_preserved": true
+  },
+  "configured_attributes": [
+    "نوع الباستا",
+    "الإضافة الرئيسية",
+    "نوع الصوص",
+    "الحجم",
+    "الوزن"
+  ],
+  "validation": {
+    "backend_tests_passed": 119,
+    "pos_frontend_suites_passed": 14,
+    "live_attribute_api_checked": true,
+    "native_chromium_previously_verified": [
+      "three option levels remain visible",
+      "attribute headings and short choice values",
+      "radio and checkbox selections",
+      "modifier groups initially closed",
+      "optional additions skipped",
+      "quantity and item comment reach cart",
+      "desktop without scrolling for sample pasta",
+      "mobile dialog fits"
+    ],
+    "test_orders_created": 0
+  }
+}

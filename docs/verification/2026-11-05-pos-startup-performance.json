@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-05",
+  "site": "rms.arab-erp.com",
+  "measurement": "Local Python API execution; excludes browser, network and Frappe Desk startup",
+  "catalog_before_mean_ms": 548.13,
+  "catalog_after_mean_ms": 135.35,
+  "catalog_reduction_percent": 75.3,
+  "catalog_parity_contexts": [
+    {
+      "store": "بيت الشرق - التجمع الخامس",
+      "order_type": "صالة",
+      "before_ms": 652.65,
+      "after_ms": 264.54,
+      "products": 41
+    },
+    {
+      "store": "بيت الشرق - التجمع الخامس",
+      "order_type": "تيك أواي",
+      "before_ms": 571.95,
+      "after_ms": 124.55,
+      "products": 41
+    },
+    {
+      "store": "بيت الشرق - التجمع الخامس",
+      "order_type": "توصيل",
+      "before_ms": 537.87,
+      "after_ms": 109.19,
+      "products": 41
+    },
+    {
+      "store": "بيت الشرق - مدينة نصر",
+      "order_type": "صالة",
+      "before_ms": 481.71,
+      "after_ms": 127.43,
+      "products": 41
+    },
+    {
+      "store": "بيت الشرق - مدينة نصر",
+      "order_type": "تيك أواي",
+      "before_ms": 528.14,
+      "after_ms": 131.06,
+      "products": 41
+    },
+    {
+      "store": "بيت الشرق - مدينة نصر",
+      "order_type": "توصيل",
+      "before_ms": 558.26,
+      "after_ms": 110.08,
+      "products": 41
+    },
+    {
+      "store": "بيت الشرق - المعادي",
+      "order_type": "صالة",
+      "before_ms": 549.23,
+      "after_ms": 110.81,
+      "products": 44
+    },
+    {
+      "store": "بيت الشرق - المعادي",
+      "order_type": "تيك أواي",
+      "before_ms": 477.19,
+      "after_ms": 121.4,
+      "products": 44
+    },
+    {
+      "store": "بيت الشرق - المعادي",
+      "order_type": "توصيل",
+      "before_ms": 576.18,
+      "after_ms": 119.12,
+      "products": 44
+    }
+  ],
+  "catalog_payloads_equal": true,
+  "restoration": {
+    "order_reads_before": 3,
+    "order_reads_after": 1,
+    "catalog_reads_before": 2,
+    "catalog_reads_after": 1,
+    "menu_blocks_payment": false
+  },
+  "chromium_payment_visible_while_catalog_pending": true,
+  "backend_operation_tests": 194,
+  "selling_product_tests": 10,
+  "frontend_suites": 12
+}

@@ -1,7 +1,7 @@
 import json
 import unittest
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import frappe
 
@@ -79,8 +79,8 @@ class TestPOSOrderOperations(unittest.TestCase):
 	def test_product_configuration_marks_an_unpriced_child_option_without_a_price(self):
 		child = frappe._dict(name="OPTION-1", title="Unpriced Tea - Small", enabled=1, has_options=0, uom="Nos",
 			option_products=[], modifier_groups=[], modifier_options=[], resolve_price=lambda *args, **kwargs: None)
-		parent = frappe._dict(name="PRODUCT-1", title="Unpriced Tea", enabled=1, has_options=1, uom="Nos",
-			option_products=[frappe._dict(option_product="OPTION-1", sequence_id=1)],
+		parent = frappe._dict(name="PRODUCT-1", title="Unpriced Tea", enabled=1, has_options=1, uom="Nos", option_attribute="Size",
+			option_products=[frappe._dict(option_product="OPTION-1", attribute_value="Small", sequence_id=1)],
 			modifier_groups=[], modifier_options=[])
 		with patch("rms.api.pos.require_pos_role"), patch("rms.api.pos.assert_store_access"), \
 				patch("rms.api.pos.get_brands", return_value=[{"name": "BRAND-1"}]), \
@@ -90,6 +90,8 @@ class TestPOSOrderOperations(unittest.TestCase):
 				patch("rms.api.pos.frappe.get_cached_value", return_value=1):
 			configuration = get_product_configuration("PRODUCT-1", "STORE-1", "BRAND-1", "Dine In")
 		self.assertTrue(configuration["has_options"])
+		self.assertEqual(configuration["option_attribute"], "Size")
+		self.assertEqual(configuration["options"][0]["attribute_value"], "Small")
 		self.assertIsNone(configuration["options"][0]["price"])
 		self.assertIsNone(configuration["options"][0]["price_list"])
 
@@ -614,7 +616,10 @@ class TestPOSOrderOperations(unittest.TestCase):
 		order.append = lambda fieldname, row: getattr(order, fieldname).append(frappe._dict(row))
 		session = frappe._dict(name="SESSION-1", user="cashier@example.com", status="Open",
 			pos_profile="PROFILE-1", pos_opening_entry="OPENING-1")
-		profile = frappe._dict(name="PROFILE-1", customer="CUSTOMER-1", company="COMPANY-1", selling_price_list="PRICE-LIST-1", update_stock=0)
+		# A real Document raises AttributeError for fields absent from its schema;
+		# frappe._dict would silently hide the v15 missing update_stock regression.
+		profile = frappe.get_doc({"doctype": "POS Profile", "name": "PROFILE-1", "customer": "CUSTOMER-1",
+			"company": "COMPANY-1", "selling_price_list": "PRICE-LIST-1"})
 		invoice = SimpleNamespace(name="POSINV-1", items=[], payments=[], taxes=[], grand_total=80.49, rounded_total=81,
 			change_amount=0, flags=frappe._dict(),
 			set_missing_values=unittest.mock.Mock(), set_missing_item_details=unittest.mock.Mock(),
@@ -667,6 +672,7 @@ class TestPOSOrderOperations(unittest.TestCase):
 				patch("rms.api.pos.frappe.db.set_value"), \
 				patch("rms.api.pos.frappe.new_doc", return_value=invoice), \
 			patch("rms.api.pos.get_pos_discount_approval", side_effect=["manager@example.com", "manager@example.com"]) as verify_discount_approval, \
+				patch("rms.api.pos.frappe.get_roles", return_value=["POS Cashier"]), \
 				patch("rms.api.pos.create_recipe_stock_entry", return_value=None), \
 				patch("rms.api.pos.nowdate", return_value="2026-10-20"), \
 				patch("rms.taxes.nowdate", return_value="2026-10-20"), \
@@ -677,8 +683,11 @@ class TestPOSOrderOperations(unittest.TestCase):
 				discount_approval_approver="manager@example.com")
 
 		self.assertEqual(result["status"], "Paid")
+		self.assertFalse(hasattr(invoice, "update_stock"), "ERPNext 15 posts POS stock during consolidation")
 		self.assertEqual(invoice.items[0].item_name, "Coffee")
 		self.assertEqual(invoice.items[1].item_name, "Mocha")
+		self.assertEqual(invoice.items[0].description, "Coffee")
+		self.assertEqual(invoice.items[1].description, "Mocha")
 		self.assertEqual(invoice.items[0].conversion_factor, 1)
 		self.assertEqual(invoice.items[1].conversion_factor, 1)
 		self.assertEqual(invoice.flags.rms_pos_rounding_method, "Round Up")
@@ -791,9 +800,11 @@ class TestPOSOrderOperations(unittest.TestCase):
 		get_print.assert_not_called()
 
 	def test_pos_user_capability_defaults_keep_legacy_pos_roles_working(self):
-		with patch("rms.api.pos.get_active_pos_user", return_value=None):
+		with patch("rms.api.pos.get_active_pos_user", return_value=None), patch("rms.api.pos.frappe.get_roles", return_value=["POS Cashier"]):
 			capabilities = get_pos_capabilities("cashier@example.com")
-		self.assertTrue(all(value for name, value in capabilities.items() if name != "can_approve_discount"))
+		privileged = {"can_approve_discount", "can_void_items", "can_void_waste", "can_request_returns", "can_return_waste"}
+		self.assertTrue(all(value for name, value in capabilities.items() if name not in privileged))
+		self.assertTrue(all(not capabilities[name] for name in privileged))
 		self.assertFalse(capabilities["can_approve_discount"])
 
 	def test_disabled_pos_user_capability_blocks_api_action(self):
@@ -976,6 +987,7 @@ class TestPOSOrderOperations(unittest.TestCase):
 				patch("frappe.get_doc", return_value=ticket), patch("frappe.get_roles", return_value=["Kitchen Operator"]), \
 				patch("frappe.session", frappe._dict(user="omar@example.com")), \
 				patch("rms.api.pos.now_datetime", return_value="2026-10-20 12:00:00"), \
+				patch("arab_streaming.streaming.outbox.notify_persisted_change") as notify, \
 				patch("frappe.db.set_value") as set_value:
 			try:
 				result = set_kitchen_ticket_status("TICKET-1", "Acknowledge Cancellation")
@@ -989,6 +1001,7 @@ class TestPOSOrderOperations(unittest.TestCase):
 			"cancellation_acknowledged_by": "omar@example.com",
 		})
 		ticket.save.assert_not_called()
+		self.assertIsNone(notify.call_args.args[0].cancellation_acknowledged_at)
 
 	def test_active_kitchen_ticket_cannot_acknowledge_a_cancellation(self):
 		ticket = frappe.new_doc("Kitchen Ticket")
@@ -1105,13 +1118,14 @@ class TestPOSOrderOperations(unittest.TestCase):
 				result = None
 		self.assertEqual(result, {"name": "ORDER-1", "status": "Cancelled"})
 
-	def test_confirmed_item_cancellation_is_manager_only(self):
-		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.frappe.get_roles", return_value=["POS Cashier"]):
-			with self.assertRaisesRegex(frappe.PermissionError, "POS Manager"):
-				cancel_confirmed_order_item("ORDER-1", "ROW-1", 1, "Customer changed mind")
+	def test_single_item_cancellation_uses_the_same_authorization_as_bulk(self):
+		with patch("rms.api.pos.cancel_confirmed_order_items", return_value={"requires_manager_authorization": True}) as bulk:
+			result = cancel_confirmed_order_item("ORDER-1", "ROW-1", 1, "REASON")
+		self.assertTrue(result["requires_manager_authorization"])
+		bulk.assert_called_once()
 
 	def test_confirmed_guest_split_locks_order_item_cancellation(self):
-		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="SESSION-1", items=[],
+		order = frappe._dict(name="ORDER-1", status="Confirmed", store="STORE-1", cashier_session="SESSION-1", items=[],
 			guest_checks=[frappe._dict(status="Open")])
 		with patch("rms.api.pos.require_pos_action"), patch("rms.api.pos.frappe.get_doc", return_value=order), \
 				patch("rms.api.pos.assert_store_access"), patch("rms.api.pos.require_order_scope"), \
@@ -1122,21 +1136,23 @@ class TestPOSOrderOperations(unittest.TestCase):
 	def test_unsent_order_item_comment_is_saved_for_same_cashier(self):
 		row = frappe._dict(name="ROW-1", sent_to_kitchen=0)
 		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="SESSION-1", status="Confirmed",
-			restaurant_brand="BRAND-1", order_type="Dine In", items=[row])
+			restaurant_brand="BRAND-1", order_type="Dine In", items=[row], notify_update=MagicMock())
 		with patch("rms.api.pos.require_pos_action") as require_action, \
 				patch("rms.api.pos.frappe.get_doc", return_value=order), \
 				patch("rms.api.pos.assert_store_access"), patch("rms.api.pos.require_order_scope"), \
 				patch("rms.api.pos.get_user_session", return_value=frappe._dict(name="SESSION-1", status="Open")), \
 				patch("rms.api.pos.frappe.db.set_value") as set_value:
 			result = update_order_item_notes("ORDER-1", "ROW-1", "بدون ثلج")
-		self.assertEqual(result, {"name": "ROW-1", "notes": "بدون ثلج"})
+		self.assertEqual(result["notes"], "بدون ثلج")
+		self.assertTrue(result["modified"])
+		order.notify_update.assert_called_once()
 		require_action.assert_called_once_with("can_checkout")
-		set_value.assert_called_once_with("POS Order Item", "ROW-1", "notes", "بدون ثلج", update_modified=True)
+		set_value.assert_any_call("POS Order Item", "ROW-1", "notes", "بدون ثلج", update_modified=True)
 
 	def test_unsent_order_item_comment_requires_open_order_edit_capability_cross_session(self):
 		row = frappe._dict(name="ROW-1", sent_to_kitchen=0)
 		order = frappe._dict(name="ORDER-1", store="STORE-1", cashier_session="OTHER-SESSION", status="Confirmed",
-			restaurant_brand="BRAND-1", order_type="Dine In", items=[row])
+			restaurant_brand="BRAND-1", order_type="Dine In", items=[row], notify_update=MagicMock())
 		with patch("rms.api.pos.require_pos_action") as require_action, \
 				patch("rms.api.pos.frappe.get_doc", return_value=order), \
 				patch("rms.api.pos.assert_store_access"), patch("rms.api.pos.require_order_scope"), \

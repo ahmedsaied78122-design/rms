@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-15",
+  "site": "rms.arab-erp.com",
+  "mode": "read-only database with mocked peer policy; no real peer or network failure was created",
+  "customer_current_settings": {
+    "direction": "Both",
+    "allow_creation": 1,
+    "lock_documents": 0,
+    "allow_rename": 0,
+    "allow_local_rename": 0,
+    "prevent_delete": 1,
+    "prevent_local_delete": 1
+  },
+  "simulated_cases": [
+    {
+      "role": "Master",
+      "status": "Connected",
+      "rename_blocked": true,
+      "create_allowed": true,
+      "ordinary_edit_allowed": true
+    },
+    {
+      "role": "Master",
+      "status": "Disconnected",
+      "rename_blocked": true,
+      "create_allowed": true,
+      "ordinary_edit_allowed": true
+    },
+    {
+      "role": "Slave",
+      "status": "Connected",
+      "rename_blocked": true,
+      "create_allowed": true,
+      "ordinary_edit_allowed": true
+    },
+    {
+      "role": "Slave",
+      "status": "Disconnected",
+      "rename_blocked": true,
+      "create_allowed": true,
+      "ordinary_edit_allowed": true
+    }
+  ],
+  "creation_disabled_checked_on_both_roles": true,
+  "automatic_replay_capture_suppressed": true,
+  "readiness_gaps": [
+    "Both currently reuses one set of action flags for both receiving roles; independent per-direction action flags are not implemented.",
+    "No explicit master-to-other-slaves relay was found in the receive path. Suppressed replay capture alone does not distribute a customer originating at one slave to the other slaves.",
+    "No actual RMS pairing, concurrent customer creation, distributed conflict resolution or multi-site lifecycle acceptance has been performed."
+  ],
+  "distinction": "Customer.name is the immutable record ID under these rules; customer_name is an editable display-name field, not a Rename operation.",
+  "role_configured": null,
+  "transport_enabled": false,
+  "persisted_peers": 0,
+  "configuration_changed": false
+}

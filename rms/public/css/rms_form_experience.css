@@ -1,0 +1,352 @@
+/* Custom RMS records use native controls inside a compact, guided layout. */
+body.rms-management .rms-custom-form .rms-form-guide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px 24px;
+  margin: 0 0 20px;
+  padding: 22px 24px;
+  border: 1px solid var(--rms-border);
+  border-radius: 18px;
+  background: var(--rms-surface);
+  color: var(--rms-text);
+}
+.rms-form-eyebrow {
+  color: var(--rms-muted);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+}
+.rms-form-guide h2 {
+  margin: 8px 0 7px;
+  font-size: 23px;
+  font-weight: 650;
+  color: var(--rms-text);
+  line-height: 1.4;
+}
+.rms-form-guide p {
+  margin: 0;
+  max-width: 780px;
+  color: var(--rms-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.rms-form-completion {
+  border: 1px solid var(--rms-border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  background: var(--rms-hover);
+  color: var(--rms-text);
+  font-size: 11px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.rms-form-completion.is-complete {
+  background: #eaf2d6;
+  color: #264431;
+}
+.rms-form-sections {
+  grid-column: 1/-1;
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 5px 0 2px;
+  scrollbar-width: thin;
+}
+.rms-form-section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--rms-border);
+  border-radius: 9px;
+  color: var(--rms-text);
+  background: var(--rms-hover);
+  font-size: 11px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.rms-form-section-link > span:first-child {
+  color: var(--rms-muted);
+  font-size: 10px;
+}
+.rms-form-section-link[aria-current],
+.rms-form-section-link:hover {
+  background: var(--rms-citrus);
+  color: #19362a;
+  border-color: transparent;
+}
+.rms-form-section-link[aria-current] > span:first-child,
+.rms-form-section-link:hover > span:first-child {
+  color: #3c5234;
+}
+.rms-custom-form .form-section {
+  margin-block: 0 16px !important;
+  padding: 20px 22px !important;
+  border: 1px solid var(--rms-border) !important;
+  border-radius: 15px;
+  background: var(--rms-surface);
+  scroll-margin-block-start: 100px;
+}
+.rms-custom-form .form-section .section-head {
+  margin-bottom: 16px;
+  padding: 0;
+  color: var(--rms-text);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.6;
+}
+.rms-custom-form .form-section .section-body {
+  gap: 12px 0;
+}
+.rms-custom-form .form-section .form-column {
+  min-width: 0;
+}
+.rms-custom-form .form-section .frappe-control {
+  margin-bottom: 16px;
+}
+.rms-custom-form .control-label {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--rms-text);
+}
+.rms-custom-form .frappe-control .help-box {
+  color: var(--rms-muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 6px;
+}
+.rms-custom-form .form-control,
+.rms-custom-form .like-disabled-input {
+  min-height: 38px;
+  border: 1px solid var(--rms-border);
+  border-radius: 9px;
+}
+.rms-custom-form .form-control:focus {
+  border-color: #7ca56b;
+  box-shadow: 0 0 0 3px #a3c66b22;
+}
+.rms-custom-form .like-disabled-input {
+  background: var(--rms-hover);
+}
+.rms-custom-form .input-area .checkbox {
+  padding: 8px 0;
+  margin: 0;
+}
+.rms-custom-form .input-area .checkbox label {
+  display: flex;
+  align-items: start;
+  gap: 9px;
+  line-height: 1.7;
+}
+.rms-custom-form .input-area .checkbox input {
+  margin-inline: 0;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+.rms-custom-form .form-grid {
+  border: 1px solid var(--rms-border);
+  border-radius: 11px;
+}
+.rms-custom-form .grid-heading-row {
+  background: var(--rms-hover);
+  font-size: 11px;
+  color: var(--rms-text);
+}
+.rms-custom-form .grid-row .static-area {
+  line-height: 1.7;
+  padding-block: 7px;
+}
+.rms-custom-form .rms-form-guide button:focus-visible {
+  outline: 3px solid #a5c467;
+  outline-offset: 2px;
+}
+@media (max-width: 767px) {
+  body.rms-management .rms-custom-form .rms-form-guide {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 17px;
+    gap: 12px;
+    border-radius: 14px;
+  }
+  .rms-form-guide h2 {
+    font-size: 21px;
+  }
+  .rms-form-completion {
+    justify-self: start;
+  }
+  .rms-custom-form .form-section {
+    padding: 17px 14px !important;
+    border-radius: 13px;
+    scroll-margin-block-start: 82px;
+  }
+  .rms-custom-form .form-section .section-body {
+    flex-direction: column;
+  }
+  .rms-custom-form .form-section .form-column {
+    flex: 1 1 auto;
+    width: 100%;
+    padding: 0;
+  }
+  .rms-custom-form .form-control {
+    font-size: 16px;
+  }
+  .rms-custom-form .form-grid {
+    overflow-x: auto;
+  }
+  .rms-custom-form .grid-heading-row,
+  .rms-custom-form .grid-body {
+    min-width: 540px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rms-custom-form .form-section {
+    scroll-behavior: auto;
+  }
+}
+.rms-custom-form .form-section .section-head.collapsed {
+  margin-bottom: 0;
+}
+body.rms-management .rms-custom-form .rms-form-guide {
+  background: linear-gradient(120deg, var(--rms-surface), var(--rms-hover));
+}
+
+/* One visible parent section, with native controls and validation inside it. */
+.rms-custom-form .rms-form-pane-hidden {
+  display: none !important;
+}
+.rms-custom-form .rms-form-pane > .section-head {
+  display: none;
+}
+.rms-custom-form .rms-form-guide > div {
+  min-width: 0;
+}
+.rms-custom-form .rms-form-guide p {
+  overflow-wrap: anywhere;
+}
+.rms-custom-form .rms-form-section-link[aria-selected="true"] {
+  background: var(--rms-citrus);
+  color: #19362a;
+}
+/* Parent field spacing must not change editable grid cell geometry. */
+.rms-custom-form .grid-row .frappe-control {
+  margin-bottom: 0 !important;
+}
+.rms-custom-form .grid-heading-row .static-area,
+.rms-custom-form .grid-body .data-row .static-area {
+  padding-block: 0;
+  line-height: 22px;
+}
+.rms-custom-form .grid-body .editable-row .form-control,
+.rms-custom-form .grid-body .editable-row .like-disabled-input {
+  min-height: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 8px;
+  font-size: 12px;
+  line-height: 22px;
+}
+.rms-custom-form .grid-body .editable-row .checkbox {
+  margin: 0;
+  padding: 0;
+}
+.rms-custom-form .grid-body .editable-row .checkbox label {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rms-custom-form .grid-body .editable-row .checkbox input {
+  margin: 0;
+}
+.rms-custom-form .grid-heading-row .grid-static-col {
+  white-space: nowrap;
+}
+.rms-custom-form .form-grid-container {
+  min-width: 0;
+  max-width: 100%;
+}
+.rms-custom-form .form-in-grid .form-section {
+  margin: 0 !important;
+  border: 0 !important;
+  box-shadow: none;
+  padding: 12px 4px !important;
+}
+.rms-custom-form .form-in-grid .section-body {
+  gap: 12px 0;
+}
+@media (max-width: 767px) {
+  .rms-custom-form .form-grid-container {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+  .rms-custom-form .form-grid {
+    overflow: visible;
+    min-width: 600px;
+  }
+  .rms-custom-form .form-grid:has(.grid-row-open) {
+    min-width: 0 !important;
+  }
+  .rms-custom-form .form-grid:has(.grid-row-open) > .grid-heading-row {
+    display: none;
+  }
+  .rms-custom-form .form-grid:has(.grid-row-open) > .grid-body {
+    min-width: 0;
+  }
+  .rms-custom-form .grid-body .editable-row .form-control {
+    font-size: 16px;
+  }
+}
+.rms-custom-form .grid-heading-row .static-area {
+  line-height: 20px;
+}
+.rms-custom-form .grid-row .form-in-grid .frappe-control {
+  margin-bottom: 14px !important;
+}
+/* Hover remains distinct from the selected section. */
+.rms-form-section-link:hover:not([aria-selected="true"]) {
+  background: var(--rms-hover);
+  color: var(--rms-text);
+  border-color: #9bb77d;
+}
+.rms-form-section-link:hover:not([aria-selected="true"]) > span:first-child {
+  color: var(--rms-muted);
+}
+.rms-custom-form .grid-heading-row {
+  height: auto;
+  min-height: 34px;
+}
+.rms-custom-form .grid-heading-row .data-row {
+  align-items: stretch;
+}
+.rms-custom-form .grid-heading-row .grid-static-col,
+.rms-custom-form .grid-heading-row .row-index,
+.rms-custom-form .grid-heading-row .row-check {
+  height: auto;
+  min-height: 34px;
+  white-space: normal;
+}
+.rms-custom-form .grid-heading-row .static-area {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  line-height: 17px;
+}
+@media (min-width: 768px) {
+  .rms-form-sections {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+}
+@media (max-width: 767px) {
+  .rms-custom-form
+    .form-grid:has(.grid-row-open)
+    .grid-body
+    > .rows
+    > .grid-row:not(.grid-row-open) {
+    display: none;
+  }
+}

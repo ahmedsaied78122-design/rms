@@ -16,6 +16,8 @@ class TestPOSProfileAssignment(unittest.TestCase):
 		]
 		with patch("rms.api.pos.require_pos_role"), \
 				patch("rms.api.pos.get_pos_capabilities", return_value={}), \
+				patch("rms.api.pos.get_brands", return_value=[]), \
+				patch("rms.api.pos.get_order_types", return_value=[]), \
 				patch("rms.api.pos.frappe.get_all", return_value=stores), \
 				patch("rms.api.pos.assert_store_access"), \
 				patch("rms.api.pos.get_active_pos_user", return_value="POS-USER-1"), \

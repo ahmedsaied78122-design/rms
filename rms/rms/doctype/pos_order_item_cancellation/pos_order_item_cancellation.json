@@ -4,14 +4,112 @@
   "module": "RMS",
   "istable": 1,
   "engine": "InnoDB",
-  "field_order": ["pos_order_item", "qty", "action_reason", "reason", "cancelled_by", "cancelled_at"],
-  "fields": [
-    {"fieldname": "pos_order_item", "fieldtype": "Link", "label": "Order Item", "options": "POS Order Item", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 3},
-    {"fieldname": "qty", "fieldtype": "Float", "label": "Cancelled Quantity", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 1},
-    {"fieldname": "action_reason", "fieldtype": "Link", "label": "Reason", "options": "POS Action Reason", "read_only": 1, "in_list_view": 1, "columns": 3, "link_filters": "[[\"POS Action Reason\",\"enabled\",\"=\",\"1\"]]"},
-    {"fieldname": "reason", "fieldtype": "Small Text", "label": "Reason Snapshot", "reqd": 1, "read_only": 1},
-    {"fieldname": "cancelled_by", "fieldtype": "Link", "label": "Approved By", "options": "User", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 2},
-    {"fieldname": "cancelled_at", "fieldtype": "Datetime", "label": "Cancelled At", "reqd": 1, "read_only": 1, "in_list_view": 1, "columns": 2}
+  "field_order": [
+    "pos_order_item",
+    "qty",
+    "action_reason",
+    "is_waste",
+    "waste_stock_entry",
+    "reason",
+    "cancelled_by",
+    "cancelled_at",
+    "comment",
+    "approved_by",
+    "approval_challenge"
   ],
-  "permissions": []
+  "fields": [
+    {
+      "fieldname": "pos_order_item",
+      "fieldtype": "Link",
+      "label": "Order Item",
+      "options": "POS Order Item",
+      "reqd": 1,
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "Cancelled Quantity",
+      "reqd": 1,
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "action_reason",
+      "fieldtype": "Link",
+      "label": "Reason",
+      "options": "POS Action Reason",
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"POS Action Reason\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "reason",
+      "fieldtype": "Small Text",
+      "label": "Reason Snapshot",
+      "reqd": 1,
+      "read_only": 1
+    },
+    {
+      "fieldname": "cancelled_by",
+      "fieldtype": "Link",
+      "label": "Approved By",
+      "options": "User",
+      "reqd": 1,
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "cancelled_at",
+      "fieldtype": "Datetime",
+      "label": "Cancelled At",
+      "reqd": 1,
+      "read_only": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "is_waste",
+      "fieldtype": "Check",
+      "label": "Waste",
+      "default": "0",
+      "read_only": 1,
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "waste_stock_entry",
+      "fieldtype": "Link",
+      "label": "Waste Stock Entry",
+      "options": "Stock Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "comment",
+      "fieldtype": "Small Text",
+      "label": "Comment",
+      "read_only": 1
+    },
+    {
+      "fieldname": "approved_by",
+      "fieldtype": "Link",
+      "label": "Authorized By",
+      "read_only": 1,
+      "options": "User"
+    },
+    {
+      "fieldname": "approval_challenge",
+      "fieldtype": "Link",
+      "label": "Manager Approval",
+      "read_only": 1,
+      "options": "Approval Challenge"
+    }
+  ],
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

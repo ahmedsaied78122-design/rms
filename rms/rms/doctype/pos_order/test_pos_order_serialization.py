@@ -9,6 +9,7 @@ from rms.rms.doctype.pos_order.pos_order import (
 	calculate_discount_amount,
 	calculate_order_item_amount,
 	validate_modifier_group_selection,
+	modifier_choices_unchanged,
 	normalize_dining_context,
 	ensure_order_items_append_only,
 )
@@ -21,6 +22,40 @@ except ImportError:
 
 
 class TestPOSOrderEmbeddedDataSchema(unittest.TestCase):
+	def test_new_minimum_does_not_invalidate_an_unchanged_saved_choice(self):
+		previous = frappe._dict(selling_product="Pasta", modifiers="[]")
+		row = frappe._dict(selling_product="Pasta")
+		self.assertTrue(modifier_choices_unchanged(previous, row, []))
+		self.assertFalse(modifier_choices_unchanged(None, row, []))
+		self.assertFalse(modifier_choices_unchanged(previous, frappe._dict(selling_product="Pizza"), []))
+
+	def test_removing_a_saved_required_choice_must_revalidate_the_minimum(self):
+		previous = frappe._dict(selling_product="Pasta", modifiers='[{"modifier_group":"Spice","modifier_product":"Mild","item":"CHILI"}]')
+		row = frappe._dict(selling_product="Pasta")
+		self.assertFalse(modifier_choices_unchanged(previous, row, []))
+		self.assertTrue(modifier_choices_unchanged(previous, row, [frappe._dict(modifier_group="Spice", modifier_product="Mild")]))
+
+	def test_required_modifier_rejects_missing_choice(self):
+		for modifiers in ([], [{"modifier_group": "Cheese", "modifier_product": "Cheddar"}]):
+			with self.assertRaisesRegex(frappe.ValidationError, "Choose at least 1.*Spice"):
+				validate_modifier_group_selection(modifiers, {"Spice"}, {"Spice": 1})
+
+	def test_required_modifier_accepts_explicit_no_chili_choice(self):
+		validate_modifier_group_selection([
+			{"modifier_group": "Spice", "modifier_product": "No Chili"},
+		], {"Spice"}, {"Spice": 1, "Cheese": 0})
+
+	def test_minimum_counts_distinct_choices_instead_of_quantity(self):
+		with self.assertRaises(frappe.ValidationError):
+			validate_modifier_group_selection([
+				{"modifier_group": "Cheese", "modifier_product": "Cheddar", "qty": 3},
+				{"modifier_group": "Cheese", "modifier_product": "Cheddar"},
+			], set(), {"Cheese": 2})
+		validate_modifier_group_selection([
+			{"modifier_group": "Cheese", "modifier_product": "Cheddar"},
+			{"modifier_group": "Cheese", "modifier_product": "Mozzarella"},
+		], set(), {"Cheese": 2})
+
 	def test_single_choice_modifier_group_rejects_two_selected_options(self):
 		with self.assertRaises(frappe.ValidationError):
 			validate_modifier_group_selection([
@@ -129,20 +164,23 @@ class TestPOSOrderEmbeddedDataSchema(unittest.TestCase):
 		save.assert_called_once_with(ignore_permissions=True)
 
 	def test_paid_order_rejects_payment_total_that_does_not_match_invoice_total(self):
-		order = SimpleNamespace(status="Paid", grand_total=100,
+		order = SimpleNamespace(status="Paid", grand_total=100, guest_checks=[], pos_invoice=None, restaurant_brand="BRAND-1",
 			payments=[frappe._dict(amount=60), frappe._dict(amount=30)])
-		with self.assertRaisesRegex(frappe.ValidationError, "Payment amounts must equal the order Grand Total"):
+		with patch("rms.rms.doctype.pos_order.pos_order.frappe.db.get_value", return_value="Nearest"), \
+				self.assertRaisesRegex(frappe.ValidationError, "Payment amounts must equal the payable total"):
 			POSOrder.validate_payment_state(order)
 
 	def test_paid_order_accepts_exact_total_across_multiple_payment_methods(self):
-		order = SimpleNamespace(status="Paid", grand_total=100,
+		order = SimpleNamespace(status="Paid", grand_total=100, guest_checks=[], pos_invoice=None, restaurant_brand="BRAND-1",
 			payments=[frappe._dict(mode_of_payment="Cash", amount=40), frappe._dict(mode_of_payment="Credit Card", amount=60)])
-		POSOrder.validate_payment_state(order)
+		with patch("rms.rms.doctype.pos_order.pos_order.frappe.db.get_value", return_value="Nearest"):
+			POSOrder.validate_payment_state(order)
 
 	def test_fully_discounted_paid_order_accepts_zero_tender_payment_row(self):
-		order = SimpleNamespace(status="Paid", grand_total=0,
+		order = SimpleNamespace(status="Paid", grand_total=0, guest_checks=[], pos_invoice=None, restaurant_brand="BRAND-1",
 			payments=[frappe._dict(mode_of_payment="Cash", amount=0)])
-		POSOrder.validate_payment_state(order)
+		with patch("rms.rms.doctype.pos_order.pos_order.frappe.db.get_value", return_value="Nearest"):
+			POSOrder.validate_payment_state(order)
 
 	def test_unpaid_order_does_not_require_payment_rows(self):
 		order = SimpleNamespace(status="Confirmed", grand_total=100, payments=[])
@@ -268,3 +306,17 @@ class TestPOSOrderEmbeddedDataSchema(unittest.TestCase):
 			[item.source_selling_product for item in parse_json_rows(row.recipe_snapshot)],
 			["BASE-PRODUCT", "MODIFIER-PRODUCT"],
 		)
+
+class TestModifierMaximum(unittest.TestCase):
+	def choices(self, count):
+		return [{"modifier_group":"Sauces","modifier_product":str(i)} for i in range(count)]
+
+	def test_exact_limit_is_valid(self):
+		validate_modifier_group_selection(self.choices(2), set(), {"Sauces":1}, {"Sauces":2})
+
+	def test_api_cannot_bypass_maximum(self):
+		with self.assertRaisesRegex(frappe.ValidationError,"Choose at most 2"):
+			validate_modifier_group_selection(self.choices(3),set(),{}, {"Sauces":2})
+
+	def test_zero_maximum_means_unlimited(self):
+		validate_modifier_group_selection(self.choices(10),set(),{}, {"Sauces":0})

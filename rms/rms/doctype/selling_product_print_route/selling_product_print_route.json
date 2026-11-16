@@ -27,8 +27,11 @@
       "reqd": 1,
       "in_list_view": 1,
       "columns": 5,
-      "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:doc.store\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]"
+      "link_filters": "[[\"Preparation Area\", \"enabled\", \"=\", 1], [\"Preparation Area\", \"store\", \"=\", \"eval:doc.store\"]]",
+      "read_only_depends_on": "eval:!doc.store"
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

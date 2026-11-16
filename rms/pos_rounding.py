@@ -5,6 +5,23 @@ POS_ROUNDING_METHODS = ("Round Up", "Nearest", "Round Down", "No Rounding")
 DEFAULT_POS_ROUNDING_METHOD = "Nearest"
 
 
+def preserve_consolidated_pos_no_rounding(doc, method=None):
+	"""The POS merge resets this flag to the profile; retain exact POS payables."""
+	if not doc.is_consolidated:
+		return
+	sources = {row.pos_invoice for row in doc.items if row.pos_invoice}
+	if not sources:
+		return
+	import frappe
+	rows = frappe.get_all("POS Invoice", filters={"name": ["in", list(sources)]},
+		fields=["name", "rounded_total", "grand_total", "rounding_adjustment"])
+	# POS Invoice v15 has no stored disable_rounded_total flag. Its submitted
+	# payable fields are authoritative, including exact fractional payables.
+	fractional_payable = any(Decimal(str(row.rounded_total or row.grand_total or 0)) % 1 for row in rows)
+	if len(rows) == len(sources) and fractional_payable and abs(sum(float(row.rounding_adjustment or 0) for row in rows)) < .00001:
+		doc.disable_rounded_total = 1
+
+
 def normalize_pos_rounding_method(method):
 	return method if method in POS_ROUNDING_METHODS else DEFAULT_POS_ROUNDING_METHOD
 

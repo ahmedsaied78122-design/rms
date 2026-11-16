@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -15,34 +15,38 @@
     "identity_section",
     "title",
     "store_code",
-    "enabled",
     "company",
-    "defaults_section",
-    "default_warehouse",
-    "default_preparation_area",
-    "pos_profile",
+    "streaming_branch",
+    "rms_column_identity_section_1",
+    "enabled",
     "operating_day_end",
     "brands_section",
     "brands",
+    "defaults_section",
+    "default_warehouse",
+    "default_preparation_area",
+    "rms_column_defaults_section_1",
+    "pos_profile",
+    "accounting_section",
+    "manual_discount_scope",
+    "order_type_taxes",
     "hours_section",
     "working_hours",
     "users_section",
     "allowed_users",
-    "accounting_section",
-    "manual_discount_scope",
-    "order_type_taxes",
     "location_section",
-    "latitude",
-    "longitude",
     "state",
     "city",
+    "rms_column_location_section_1",
+    "latitude",
+    "longitude",
     "description"
   ],
   "fields": [
     {
       "fieldname": "identity_section",
       "fieldtype": "Section Break",
-      "label": "Store"
+      "label": "Store essentials"
     },
     {
       "fieldname": "title",
@@ -56,18 +60,10 @@
     {
       "fieldname": "store_code",
       "fieldtype": "Data",
+      "unique": 1,
       "label": "Store Code",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 2
-    },
-    {
-      "fieldname": "enabled",
-      "fieldtype": "Check",
-      "label": "Enabled",
-      "default": "1",
-      "in_list_view": 1,
-      "in_standard_filter": 1,
       "columns": 2
     },
     {
@@ -81,9 +77,51 @@
       "columns": 3
     },
     {
+      "fieldname": "streaming_branch",
+      "fieldtype": "Link",
+      "label": "Streaming Branch",
+      "options": "Branch",
+      "no_copy": 1,
+      "description": "The branch identity used to route this Store and its POS documents during streaming.",
+      "unique": 1
+    },
+    {
+      "fieldname": "rms_column_identity_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "operating_day_end",
+      "fieldtype": "Time",
+      "label": "Operating Day End",
+      "default": "04:00:00",
+      "reqd": 1
+    },
+    {
+      "fieldname": "brands_section",
+      "fieldtype": "Section Break",
+      "label": "Brands available here"
+    },
+    {
+      "fieldname": "brands",
+      "fieldtype": "Table",
+      "label": "Brands",
+      "options": "Store Brand Assignment",
+      "reqd": 1,
+      "description": "Add each brand once and select exactly one default brand."
+    },
+    {
       "fieldname": "defaults_section",
       "fieldtype": "Section Break",
-      "label": "Operational Defaults"
+      "label": "Warehouse and POS defaults"
     },
     {
       "fieldname": "default_warehouse",
@@ -97,7 +135,13 @@
       "fieldtype": "Link",
       "label": "Default Preparation Area",
       "options": "Preparation Area",
-      "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:doc.name\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]"
+      "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:doc.name\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]",
+      "read_only_depends_on": "eval:doc.__islocal",
+      "description": "Save the store first, then select one of its preparation areas."
+    },
+    {
+      "fieldname": "rms_column_defaults_section_1",
+      "fieldtype": "Column Break"
     },
     {
       "fieldname": "pos_profile",
@@ -107,52 +151,9 @@
       "link_filters": "[[\"POS Profile\",\"company\",\"=\",\"eval:doc.company\"],[\"POS Profile\",\"disabled\",\"=\",\"0\"]]"
     },
     {
-      "fieldname": "operating_day_end",
-      "fieldtype": "Time",
-      "label": "Operating Day End",
-      "default": "04:00:00",
-      "reqd": 1
-    },
-    {
-      "fieldname": "brands_section",
-      "fieldtype": "Section Break",
-      "label": "Brands"
-    },
-    {
-      "fieldname": "brands",
-      "fieldtype": "Table",
-      "label": "Brands",
-      "options": "Store Brand Assignment",
-      "reqd": 1
-    },
-    {
-      "fieldname": "hours_section",
-      "fieldtype": "Section Break",
-      "label": "Working Hours",
-      "collapsible": 1
-    },
-    {
-      "fieldname": "working_hours",
-      "fieldtype": "Table",
-      "label": "Working Hours",
-      "options": "Store Working Hour"
-    },
-    {
-      "fieldname": "users_section",
-      "fieldtype": "Section Break",
-      "label": "Allowed Users",
-      "collapsible": 1
-    },
-    {
-      "fieldname": "allowed_users",
-      "fieldtype": "Table",
-      "label": "Allowed Users",
-      "options": "Store User Assignment"
-    },
-    {
       "fieldname": "accounting_section",
       "fieldtype": "Section Break",
-      "label": "Accounting"
+      "label": "Taxes and checkout"
     },
     {
       "fieldname": "manual_discount_scope",
@@ -166,13 +167,57 @@
       "fieldname": "order_type_taxes",
       "fieldtype": "Table",
       "label": "Order Type Taxes",
-      "options": "Store Order Type Tax"
+      "options": "Store Order Type Tax",
+      "description": "Each order type has one tax template from this store company."
+    },
+    {
+      "fieldname": "hours_section",
+      "fieldtype": "Section Break",
+      "label": "Opening hours",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
+    },
+    {
+      "fieldname": "working_hours",
+      "fieldtype": "Table",
+      "label": "Working Hours",
+      "options": "Store Working Hour",
+      "description": "Saved for reference. POS does not currently block orders outside these hours."
+    },
+    {
+      "fieldname": "users_section",
+      "fieldtype": "Section Break",
+      "label": "Store access",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
+    },
+    {
+      "fieldname": "allowed_users",
+      "fieldtype": "Table",
+      "label": "Allowed Users",
+      "options": "Store User Assignment",
+      "description": "Used for users without a POS User assignment. Cashier access is configured in POS User stores."
     },
     {
       "fieldname": "location_section",
       "fieldtype": "Section Break",
-      "label": "Location",
-      "collapsible": 1
+      "label": "Location and notes",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
+    },
+    {
+      "fieldname": "state",
+      "fieldtype": "Data",
+      "label": "State"
+    },
+    {
+      "fieldname": "city",
+      "fieldtype": "Data",
+      "label": "City"
+    },
+    {
+      "fieldname": "rms_column_location_section_1",
+      "fieldtype": "Column Break"
     },
     {
       "fieldname": "latitude",
@@ -185,16 +230,6 @@
       "fieldtype": "Float",
       "label": "Longitude",
       "precision": "7"
-    },
-    {
-      "fieldname": "state",
-      "fieldtype": "Data",
-      "label": "State"
-    },
-    {
-      "fieldname": "city",
-      "fieldtype": "Data",
-      "label": "City"
     },
     {
       "fieldname": "description",
@@ -216,5 +251,6 @@
       "share": 1,
       "report": 1
     }
-  ]
+  ],
+  "show_title_field_in_link": 1
 }

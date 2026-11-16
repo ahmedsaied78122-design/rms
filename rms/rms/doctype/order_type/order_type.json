@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -16,7 +16,7 @@
     "title",
     "enabled",
     "sequence_id",
-    "identity_column",
+    "rms_column_identity_section_1",
     "delivery_included",
     "require_table",
     "require_external_reference",
@@ -27,7 +27,7 @@
     {
       "fieldname": "identity_section",
       "fieldtype": "Section Break",
-      "label": "Order Type"
+      "label": "Order type essentials"
     },
     {
       "fieldname": "title",
@@ -50,20 +50,22 @@
     {
       "fieldname": "sequence_id",
       "fieldtype": "Int",
-      "label": "Sequence ID",
+      "label": "Display Order",
       "default": "0",
       "in_list_view": 1,
-      "columns": 2
+      "columns": 2,
+      "description": "Lower numbers appear first."
     },
     {
-      "fieldname": "identity_column",
+      "fieldname": "rms_column_identity_section_1",
       "fieldtype": "Column Break"
     },
     {
       "fieldname": "delivery_included",
       "fieldtype": "Check",
       "label": "Delivery Included",
-      "default": "0"
+      "default": "0",
+      "description": "Marks this order type for delivery. Courier assignment, delivery zones and delivery fees are not configured by this checkbox."
     },
     {
       "fieldname": "require_table",
@@ -80,13 +82,14 @@
     {
       "fieldname": "accounting_section",
       "fieldtype": "Section Break",
-      "label": "Accounts"
+      "label": "Accounts by company"
     },
     {
       "fieldname": "accounts",
       "fieldtype": "Table",
       "label": "Accounts",
-      "options": "Order Type Account Mapping"
+      "options": "Order Type Account Mapping",
+      "description": "Add rows here. Open a row to see all its settings."
     }
   ],
   "permissions": [
@@ -103,5 +106,6 @@
       "share": 1,
       "report": 1
     }
-  ]
+  ],
+  "show_title_field_in_link": 1
 }

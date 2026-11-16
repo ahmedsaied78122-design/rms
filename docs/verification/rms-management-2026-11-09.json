@@ -1,0 +1,175 @@
+{
+  "date": "2026-11-09",
+  "assets": {
+    "js": "desk-a-80",
+    "css": "desk-a-15"
+  },
+  "javascript_suites": {
+    "passed": 17,
+    "failed": 0
+  },
+  "browser": {
+    "checks": [
+      {
+        "name": "Sidebar uses only native permitted workspaces",
+        "pass": true
+      },
+      {
+        "name": "Native workspace selection and nested navigation",
+        "pass": true
+      },
+      {
+        "name": "Workspace filter and desktop collapse preserve working canvas",
+        "pass": true
+      },
+      {
+        "name": "Native global search keeps suggestions and keyboard focus",
+        "pass": true
+      },
+      {
+        "name": "Native workspace editor and Discard remain available",
+        "pass": true
+      },
+      {
+        "name": "Native product list selection, filters and primary action remain available",
+        "pass": true
+      },
+      {
+        "name": "Primary Add action opens native new document without saving",
+        "pass": true
+      },
+      {
+        "name": "Native Store form fields and sidebar retain their data",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 320px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 390px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 768px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 1024px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 1194px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 1366px",
+        "pass": true
+      },
+      {
+        "name": "Mobile native list filters open independently of global navigation",
+        "pass": true
+      },
+      {
+        "name": "Native report filters and data render",
+        "pass": true
+      },
+      {
+        "name": "Report fits mobile without page-level horizontal overflow",
+        "pass": true
+      },
+      {
+        "name": "Mobile workspace and focus loop",
+        "pass": true
+      },
+      {
+        "name": "POS fullscreen remains isolated from Management",
+        "pass": true
+      },
+      {
+        "name": "Returning from POS restores Management layout",
+        "pass": true
+      }
+    ],
+    "errors": [],
+    "screenshots": [
+      "management-collapsed.png",
+      "management-desktop.png",
+      "management-products-desktop.png",
+      "management-form-desktop.png",
+      "management-form-390.png",
+      "management-form-768.png",
+      "management-mobile-filters.png",
+      "management-products-mobile.png",
+      "management-report-desktop.png",
+      "management-report-mobile.png",
+      "management-mobile.png",
+      "management-mobile-menu.png",
+      "management-tablet.png",
+      "management-dark.png",
+      "pos-regression-desktop.png"
+    ]
+  },
+  "accessibility": {
+    "results": [
+      "Native Arabic dictionary and RTL layout on desktop",
+      "Arabic workspace search and RTL mobile drawer",
+      "Reduced motion preference",
+      "Dark theme keeps native list statuses"
+    ],
+    "errors": []
+  },
+  "devices": {
+    "engine": "Chromium; mobile/iPad user agent, viewport and touch emulation. Physical Safari hardware was not available.",
+    "results": [
+      {
+        "name": "iPhone 13",
+        "viewport": {
+          "width": 390,
+          "height": 664
+        },
+        "touch": true,
+        "inputFont": "16px",
+        "navTarget": "42px",
+        "pass": true,
+        "errors": []
+      },
+      {
+        "name": "iPad (gen 7)",
+        "viewport": {
+          "width": 810,
+          "height": 1080
+        },
+        "touch": true,
+        "inputFont": "16px",
+        "navTarget": "42px",
+        "pass": true,
+        "errors": []
+      },
+      {
+        "name": "iPad Pro 12.9 landscape",
+        "viewport": {
+          "width": 1366,
+          "height": 1024
+        },
+        "touch": true,
+        "inputFont": "16px",
+        "navTarget": "42px",
+        "pass": true,
+        "errors": []
+      }
+    ]
+  },
+  "reports": {
+    "checks": [
+      "Native Stock Ledger report renders filters and data table",
+      "Report page fits 320px",
+      "Report page fits 390px",
+      "Report page fits 768px",
+      "Report page fits 1024px",
+      "Report page fits 1600px"
+    ],
+    "errors": [],
+    "existingRmsReportIssue": "RMS POS Sales Summary fails on existing module path rms.rms.report.rms_pos_sales_summary; report backend was not changed by this UI task."
+  }
+}

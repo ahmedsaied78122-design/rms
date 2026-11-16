@@ -1,0 +1,66 @@
+{% extends "frappe/www/login.html" %}
+
+{% block head_include %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/rms/css/rms_login.css?v=rms-login-6">
+{% endblock %}
+
+{% block favicon %}
+<link rel="icon" href="/assets/rms/images/rms-mark.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/rms/images/rms-touch-icon.png">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% macro erp_modules() %}
+<ul class="rms-login-features" aria-label="{{ _('ERP modules') }}">
+	{% for module in rms_erp_modules %}<li>{{ _(module) }}</li>{% endfor %}
+</ul>
+{% endmacro %}
+
+{% block page_content %}
+<div class="rms-login-shell" dir="{{ rms_direction }}">
+	<aside class="rms-login-story" aria-label="{{ _('About RMS') }}">
+		<a class="rms-login-wordmark" href="/login" aria-label="RMS">
+			<img src="{{ logo }}" alt="" width="48" height="48">
+			<span><strong>RMS</strong><small>{{ _("Integrated ERP") }}</small></span>
+		</a>
+		<div class="rms-login-story-copy">
+			<span class="rms-login-eyebrow">{{ _("ONE ERP. EVERY DEPARTMENT.") }}</span>
+			<h1>{{ _("Your business.") }}<br><em>{{ _("One ERP.") }}</em></h1>
+			<p>{{ _("Connect finance, people, manufacturing and supply chain. Every department, every branch, in one integrated system.") }}</p>
+		</div>
+		<div class="rms-login-visual" aria-hidden="true">
+			<div class="rms-preview-window">
+				<div class="rms-preview-bar"><span class="rms-preview-dot"></span><b>RMS</b><span>{{ _("ERP workspace") }}</span><i></i><i></i><i></i></div>
+				<div class="rms-preview-body">
+					<div class="rms-preview-tools"><span>{{ _("Business overview") }}</span><span></span></div>
+					<div class="rms-preview-summary"><span><i></i><b></b></span><span><i></i><b></b></span><span><i></i><b></b></span></div>
+					<div class="rms-preview-chart"><span style="--bar:35%"></span><span style="--bar:52%"></span><span style="--bar:43%"></span><span style="--bar:68%"></span><span style="--bar:59%"></span><span style="--bar:82%"></span><span style="--bar:72%"></span><span style="--bar:95%"></span></div>
+					<div class="rms-preview-bottom"><span></span><span></span><b>+</b></div>
+				</div>
+			</div>
+			<div class="rms-preview-receipt"><span class="rms-preview-check">✓</span><strong>{{ _("Everything in sync.") }}</strong><span></span><span></span><span></span><div><i></i><b>RMS</b></div></div>
+		</div>
+		<div class="rms-login-suite"><p>{{ _("One system for every team") }}</p>{{ erp_modules() }}</div>
+	</aside>
+	<section class="rms-login-auth" aria-label="{{ _('Sign in') }}">
+		<div class="rms-auth-content">
+			<div class="rms-auth-brand"><img src="{{ logo }}" alt="RMS" width="52" height="52"><strong>RMS</strong><p>{{ _("A complete ERP. Everything in one place.") }}</p></div>
+			<div class="rms-native-login">{{ super() }}</div>
+			<div class="rms-auth-footer">
+				<span>RMS · {{ _("Integrated ERP") }}</span>
+				<nav aria-label="{{ _('Language') }}"><a href="{{ rms_language_urls.en }}" lang="en"{% if lang == 'en' %} aria-current="true"{% endif %}>English</a><span aria-hidden="true">/</span><a href="{{ rms_language_urls.ar }}" lang="ar"{% if lang == 'ar' %} aria-current="true"{% endif %}>العربية</a></nav>
+			</div>
+			<details class="rms-mobile-modules"><summary>{{ _("Explore the ERP suite") }}</summary>{{ erp_modules() }}</details>
+		</div>
+	</section>
+</div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script>{% include "rms/public/js/rms_login.js" %}</script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{
+  "site": "rms.arab-erp.com",
+  "passed": true,
+  "change": "Order Type display titles changed to English; document IDs and operating rules preserved",
+  "changes": [
+    {
+      "id": "صالة",
+      "previous_title": "صالة",
+      "title": "Dine In",
+      "rules_and_account_mappings_preserved": true
+    },
+    {
+      "id": "تيك أواي",
+      "previous_title": "تيك أواي",
+      "title": "Takeaway",
+      "rules_and_account_mappings_preserved": true
+    },
+    {
+      "id": "توصيل",
+      "previous_title": "توصيل",
+      "title": "Delivery",
+      "rules_and_account_mappings_preserved": true
+    }
+  ],
+  "pos_bootstrap_verified": true,
+  "fresh_connection_readback": [
+    {
+      "name": "صالة",
+      "title": "Dine In"
+    },
+    {
+      "name": "تيك أواي",
+      "title": "Takeaway"
+    },
+    {
+      "name": "توصيل",
+      "title": "Delivery"
+    }
+  ],
+  "lock_recovery": {
+    "site": "rms.arab-erp.com",
+    "doctype": "Order Type",
+    "name": "توصيل",
+    "orphaned_lock_released": true,
+    "pending_actions": 0,
+    "failed_actions": [
+      {
+        "id": "rms.arab-erp.com::8a079c8a-1de3-4812-83c9-b3c83cf40547",
+        "status": "failed",
+        "last_error": "ModuleNotFoundError: No module named 'hrms'"
+      }
+    ],
+    "recovery": "Standard Document.unlock after verifying failed job and no pending or running actions"
+  },
+  "frontend_translation_removed": true,
+  "site_assets": {
+    "site": "rms.arab-erp.com",
+    "scope": "UI assets and cache only; no schema or transaction changes",
+    "hook_versions": true,
+    "native_page_script": true,
+    "arabic_translation": true,
+    "assets": [
+      {
+        "path": "css/point_of_sale.css?v=pos-a-107",
+        "status": 200,
+        "sha256": "b99f8fa1c5d665f6da0cca3dbe6a36276aae116a788cd893674a09ab7b66c5e7"
+      },
+      {
+        "path": "js/rms_desk.js?v=desk-a-99",
+        "status": 200,
+        "sha256": "34829b0738311b4d8bdc14b2c52128765a3ddac56c879603853ad187e009154c"
+      }
+    ],
+    "ping": true
+  },
+  "browser": {
+    "passed": true,
+    "scope": "Actual POS mount/bind/render and handlers; mocked read-only RPC, no live sale mutations",
+    "results": [
+      {
+        "lang": "en",
+        "width": 1440,
+        "checks": 49,
+        "performanceCheck": {
+          "navigations": 20,
+          "requests": 0,
+          "noLoading": true,
+          "rendered": true,
+          "background": true,
+          "refreshCalls": 1,
+          "elapsedMs": 39.1
+        },
+        "dimensions": {
+          "scroll": 1440,
+          "viewport": 1440,
+          "header": 65.390625,
+          "controls": 46.390625
+        }
+      }
+    ]
+  }
+}

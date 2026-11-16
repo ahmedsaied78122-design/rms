@@ -3,13 +3,20 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, now_datetime
 
+from rms.streaming_replica import upstream, validate as validate_replica
+
 
 class KitchenTicket(Document):
 	def before_insert(self):
+		if upstream(self):
+			return
 		self.status = "Pending"
 		self.sent_at = self.sent_at or now_datetime()
 
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		self.validate_context()
 		self.validate_items()
 		self.stamp_status_times()
@@ -20,6 +27,7 @@ class KitchenTicket(Document):
 			"Confirmed",
 			"In Preparation",
 			"Ready",
+			"Paid",
 		):
 			frappe.throw(_("Kitchen Ticket must belong to a confirmed POS Order for the same Store."))
 		area = frappe.db.get_value(
@@ -38,6 +46,8 @@ class KitchenTicket(Document):
 		)
 		seen = set()
 		for row in self.items:
+			if flt(row.qty) <= 0:
+				frappe.throw(_("Kitchen Ticket quantities must be greater than zero."))
 			if row.pos_order_item not in order_item_names:
 				frappe.throw(_("Every Kitchen Ticket line must belong to the Ticket POS Order."))
 			if row.pos_order_item in seen:

@@ -1,0 +1,41 @@
+{
+  "doctype": "Dashboard Chart",
+  "name": "RMS Cashier Leaders",
+  "chart_name": "RMS Cashier Leaders",
+  "module": "RMS",
+  "is_standard": 1,
+  "is_public": 1,
+  "chart_type": "Custom",
+  "source": "RMS Analytics",
+  "document_type": "POS Order",
+  "type": "Bar",
+  "timeseries": 0,
+  "time_interval": "Daily",
+  "timespan": "Last Month",
+  "filters_json": "{\"report_key\": \"cashiers\"}",
+  "color": "#24785e",
+  "custom_options": "{\"colors\": [\"#24785e\", \"#bed865\", \"#78aaa5\", \"#dc9c68\"], \"animate\": false, \"disableEntryAnimation\": true}",
+  "roles": [
+    {
+      "role": "System Manager"
+    },
+    {
+      "role": "POS Manager"
+    },
+    {
+      "role": "Accounts Manager"
+    },
+    {
+      "role": "Sales Manager"
+    },
+    {
+      "role": "Stock Manager"
+    },
+    {
+      "role": "Purchase Manager"
+    },
+    {
+      "role": "Manufacturing User"
+    }
+  ]
+}

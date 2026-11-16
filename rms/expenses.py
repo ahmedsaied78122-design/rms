@@ -1,4 +1,5 @@
 import secrets
+from html import escape
 
 import frappe
 from frappe import _
@@ -30,7 +31,8 @@ def get_expense_context():
 		fields=["name", "expense_category", "amount", "mode_of_payment", "creation"],
 		order_by="creation desc",
 	)
-	return {"company": store.company, "currency": frappe.db.get_value("Company", store.company, "default_currency"),
+	from rms.api.pos import get_pos_discount_approvers
+	return {"approvers": get_pos_discount_approvers(session.store, exclude_user=frappe.session.user), "company": store.company, "currency": frappe.db.get_value("Company", store.company, "default_currency"),
 		"categories": categories, "pending_expenses": pending}
 
 
@@ -158,6 +160,10 @@ def issue_shift_expense_approval_code(expense_name):
 		frappe.throw(_("Only a pending Shift Expense can be approved."))
 	if doc.owner == frappe.session.user:
 		frappe.throw(_("A different User must approve this expense."), frappe.PermissionError)
+	return _issue_expense_code(doc, frappe.session.user)
+
+
+def _issue_expense_code(doc, approver):
 	for row in frappe.get_all("Approval Challenge", filters={
 		"subject_doctype": "Shift Expense", "subject_name": doc.name,
 		"action": EXPENSE_APPROVAL_ACTION, "status": "Issued",
@@ -174,14 +180,47 @@ def issue_shift_expense_approval_code(expense_name):
 		"subject_name": doc.name,
 		"action": EXPENSE_APPROVAL_ACTION,
 		"requester": doc.owner,
-		"approver": frappe.session.user,
+		"approver": approver,
 		"status": "Issued",
 		"code_hash": passlibctx.hash(code),
 		"expires_at": add_to_date(now_datetime(), minutes=APPROVAL_CODE_MINUTES),
 	})
 	challenge.flags.from_pos_api = True
 	challenge.insert(ignore_permissions=True)
+	notify_shift_expense_approval(doc, challenge, code)
 	return {"challenge": challenge.name, "code": code, "expires_at": challenge.expires_at}
+
+
+
+def notify_shift_expense_approval(doc, challenge, code):
+	return frappe.get_doc(dict(doctype='Notification Log', type='Alert', for_user=challenge.approver,
+		from_user=doc.owner, subject=_('Approval code {0} · Shift Expense').format(escape(code)),
+		email_content='<p><strong>{0}</strong></p><p>{1} · {2}</p><p>{3} {4} · {5}</p><p>{6}</p><p>{7}</p>'.format(
+			escape(code), escape(doc.name), escape(doc.store), escape(str(doc.amount)), escape(doc.currency or ''),
+			escape(doc.expense_category), escape(doc.remarks or ''), escape(_('Valid for three minutes. Share this code only if you approve this expense.'))),
+		document_type='Approval Challenge', document_name=challenge.name, read=0)).insert(ignore_permissions=True)
+
+
+@frappe.whitelist(methods=['POST'])
+def request_shift_expense_approval_code(expense_name, approver, resend=0):
+	from rms.approval_delivery import wants_resend, can_resend, delivery_result
+	resend=wants_resend(resend)
+	session = _get_open_expense_session(lock=True)
+	doc = frappe.get_doc('Shift Expense', expense_name, for_update=True)
+	if doc.owner != frappe.session.user or doc.cashier_session != session.name:
+		frappe.throw(_('This expense does not belong to your open Cashier Session.'), frappe.PermissionError)
+	if doc.status != 'Pending Approval':
+		frappe.throw(_('Only a pending Shift Expense can be approved.'))
+	from rms.api.pos import get_pos_discount_approvers
+	if approver not in {row['user'] for row in get_pos_discount_approvers(doc.store, exclude_user=doc.owner)}:
+		frappe.throw(_('Choose a different POS Manager with access to this Store.'), frappe.PermissionError)
+	existing = frappe.db.get_value('Approval Challenge', dict(subject_doctype='Shift Expense', subject_name=doc.name,
+		action=EXPENSE_APPROVAL_ACTION, requester=doc.owner, approver=approver, status='Issued', expires_at=['>', now_datetime()]),
+		['name','expires_at','creation'], as_dict=True)
+	if existing and frappe.db.exists('Notification Log', dict(for_user=approver, document_type='Approval Challenge', document_name=existing.name)):
+		if not resend or not can_resend(existing):return delivery_result(existing,approver)
+	result = _issue_expense_code(doc, approver)
+	return delivery_result(frappe._dict(name=result['challenge'],creation=now_datetime(),expires_at=result['expires_at']),approver)
 
 
 @frappe.whitelist()

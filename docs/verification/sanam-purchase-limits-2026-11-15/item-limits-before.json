@@ -1,0 +1,1724 @@
+{
+  "initial_167": [
+    {
+      "name": "10101",
+      "item_code": "10101",
+      "item_name": "لحم الحاشي",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:56:40.219067"
+    },
+    {
+      "name": "10102",
+      "item_code": "10102",
+      "item_name": "سنام",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 00:59:06.064411"
+    },
+    {
+      "name": "10103",
+      "item_code": "10103",
+      "item_name": "لحم الغنم",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 02:07:30.539187"
+    },
+    {
+      "name": "10201",
+      "item_code": "10201",
+      "item_name": "دجاج 800 جرام",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:56:26.812393"
+    },
+    {
+      "name": "10202",
+      "item_code": "10202",
+      "item_name": "فروج 600 جرام",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:03:26.970732"
+    },
+    {
+      "name": "10203",
+      "item_code": "10203",
+      "item_name": "دجاج 900 ",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:54:25.072580"
+    },
+    {
+      "name": "10204",
+      "item_code": "10204",
+      "item_name": "دجاج 700 جرام",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 22:28:26.823471"
+    },
+    {
+      "name": "10301",
+      "item_code": "10301",
+      "item_name": "كشنة حمراء",
+      "stock_uom": "علبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:47:38.912265"
+    },
+    {
+      "name": "10302",
+      "item_code": "10302",
+      "item_name": "كشنة بيضاء",
+      "stock_uom": "علبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:17:20.946393"
+    },
+    {
+      "name": "10303",
+      "item_code": "10303",
+      "item_name": "كشنة بخارى",
+      "stock_uom": "علبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:21:33.011440"
+    },
+    {
+      "name": "10304",
+      "item_code": "10304",
+      "item_name": "كشنة كبسة شتوية حاره",
+      "stock_uom": "علبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:47:38.912893"
+    },
+    {
+      "name": "10305",
+      "item_code": "10305",
+      "item_name": "كشنة ايدام حمراء",
+      "stock_uom": "علبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:47:38.913511"
+    },
+    {
+      "name": "10306",
+      "item_code": "10306",
+      "item_name": "كشنة ايدام خضراء",
+      "stock_uom": "علبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:47:38.914087"
+    },
+    {
+      "name": "10307",
+      "item_code": "10307",
+      "item_name": "كشنة بادية الباشا",
+      "stock_uom": "علبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 21:52:19.058530"
+    },
+    {
+      "name": "10401",
+      "item_code": "10401",
+      "item_name": "ارز عام",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:49:37.008689"
+    },
+    {
+      "name": "10402",
+      "item_code": "10402",
+      "item_name": "ارز أبو بنت",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 22:09:26.191770"
+    },
+    {
+      "name": "10501",
+      "item_code": "10501",
+      "item_name": "زيت طبخ",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:44.855520"
+    },
+    {
+      "name": "10502",
+      "item_code": "10502",
+      "item_name": "زيت زيتون",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 16:25:04.783510"
+    },
+    {
+      "name": "10601",
+      "item_code": "10601",
+      "item_name": "طماطم",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.356775"
+    },
+    {
+      "name": "10602",
+      "item_code": "10602",
+      "item_name": "فلفل رومي",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.357576"
+    },
+    {
+      "name": "10603",
+      "item_code": "10603",
+      "item_name": "بصل",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.352971"
+    },
+    {
+      "name": "10604",
+      "item_code": "10604",
+      "item_name": "ثوم",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:41:36.925556"
+    },
+    {
+      "name": "10605",
+      "item_code": "10605",
+      "item_name": "جزر",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:41:36.919107"
+    },
+    {
+      "name": "10606",
+      "item_code": "10606",
+      "item_name": "خيار ",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.354827"
+    },
+    {
+      "name": "10607",
+      "item_code": "10607",
+      "item_name": "كوسه",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.356111"
+    },
+    {
+      "name": "10608",
+      "item_code": "10608",
+      "item_name": "بطاطس",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.354273"
+    },
+    {
+      "name": "10609",
+      "item_code": "10609",
+      "item_name": "فاصوليا خضراء",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.358947"
+    },
+    {
+      "name": "10610",
+      "item_code": "10610",
+      "item_name": "ملوخية خضراء",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:41:36.922021"
+    },
+    {
+      "name": "10611",
+      "item_code": "10611",
+      "item_name": "باذنجان اسود",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.353709"
+    },
+    {
+      "name": "10612",
+      "item_code": "10612",
+      "item_name": "ليمون",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.355459"
+    },
+    {
+      "name": "10613",
+      "item_code": "10613",
+      "item_name": "كزبره خضراء",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:25.358290"
+    },
+    {
+      "name": "10614",
+      "item_code": "10614",
+      "item_name": "فلفل اخضر حار",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:41:36.924973"
+    },
+    {
+      "name": "10701",
+      "item_code": "10701",
+      "item_name": "زبادي سلطات",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:56:12.258939"
+    },
+    {
+      "name": "10702",
+      "item_code": "10702",
+      "item_name": "لبن المراعي 180 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:56:12.256660"
+    },
+    {
+      "name": "10703",
+      "item_code": "10703",
+      "item_name": "لبن المراعي 360 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:52:32.545457"
+    },
+    {
+      "name": "10704",
+      "item_code": "10704",
+      "item_name": "لبن المراعي 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:52:32.544596"
+    },
+    {
+      "name": "10705",
+      "item_code": "10705",
+      "item_name": "لبن المراعي 2 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:56:12.255204"
+    },
+    {
+      "name": "10706",
+      "item_code": "10706",
+      "item_name": "لبن المراعي 2.85 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:19.918040"
+    },
+    {
+      "name": "10707",
+      "item_code": "10707",
+      "item_name": "لبن نادك 180 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:36:15.215394"
+    },
+    {
+      "name": "10708",
+      "item_code": "10708",
+      "item_name": "لبن نادك 340 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-08 13:00:51.303743"
+    },
+    {
+      "name": "10709",
+      "item_code": "10709",
+      "item_name": "لبن نادك 800 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-08 13:07:58.743687"
+    },
+    {
+      "name": "10710",
+      "item_code": "10710",
+      "item_name": "لبن نادك 1.75 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-08 10:35:42.560334"
+    },
+    {
+      "name": "10711",
+      "item_code": "10711",
+      "item_name": "لبن الصافي 180 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 10:39:53.419839"
+    },
+    {
+      "name": "10712",
+      "item_code": "10712",
+      "item_name": "لبن الصافي 360 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-07 15:54:25.223784"
+    },
+    {
+      "name": "10713",
+      "item_code": "10713",
+      "item_name": "لبن الصافي 850 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 23:14:38.847880"
+    },
+    {
+      "name": "10714",
+      "item_code": "10714",
+      "item_name": "لبن الصافي 1.5 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-01 16:54:48.024334"
+    },
+    {
+      "name": "10715",
+      "item_code": "10715",
+      "item_name": "لبن الصافي 2.2 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 23:14:38.846970"
+    },
+    {
+      "name": "10716",
+      "item_code": "10716",
+      "item_name": "لبن الصافي 2.9 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:20.296548"
+    },
+    {
+      "name": "10717",
+      "item_code": "10717",
+      "item_name": "لبن القرية 230 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:16:17.911759"
+    },
+    {
+      "name": "10718",
+      "item_code": "10718",
+      "item_name": "لبن القرية 900  مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 02:32:37.497304"
+    },
+    {
+      "name": "10719",
+      "item_code": "10719",
+      "item_name": "زبادي المراعي 170 جم",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:56:12.257848"
+    },
+    {
+      "name": "10720",
+      "item_code": "10720",
+      "item_name": "زبادي نادك 170 جم",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-09 13:59:46.469154"
+    },
+    {
+      "name": "10721",
+      "item_code": "10721",
+      "item_name": "زبادي الصافي 170 جم",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 10:39:53.420547"
+    },
+    {
+      "name": "10722",
+      "item_code": "10722",
+      "item_name": "زبادي القرية 230 جم",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-22 15:06:31.947506"
+    },
+    {
+      "name": "10723",
+      "item_code": "10723",
+      "item_name": "ماء 330 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:25:18.827772"
+    },
+    {
+      "name": "10724",
+      "item_code": "10724",
+      "item_name": "ماء 600 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:40:32.201941"
+    },
+    {
+      "name": "10725",
+      "item_code": "10725",
+      "item_name": "ماء 500 مللي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 10:53:54.998001"
+    },
+    {
+      "name": "10801",
+      "item_code": "10801",
+      "item_name": "ملح طعام",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 02:54:28.268790"
+    },
+    {
+      "name": "10802",
+      "item_code": "10802",
+      "item_name": "كمون",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 23:18:48.174353"
+    },
+    {
+      "name": "10803",
+      "item_code": "10803",
+      "item_name": "فلفل اسود بهارات",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 01:22:29.196916"
+    },
+    {
+      "name": "10804",
+      "item_code": "10804",
+      "item_name": "مرق دجاج مكعبات",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:59:04.343267"
+    },
+    {
+      "name": "10805",
+      "item_code": "10805",
+      "item_name": "ليمون اسود ( لومي )",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 23:18:48.175011"
+    },
+    {
+      "name": "10806",
+      "item_code": "10806",
+      "item_name": "كزبرة مطحونة",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 23:18:48.173636"
+    },
+    {
+      "name": "10808",
+      "item_code": "10808",
+      "item_name": "نعناع مجفف",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 15:17:51.547375"
+    },
+    {
+      "name": "10809",
+      "item_code": "10809",
+      "item_name": "بهارات كشنة",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-11 17:09:18.284714"
+    },
+    {
+      "name": "10810",
+      "item_code": "10810",
+      "item_name": "خل ابيض",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:31:14.433310"
+    },
+    {
+      "name": "10812",
+      "item_code": "10812",
+      "item_name": "زبيب",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:32:14.338677"
+    },
+    {
+      "name": "10901",
+      "item_code": "10901",
+      "item_name": "طحينة",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:59:04.341160"
+    },
+    {
+      "name": "10902",
+      "item_code": "10902",
+      "item_name": "شطة حارة 88 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:58.228003"
+    },
+    {
+      "name": "11001",
+      "item_code": "11001",
+      "item_name": "كيس علاقي سفري مطبوع",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 01:42:53.369478"
+    },
+    {
+      "name": "11002",
+      "item_code": "11002",
+      "item_name": "سفره طعام مطبوع",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:47:38.914653"
+    },
+    {
+      "name": "11003",
+      "item_code": "11003",
+      "item_name": "ملعقة بلاستيك",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:21:57.235538"
+    },
+    {
+      "name": "11004",
+      "item_code": "11004",
+      "item_name": "علبه مضغوط بالغطاء",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:21:33.013109"
+    },
+    {
+      "name": "11005",
+      "item_code": "11005",
+      "item_name": "علبة سلطات كبير",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:17:41.840798"
+    },
+    {
+      "name": "11007",
+      "item_code": "11007",
+      "item_name": "علبة سلطات صغير",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:51:33.700462"
+    },
+    {
+      "name": "11008",
+      "item_code": "11008",
+      "item_name": "علبه شواية بالغطاء",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 01:42:53.371146"
+    },
+    {
+      "name": "11009",
+      "item_code": "11009",
+      "item_name": "علبه ربع شواية بالغطاء",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-01 13:57:38.152568"
+    },
+    {
+      "name": "11010",
+      "item_code": "11010",
+      "item_name": "علبة ايدام",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:21:33.012558"
+    },
+    {
+      "name": "11101",
+      "item_code": "11101",
+      "item_name": "خبز",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:53:24.268375"
+    },
+    {
+      "name": "11102",
+      "item_code": "11102",
+      "item_name": "كنافة قشطة",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:59:18.182350"
+    },
+    {
+      "name": "11103",
+      "item_code": "11103",
+      "item_name": "كنافة جبنة",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:21.674736"
+    },
+    {
+      "name": "11104",
+      "item_code": "11104",
+      "item_name": "كنافة نوتيلا",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:59:18.183206"
+    },
+    {
+      "name": "11105",
+      "item_code": "11105",
+      "item_name": "كنافة جلاكسي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-25 10:13:44.176555"
+    },
+    {
+      "name": "11106",
+      "item_code": "11106",
+      "item_name": "تشيز كيك | جلاكسي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 18:07:28.069522"
+    },
+    {
+      "name": "11107",
+      "item_code": "11107",
+      "item_name": "تشيز كيك | ايس كريم",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 00:05:11.547317"
+    },
+    {
+      "name": "11108",
+      "item_code": "11108",
+      "item_name": "تشيز كيك | اللوتس",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 00:04:24.071740"
+    },
+    {
+      "name": "11109",
+      "item_code": "11109",
+      "item_name": "تشيز كيك | فيمتو",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-30 17:39:25.001286"
+    },
+    {
+      "name": "11110",
+      "item_code": "11110",
+      "item_name": "حلى الكريمة",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 00:45:01.328961"
+    },
+    {
+      "name": "11111",
+      "item_code": "11111",
+      "item_name": "ام علي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:21.944994"
+    },
+    {
+      "name": "11201",
+      "item_code": "11201",
+      "item_name": "بيبسي 330 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:09:30.787972"
+    },
+    {
+      "name": "11202",
+      "item_code": "11202",
+      "item_name": "بيبسي دايت 330 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.365339"
+    },
+    {
+      "name": "11203",
+      "item_code": "11203",
+      "item_name": "بيبسي 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-19 16:12:09.138712"
+    },
+    {
+      "name": "11204",
+      "item_code": "11204",
+      "item_name": "بيبسي دايت 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-26 10:42:29.383161"
+    },
+    {
+      "name": "11205",
+      "item_code": "11205",
+      "item_name": "بيبسي 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 00:28:15.176390"
+    },
+    {
+      "name": "11206",
+      "item_code": "11206",
+      "item_name": "بيبسي دايت 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:22.178106"
+    },
+    {
+      "name": "11207",
+      "item_code": "11207",
+      "item_name": "بيبسي 2 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:09:30.797215"
+    },
+    {
+      "name": "11208",
+      "item_code": "11208",
+      "item_name": "بيبسي 2.25 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-07 21:45:50.334949"
+    },
+    {
+      "name": "11209",
+      "item_code": "11209",
+      "item_name": "ديو 330 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.367572"
+    },
+    {
+      "name": "11210",
+      "item_code": "11210",
+      "item_name": "ديو 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-27 11:31:59.746308"
+    },
+    {
+      "name": "11211",
+      "item_code": "11211",
+      "item_name": "ديو 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 15:44:33.587929"
+    },
+    {
+      "name": "11212",
+      "item_code": "11212",
+      "item_name": "ديو 2 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 15:44:33.583122"
+    },
+    {
+      "name": "11213",
+      "item_code": "11213",
+      "item_name": "ديو 2.25 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-04 02:32:40.402460"
+    },
+    {
+      "name": "11214",
+      "item_code": "11214",
+      "item_name": "سفن اب 330 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.366882"
+    },
+    {
+      "name": "11215",
+      "item_code": "11215",
+      "item_name": "سفن اب دايت 330 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.366121"
+    },
+    {
+      "name": "11216",
+      "item_code": "11216",
+      "item_name": "سفن اب 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:22.547434"
+    },
+    {
+      "name": "11217",
+      "item_code": "11217",
+      "item_name": "سفن اب دايت 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-27 11:31:59.745523"
+    },
+    {
+      "name": "11218",
+      "item_code": "11218",
+      "item_name": "سفن اب 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 15:44:33.587318"
+    },
+    {
+      "name": "11219",
+      "item_code": "11219",
+      "item_name": "سفن اب دايت 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:22.652818"
+    },
+    {
+      "name": "11220",
+      "item_code": "11220",
+      "item_name": "سفن اب 2 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 15:44:33.589075"
+    },
+    {
+      "name": "11221",
+      "item_code": "11221",
+      "item_name": "سفن اب 2.25 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-27 11:15:47.800319"
+    },
+    {
+      "name": "11222",
+      "item_code": "11222",
+      "item_name": "ميرندا حمضيات 330 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 00:35:05.460207"
+    },
+    {
+      "name": "11223",
+      "item_code": "11223",
+      "item_name": "ميرندا برتقال 330 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.361865"
+    },
+    {
+      "name": "11224",
+      "item_code": "11224",
+      "item_name": "ميرندا حمضيات 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:22.827442"
+    },
+    {
+      "name": "11225",
+      "item_code": "11225",
+      "item_name": "ميرندا برتقال 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-16 21:41:42.608680"
+    },
+    {
+      "name": "11226",
+      "item_code": "11226",
+      "item_name": "ميرندا فراولة 360 مل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.359833"
+    },
+    {
+      "name": "11227",
+      "item_code": "11227",
+      "item_name": "ميرندا حمضيات 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.363041"
+    },
+    {
+      "name": "11228",
+      "item_code": "11228",
+      "item_name": "ميرندا حمضيات 2 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 00:57:28.363737"
+    },
+    {
+      "name": "11229",
+      "item_code": "11229",
+      "item_name": "ميرندا برتقال 2 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:23.019831"
+    },
+    {
+      "name": "11230",
+      "item_code": "11230",
+      "item_name": "ميرندا حمضيات 2.25 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-07 21:45:50.335692"
+    },
+    {
+      "name": "11231",
+      "item_code": "11231",
+      "item_name": "ميرندا برتقال 2.25 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-09-13 16:50:23.100233"
+    },
+    {
+      "name": "11232",
+      "item_code": "11232",
+      "item_name": "مشروب غازي 1 لتر",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-01 15:50:06.361196"
+    },
+    {
+      "name": "201001",
+      "item_code": "201001",
+      "item_name": "فاين مناديل اوتوكت للحمامات",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:51:33.701289"
+    },
+    {
+      "name": "201002",
+      "item_code": "201002",
+      "item_name": "فاين مناديل رول للنظافة",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:44.856406"
+    },
+    {
+      "name": "201003",
+      "item_code": "201003",
+      "item_name": "منظف افران مزيل دهون",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-09 22:52:30.941268"
+    },
+    {
+      "name": "201004",
+      "item_code": "201004",
+      "item_name": "اسفنج خشن للغسيل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-10 21:25:22.326960"
+    },
+    {
+      "name": "201005",
+      "item_code": "201005",
+      "item_name": "سلك مواعين",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 04:04:19.133984"
+    },
+    {
+      "name": "201006",
+      "item_code": "201006",
+      "item_name": "صابون يد",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 23:18:48.172116"
+    },
+    {
+      "name": "201007",
+      "item_code": "201007",
+      "item_name": "صابون يد فوم",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 23:56:28.596074"
+    },
+    {
+      "name": "201008",
+      "item_code": "201008",
+      "item_name": "صابون غسيل صحون",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:17:41.841399"
+    },
+    {
+      "name": "201009",
+      "item_code": "201009",
+      "item_name": "مطهر ارضيات",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.417534"
+    },
+    {
+      "name": "201010",
+      "item_code": "201010",
+      "item_name": "منظف ارضيات كلوركس",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 20:32:00.604467"
+    },
+    {
+      "name": "201011",
+      "item_code": "201011",
+      "item_name": "معطر عام",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:18:12.604678"
+    },
+    {
+      "name": "201012",
+      "item_code": "201012",
+      "item_name": "اكياس نفايات بلدية مقاس 30",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 20:32:00.592529"
+    },
+    {
+      "name": "201013",
+      "item_code": "201013",
+      "item_name": "كلونيا",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 23:56:28.605545"
+    },
+    {
+      "name": "201014",
+      "item_code": "201014",
+      "item_name": "خلة اسنان",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-09 23:35:59.719052"
+    },
+    {
+      "name": "201015",
+      "item_code": "201015",
+      "item_name": "مسلك مجاري اسيد",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:20:20.290008"
+    },
+    {
+      "name": "201016",
+      "item_code": "201016",
+      "item_name": "مبيد حشرات",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-09 10:44:40.182102"
+    },
+    {
+      "name": "201017",
+      "item_code": "201017",
+      "item_name": "ملمع زجاج",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-09 16:04:04.865435"
+    },
+    {
+      "name": "201019",
+      "item_code": "201019",
+      "item_name": "اكياس نفايات بلدية مقاس 70",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.392585"
+    },
+    {
+      "name": "201020",
+      "item_code": "201020",
+      "item_name": "موب قطن - شرشوفه",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 01:35:30.255733"
+    },
+    {
+      "name": "201022",
+      "item_code": "201022",
+      "item_name": "مزيل دهون",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.421649"
+    },
+    {
+      "name": "201023",
+      "item_code": "201023",
+      "item_name": "موبي ملمع ستيل",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.382709"
+    },
+    {
+      "name": "201024",
+      "item_code": "201024",
+      "item_name": "صابون صحون موبي",
+      "stock_uom": "لتر",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 23:56:28.598105"
+    },
+    {
+      "name": "201025",
+      "item_code": "201025",
+      "item_name": "مناديل رول ازرق",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-11 14:25:20.702368"
+    },
+    {
+      "name": "201026",
+      "item_code": "201026",
+      "item_name": "مساحة",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.404231"
+    },
+    {
+      "name": "201027",
+      "item_code": "201027",
+      "item_name": "مكنسة",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-10 11:12:57.153885"
+    },
+    {
+      "name": "201028",
+      "item_code": "201028",
+      "item_name": "اكياس نفايات مقاس 55",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.394854"
+    },
+    {
+      "name": "201029",
+      "item_code": "201029",
+      "item_name": "جاروف بالعصا",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-10 11:12:57.154961"
+    },
+    {
+      "name": "202001",
+      "item_code": "202001",
+      "item_name": "قصدير لف",
+      "stock_uom": "لفة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.422739"
+    },
+    {
+      "name": "202002",
+      "item_code": "202002",
+      "item_name": "رول تغليف شفاف",
+      "stock_uom": "لفة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.424581"
+    },
+    {
+      "name": "202004",
+      "item_code": "202004",
+      "item_name": "كمامات",
+      "stock_uom": "باكت 50 حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-09 14:42:45.738869"
+    },
+    {
+      "name": "202005",
+      "item_code": "202005",
+      "item_name": "غطاء راس",
+      "stock_uom": "باكت 100 حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 03:19:14.041320"
+    },
+    {
+      "name": "202006",
+      "item_code": "202006",
+      "item_name": "رول كاشير",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:53:58.571207"
+    },
+    {
+      "name": "202007",
+      "item_code": "202007",
+      "item_name": "رول صلاحية",
+      "stock_uom": "رول",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-14 23:10:56.439324"
+    },
+    {
+      "name": "202008",
+      "item_code": "202008",
+      "item_name": "اكواب بلاستيك ",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:26:29.634226"
+    },
+    {
+      "name": "202009",
+      "item_code": "202009",
+      "item_name": "اكياس نايلون شفاف صغير",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-13 20:32:00.590347"
+    },
+    {
+      "name": "202010",
+      "item_code": "202010",
+      "item_name": "اكياس حراري مقاس 6 للبصل والليمون",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:15:18.478811"
+    },
+    {
+      "name": "202011",
+      "item_code": "202011",
+      "item_name": "مناديل جلسات",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.390239"
+    },
+    {
+      "name": "202012",
+      "item_code": "202012",
+      "item_name": "سكر",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:51:13.574760"
+    },
+    {
+      "name": "202014",
+      "item_code": "202014",
+      "item_name": "اكواب 2.5 اونز",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:03:43.539922"
+    },
+    {
+      "name": "202015",
+      "item_code": "202015",
+      "item_name": "اكياس نايلون شفاف كبير",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 11:09:00.425438"
+    },
+    {
+      "name": "202016",
+      "item_code": "202016",
+      "item_name": "ظرف شطة رنا شفرات",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:31:14.432584"
+    },
+    {
+      "name": "202017",
+      "item_code": "202017",
+      "item_name": "اكياس حراري مقاس 12 للحم",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-12 03:19:14.048854"
+    },
+    {
+      "name": "202018",
+      "item_code": "202018",
+      "item_name": "رول صراف شبكة مدى",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-02 12:35:07.772357"
+    },
+    {
+      "name": "رنا 100 ملي",
+      "item_code": "رنا 100 ملي",
+      "item_name": "رنا 100 ملي",
+      "stock_uom": "حبة",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 13:59:04.342642"
+    },
+    {
+      "name": "زنابيل باله مقاس 15",
+      "item_code": "زنابيل باله مقاس 15",
+      "item_name": "زنابيل باله مقاس 15",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-05 13:40:05.861245"
+    },
+    {
+      "name": "زنابيل باله مقاس 18",
+      "item_code": "زنابيل باله مقاس 18",
+      "item_name": "زنابيل باله مقاس 18",
+      "stock_uom": "كجم",
+      "is_purchase_item": 1,
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-10-06 12:29:48.931700"
+    }
+  ],
+  "remaining_6": [
+    {
+      "name": "10814",
+      "item_code": "10814",
+      "stock_uom": "كجم",
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:19:30.617077"
+    },
+    {
+      "name": "10815",
+      "item_code": "10815",
+      "stock_uom": "كجم",
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 12:21:33.015280"
+    },
+    {
+      "name": "201021",
+      "item_code": "201021",
+      "stock_uom": "حبة",
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-08 10:44:22.945409"
+    },
+    {
+      "name": "202003",
+      "item_code": "202003",
+      "stock_uom": "باكت 50 حبة",
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:55:44.857101"
+    },
+    {
+      "name": "202013",
+      "item_code": "202013",
+      "stock_uom": "حبة",
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:51:13.575699"
+    },
+    {
+      "name": "202019",
+      "item_code": "202019",
+      "stock_uom": "حبة",
+      "custom_minimum_purchase_rate": 0.0,
+      "custom_maximum_purchase_rate": 0.0,
+      "modified": "2026-11-15 14:24:46.007948"
+    }
+  ]
+}

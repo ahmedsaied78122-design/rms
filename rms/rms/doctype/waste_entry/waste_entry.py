@@ -3,12 +3,21 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
+from rms.streaming_replica import cancel_waste, upstream, validate as validate_replica
+
 from rms.recipe import get_recipe_components
 from rms.stock import create_material_issue
 
 
 class WasteEntry(Document):
+	def before_update_after_submit(self):
+		if upstream(self):
+			validate_replica(self)
+
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		previous = self.get_doc_before_save()
 		if previous and previous.docstatus == 1:
 			return
@@ -63,6 +72,9 @@ class WasteEntry(Document):
 			})
 
 	def on_submit(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		store_company = frappe.db.get_value("Store", self.store, "company")
 		expense_account = None
 		if self.order_type:
@@ -74,6 +86,7 @@ class WasteEntry(Document):
 			[self.row_as_stock_item(row) for row in self.items],
 			expense_account,
 			_("Waste {0}: {1}").format(self.name, self.reason),
+			stock_entry_type="Void",
 		)
 		if not stock_entry:
 			frappe.throw(_("The waste record did not produce any stock movement."))
@@ -82,6 +95,9 @@ class WasteEntry(Document):
 		self.status = "Submitted"
 
 	def on_cancel(self):
+		if upstream(self):
+			cancel_waste(self)
+			return
 		if self.stock_entry and frappe.db.get_value("Stock Entry", self.stock_entry, "docstatus") == 1:
 			stock_entry = frappe.get_doc("Stock Entry", self.stock_entry)
 			stock_entry.flags.ignore_permissions = True

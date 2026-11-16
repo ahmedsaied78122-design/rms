@@ -1,0 +1,193 @@
+{
+  "method": "Actual native Form cleanup, Layout, controls, populated grids, ScriptManager, validation and save; RPC/persistence mocked locally, no live authentication or business writes.",
+  "checks": [
+    "One visible section, selected tab and keyboard navigation",
+    "All 24 parent forms open one visible pane",
+    "Saved product name editable; native save and fixture reload retain new title and stable product/item IDs",
+    "Native populated modifier grid: inline price edit, Add Row and native save retain values",
+    "Native required-field validation reveals the hidden owning pane",
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 320,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 390,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 768,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 1024,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 1500,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 320,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 390,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 768,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 1024,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 1500,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 320,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 390,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 768,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 1024,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 1500,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 320,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 390,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 768,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 1024,
+      "panes": 1,
+      "overflow": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 1500,
+      "panes": 1,
+      "overflow": false
+    },
+    "Phone native row editor opens/closes without page overflow",
+    {
+      "populatedGridTypes": [
+        "Selling Product Price Rule",
+        "Selling Product Recipe Line",
+        "Selling Product Additional Recipe Line",
+        "Selling Product Store Availability",
+        "Selling Product Store Order Type Exclusion",
+        "Selling Product Modifier Group",
+        "Selling Product Modifier Option",
+        "Selling Product Print Route",
+        "Store Brand Assignment",
+        "Store Order Type Tax",
+        "Store Working Hour",
+        "Store User Assignment",
+        "POS User Store",
+        "POS User Brand",
+        "POS User Order Type",
+        "POS User Preparation Area",
+        "Brand Menu Assignment",
+        "Store Menu Category",
+        "Order Type Account Mapping",
+        "Cashier Session Payment",
+        "POS Order Item",
+        "POS Order Guest Check",
+        "POS Order Item Cancellation",
+        "POS Return Item",
+        "POS Return Payment",
+        "Kitchen Ticket Item",
+        "Waste Entry Item",
+        "Selling Product Option",
+        "POS Order Payment",
+        "POS Order Item Modifier",
+        "POS Order Item Recipe Line",
+        "Order Type MultiSelect Option"
+      ],
+      "legacySchemaFixtures": [
+        "POS Order Item Modifier",
+        "POS Order Item Recipe Line",
+        "Order Type MultiSelect Option"
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -6,6 +6,7 @@
   "engine": "InnoDB",
   "field_order": [
     "option_product",
+    "attribute_value",
     "sequence_id"
   ],
   "fields": [
@@ -16,17 +17,27 @@
       "options": "Selling Product",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 7,
-      "link_filters": "[[\"Selling Product\",\"enabled\",\"=\",\"1\"],[\"Selling Product\",\"has_options\",\"=\",\"0\"]]"
+      "columns": 4,
+      "link_filters": "[[\"Selling Product\", \"enabled\", \"=\", 1], [\"Selling Product\", \"name\", \"!=\", \"eval:parent.name\"]]"
+    },
+    {
+      "fieldname": "attribute_value",
+      "fieldtype": "Data",
+      "label": "Attribute Value",
+      "in_list_view": 1,
+      "columns": 4
     },
     {
       "fieldname": "sequence_id",
       "fieldtype": "Int",
-      "label": "Sequence ID",
+      "label": "Display Order",
       "default": "0",
       "in_list_view": 1,
-      "columns": 2
+      "columns": 2,
+      "description": "Lower numbers appear first."
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

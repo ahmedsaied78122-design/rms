@@ -33,13 +33,18 @@ def execute(filters=None):
 		SELECT o.business_date, o.store, o.restaurant_brand, o.order_type,
 			COUNT(o.name) AS paid_orders, COALESCE(SUM(line_totals.qty_sold), 0) AS qty_sold,
 			SUM(o.subtotal) AS subtotal, SUM(o.tax_total) AS tax_total,
-			SUM(o.grand_total) AS gross_sales, 0 AS approved_returns,
+			SUM(COALESCE(payment_totals.paid_total, o.grand_total)) AS gross_sales,
+			SUM(COALESCE(payment_totals.paid_total, o.grand_total) - o.grand_total) AS rounding_adjustment, 0 AS approved_returns,
 			company.default_currency AS currency
 		FROM `tabPOS Order` o
 		LEFT JOIN (
-			SELECT parent, SUM(qty) AS qty_sold FROM `tabPOS Order Item`
+			SELECT parent, SUM(GREATEST(qty - COALESCE(cancelled_qty, 0), 0)) AS qty_sold FROM `tabPOS Order Item`
 			WHERE parenttype = 'POS Order' GROUP BY parent
 		) line_totals ON line_totals.parent = o.name
+		LEFT JOIN (
+			SELECT parent, SUM(amount) AS paid_total FROM `tabPOS Order Payment`
+			WHERE parenttype = 'POS Order' GROUP BY parent
+		) payment_totals ON payment_totals.parent = o.name
 		INNER JOIN `tabStore` store ON store.name = o.store
 		INNER JOIN `tabCompany` company ON company.name = store.company
 		WHERE o.status = 'Paid'
@@ -63,10 +68,15 @@ def execute(filters=None):
 		f"""
 		SELECT {return_business_date} AS business_date, ret.store, o.restaurant_brand, o.order_type,
 			0 AS paid_orders, 0 AS qty_sold, 0 AS subtotal, 0 AS tax_total, 0 AS gross_sales,
-			SUM(ret.refund_total) AS approved_returns, company.default_currency AS currency
+			0 AS rounding_adjustment, SUM(ret.refund_total) AS approved_returns, company.default_currency AS currency
 		FROM `tabPOS Return` ret
-		INNER JOIN `tabPOS Order` o ON o.pos_invoice = ret.source_pos_invoice
-			AND o.cashier_session = ret.cashier_session
+		INNER JOIN (
+			SELECT DISTINCT invoice_line.parent AS source_pos_invoice, order_item.parent AS pos_order
+			FROM `tabPOS Invoice Item` invoice_line
+			INNER JOIN `tabPOS Order Item` order_item ON order_item.name = invoice_line.rms_pos_order_item
+			WHERE invoice_line.parenttype = 'POS Invoice'
+		) sale_order ON sale_order.source_pos_invoice = ret.source_pos_invoice
+		INNER JOIN `tabPOS Order` o ON o.name = sale_order.pos_order
 		INNER JOIN `tabStore` store ON store.name = ret.store
 		INNER JOIN `tabCompany` company ON company.name = store.company
 		WHERE ret.status = 'Approved' AND ret.docstatus < 2
@@ -96,6 +106,7 @@ def execute(filters=None):
 		{"fieldname": "qty_sold", "label": _("Quantity Sold"), "fieldtype": "Float", "width": 110},
 		{"fieldname": "subtotal", "label": _("Subtotal"), "fieldtype": "Currency", "options": "currency", "width": 125},
 		{"fieldname": "tax_total", "label": _("Taxes"), "fieldtype": "Currency", "options": "currency", "width": 110},
+		{"fieldname": "rounding_adjustment", "label": _("Rounding Adjustment"), "fieldtype": "Currency", "options": "currency", "width": 130},
 		{"fieldname": "gross_sales", "label": _("Gross Sales"), "fieldtype": "Currency", "options": "currency", "width": 125},
 		{"fieldname": "approved_returns", "label": _("Approved Returns"), "fieldtype": "Currency", "options": "currency", "width": 135},
 		{"fieldname": "net_sales", "label": _("Net Sales"), "fieldtype": "Currency", "options": "currency", "width": 125},
@@ -119,7 +130,7 @@ def merge_sales_and_returns(sales, returns):
 	for row in returns:
 		key = (row.business_date, row.store, row.restaurant_brand, row.order_type, row.currency)
 		item = combined.setdefault(key, {**row, "paid_orders": 0, "qty_sold": 0, "subtotal": 0,
-			"tax_total": 0, "gross_sales": 0})
+			"tax_total": 0, "gross_sales": 0, "approved_returns": 0})
 		item["approved_returns"] = flt(item.get("approved_returns")) + flt(row.approved_returns)
 		item["net_sales"] = flt(item.get("gross_sales")) - item["approved_returns"]
 	return sorted(combined.values(), key=lambda row: (row["business_date"], row["store"], row["restaurant_brand"], row["order_type"]))

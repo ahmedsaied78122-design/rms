@@ -13,12 +13,10 @@ class ProductCategory(NestedSet):
 			)
 			if not parent or not parent.enabled or not parent.is_group:
 				frappe.throw(_("Parent Product Category must be enabled and marked Is Group."))
-			current_lft = frappe.db.get_value("Product Category", self.name, "lft") if self.name else None
-			if current_lft and parent.lft <= current_lft <= parent.rgt:
+			current = frappe.db.get_value("Product Category", self.name, ["lft", "rgt"], as_dict=True) if self.name else None
+			if current and current.lft <= parent.lft <= current.rgt:
 				frappe.throw(_("A Product Category cannot be moved under one of its own descendants."))
 
-		if self.is_group and self.item_group:
-			frappe.throw(_("Group Product Categories organize their children and cannot carry an Item Group."))
 		if not self.is_group and not self.item_group:
 			frappe.throw(_("Select an Item Group for each leaf Product Category."))
 		if self.item_group and frappe.db.get_value("Item Group", self.item_group, "is_group"):

@@ -1,0 +1,233 @@
+{
+  "spreadsheet_id": "1Cy2EgW1SKd_8TcR-mE-TPMALHScvVhtglB3KM9VfdDI",
+  "summary_url": "https://docs.google.com/spreadsheets/d/1Cy2EgW1SKd_8TcR-mE-TPMALHScvVhtglB3KM9VfdDI/edit?gid=1370976820#gid=1370976820",
+  "new_tabs": 15,
+  "original_tabs_preserved": true,
+  "cell_count": 31667,
+  "verified_from_server": true,
+  "sheets": [
+    {
+      "name": "RMS - النتيجة والنطاق",
+      "gid": "1370976820",
+      "rows": 30,
+      "columns": 2
+    },
+    {
+      "name": "RMS - الدوكتايبس واحدًا واحدًا",
+      "gid": "1139948132",
+      "rows": 57,
+      "columns": 10
+    },
+    {
+      "name": "RMS - حقول RMS الحية",
+      "gid": "1901336612",
+      "rows": 568,
+      "columns": 15
+    },
+    {
+      "name": "RMS - حقول المرجع المخصصة",
+      "gid": "405148783",
+      "rows": 940,
+      "columns": 16
+    },
+    {
+      "name": "RMS - تخصيصات RMS الأصلية",
+      "gid": "1977149065",
+      "rows": 11,
+      "columns": 8
+    },
+    {
+      "name": "RMS - خصائص المرجع المعدلة",
+      "gid": "1492595551",
+      "rows": 406,
+      "columns": 6
+    },
+    {
+      "name": "RMS - الحقول القديمة غير الموصولة",
+      "gid": "1704779316",
+      "rows": 3,
+      "columns": 3
+    },
+    {
+      "name": "RMS - قراءة النتائج",
+      "gid": "404412840",
+      "rows": 7,
+      "columns": 2
+    },
+    {
+      "name": "RMS - جميع تقارير المرجع",
+      "gid": "132348121",
+      "rows": 318,
+      "columns": 7
+    },
+    {
+      "name": "RMS - تقارير RMS الجديدة",
+      "gid": "1896586275",
+      "rows": 57,
+      "columns": 7
+    },
+    {
+      "name": "RMS - التأجيل والأجزاء غير المتاحة",
+      "gid": "1622853769",
+      "rows": 47,
+      "columns": 3
+    },
+    {
+      "name": "RMS - تخصيص POS Profile",
+      "gid": "970463437",
+      "rows": 15,
+      "columns": 4
+    },
+    {
+      "name": "RMS - المستندات بتصميم مستقل",
+      "gid": "2141927975",
+      "rows": 10,
+      "columns": 4
+    },
+    {
+      "name": "RMS - دوكتايبس إضافية للقرار",
+      "gid": "1081558755",
+      "rows": 156,
+      "columns": 13
+    },
+    {
+      "name": "RMS - الداشبورد ومساحات العمل",
+      "gid": "1738943055",
+      "rows": 12,
+      "columns": 3
+    }
+  ],
+  "verification": {
+    "original_tabs_preserved": true,
+    "total_tabs": 23,
+    "sheets": [
+      {
+        "name": "RMS - النتيجة والنطاق",
+        "export_name": "RMS - النتيجة والنطاق",
+        "rows": 30,
+        "columns": 2,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - الدوكتايبس واحدًا واحدًا",
+        "export_name": "RMS - الدوكتايبس واحدًا واحدًا",
+        "rows": 57,
+        "columns": 10,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - حقول RMS الحية",
+        "export_name": "RMS - حقول RMS الحية",
+        "rows": 568,
+        "columns": 15,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - حقول المرجع المخصصة",
+        "export_name": "RMS - حقول المرجع المخصصة",
+        "rows": 940,
+        "columns": 16,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - تخصيصات RMS الأصلية",
+        "export_name": "RMS - تخصيصات RMS الأصلية",
+        "rows": 11,
+        "columns": 8,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - خصائص المرجع المعدلة",
+        "export_name": "RMS - خصائص المرجع المعدلة",
+        "rows": 406,
+        "columns": 6,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - الحقول القديمة غير الموصولة",
+        "export_name": "RMS - الحقول القديمة غير الموصو",
+        "rows": 3,
+        "columns": 3,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - قراءة النتائج",
+        "export_name": "RMS - قراءة النتائج",
+        "rows": 7,
+        "columns": 2,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - جميع تقارير المرجع",
+        "export_name": "RMS - جميع تقارير المرجع",
+        "rows": 318,
+        "columns": 7,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - تقارير RMS الجديدة",
+        "export_name": "RMS - تقارير RMS الجديدة",
+        "rows": 57,
+        "columns": 7,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - التأجيل والأجزاء غير المتاحة",
+        "export_name": "RMS - التأجيل والأجزاء غير المت",
+        "rows": 47,
+        "columns": 3,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - تخصيص POS Profile",
+        "export_name": "RMS - تخصيص POS Profile",
+        "rows": 15,
+        "columns": 4,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - المستندات بتصميم مستقل",
+        "export_name": "RMS - المستندات بتصميم مستقل",
+        "rows": 10,
+        "columns": 4,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - دوكتايبس إضافية للقرار",
+        "export_name": "RMS - دوكتايبس إضافية للقرار",
+        "rows": 156,
+        "columns": 13,
+        "differences": 0,
+        "examples": []
+      },
+      {
+        "name": "RMS - الداشبورد ومساحات العمل",
+        "export_name": "RMS - الداشبورد ومساحات العمل",
+        "rows": 12,
+        "columns": 3,
+        "differences": 0,
+        "examples": []
+      }
+    ],
+    "verification": "Fresh server XLSX export; original HR sheet contents were not inspected.",
+    "normalizations": [
+      "Google XLSX export truncates sheet names to 31 characters.",
+      "UTF-8 BOM on a CSV-derived header is omitted in Sheets.",
+      "Equivalent numeric cell representations are compared numerically, excluding identifiers with leading zeros.",
+      "Sheets trims outer ASCII spaces on three reference field labels and one dependency expression; internal spaces and leading blank select options were verified."
+    ]
+  }
+}

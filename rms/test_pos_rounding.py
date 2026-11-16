@@ -1,11 +1,24 @@
 import unittest
 from decimal import Decimal
 from types import SimpleNamespace
+from unittest.mock import patch
 
-from rms.pos_rounding import apply_pos_brand_rounding, round_pos_payable, POSInvoiceRoundingMixin
+from rms.pos_rounding import apply_pos_brand_rounding, round_pos_payable, POSInvoiceRoundingMixin, preserve_consolidated_pos_no_rounding
 
 
 class TestPOSRounding(unittest.TestCase):
+	def test_consolidation_preserves_no_rounding_when_profile_rounding_is_enabled(self):
+		doc = SimpleNamespace(is_consolidated=1, disable_rounded_total=0, items=[SimpleNamespace(pos_invoice="POS-1")])
+		with patch("frappe.get_all", return_value=[SimpleNamespace(name="POS-1",rounded_total=114.06,grand_total=114.06,rounding_adjustment=0)]):
+			preserve_consolidated_pos_no_rounding(doc)
+		self.assertEqual(doc.disable_rounded_total,1)
+
+	def test_consolidation_keeps_recorded_nonzero_rounding_adjustments(self):
+		doc = SimpleNamespace(is_consolidated=1, disable_rounded_total=0, items=[SimpleNamespace(pos_invoice="POS-1"),SimpleNamespace(pos_invoice="POS-2")])
+		with patch("frappe.get_all", return_value=[SimpleNamespace(name="POS-1",rounded_total=114.06,grand_total=114.06,rounding_adjustment=0),SimpleNamespace(name="POS-2",rounded_total=115,grand_total=114.6,rounding_adjustment=.4)]):
+			preserve_consolidated_pos_no_rounding(doc)
+		self.assertEqual(doc.disable_rounded_total,0)
+
 	def test_migrated_brand_setting_and_invoice_extension_are_available(self):
 		import frappe
 		from frappe.model.base_document import get_controller

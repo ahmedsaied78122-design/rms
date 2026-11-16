@@ -18,19 +18,22 @@
     "store",
     "store_company",
     "pos_profile",
-    "pos_opening_entry",
-    "pos_closing_entry",
+    "rms_column_session_section_1",
     "status",
     "business_date",
     "opened_at",
+    "closed_at",
+    "rms_payment_section",
     "payments",
-    "closed_at"
+    "rms_documents_section",
+    "pos_opening_entry",
+    "pos_closing_entry"
   ],
   "fields": [
     {
       "fieldname": "session_section",
       "fieldtype": "Section Break",
-      "label": "Cashier Session"
+      "label": "Cashier session"
     },
     {
       "fieldname": "naming_series",
@@ -82,18 +85,8 @@
       "link_filters": "[[\"POS Profile\",\"disabled\",\"=\",\"0\"],[\"POS Profile\",\"company\",\"=\",\"eval:doc.store_company\"]]"
     },
     {
-      "fieldname": "pos_opening_entry",
-      "fieldtype": "Link",
-      "label": "ERPNext POS Opening Entry",
-      "options": "POS Opening Entry",
-      "read_only": 1
-    },
-    {
-      "fieldname": "pos_closing_entry",
-      "fieldtype": "Link",
-      "label": "ERPNext POS Closing Entry",
-      "options": "POS Closing Entry",
-      "read_only": 1
+      "fieldname": "rms_column_session_section_1",
+      "fieldtype": "Column Break"
     },
     {
       "fieldname": "status",
@@ -125,16 +118,43 @@
       "read_only": 1
     },
     {
+      "fieldname": "closed_at",
+      "fieldtype": "Datetime",
+      "label": "Closed At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rms_payment_section",
+      "fieldtype": "Section Break",
+      "label": "Opening and closing balances"
+    },
+    {
       "fieldname": "payments",
       "fieldtype": "Table",
       "label": "Payment Reconciliation",
       "options": "Cashier Session Payment",
-      "reqd": 1
+      "reqd": 1,
+      "description": "Add rows here. Open a row to see all its settings."
     },
     {
-      "fieldname": "closed_at",
-      "fieldtype": "Datetime",
-      "label": "Closed At",
+      "fieldname": "rms_documents_section",
+      "fieldtype": "Section Break",
+      "label": "Linked accounting documents",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
+    },
+    {
+      "fieldname": "pos_opening_entry",
+      "fieldtype": "Link",
+      "label": "POS Opening Document",
+      "options": "POS Opening Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pos_closing_entry",
+      "fieldtype": "Link",
+      "label": "POS Closing Document",
+      "options": "POS Closing Entry",
       "read_only": 1
     }
   ],

@@ -31,7 +31,7 @@ SYNC_SCHEMA = {
 		"children": {"categories": ("Store Menu Category", ["product_category", "sequence_id"])},
 	},
 	"Product Category": {"fields": ["title", "parent_product_category", "sequence_id", "enabled", "is_group", "item_group", "default_preparation_area"]},
-	"Modifier Group": {"fields": ["title", "enabled", "sequence_id", "allow_collapse", "collapsed_by_default"]},
+	"Modifier Group": {"fields": ["title", "enabled", "sequence_id", "allow_collapse", "collapsed_by_default", "allow_multiple_selections", "min_selections", "max_selections"]},
 	"Selling Product": {
 		"fields": ["title", "item", "product_category", "uom", "maintain_stock", "enabled", "sequence_id", "is_modifier", "can_be_sold_separately", "has_options", "selling_price", "with_recipe", "default_store"],
 		"children": {
@@ -41,7 +41,7 @@ SYNC_SCHEMA = {
 			"additional_recipe": ("Selling Product Additional Recipe Line", ["item", "qty", "order_types"]),
 			"store_availability": ("Selling Product Store Availability", ["store"]),
 			"store_order_type_exclusions": ("Selling Product Store Order Type Exclusion", ["store", "order_type"]),
-			"modifier_groups": ("Selling Product Modifier Group", ["modifier_group", "sequence_id"]),
+			"modifier_groups": ("Selling Product Modifier Group", ["modifier_group", "selection_requirement", "min_selections", "max_selections", "sequence_id"]),
 			"modifier_options": ("Selling Product Modifier Option", ["modifier_group", "modifier_product", "selling_price", "sequence_id"]),
 			"print_routes": ("Selling Product Print Route", ["store", "preparation_area"]),
 		},

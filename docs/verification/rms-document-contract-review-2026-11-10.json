@@ -1,0 +1,4308 @@
+{
+  "date": "2026-11-10",
+  "documents": [
+    {
+      "name": "Approval Challenge",
+      "arabic": "طلب موافقة",
+      "counterpart": "Authorization Request",
+      "status": "وظيفة مقابلة",
+      "note": "طلبات موافقة مؤقتة برمز؛ نموذج أمان مستقل بدل إعادة استعمال سجل الطلب.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "",
+        "search_fields": "subject_doctype,subject_name,requester,approver",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": "requested_by",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "naming_series:",
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": "By \"Naming Series\" field",
+          "reference": "Random"
+        },
+        "title_field": {
+          "rms": "",
+          "reference": "requested_by"
+        },
+        "search_fields": {
+          "rms": "subject_doctype,subject_name,requester,approver",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate",
+        "verify_code"
+      ],
+      "controller": "rms/rms/doctype/approval_challenge/approval_challenge.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 19,
+      "live_only": []
+    },
+    {
+      "name": "Brand Menu Assignment",
+      "arabic": "ربط قائمة بعلامة تجارية",
+      "counterpart": "Restaurant Brand Menu",
+      "status": "مقابل مباشر",
+      "note": "ترتيب المنيو المعروض للبراند.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/brand_menu_assignment/brand_menu_assignment.py",
+      "parents": [
+        "Restaurant Brand"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "Cashier Session",
+      "arabic": "وردية الكاشير",
+      "counterpart": "Cashier Session Opening / Cashier Session Closing",
+      "status": "دمج وظيفي",
+      "note": "افتتاح وإقفال الشيفت في مستند واحد مع ربط السندات القياسية.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [
+        "before_insert",
+        "validate",
+        "load_store_defaults",
+        "load_payment_methods",
+        "validate_context",
+        "validate_open_session",
+        "validate_payments",
+        "update_expected_amounts",
+        "validate_status_change",
+        "begin_closing",
+        "finish_closing"
+      ],
+      "controller": "rms/rms/doctype/cashier_session/cashier_session.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 16,
+      "live_only": []
+    },
+    {
+      "name": "Cashier Session Payment",
+      "arabic": "أرصدة وسائل الدفع بالوردية",
+      "counterpart": "Cashier Session Opening Detail / Cashier Session Closing Payment",
+      "status": "دمج وظيفي",
+      "note": "افتتاح ومتوقع وفعلي وفروق لكل طريقة دفع.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/cashier_session_payment/cashier_session_payment.py",
+      "parents": [
+        "Cashier Session"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 5,
+      "live_only": []
+    },
+    {
+      "name": "Dining Area",
+      "arabic": "منطقة الجلوس",
+      "counterpart": "Station",
+      "status": "مقابل مباشر",
+      "note": "تجميع الطاولات حسب الفرع والبراند.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": "By script",
+        "title_field": "station_name",
+        "search_fields": "station_name,abbr,restaurant_branch",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": null
+        },
+        "title_field": {
+          "rms": "title",
+          "reference": "station_name"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": "station_name,abbr,restaurant_branch"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/dining_area/dining_area.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 7,
+      "live_only": []
+    },
+    {
+      "name": "Dining Table",
+      "arabic": "طاولة",
+      "counterpart": "Table",
+      "status": "مقابل مباشر",
+      "note": "السعة والصالة والفرع؛ أضيف رفض الصالة المعطلة على الخادم.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": "By script",
+        "title_field": "table_name",
+        "search_fields": "table_name,restaurant_branch,station",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": null
+        },
+        "title_field": {
+          "rms": "title",
+          "reference": "table_name"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": "table_name,restaurant_branch,station"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/dining_table/dining_table.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 8,
+      "live_only": []
+    },
+    {
+      "name": "Expense Category",
+      "arabic": "تصنيف المصروف",
+      "counterpart": "Expense Entry Type",
+      "status": "مقابل وظيفي",
+      "note": "شركة وحساب مصروف ومركز تكلفة؛ المرجع الأحدث يدعم جدول حسابات لشركات متعددة.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title,company,expense_account",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": "title",
+        "search_fields": null,
+        "editable_grid": 0
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "Random"
+        },
+        "search_fields": {
+          "rms": "title,company,expense_account",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/expense_category/expense_category.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 7,
+      "live_only": []
+    },
+    {
+      "name": "Kitchen Ticket",
+      "arabic": "تذكرة المطبخ",
+      "counterpart": "Kitchen Order",
+      "status": "مقابل وظيفي",
+      "note": "حالات وتوقيتات التحضير والالتقاط؛ تاريخ أحداث مفصل في المرجع مقابل طوابع زمنية في RMS.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": "By script",
+        "title_field": "order",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "naming_series:",
+          "reference": null
+        },
+        "naming_rule": {
+          "rms": "By \"Naming Series\" field",
+          "reference": "By script"
+        },
+        "title_field": {
+          "rms": "",
+          "reference": "order"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "before_insert",
+        "validate",
+        "validate_context",
+        "validate_items",
+        "stamp_status_times",
+        "set_status",
+        "update_order_status"
+      ],
+      "controller": "rms/rms/doctype/kitchen_ticket/kitchen_ticket.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 20,
+      "live_only": []
+    },
+    {
+      "name": "Kitchen Ticket Item",
+      "arabic": "صنف تذكرة المطبخ",
+      "counterpart": "Kitchen Order Item",
+      "status": "مقابل مباشر",
+      "note": "ربط بند الطلب والكمية والإضافات؛ أضيف منع الكمية الصفرية والسالبة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 1,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/kitchen_ticket_item/kitchen_ticket_item.py",
+      "parents": [
+        "Kitchen Ticket"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 7,
+      "live_only": []
+    },
+    {
+      "name": "Modifier Group",
+      "arabic": "مجموعة إضافات",
+      "counterpart": "Modifier Group",
+      "status": "مقابل مباشر",
+      "note": "هوية المجموعة وعرضها؛ الحدود الفعلية موجودة داخل الصنف.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": "title",
+        "search_fields": null,
+        "editable_grid": 0
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "Random"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/modifier_group/modifier_group.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 14,
+      "live_only": []
+    },
+    {
+      "name": "Order Type",
+      "arabic": "نوع الطلب",
+      "counterpart": "Order Type",
+      "status": "مقابل وظيفي",
+      "note": "اشتراط الطاولة والمرجع الخارجي والحسابات؛ الحجز وقنوات التوصيل الأوسع غير منفذين.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "field:title",
+        "naming_rule": "By fieldname",
+        "title_field": "title",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "field:title"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "By fieldname"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate",
+        "validate_account"
+      ],
+      "controller": "rms/rms/doctype/order_type/order_type.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 10,
+      "live_only": []
+    },
+    {
+      "name": "Order Type Account Mapping",
+      "arabic": "حسابات نوع الطلب",
+      "counterpart": "Order Type Account",
+      "status": "مقابل مباشر",
+      "note": "حساب الإيراد وتكلفة المبيعات لكل شركة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/order_type_account_mapping/order_type_account_mapping.py",
+      "parents": [
+        "Order Type"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 3,
+      "live_only": []
+    },
+    {
+      "name": "Order Type MultiSelect Option",
+      "arabic": "اختيار نوع طلب",
+      "counterpart": "Order Type",
+      "status": "جدول قديم غير مستخدم",
+      "note": "لا يوجد مقابل كجدول مستقل. قائمة الوصفة الإضافية الحالية مخزنة بقيم مشفرة، وليس بهذا الجدول.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "field:title",
+        "naming_rule": "By fieldname",
+        "title_field": "title",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": 1,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 1
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": null,
+          "reference": "field:title"
+        },
+        "naming_rule": {
+          "rms": null,
+          "reference": "By fieldname"
+        },
+        "title_field": {
+          "rms": null,
+          "reference": "title"
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/order_type_multiselect_option/order_type_multiselect_option.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 1,
+      "live_only": []
+    },
+    {
+      "name": "POS Action Reason",
+      "arabic": "سبب إجراء نقطة البيع",
+      "counterpart": "Order Cancellation Reason / Order Return Reason",
+      "status": "دمج وظيفي",
+      "note": "تصنيف موحد للسبب حسب الإلغاء أو المرتجع؛ إلزام التعليق والحساب حسب السبب ميزات مؤجلة.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": "hash",
+        "naming_rule": null,
+        "title_field": "reason",
+        "search_fields": "reason",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [
+        "validate_pos_action_reason",
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/pos_action_reason/pos_action_reason.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 6,
+      "live_only": []
+    },
+    {
+      "name": "POS Order",
+      "arabic": "طلب نقطة البيع",
+      "counterpart": "Order",
+      "status": "مقابل وظيفي",
+      "note": "الأصناف والخصومات والمدفوعات والطاولات؛ سلطة تعديل الطلب في واجهات POS مع حفظ اللقطات.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 1,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 1
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "naming_series:"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "By \"Naming Series\" field"
+        },
+        "title_field": {
+          "rms": "",
+          "reference": null
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "get_active_order_item_qty",
+        "calculate_order_item_amount",
+        "validate_confirmed_item_cancellation",
+        "validate_modifier_group_selection",
+        "modifier_choices_unchanged",
+        "normalize_dining_context",
+        "ensure_order_items_append_only",
+        "normalize_guest_checks_for_lock",
+        "ensure_confirmed_guest_checks_unchanged",
+        "ensure_guest_check_item_append_only",
+        "option_tree_contains",
+        "calculate_discount_amount",
+        "choices",
+        "autoname",
+        "before_insert",
+        "validate",
+        "validate_transition",
+        "compare_locked_snapshot",
+        "validate_pending_item_edit",
+        "serialize_order_items",
+        "validate_item_cancellation_change",
+        "serialize_item_cancellation",
+        "recalculate_cancelled_item_amounts",
+        "recalculate_order_totals",
+        "validate_context",
+        "validate_table_check_occupancy",
+        "normalize_check_label",
+        "resolve_items",
+        "validate_discount",
+        "get_brand_menu_categories",
+        "build_recipe_snapshot",
+        "append_modifier_recipe",
+        "calculate_tax_preview",
+        "validate_payment_state",
+        "validate_terminal_state",
+        "confirm",
+        "validate_stock_available",
+        "create_kitchen_tickets",
+        "set_kitchen_status",
+        "sent_snapshot"
+      ],
+      "controller": "rms/rms/doctype/pos_order/pos_order.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 37,
+      "live_only": [
+        "is_retail",
+        "retail_sale_id"
+      ]
+    },
+    {
+      "name": "POS Order Guest Check",
+      "arabic": "حساب ضيف بالطلب",
+      "counterpart": "Order / Table",
+      "status": "لا مقابل مستقل",
+      "note": "تقسيم فاتورة الطلب إلى ضيوف بهويات وتخصيص كميات ثابت؛ المرجع يقسم أوامر الطاولة بدل هذا الجدول.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_guest_check/pos_order_guest_check.py",
+      "parents": [
+        "POS Order"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 11,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Item",
+      "arabic": "صنف طلب نقطة البيع",
+      "counterpart": "Order Item",
+      "status": "مقابل وظيفي",
+      "note": "بند صنف؛ لقطات JSON للإضافات والوصفة وإلغاء جزئي للكمية بدل صفوف إضافات مستقلة في المرجع.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 1
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": null,
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": null,
+          "reference": "Random"
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_item/pos_order_item.py",
+      "parents": [
+        "POS Order"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 15,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Item Cancellation",
+      "arabic": "إلغاء صنف بالطلب",
+      "counterpart": "Order Item / Authorization Request",
+      "status": "لا مقابل مستقل",
+      "note": "سجل إلغاء جزئي غير قابل للاستبدال داخل الطلب؛ المرجع يحتفظ بحقول إلغاء البند وطلب الموافقة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_item_cancellation/pos_order_item_cancellation.py",
+      "parents": [
+        "POS Order"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 11,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Item Modifier",
+      "arabic": "إضافة على صنف الطلب",
+      "counterpart": "Order Item",
+      "status": "جدول قديم غير مستخدم",
+      "note": "المخطط موجود للتوافق فقط؛ التنفيذ الحالي يستخدم POS Order Item.modifiers بصيغة JSON.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 1
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": null,
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": null,
+          "reference": "Random"
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_item_modifier/pos_order_item_modifier.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 6,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Item Recipe Line",
+      "arabic": "مكونات صنف الطلب",
+      "counterpart": "Menu Product Recipe",
+      "status": "جدول قديم غير مستخدم",
+      "note": "التنفيذ الحالي يستخدم recipe_snapshot بصيغة JSON؛ ليس جدولًا متداخلًا في بنود الطلب.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_item_recipe_line/pos_order_item_recipe_line.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 7,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Payment",
+      "arabic": "دفعة طلب نقطة البيع",
+      "counterpart": "Sales Invoice Payment",
+      "status": "مقابل وظيفي",
+      "note": "مدفوعات الطلب مرتبطة بترحيل فاتورة POS؛ المصدر يستخدم جدول الدفع القياسي.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_payment/pos_order_payment.py",
+      "parents": [
+        "POS Order"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 3,
+      "live_only": []
+    },
+    {
+      "name": "POS Return",
+      "arabic": "مرتجع نقطة البيع",
+      "counterpart": "POS Invoice / Authorization Request",
+      "status": "لا مقابل مستقل",
+      "note": "مستند طلب وموافقة ومرتجع ومخزون منفصل فوق إشعار الدائن القياسي.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [
+        "get_return_refund_total",
+        "normalize_return_rounding",
+        "before_insert",
+        "validate",
+        "validate_request",
+        "validate_return_line",
+        "build_return_invoice",
+        "get_source_rounding_method",
+        "get_reserved_qty",
+        "get_external_returned_qty",
+        "build_stock_receipt_items"
+      ],
+      "controller": "rms/rms/doctype/pos_return/pos_return.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 28,
+      "live_only": []
+    },
+    {
+      "name": "POS Return Item",
+      "arabic": "صنف مرتجع",
+      "counterpart": "POS Invoice Item",
+      "status": "مقابل وظيفي",
+      "note": "اختيار كميات مرتجعة من بنود الفاتورة الأصلية وحجز المطلوب قبل الموافقة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": null,
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": null,
+          "reference": "Random"
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_return_item/pos_return_item.py",
+      "parents": [
+        "POS Return"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 9,
+      "live_only": []
+    },
+    {
+      "name": "POS Return Payment",
+      "arabic": "دفعة استرداد",
+      "counterpart": "Sales Invoice Payment",
+      "status": "مقابل وظيفي",
+      "note": "طرق سداد المرتجع المسموح بها في ملف نقطة البيع الحالي.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_return_payment/pos_return_payment.py",
+      "parents": [
+        "POS Return"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "POS User",
+      "arabic": "مستخدم نقطة البيع",
+      "counterpart": "Staff Member",
+      "status": "مقابل وظيفي",
+      "note": "حساب الدخول والصلاحيات والفروع ونطاق المطبخ والبراند ونوع الطلب؛ لا ينشئ موظفًا أو مستخدمًا تلقائيًا.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": "field:user",
+        "naming_rule": null,
+        "title_field": "full_name",
+        "search_fields": "user,full_name,employee",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": "By script",
+        "title_field": "full_name",
+        "search_fields": "full_name,phone,employee,staff_role",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "field:user",
+          "reference": null
+        },
+        "naming_rule": {
+          "rms": null,
+          "reference": "By script"
+        },
+        "search_fields": {
+          "rms": "user,full_name,employee",
+          "reference": "full_name,phone,employee,staff_role"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "on_update",
+        "validate",
+        "validate_permissions",
+        "validate_scopes",
+        "validate_scope_table",
+        "validate_user",
+        "validate_employee",
+        "validate_stores"
+      ],
+      "controller": "rms/rms/doctype/pos_user/pos_user.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 45,
+      "live_only": [
+        "retail_mode",
+        "retail_order_type",
+        "retail_section"
+      ]
+    },
+    {
+      "name": "POS User Brand",
+      "arabic": "علامة مسموحة للمستخدم",
+      "counterpart": "Staff Member Brand Perm",
+      "status": "مقابل مباشر",
+      "note": "قائمة سماح براندات ضمن الفروع المكلف بها.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_user_brand/pos_user_brand.py",
+      "parents": [
+        "POS User"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 1,
+      "live_only": []
+    },
+    {
+      "name": "POS User Order Type",
+      "arabic": "نوع طلب مسموح للمستخدم",
+      "counterpart": "Staff Member Order Type Perm",
+      "status": "مقابل مباشر",
+      "note": "قائمة سماح أنواع طلب ضمن الفروع المكلف بها.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_user_order_type/pos_user_order_type.py",
+      "parents": [
+        "POS User"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 1,
+      "live_only": []
+    },
+    {
+      "name": "POS User Preparation Area",
+      "arabic": "منطقة تحضير مسموحة للمستخدم",
+      "counterpart": "Staff Member Preparation Area Perm",
+      "status": "مقابل مباشر",
+      "note": "نطاق مناطق التحضير المفعلة والمسموح عرضها.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 1,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_user_preparation_area/pos_user_preparation_area.py",
+      "parents": [
+        "POS User"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 1,
+      "live_only": []
+    },
+    {
+      "name": "POS User Store",
+      "arabic": "فرع المستخدم",
+      "counterpart": "Staff Member Branch POS Profile",
+      "status": "مقابل مباشر",
+      "note": "تعيين الفرع وملف POS التابع لشركته؛ التحقق يعمل من حفظ مستند المستخدم.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/pos_user_store/pos_user_store.py",
+      "parents": [
+        "POS User"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 4,
+      "live_only": []
+    },
+    {
+      "name": "Preparation Area",
+      "arabic": "منطقة التحضير",
+      "counterpart": "Preparation Area",
+      "status": "مقابل وظيفي",
+      "note": "مطبخ وطابعة وأجهزة عرض؛ توزيع حمل الأجهزة التفصيلي ليس منفذًا.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "title",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "naming_series:"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "By \"Naming Series\" field"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/preparation_area/preparation_area.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 13,
+      "live_only": []
+    },
+    {
+      "name": "Print Device",
+      "arabic": "طابعة",
+      "counterpart": "Network Printer Settings",
+      "status": "مقابل وظيفي",
+      "note": "جهاز طباعة مستقل يدعم الشبكة وIPP وطابور النظام.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "format:{printer_title}",
+        "naming_rule": "Set by user",
+        "title_field": "printer_title",
+        "search_fields": "printer_title,printer_name,server_ip,device,device_printer_identifier",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "format:{printer_title}"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "Set by user"
+        },
+        "title_field": {
+          "rms": "title",
+          "reference": "printer_title"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": "printer_title,printer_name,server_ip,device,device_printer_identifier"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/print_device/print_device.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 13,
+      "live_only": []
+    },
+    {
+      "name": "Print Dispatch Job",
+      "arabic": "مهمة طباعة",
+      "counterpart": "Server Printing Job",
+      "status": "مقابل وظيفي",
+      "note": "طابور إرسال ونتيجة ومحاولات طباعة؛ الحمولات لا تعرض في التقارير العامة.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": "reference_doctype",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "naming_series:",
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": "By \"Naming Series\" field",
+          "reference": "Random"
+        },
+        "title_field": {
+          "rms": "",
+          "reference": "reference_doctype"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "before_insert",
+        "validate",
+        "after_insert",
+        "retry"
+      ],
+      "controller": "rms/rms/doctype/print_dispatch_job/print_dispatch_job.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 17,
+      "live_only": []
+    },
+    {
+      "name": "Product Category",
+      "arabic": "قسم المنتجات",
+      "counterpart": "Menu Category",
+      "status": "مقابل وظيفي",
+      "note": "شجرة منيو مستقلة عن مجموعة الصنف المخزني؛ مخزن القسم يورث فقط للشركة المطابقة.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": 1,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 1,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "field:title",
+        "naming_rule": "By fieldname",
+        "title_field": "title",
+        "search_fields": "parent_menu_category",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "field:title"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "By fieldname"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": "parent_menu_category"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/product_category/product_category.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 17,
+      "live_only": []
+    },
+    {
+      "name": "RMS Sync Event",
+      "arabic": "حدث مزامنة RMS",
+      "counterpart": "Capture Event",
+      "status": "تغطية جزئية مؤجلة",
+      "note": "سجل محلي فقط؛ ليس استقبالًا وتنفيذًا للتغييرات بين مواقع مستقلة.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 0,
+        "allow_rename": null,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "",
+        "search_fields": "source_doctype,source_name,idempotency_key",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": "reference_doctype",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": 0,
+          "reference": 1
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 1
+        },
+        "autoname": {
+          "rms": "naming_series:",
+          "reference": null
+        },
+        "naming_rule": {
+          "rms": "By \"Naming Series\" field",
+          "reference": null
+        },
+        "title_field": {
+          "rms": "",
+          "reference": "reference_doctype"
+        },
+        "search_fields": {
+          "rms": "source_doctype,source_name,idempotency_key",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "before_insert",
+        "validate",
+        "on_trash"
+      ],
+      "controller": "rms/rms/doctype/rms_sync_event/rms_sync_event.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 13,
+      "live_only": []
+    },
+    {
+      "name": "RMS Sync Settings",
+      "arabic": "إعدادات مزامنة RMS",
+      "counterpart": "Master Instance / Slave Instance",
+      "status": "تغطية جزئية مؤجلة",
+      "note": "تشغيل التسجيل المحلي؛ الاتصال والنقل وتسوية التعارضات غير منفذة.",
+      "settings": {
+        "istable": null,
+        "issingle": 1,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/rms_sync_settings/rms_sync_settings.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 3,
+      "live_only": []
+    },
+    {
+      "name": "Restaurant Brand",
+      "arabic": "علامة تجارية",
+      "counterpart": "Restaurant Brand",
+      "status": "مقابل مباشر",
+      "note": "هوية البراند وقوائم المنيو وخيار التقريب الخاص به.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "field:title",
+        "naming_rule": "By fieldname",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 0
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "field:title"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "By fieldname"
+        },
+        "title_field": {
+          "rms": "title",
+          "reference": null
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/restaurant_brand/restaurant_brand.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 9,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product",
+      "arabic": "صنف بيع",
+      "counterpart": "Menu Product",
+      "status": "مقابل وظيفي",
+      "note": "السعر والوصفة والخيارات والمخزن والإضافات حسب الصنف؛ تعديل الاسم والقسم يحافظ على المعرفات.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title,item_code",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": null
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": "title,item_code"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "before_insert",
+        "validate",
+        "on_update",
+        "get_effective_defaults",
+        "create_erpnext_item",
+        "validate_category",
+        "validate_item_ownership",
+        "validate_default_warehouse",
+        "sync_erpnext_prices",
+        "get_price_currencies",
+        "get_price_list_name",
+        "get_price_list_currency",
+        "ensure_selling_price_list",
+        "upsert_item_price",
+        "resolve_price",
+        "validate_option_attribute",
+        "validate_options_and_prices",
+        "option_graph_reaches",
+        "validate_recipe",
+        "validate_stock_item",
+        "validate_store_rows",
+        "validate_modifiers"
+      ],
+      "controller": "rms/rms/doctype/selling_product/selling_product.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 38,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Additional Recipe Line",
+      "arabic": "مكونات إضافية للصنف",
+      "counterpart": "Menu Product Additional Recipe",
+      "status": "مقابل وظيفي",
+      "note": "قائمة أنواع طلب لكل سطر بدل نوع منفرد؛ فك الترميز والتحقق في الخادم.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_additional_recipe_line/selling_product_additional_recipe_line.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 5,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Modifier Group",
+      "arabic": "مجموعة إضافات الصنف",
+      "counterpart": "Menu Product Modifier Group",
+      "status": "مقابل وظيفي",
+      "note": "الحدان مستقلان لكل صنف؛ 0 للأقصى دون حد ويحسب العدد خيارات مختلفة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [
+        "_limit",
+        "get_minimum_selections",
+        "get_maximum_selections",
+        "allows_multiple_selections",
+        "validate_product_limits"
+      ],
+      "controller": "rms/rms/doctype/selling_product_modifier_group/selling_product_modifier_group.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 5,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Modifier Option",
+      "arabic": "اختيار إضافة للصنف",
+      "counterpart": "Menu Product Modifier",
+      "status": "مقابل وظيفي",
+      "note": "خيارات وأسعار خاصة بالصنف؛ حدود كمية مستقلة لكل إضافة غير منفذة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_modifier_option/selling_product_modifier_option.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 5,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Option",
+      "arabic": "اختيار فرعي للصنف",
+      "counterpart": "Menu Product.parent_product / attribute_value",
+      "status": "لا مقابل مستقل",
+      "note": "علاقة خيارات في جدول داخل الأب، بدل ربط الابن بالأب في سجل الصنف.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_option/selling_product_option.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 3,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Price Rule",
+      "arabic": "قاعدة تسعير الصنف",
+      "counterpart": "Menu Product Price List / Menu Product Price",
+      "status": "دمج وظيفي",
+      "note": "شروط الفرع والبراند والنوع والأولوية داخل الصنف؛ تواريخ صلاحية الأسعار مؤجلة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_price_rule/selling_product_price_rule.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 5,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Print Route",
+      "arabic": "مسار تحضير الصنف",
+      "counterpart": "Menu Product Default",
+      "status": "مقابل وظيفي",
+      "note": "مسارات تحضير متعددة لكل فرع بدل افتراضي تحضير واحد.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_print_route/selling_product_print_route.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Recipe Line",
+      "arabic": "مكونات وصفة الصنف",
+      "counterpart": "Menu Product Recipe",
+      "status": "مقابل وظيفي",
+      "note": "مكونات وكميات ووحدات وتفجير BOM؛ إعداد BOM محدد لكل سطر غير موجود.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_recipe_line/selling_product_recipe_line.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 6,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Store Availability",
+      "arabic": "إتاحة الصنف في فرع",
+      "counterpart": "Menu Product Branch",
+      "status": "دلالة مختلفة",
+      "note": "RMS قائمة سماح، والمرجع قائمة منع في disable_at_branches؛ لا يجوز نقل القيم مباشرة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_store_availability/selling_product_store_availability.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 1,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Store Order Type Exclusion",
+      "arabic": "استبعاد نوع طلب للصنف في فرع",
+      "counterpart": "Menu Product Order Type",
+      "status": "دلالة مختلفة",
+      "note": "استبعاد نوع طلب لفرع، مقابل إتاحة أنواع الطلب في المرجع.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_store_order_type_exclusion/selling_product_store_order_type_exclusion.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "Shift Expense",
+      "arabic": "مصروف الوردية",
+      "counterpart": "Expense Entry",
+      "status": "مقابل وظيفي",
+      "note": "طلب مصروف واعتماده وترحيل القيد وإدراجه في تسوية الشيفت.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": 1,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "",
+        "search_fields": "cashier_session,expense_category,mode_of_payment",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 1,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": "By script",
+        "title_field": null,
+        "search_fields": "company,restaurant_branch,cashier,staff_member,mode_of_payment,payment_account",
+        "editable_grid": 0
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "naming_series:",
+          "reference": null
+        },
+        "naming_rule": {
+          "rms": "By \"Naming Series\" field",
+          "reference": "By script"
+        },
+        "title_field": {
+          "rms": "",
+          "reference": null
+        },
+        "search_fields": {
+          "rms": "cashier_session,expense_category,mode_of_payment",
+          "reference": "company,restaurant_branch,cashier,staff_member,mode_of_payment,payment_account"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [
+        "validate",
+        "on_update",
+        "before_submit",
+        "post_to_ledger"
+      ],
+      "controller": "rms/rms/doctype/shift_expense/shift_expense.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 29,
+      "live_only": []
+    },
+    {
+      "name": "Store",
+      "arabic": "الفرع",
+      "counterpart": "Restaurant Branch",
+      "status": "مقابل وظيفي",
+      "note": "الشركة والبراند والضرائب والافتراضيات؛ المواعيد بيانات مرجعية والإغلاق التشغيلي مؤجل.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "field:restaurant_name",
+        "naming_rule": "By fieldname",
+        "title_field": "restaurant_name",
+        "search_fields": "restaurant_name,company",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "field:restaurant_name"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "By fieldname"
+        },
+        "title_field": {
+          "rms": "title",
+          "reference": "restaurant_name"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": "restaurant_name,company"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate",
+        "validate_brands",
+        "validate_defaults",
+        "validate_order_type_taxes"
+      ],
+      "controller": "rms/rms/doctype/store/store.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 28,
+      "live_only": []
+    },
+    {
+      "name": "Store Brand Assignment",
+      "arabic": "علامة تجارية بفرع",
+      "counterpart": "Restaurant Branch Brand",
+      "status": "مقابل مباشر",
+      "note": "براند واحد افتراضي وروابط غير مكررة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/store_brand_assignment/store_brand_assignment.py",
+      "parents": [
+        "Store"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 3,
+      "live_only": []
+    },
+    {
+      "name": "Store Menu",
+      "arabic": "قائمة بيع",
+      "counterpart": "Menu",
+      "status": "مقابل وظيفي",
+      "note": "منيو مرتبط ببراند وقائمة أقسام، بدل إسناد المنيو مباشرة لكل صنف.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "",
+        "naming_rule": "By script",
+        "title_field": "title",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "title",
+        "search_fields": "title, currency",
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": "",
+          "reference": "naming_series:"
+        },
+        "naming_rule": {
+          "rms": "By script",
+          "reference": "By \"Naming Series\" field"
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": "title, currency"
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 1
+        }
+      },
+      "methods": [
+        "validate"
+      ],
+      "controller": "rms/rms/doctype/store_menu/store_menu.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 7,
+      "live_only": []
+    },
+    {
+      "name": "Store Menu Category",
+      "arabic": "قسم قائمة البيع",
+      "counterpart": "Menu Product.menu / Menu Category",
+      "status": "لا مقابل مستقل",
+      "note": "قائمة الأقسام المتاحة للمنيو في RMS؛ المقابل علاقة الصنف بالمنيو وشجرة القسم في المرجع.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/store_menu_category/store_menu_category.py",
+      "parents": [
+        "Store Menu"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "Store Order Type Tax",
+      "arabic": "ضريبة نوع طلب بالفرع",
+      "counterpart": "Order Type Tax Template",
+      "status": "مقابل مباشر",
+      "note": "قالب ضريبة لكل نوع طلب في الفرع وشركته.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/store_order_type_tax/store_order_type_tax.py",
+      "parents": [
+        "Store"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "Store User Assignment",
+      "arabic": "مستخدم مسموح له بالفرع",
+      "counterpart": "User Permission / Staff Member.branches",
+      "status": "لا مقابل مستقل",
+      "note": "قائمة دخول الفرع للمستخدم غير المعرف ككاشير؛ الكاشير يستخدم POS User Store.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/store_user_assignment/store_user_assignment.py",
+      "parents": [
+        "Store"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "Store Working Hour",
+      "arabic": "ساعات عمل الفرع",
+      "counterpart": "Branch Working Hour",
+      "status": "تغطية جزئية مؤجلة",
+      "note": "تخزين المواعيد ونوع الطلب؛ لا سجل نسخ تاريخية ولا منع تلقائي للبيع خارج المواعيد.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 1
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/store_working_hour/store_working_hour.py",
+      "parents": [
+        "Store"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 5,
+      "live_only": []
+    },
+    {
+      "name": "Waste Entry",
+      "arabic": "تسجيل هالك",
+      "counterpart": "Menu Product Waste Entry",
+      "status": "مقابل وظيفي",
+      "note": "هالك صنف أو وصفة وحركة مخزون مرتبطة وعكسها عند الإلغاء.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": 1,
+        "track_changes": 1,
+        "allow_rename": 1,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": "",
+        "search_fields": "title",
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 1,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 0
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": null,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": 1,
+          "reference": 0
+        },
+        "title_field": {
+          "rms": "",
+          "reference": null
+        },
+        "search_fields": {
+          "rms": "title",
+          "reference": null
+        },
+        "editable_grid": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [
+        "validate",
+        "validate_context",
+        "build_waste_items",
+        "on_submit",
+        "on_cancel",
+        "row_as_stock_item"
+      ],
+      "controller": "rms/rms/doctype/waste_entry/waste_entry.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 15,
+      "live_only": []
+    },
+    {
+      "name": "Waste Entry Item",
+      "arabic": "صنف هالك",
+      "counterpart": "Menu Product Waste Entry Item",
+      "status": "مقابل مباشر",
+      "note": "مكونات الهالك المحسوبة وكمياتها وتكلفتها ومخازنها.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/waste_entry_item/waste_entry_item.py",
+      "parents": [
+        "Waste Entry"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 6,
+      "live_only": []
+    }
+  ],
+  "source_field_count": 562,
+  "live_field_count": 567,
+  "reference_custom_fields": 939,
+  "local_custom_fields": 10,
+  "reference_property_setters": 405,
+  "local_property_setters": 106,
+  "custom_summary": {
+    "لا مقابل مباشر — مؤجل": 550,
+    "ربط بديل يحتاج مراعاة المستند": 121,
+    "ميزة غير موجودة — مؤجل": 139,
+    "موجود بنفس الاسم": 7,
+    "تنظيم واجهة": 116,
+    "مقابل وظيفي / فرق موضح": 6
+  },
+  "live_only_fields": [
+    {
+      "doctype": "POS Order",
+      "live_only": [
+        "is_retail",
+        "retail_sale_id"
+      ],
+      "finding": "تعريفات قديمة لا توجد في ملفات RMS الحالية، ولا يوجد Client Script أو Server Script يستعملها. لم تحذف."
+    },
+    {
+      "doctype": "POS User",
+      "live_only": [
+        "retail_mode",
+        "retail_order_type",
+        "retail_section"
+      ],
+      "finding": "تعريفات قديمة لا توجد في ملفات RMS الحالية، ولا يوجد Client Script أو Server Script يستعملها. لم تحذف."
+    }
+  ],
+  "independent_or_legacy": [
+    {
+      "name": "Order Type MultiSelect Option",
+      "arabic": "اختيار نوع طلب",
+      "counterpart": "Order Type",
+      "status": "جدول قديم غير مستخدم",
+      "note": "لا يوجد مقابل كجدول مستقل. قائمة الوصفة الإضافية الحالية مخزنة بقيم مشفرة، وليس بهذا الجدول.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 0,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "field:title",
+        "naming_rule": "By fieldname",
+        "title_field": "title",
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "istable": {
+          "rms": 1,
+          "reference": 0
+        },
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 1
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": null,
+          "reference": "field:title"
+        },
+        "naming_rule": {
+          "rms": null,
+          "reference": "By fieldname"
+        },
+        "title_field": {
+          "rms": null,
+          "reference": "title"
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/order_type_multiselect_option/order_type_multiselect_option.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 1,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Guest Check",
+      "arabic": "حساب ضيف بالطلب",
+      "counterpart": "Order / Table",
+      "status": "لا مقابل مستقل",
+      "note": "تقسيم فاتورة الطلب إلى ضيوف بهويات وتخصيص كميات ثابت؛ المرجع يقسم أوامر الطاولة بدل هذا الجدول.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_guest_check/pos_order_guest_check.py",
+      "parents": [
+        "POS Order"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 11,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Item Cancellation",
+      "arabic": "إلغاء صنف بالطلب",
+      "counterpart": "Order Item / Authorization Request",
+      "status": "لا مقابل مستقل",
+      "note": "سجل إلغاء جزئي غير قابل للاستبدال داخل الطلب؛ المرجع يحتفظ بحقول إلغاء البند وطلب الموافقة.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_item_cancellation/pos_order_item_cancellation.py",
+      "parents": [
+        "POS Order"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 11,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Item Modifier",
+      "arabic": "إضافة على صنف الطلب",
+      "counterpart": "Order Item",
+      "status": "جدول قديم غير مستخدم",
+      "note": "المخطط موجود للتوافق فقط؛ التنفيذ الحالي يستخدم POS Order Item.modifiers بصيغة JSON.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 1,
+        "allow_rename": 0,
+        "autoname": "hash",
+        "naming_rule": "Random",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 1
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        },
+        "autoname": {
+          "rms": null,
+          "reference": "hash"
+        },
+        "naming_rule": {
+          "rms": null,
+          "reference": "Random"
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_item_modifier/pos_order_item_modifier.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 6,
+      "live_only": []
+    },
+    {
+      "name": "POS Order Item Recipe Line",
+      "arabic": "مكونات صنف الطلب",
+      "counterpart": "Menu Product Recipe",
+      "status": "جدول قديم غير مستخدم",
+      "note": "التنفيذ الحالي يستخدم recipe_snapshot بصيغة JSON؛ ليس جدولًا متداخلًا في بنود الطلب.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": 1,
+        "issingle": 0,
+        "is_tree": 0,
+        "is_submittable": 0,
+        "track_changes": 0,
+        "allow_rename": 0,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "settings_differences": {
+        "issingle": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_tree": {
+          "rms": null,
+          "reference": 0
+        },
+        "is_submittable": {
+          "rms": null,
+          "reference": 0
+        },
+        "track_changes": {
+          "rms": null,
+          "reference": 0
+        },
+        "allow_rename": {
+          "rms": null,
+          "reference": 0
+        }
+      },
+      "methods": [],
+      "controller": "rms/rms/doctype/pos_order_item_recipe_line/pos_order_item_recipe_line.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 7,
+      "live_only": []
+    },
+    {
+      "name": "POS Return",
+      "arabic": "مرتجع نقطة البيع",
+      "counterpart": "POS Invoice / Authorization Request",
+      "status": "لا مقابل مستقل",
+      "note": "مستند طلب وموافقة ومرتجع ومخزون منفصل فوق إشعار الدائن القياسي.",
+      "settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": 1,
+        "allow_rename": null,
+        "autoname": "naming_series:",
+        "naming_rule": "By \"Naming Series\" field",
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [
+        "get_return_refund_total",
+        "normalize_return_rounding",
+        "before_insert",
+        "validate",
+        "validate_request",
+        "validate_return_line",
+        "build_return_invoice",
+        "get_source_rounding_method",
+        "get_reserved_qty",
+        "get_external_returned_qty",
+        "build_stock_receipt_items"
+      ],
+      "controller": "rms/rms/doctype/pos_return/pos_return.py",
+      "parents": [],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء",
+      "source_fields": 28,
+      "live_only": []
+    },
+    {
+      "name": "Selling Product Option",
+      "arabic": "اختيار فرعي للصنف",
+      "counterpart": "Menu Product.parent_product / attribute_value",
+      "status": "لا مقابل مستقل",
+      "note": "علاقة خيارات في جدول داخل الأب، بدل ربط الابن بالأب في سجل الصنف.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/selling_product_option/selling_product_option.py",
+      "parents": [
+        "Selling Product"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 3,
+      "live_only": []
+    },
+    {
+      "name": "Store Menu Category",
+      "arabic": "قسم قائمة البيع",
+      "counterpart": "Menu Product.menu / Menu Category",
+      "status": "لا مقابل مستقل",
+      "note": "قائمة الأقسام المتاحة للمنيو في RMS؛ المقابل علاقة الصنف بالمنيو وشجرة القسم في المرجع.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/store_menu_category/store_menu_category.py",
+      "parents": [
+        "Store Menu"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    },
+    {
+      "name": "Store User Assignment",
+      "arabic": "مستخدم مسموح له بالفرع",
+      "counterpart": "User Permission / Staff Member.branches",
+      "status": "لا مقابل مستقل",
+      "note": "قائمة دخول الفرع للمستخدم غير المعرف ككاشير؛ الكاشير يستخدم POS User Store.",
+      "settings": {
+        "istable": 1,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": 1
+      },
+      "reference_settings": {
+        "istable": null,
+        "issingle": null,
+        "is_tree": null,
+        "is_submittable": null,
+        "track_changes": null,
+        "allow_rename": null,
+        "autoname": null,
+        "naming_rule": null,
+        "title_field": null,
+        "search_fields": null,
+        "editable_grid": null
+      },
+      "settings_differences": {},
+      "methods": [],
+      "controller": "rms/rms/doctype/store_user_assignment/store_user_assignment.py",
+      "parents": [
+        "Store"
+      ],
+      "review": "تعريف الحقول وترتيبها والروابط والشروط + كنترولر الأصل ومسارات الاستدعاء؛ حفظ جداول الأطفال يطبق تحقق الأصل وليس validate الطفل تلقائيًا",
+      "source_fields": 2,
+      "live_only": []
+    }
+  ],
+  "fixes": [
+    "Kitchen Ticket rejects zero and negative quantities.",
+    "Dining Table rejects disabled Dining Area."
+  ],
+  "limitations": [
+    "Full declaration and caller/controller review; not a live transaction certification.",
+    "External addon controllers missing from supplied archive are identified, not assumed equivalent.",
+    "Five legacy retail fields are retained, not silently deleted or treated as implemented features."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "desktopEnglish": true,
+  "desktopArabic": true,
+  "mobileWidths": [
+    390,
+    320
+  ],
+  "tabletWidth": 1024,
+  "noHorizontalOverflow": true,
+  "labelsVisible": true,
+  "inputIconsAndToggleAligned": true,
+  "passwordVisibilityMouseAndKeyboard": true,
+  "passwordRecoveryAndEmailLinkScreens": true,
+  "invalidLoginFeedback": true,
+  "realCredentialLogin": true,
+  "redirectPreserved": true,
+  "noVisibleFrameworkBranding": true,
+  "launcherUsesRMSLogo": true,
+  "deskUsesRMSLogo": true,
+  "frameworkHelpLinksHidden": true,
+  "authenticationSettingsUnchanged": true,
+  "portraitRequests": 0,
+  "existingDeskConsoleIssue": "Pre-existing Desk toast compatibility error; login pages have no JavaScript errors",
+  "verified_on": "2026-11-09",
+  "site": "rms.arab-erp.com",
+  "controller_security_tests_passed": 3,
+  "branding_idempotent": true,
+  "temporary_test_user_and_sessions_removed": true,
+  "test_email_sent": false,
+  "preview_english": "/home/xxx/outputs/rms-login/desktop-english.png",
+  "preview_arabic": "/home/xxx/outputs/rms-login/desktop-arabic.png"
+}

@@ -1,0 +1,10 @@
+{
+  "installed_reports": 56,
+  "charts": 9,
+  "number_cards": 6,
+  "dashboard": "RMS Business Review",
+  "workspace_count": 23,
+  "workspace_idempotent": true,
+  "permissions_unchanged": true,
+  "original_permission_baseline_unchanged": true
+}

@@ -1,0 +1,37 @@
+{
+  "verified_on": "2026-11-09",
+  "site": "rms.arab-erp.com",
+  "naming_format": "<lowercase-store-code>-DDMMYYYY-0001",
+  "short_display": "last sequence with leading zeroes removed",
+  "existing_order_names_unchanged": true,
+  "backend_tests_passed": 58,
+  "frontend_suites_passed": 15,
+  "backend": {
+    "calendar_date": "2026-11-09",
+    "inserted_order_examples": [
+      "maadi-09112026-0001",
+      "maadi-09112026-0002"
+    ],
+    "raw_grand_total": 279.3,
+    "real_order_insert_and_daily_sequence": true,
+    "database_rejects_duplicate_store_codes": true,
+    "concurrent_same_branch_allocations": 20,
+    "concurrent_multi_branch_allocations": 20,
+    "concurrent_names_unique": true,
+    "existing_orders_and_references_preserved": true,
+    "financial_test_changes_rolled_back": true,
+    "test_series_cleaned": true
+  },
+  "browser": {
+    "unroundedOrderTotal": 279.3,
+    "nearestPayable": 279,
+    "roundingAdjustment": -0.3,
+    "paymentMatchesOrderSummary": true,
+    "oldOrderNumber": "16",
+    "newOrderNumber": "23",
+    "fullReferencePreserved": true,
+    "allFourRoundingMethodsVerified": true,
+    "mobileWidthFits": true,
+    "financialWrites": 0
+  }
+}

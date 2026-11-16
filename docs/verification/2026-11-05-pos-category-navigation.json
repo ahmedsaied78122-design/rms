@@ -1,0 +1,31 @@
+{
+  "site": "rms.arab-erp.com",
+  "date": "2026-11-05",
+  "behavior": {
+    "default_view": "root category image cards",
+    "navigation": "immediate children only with clickable ancestor breadcrumbs",
+    "mixed_parent": "child section cards followed by products assigned directly to the selected category",
+    "search": "searches the selected category subtree; root searches the whole menu",
+    "category_images": "explicit category image, with descendant product photo fallback",
+    "direct_group_products": "supported when the group category has an accounting Item Group"
+  },
+  "persistent_data": {
+    "category_images_added": 18,
+    "existing_group_categories_enabled_for_direct_products": 4,
+    "archived_selling_products": ["تجربة - فراخ بالأرز", "تجربة - لحم بالأرز", "تجربة - وجبة معبأة مخزنية"],
+    "preserved": "historical orders, invoices, recipes and stock entries",
+    "visible_products_after_cleanup": 41
+  },
+  "verification": {
+    "backend_tests_passed": 106,
+    "pos_frontend_suites_passed": 14,
+    "approval_notification_suite_passed": true,
+    "actual_database_transaction": "Created a temporary Matcha Selling Product directly in a group category with children, created its ERPNext Item, verified exact-category and subtree catalogs and nested search, then rolled back the transaction",
+    "catalog_contexts_checked": 9,
+    "stores_checked": 3,
+    "all_menu_categories_have_local_photos": true,
+    "chromium": ["only four root categories", "nested navigation", "mixed parent with three subcategories and one direct product", "leaf category products", "clickable breadcrumbs", "subtree search", "loaded category photos", "mobile has no horizontal overflow"],
+    "desktop_screenshot": "/tmp/rms-return-preview/mixed-category-desktop.png",
+    "mobile_screenshot": "/tmp/rms-return-preview/mixed-category-mobile.png"
+  }
+}

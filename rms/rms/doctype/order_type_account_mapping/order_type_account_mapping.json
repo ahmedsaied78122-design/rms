@@ -17,7 +17,7 @@
       "options": "Company",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 3,
+      "columns": 4,
       "link_filters": "[[\"Company\",\"is_group\",\"=\",\"0\"]]"
     },
     {
@@ -28,7 +28,8 @@
       "reqd": 1,
       "in_list_view": 1,
       "columns": 3,
-      "link_filters": "[[\"Account\",\"company\",\"=\",\"eval:doc.company\"],[\"Account\",\"is_group\",\"=\",\"0\"]]"
+      "link_filters": "[[\"Account\", \"company\", \"=\", \"eval:doc.company\"], [\"Account\", \"is_group\", \"=\", 0], [\"Account\", \"root_type\", \"=\", \"Income\"]]",
+      "read_only_depends_on": "eval:!doc.company"
     },
     {
       "fieldname": "cost_of_goods_sold_account",
@@ -36,9 +37,12 @@
       "label": "Cost of Goods Sold Account",
       "options": "Account",
       "in_list_view": 1,
-      "columns": 4,
-      "link_filters": "[[\"Account\",\"company\",\"=\",\"eval:doc.company\"],[\"Account\",\"is_group\",\"=\",\"0\"]]"
+      "columns": 3,
+      "link_filters": "[[\"Account\", \"company\", \"=\", \"eval:doc.company\"], [\"Account\", \"is_group\", \"=\", 0], [\"Account\", \"root_type\", \"=\", \"Expense\"]]",
+      "read_only_depends_on": "eval:!doc.company"
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

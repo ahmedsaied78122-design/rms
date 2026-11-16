@@ -80,6 +80,22 @@ class TestSellingProductRecipeValidation(FrappeTestCase):
 			price = SellingProduct.resolve_price(product, "STORE-1", "Dine In", "BRAND-1")
 		self.assertEqual(price, {"selling_price": 80, "price_list": "GENERAL"})
 
+	def test_group_category_accepts_direct_products_with_an_item_group(self):
+		product = SimpleNamespace(product_category="Drinks", item=None)
+		with patch("frappe.db.get_value", return_value=frappe._dict(enabled=1, is_group=1, item_group="Beverages")):
+			SellingProduct.validate_category(product)
+
+	def test_group_category_requires_accounting_item_group_for_direct_products(self):
+		product = SimpleNamespace(product_category="Drinks", item=None)
+		with patch("frappe.db.get_value", return_value=frappe._dict(enabled=1, is_group=1, item_group=None)):
+			with self.assertRaisesRegex(frappe.ValidationError, "enabled Product Category with an Item Group"):
+				SellingProduct.validate_category(product)
+
+	def test_group_category_can_carry_an_accounting_item_group(self):
+		category = frappe._dict(name="Drinks", is_group=1, item_group="Beverages")
+		with patch("frappe.db.get_value", return_value=0):
+			ProductCategory.validate(category)
+
 	def test_product_category_tree_has_nested_set_storage(self):
 		meta = frappe.get_meta("Product Category")
 		self.assertTrue(issubclass(ProductCategory, NestedSet))
@@ -89,6 +105,7 @@ class TestSellingProductRecipeValidation(FrappeTestCase):
 
 	def test_options_parent_allows_database_zero_price(self):
 		product = SimpleNamespace(
+			name="PARENT-1", option_graph_reaches=lambda *args: False,
 			has_options=1, maintain_stock=0, option_products=[SimpleNamespace(option_product="OPTION-1")],
 			with_recipe=0, recipe=[], additional_recipe=[], selling_price=0.0, selling_prices=[],
 		)

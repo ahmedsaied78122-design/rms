@@ -1,0 +1,1159 @@
+{
+  "reference_rows": {
+    "slave_syncing_doctypes": 86,
+    "initial_sync_doctypes": 91,
+    "master_syncing_doctypes": 20
+  },
+  "unique_reference_doctypes": 103,
+  "rows": [
+    {
+      "reference": "Account",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Account"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Accounting Dimension",
+      "reference_direction": "نسخ أولي فقط",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "التوجيه يعتمد على حقل Store.streaming_branch وربط الحركات؛ لا إضافة تلقائية لبعد محاسبي وحقول فرع لكل المستندات."
+    },
+    {
+      "reference": "Accounts Settings",
+      "reference_direction": "نسخ أولي فقط",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Address",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [
+        "Address"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "في الاتجاهين"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Address Template",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Address Template"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Authorization Request",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 0,
+      "rms": [
+        "Approval Challenge"
+      ],
+      "status": "محلي لأسباب الأمان",
+      "rms_direction": [],
+      "note": "طلب موافقة برمز تحقق محلي؛ لا تُرسل الرموز أو طلبات التفويض. تُرسل نتيجة المرتجع أو المصروف ضمن مستنده."
+    },
+    {
+      "reference": "BOM",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "ليس ضمن القواعد المستقلة الحالية",
+      "rms_direction": [],
+      "note": "موجود كجزء من ERPNext؛ وصفات RMS موجودة داخل الصنف وليست دورة BOM مرسلة بهذا الإعداد."
+    },
+    {
+      "reference": "Call Center Settings",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 0,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Campaign",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "ليس ضمن القواعد المستقلة الحالية",
+      "rms_direction": [],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Cashier Session Closing",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 0,
+      "rms": [
+        "Cashier Session"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "جزء من وردية RMS الموحدة، مع استقبال الإقفال القياسي دون إعادة تجميع الفواتير."
+    },
+    {
+      "reference": "Cashier Session Opening",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 1,
+      "rms": [
+        "Cashier Session"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "وردية موحدة في RMS تحفظ بيانات الفتح والإقفال؛ الافتتاح المالي القياسي له قاعدة منفصلة."
+    },
+    {
+      "reference": "Company",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Company"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Contact",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [
+        "Contact"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "في الاتجاهين"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Cost Center",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Cost Center"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Country",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Country"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Courier",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 0,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Currency",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Currency"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Custom DocPerm",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Customer",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [
+        "Customer"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "في الاتجاهين"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Customer Group",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [
+        "Customer Group"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "في الاتجاهين"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Customer Rating",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 0,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Delivery Zone",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Document Naming Rule",
+      "reference_direction": "نسخ أولي فقط",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Email Account",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 0,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Employee",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "الموارد البشرية خارج نطاق إعداد نقطة البيع الحالي؛ لا قاعدة مستقلة لنسخ الموظفين."
+    },
+    {
+      "reference": "Expense Entry",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 1,
+      "rms": [
+        "Shift Expense"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Expense Entry Type",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Expense Category"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "File",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "الصور والمرفقات تنتقل مع المستند المصرح له؛ لا توجد قاعدة عامة لنسخ جميع الملفات."
+    },
+    {
+      "reference": "Fiscal Year",
+      "reference_direction": "نسخ أولي فقط",
+      "initial": 1,
+      "rms": [
+        "Fiscal Year"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Global Defaults",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Industry Type",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [
+        "Industry Type"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "في الاتجاهين"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Item",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Item"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Item Group",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Item Group"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Item Tax Template",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Item Tax Template"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "KDS Screen",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "شاشة المطبخ جزء من التطبيق؛ إعداد مناطق التحضير ينتقل، ولا يوجد مستند شاشة منفصل مماثل."
+    },
+    {
+      "reference": "Kitchen Order",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 1,
+      "rms": [
+        "Kitchen Ticket"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Letter Head",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Loyalty Point Entry",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "سجل مولّد من الفواتير؛ يُنشئه الكنترولر المحلي، وليس قاعدة مستقلة لتجنب تكرار النقاط."
+    },
+    {
+      "reference": "Loyalty Program",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Loyalty Program"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Menu",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Store Menu"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Menu Category",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Product Category"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Menu Product",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Selling Product"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Menu Product Price",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 0,
+      "rms": [
+        "Selling Product"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "قواعد الأسعار داخل الصنف تنتقل معه؛ ينشئ RMS سجلات Item Price محليًا بمعرّفاته المعتادة."
+    },
+    {
+      "reference": "Menu Product Price List",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Price List"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "قوائم الأسعار القياسية وتعريف قواعد الأسعار داخل الصنف؛ لا نسخ لسجلات الأسعار المولّدة منفصلة."
+    },
+    {
+      "reference": "Menu Product Qty Shortcut Template",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "اختصارات الكمية من واجهة RMS؛ لا يوجد مستند قالب اختصارات مستقل مماثل."
+    },
+    {
+      "reference": "Menu Product Sales Limit",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Menu Product Shortcut Template",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "تجربة اختيار المنتجات من واجهة RMS؛ لا يوجد مستند اختصارات مستقل مماثل."
+    },
+    {
+      "reference": "Mode of Payment",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Mode of Payment"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Mode of Payment Filter",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "لا يوجد مستند مقابل مستقل؛ لم تُضف ميزة جديدة أو مستند جديد بلا اعتماد."
+    },
+    {
+      "reference": "Modifier Group",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Modifier Group"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Module Profile",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Network Printer Settings",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 0,
+      "rms": [
+        "Print Device"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "تعريف جهاز الطباعة مركزي؛ مهام الطباعة نفسها محلية منعًا لطباعة نسخة إضافية في الماستر."
+    },
+    {
+      "reference": "Notification Log",
+      "reference_direction": "نسخ أولي فقط",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Notification Settings",
+      "reference_direction": "نسخ أولي فقط",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Online Order",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Online Refund Request",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Online Store",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Online Transaction Entry",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Order",
+      "reference_direction": "في الاتجاهين",
+      "initial": 1,
+      "rms": [
+        "POS Order"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "طلب RMS يملكه فرع التشغيل؛ لا توجد دورة طلبات أونلاين أو مركز اتصالات تسمح بتعديله من الجهتين."
+    },
+    {
+      "reference": "Order Cancellation Reason",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "POS Action Reason"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Order Rejection Reason",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Order Return Reason",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "POS Action Reason"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Order Source",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Order Type",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Order Type"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "POS Closing Entry",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 0,
+      "rms": [
+        "POS Closing Entry"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "POS Invoice",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 1,
+      "rms": [
+        "POS Invoice"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "POS Opening Entry",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 1,
+      "rms": [
+        "POS Opening Entry"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "POS Profile",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "POS Profile"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Preparation Area",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Preparation Area"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Price List",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Price List"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Print Format",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Print Heading",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Printer Size Settings",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Promo Code",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Promotion",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "RMS Settings",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Store",
+        "Restaurant Brand",
+        "POS User",
+        "Order Type"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "وظائف الإعداد موزعة على المتجر والعلامة ومستخدم نقطة البيع ونوع الطلب؛ لا استيراد لمستند إعدادات الشركة الأخرى."
+    },
+    {
+      "reference": "Rating Question",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Restaurant Branch",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Store",
+        "Branch"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Restaurant Branch Closure",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 0,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Restaurant Brand",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Restaurant Brand"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Role",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Role Profile",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Sales Taxes and Charges Template",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Sales Taxes and Charges Template"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Staff Member",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "POS User"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Staff Member Transfer",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 0,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Staff Role",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "POS User"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "قدرات الكاشير ضمن POS User؛ تعريفات الأدوار وصلاحيات النظام تُثبت محليًا ولا تُنسخ من موقع آخر."
+    },
+    {
+      "reference": "Staff Sales Target",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Staff Sales Target Enrollment",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "لا يوجد مقابل مستقل حاليًا؛ لم يُضف",
+      "rms_direction": [],
+      "note": "ميزة مستقلة غير مضافة إلى RMS؛ مؤجلة لحين اعتماد نطاقها."
+    },
+    {
+      "reference": "Station",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Dining Area"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Stock Entry",
+      "reference_direction": "من الفروع إلى الماستر",
+      "initial": 0,
+      "rms": [
+        "Stock Entry"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الفروع إلى الماستر"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Stock Settings",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "System Settings",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Table",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Dining Table"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Tax Category",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Tax Category"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Terms and Conditions",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Terms and Conditions"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Territory",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Territory"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Translation",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "UOM",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "UOM"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "User",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "User"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "User Group",
+      "reference_direction": "نسخ أولي فقط",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "User Permission",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    },
+    {
+      "reference": "Warehouse",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [
+        "Warehouse"
+      ],
+      "status": "مغطى بقواعد RMS",
+      "rms_direction": [
+        "من الماستر إلى الفروع"
+      ],
+      "note": "لا توجد قاعدة مستقلة؛ المراجع المساعدة المدعومة قد تُجلب ضمن اعتماد مستند مصرح له."
+    },
+    {
+      "reference": "Workspace",
+      "reference_direction": "من الماستر إلى الفروع",
+      "initial": 1,
+      "rms": [],
+      "status": "محلي أو مولّد؛ ليس قاعدة مستقلة",
+      "rms_direction": [],
+      "note": "إعداد موقع أو أمان أو مظهر يُدار محليًا من تطبيق RMS ولا يُنسخ كقاعدة مستقلة."
+    }
+  ]
+}

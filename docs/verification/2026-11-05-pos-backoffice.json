@@ -1,0 +1,387 @@
+{
+  "automated_backend_tests_passed": 228,
+  "transactional_audit": {
+    "checks": [
+      "Customer creation accepts null address and creates a back-office Customer",
+      "Multiple phones and addresses persist on Contact and Address doctypes",
+      "Default phone persists on Customer",
+      "Saved phone/address edits and changed defaults survive reload",
+      "Default address is linked on Customer",
+      "Order comment and line note persist in POS Order and POS Order Item",
+      "Editing order and item notes updates their doctypes",
+      "Confirmation copies item notes to kitchen tickets",
+      "Pending quantity edit persists without creating duplicate rows",
+      "Pending quantity edit persists without creating duplicate rows",
+      "Removing saved pending addition preserves confirmed quantity",
+      "Ordinary confirmed-item void records audit without stock issue",
+      "Waste confirmed-item void deducts exactly one stock unit and links its entry",
+      "Confirmed-item waste stock issue uses Void type",
+      "Payment invoices only the two remaining units after both voids",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Waste return uses Stock Entry Type Void",
+      "Waste return receives then issues one unit; net stock unchanged (no double deduction)",
+      "Retrying approved waste return reuses documents without duplicate stock or credit notes",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Ordinary return increases stock by one unit",
+      "Recipe waste void issues scaled raw materials and stock modifier exactly once",
+      "Sale consumes remaining recipe quantity only; waste is not consumed twice",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Partial recipe return restores 0.5 kg from original saved order quantity",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Waste return uses Stock Entry Type Void",
+      "Waste recipe return restores and issues same 0.5 kg without double deduction",
+      "Void type purpose is Material Issue as required by ERPNext",
+      "Failed waste approval rolls back credit note, receipt, stock ledger and GL together",
+      "Failed return remains pending rather than partially approved",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Full refund matches actual paid total under rounding mode Round Up",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Full refund matches actual paid total under rounding mode Nearest",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Full refund matches actual paid total under rounding mode Round Down",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Full refund matches actual paid total under rounding mode No Rounding",
+      "Two recipe modifiers per meal consume their saved raw-material quantities",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Returning one recipe modifier restores 0.1 kg, independent of main meal quantity",
+      "Approved return links to a submitted source-specific credit note",
+      "Refund payments match credit note and rounded refund total",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Return stock document is submitted",
+      "Return stock document has balanced accounting entries",
+      "Waste return uses Stock Entry Type Void",
+      "Waste recipe modifier return does not restore usable stock or deduct twice",
+      "Cashier Session expected cash includes rounded receipts minus all approved refunds",
+      "POS Sales Summary excludes voided quantities",
+      "POS Sales Summary gross total matches rounded amounts actually paid",
+      "POS Sales Summary includes every approved refund",
+      "Product Sales Summary reports sold and returned units after voids",
+      "Consolidation submits sales invoice and posts stock for sold quantities",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "Consolidation submits sales invoice and posts stock for sold quantities",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "Consolidation submits sales invoice and posts stock for sold quantities",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "Consolidation submits sales invoice and posts stock for sold quantities",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "Consolidation submits sales invoice and posts stock for sold quantities",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "Consolidation submits sales invoice and posts stock for sold quantities",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "Consolidation submits sales invoice and posts stock for sold quantities",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "POS invoice is linked to a submitted financial Sales Invoice",
+      "Consolidated sale/credit note has balanced GL entries",
+      "Consolidated RMS credit note does not post a second stock receipt",
+      "Direct stock final balance is 98 after sale, waste void, waste return, good return and consolidation",
+      "Consolidation does not duplicate recipe consumption or recipe return stock",
+      "Consolidation preserves recipe-modifier stock quantities",
+      "Consolidation consumes exactly the remaining three stock modifiers, plus one earlier waste void"
+    ],
+    "passed": 133,
+    "rollback_verified": true
+  },
+  "saved_demo": {
+    "marker": "RMS stock demo 2026-11-05",
+    "raw_items": [
+      {
+        "name": "تجربة - أرز خام",
+        "opening_qty": 20,
+        "uom": "Kg",
+        "rate": 30
+      },
+      {
+        "name": "تجربة - ملح",
+        "opening_qty": 1,
+        "uom": "Kg",
+        "rate": 10
+      },
+      {
+        "name": "تجربة - فراخ خام",
+        "opening_qty": 10,
+        "uom": "Kg",
+        "rate": 150
+      },
+      {
+        "name": "تجربة - لحم خام",
+        "opening_qty": 10,
+        "uom": "Kg",
+        "rate": 300
+      }
+    ],
+    "products": [
+      {
+        "name": "تجربة - فراخ بالأرز",
+        "item": "RMS-ITEM-2026-00112",
+        "maintain_stock": 0,
+        "with_recipe": 1,
+        "recipe": [
+          {
+            "item": "تجربة - أرز خام",
+            "qty": 0.15,
+            "uom": "Kg"
+          },
+          {
+            "item": "تجربة - ملح",
+            "qty": 0.005,
+            "uom": "Kg"
+          },
+          {
+            "item": "تجربة - فراخ خام",
+            "qty": 0.2,
+            "uom": "Kg"
+          }
+        ]
+      },
+      {
+        "name": "تجربة - لحم بالأرز",
+        "item": "RMS-ITEM-2026-00113",
+        "maintain_stock": 0,
+        "with_recipe": 1,
+        "recipe": [
+          {
+            "item": "تجربة - أرز خام",
+            "qty": 0.15,
+            "uom": "Kg"
+          },
+          {
+            "item": "تجربة - ملح",
+            "qty": 0.005,
+            "uom": "Kg"
+          },
+          {
+            "item": "تجربة - لحم خام",
+            "qty": 0.2,
+            "uom": "Kg"
+          }
+        ]
+      },
+      {
+        "name": "تجربة - وجبة معبأة مخزنية",
+        "item": "RMS-ITEM-2026-00114",
+        "maintain_stock": 1,
+        "with_recipe": 0,
+        "recipe": []
+      }
+    ],
+    "orders": [
+      {
+        "name": "RMS-ORD-2026-00008",
+        "product": "تجربة - فراخ بالأرز",
+        "pos_invoice": "ACC-PSINV-2026-00002",
+        "paid_amount": 228.0,
+        "recipe_stock_entry": "MAT-STE-2026-00003",
+        "void_stock_entry": "MAT-STE-2026-00002",
+        "sales_invoice": "ACC-SINV-2026-00001"
+      },
+      {
+        "name": "RMS-ORD-2026-00009",
+        "product": "تجربة - لحم بالأرز",
+        "pos_invoice": "ACC-PSINV-2026-00005",
+        "paid_amount": 171.0,
+        "recipe_stock_entry": "MAT-STE-2026-00008",
+        "void_stock_entry": "MAT-STE-2026-00007",
+        "sales_invoice": "ACC-SINV-2026-00003"
+      },
+      {
+        "name": "RMS-ORD-2026-00010",
+        "product": "تجربة - وجبة معبأة مخزنية",
+        "pos_invoice": "ACC-PSINV-2026-00007",
+        "paid_amount": 114.0,
+        "recipe_stock_entry": null,
+        "void_stock_entry": "MAT-STE-2026-00010",
+        "sales_invoice": "ACC-SINV-2026-00005"
+      }
+    ],
+    "returns": [
+      {
+        "name": "RMS-RET-2026-00001",
+        "product": "تجربة - فراخ بالأرز",
+        "is_waste": 0,
+        "credit_note": "ACC-PSINV-2026-00003",
+        "stock_entry": "MAT-STE-2026-00004",
+        "waste_stock_entry": null,
+        "refund_total": 114.0
+      },
+      {
+        "name": "RMS-RET-2026-00002",
+        "product": "تجربة - فراخ بالأرز",
+        "is_waste": 1,
+        "credit_note": "ACC-PSINV-2026-00004",
+        "stock_entry": "MAT-STE-2026-00005",
+        "waste_stock_entry": "MAT-STE-2026-00006",
+        "refund_total": 114.0
+      },
+      {
+        "name": "RMS-RET-2026-00003",
+        "product": "تجربة - لحم بالأرز",
+        "is_waste": 0,
+        "credit_note": "ACC-PSINV-2026-00006",
+        "stock_entry": "MAT-STE-2026-00009",
+        "waste_stock_entry": null,
+        "refund_total": 171.0
+      },
+      {
+        "name": "RMS-RET-2026-00004",
+        "product": "تجربة - وجبة معبأة مخزنية",
+        "is_waste": 0,
+        "credit_note": "ACC-PSINV-2026-00008",
+        "stock_entry": "MAT-STE-2026-00011",
+        "waste_stock_entry": null,
+        "refund_total": 57.0
+      },
+      {
+        "name": "RMS-RET-2026-00005",
+        "product": "تجربة - وجبة معبأة مخزنية",
+        "is_waste": 1,
+        "credit_note": "ACC-PSINV-2026-00009",
+        "stock_entry": "MAT-STE-2026-00012",
+        "waste_stock_entry": "MAT-STE-2026-00013",
+        "refund_total": 57.0
+      }
+    ],
+    "stock_entries": [
+      {
+        "name": "MAT-STE-2026-00002",
+        "kind": "Void waste",
+        "product": "تجربة - فراخ بالأرز"
+      },
+      {
+        "name": "MAT-STE-2026-00007",
+        "kind": "Void waste",
+        "product": "تجربة - لحم بالأرز"
+      },
+      {
+        "name": "MAT-STE-2026-00010",
+        "kind": "Void waste",
+        "product": "تجربة - وجبة معبأة مخزنية"
+      }
+    ],
+    "checks": [
+      "Opening raw material and finished-stock balances are posted",
+      "Waste void has an audit record and linked stock issue for تجربة - فراخ بالأرز",
+      "Order and line comments persist for تجربة - فراخ بالأرز",
+      "Approved return has linked receipt for تجربة - فراخ بالأرز",
+      "Approved return has linked receipt and Void waste issue for تجربة - فراخ بالأرز",
+      "Consolidated return posts accounting without duplicate stock for تجربة - فراخ بالأرز",
+      "Consolidated return posts accounting without duplicate stock for تجربة - فراخ بالأرز",
+      "Waste void has an audit record and linked stock issue for تجربة - لحم بالأرز",
+      "Order and line comments persist for تجربة - لحم بالأرز",
+      "Approved return has linked receipt for تجربة - لحم بالأرز",
+      "Consolidated return posts accounting without duplicate stock for تجربة - لحم بالأرز",
+      "Waste void has an audit record and linked stock issue for تجربة - وجبة معبأة مخزنية",
+      "Order and line comments persist for تجربة - وجبة معبأة مخزنية",
+      "Approved return has linked receipt for تجربة - وجبة معبأة مخزنية",
+      "Approved return has linked receipt and Void waste issue for تجربة - وجبة معبأة مخزنية",
+      "Consolidated return posts accounting without duplicate stock for تجربة - وجبة معبأة مخزنية",
+      "Consolidated return posts accounting without duplicate stock for تجربة - وجبة معبأة مخزنية",
+      "Final physical balance تجربة - أرز خام = 19.55",
+      "Final physical balance تجربة - ملح = 0.985",
+      "Final physical balance تجربة - فراخ خام = 9.6",
+      "Final physical balance تجربة - لحم خام = 9.8",
+      "Final physical balance RMS-ITEM-2026-00114 = 22",
+      "Waste entry is submitted Void / Material Issue: MAT-STE-2026-00013",
+      "Waste accounting is balanced: MAT-STE-2026-00013",
+      "Waste entry is submitted Void / Material Issue: MAT-STE-2026-00010",
+      "Waste accounting is balanced: MAT-STE-2026-00010",
+      "Waste entry is submitted Void / Material Issue: MAT-STE-2026-00007",
+      "Waste accounting is balanced: MAT-STE-2026-00007",
+      "Waste entry is submitted Void / Material Issue: MAT-STE-2026-00006",
+      "Waste accounting is balanced: MAT-STE-2026-00006",
+      "Waste entry is submitted Void / Material Issue: MAT-STE-2026-00002",
+      "Waste accounting is balanced: MAT-STE-2026-00002",
+      "Fully refunded demo orders leave expected cashier cash unchanged"
+    ],
+    "opening_stock_entry": "MAT-STE-2026-00001",
+    "balances": [
+      {
+        "item": "تجربة - أرز خام",
+        "qty": 19.55,
+        "expected_qty": 19.55
+      },
+      {
+        "item": "تجربة - ملح",
+        "qty": 0.985,
+        "expected_qty": 0.985
+      },
+      {
+        "item": "تجربة - فراخ خام",
+        "qty": 9.6,
+        "expected_qty": 9.6
+      },
+      {
+        "item": "تجربة - لحم خام",
+        "qty": 9.8,
+        "expected_qty": 9.8
+      },
+      {
+        "item": "RMS-ITEM-2026-00114",
+        "qty": 22.0,
+        "expected_qty": 22
+      }
+    ],
+    "store": "بيت الشرق - المعادي",
+    "warehouse": "مخزن بيت الشرق المعادي - T",
+    "company": "TEST",
+    "session": "RMS-SES-2026-00001",
+    "committed": true
+  }
+}

@@ -15,9 +15,11 @@
       "options": "Order Type",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 8,
+      "columns": 10,
       "link_filters": "[[\"Order Type\",\"enabled\",\"=\",\"1\"]]"
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

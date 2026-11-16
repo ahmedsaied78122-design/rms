@@ -27,6 +27,7 @@ async function createHarness({ dialogValue, callbackValues, saved = true }) {
 	pos.showError = (error) => { throw error; };
 	const calls = [];
 	pos.call = async (method, args) => {
+		if (method === "get_order_state") return { name: "ORDER-1", status: "Confirmed" };
 		calls.push({ method, args });
 		if (method === "get_order") return { items: [{ name: "ROW-1", selling_product: "Mint Lemonade" }] };
 		return { name: args.item_name, notes: args.notes };

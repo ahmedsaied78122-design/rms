@@ -17,19 +17,22 @@
     "store",
     "store_company",
     "selling_product",
+    "rms_column_waste_section_1",
     "quantity",
     "warehouse",
     "order_type",
     "reason",
+    "status",
+    "rms_items_section",
     "items",
-    "stock_entry",
-    "status"
+    "rms_documents_section",
+    "stock_entry"
   ],
   "fields": [
     {
       "fieldname": "waste_section",
       "fieldtype": "Section Break",
-      "label": "Waste Entry"
+      "label": "Waste record"
     },
     {
       "fieldname": "naming_series",
@@ -70,6 +73,10 @@
       "link_filters": "[[\"Selling Product\",\"enabled\",\"=\",\"1\"]]"
     },
     {
+      "fieldname": "rms_column_waste_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
       "fieldname": "quantity",
       "fieldtype": "Float",
       "label": "Quantity",
@@ -102,20 +109,6 @@
       "columns": 2
     },
     {
-      "fieldname": "items",
-      "fieldtype": "Table",
-      "label": "Waste Items",
-      "options": "Waste Entry Item",
-      "reqd": 1
-    },
-    {
-      "fieldname": "stock_entry",
-      "fieldtype": "Link",
-      "label": "Stock Entry",
-      "options": "Stock Entry",
-      "read_only": 1
-    },
-    {
       "fieldname": "status",
       "fieldtype": "Select",
       "label": "Status",
@@ -125,6 +118,33 @@
       "in_list_view": 1,
       "in_standard_filter": 1,
       "columns": 2,
+      "read_only": 1
+    },
+    {
+      "fieldname": "rms_items_section",
+      "fieldtype": "Section Break",
+      "label": "Stock to be written off"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Waste Items",
+      "options": "Waste Entry Item",
+      "reqd": 1,
+      "description": "Add rows here. Open a row to see all its settings."
+    },
+    {
+      "fieldname": "rms_documents_section",
+      "fieldtype": "Section Break",
+      "label": "Stock document",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
+    },
+    {
+      "fieldname": "stock_entry",
+      "fieldtype": "Link",
+      "label": "Stock Entry",
+      "options": "Stock Entry",
       "read_only": 1
     }
   ],

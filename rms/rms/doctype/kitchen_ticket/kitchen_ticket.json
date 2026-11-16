@@ -17,22 +17,27 @@
     "pos_order",
     "store",
     "preparation_area",
+    "rms_column_ticket_section_1",
     "status",
     "is_item_cancellation_notice",
+    "rms_items_section",
+    "items",
+    "rms_cancellation_section",
     "cancellation_reason",
-    "cancellation_acknowledged_at",
     "cancellation_acknowledged_by",
-    "started_at",
+    "cancellation_acknowledged_at",
+    "rms_timing_section",
     "sent_at",
-    "picked_at",
+    "started_at",
+    "rms_column_rms_timing_section_1",
     "ready_at",
-    "items"
+    "picked_at"
   ],
   "fields": [
     {
       "fieldname": "ticket_section",
       "fieldtype": "Section Break",
-      "label": "Kitchen Ticket"
+      "label": "Kitchen ticket"
     },
     {
       "fieldname": "naming_series",
@@ -58,7 +63,8 @@
       "options": "Store",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 1
+      "columns": 1,
+      "link_filters": "[[\"Store\", \"enabled\", \"=\", 1]]"
     },
     {
       "fieldname": "preparation_area",
@@ -70,6 +76,10 @@
       "in_standard_filter": 1,
       "columns": 2,
       "link_filters": "[[\"Preparation Area\",\"store\",\"=\",\"eval:doc.store\"],[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "rms_column_ticket_section_1",
+      "fieldtype": "Column Break"
     },
     {
       "fieldname": "status",
@@ -92,15 +102,28 @@
       "hidden": 1
     },
     {
+      "fieldname": "rms_items_section",
+      "fieldtype": "Section Break",
+      "label": "Items to prepare"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "Kitchen Ticket Item",
+      "reqd": 1,
+      "description": "Add rows here. Open a row to see all its settings."
+    },
+    {
+      "fieldname": "rms_cancellation_section",
+      "fieldtype": "Section Break",
+      "label": "Cancellation notice",
+      "depends_on": "eval:doc.is_item_cancellation_notice"
+    },
+    {
       "fieldname": "cancellation_reason",
       "fieldtype": "Small Text",
       "label": "Cancellation Reason",
-      "read_only": 1
-    },
-    {
-      "fieldname": "cancellation_acknowledged_at",
-      "fieldtype": "Datetime",
-      "label": "Cancellation Acknowledged At",
       "read_only": 1
     },
     {
@@ -111,10 +134,17 @@
       "read_only": 1
     },
     {
-      "label": "Started At",
+      "fieldname": "cancellation_acknowledged_at",
       "fieldtype": "Datetime",
-      "fieldname": "started_at",
+      "label": "Cancellation Acknowledged At",
       "read_only": 1
+    },
+    {
+      "fieldname": "rms_timing_section",
+      "fieldtype": "Section Break",
+      "label": "Preparation timeline",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
     },
     {
       "fieldname": "sent_at",
@@ -125,10 +155,14 @@
       "read_only": 1
     },
     {
-      "label": "Picked At",
+      "label": "Started At",
       "fieldtype": "Datetime",
-      "fieldname": "picked_at",
+      "fieldname": "started_at",
       "read_only": 1
+    },
+    {
+      "fieldname": "rms_column_rms_timing_section_1",
+      "fieldtype": "Column Break"
     },
     {
       "fieldname": "ready_at",
@@ -139,11 +173,10 @@
       "read_only": 1
     },
     {
-      "fieldname": "items",
-      "fieldtype": "Table",
-      "label": "Items",
-      "options": "Kitchen Ticket Item",
-      "reqd": 1
+      "label": "Picked At",
+      "fieldtype": "Datetime",
+      "fieldname": "picked_at",
+      "read_only": 1
     }
   ],
   "permissions": [

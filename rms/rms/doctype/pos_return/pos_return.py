@@ -3,6 +3,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
+from rms.streaming_replica import upstream, validate as validate_replica
+
 from rms.snapshots import parse_json_rows
 
 
@@ -27,18 +29,25 @@ def normalize_return_rounding(invoice, method=None):
 
 class POSReturn(Document):
 	def before_insert(self):
+		if upstream(self):
+			return
 		if self.status not in (None, "", "Pending Approval"):
 			frappe.throw(_("A new POS Return must start Pending Approval."))
 		self.status = "Pending Approval"
 
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		if self.is_new() or self.get_doc_before_save() is None:
 			self.validate_request()
 			return
 		if self.flags.get("allow_workflow_update"):
 			return
 		previous = self.get_doc_before_save()
-		if previous.status != self.status or previous.items != self.items or previous.payments != self.payments:
+		locked_fields = ("status", "store", "cashier_session", "source_pos_invoice", "is_waste", "action_reason", "reason",
+			"refund_total", "return_pos_invoice", "stock_entry", "waste_stock_entry", "comment", "approval_challenge")
+		if any(previous.get(field) != self.get(field) for field in locked_fields) or previous.items != self.items or previous.payments != self.payments:
 			frappe.throw(_("A submitted POS Return request cannot be edited."))
 
 	def validate_request(self):
@@ -144,7 +153,8 @@ class POSReturn(Document):
 			if tax.charge_type == "Actual":
 				source_tax = next((row for row in source.taxes if row.idx == tax.idx), None)
 				tax.tax_amount = -abs(flt(source_tax.tax_amount) if source_tax else flt(tax.tax_amount)) * actual_ratio
-		invoice.update_stock = 0
+		# POS Invoice has no persisted update_stock field in ERPNext 15.
+		# The Sales Invoice hook prevents a second receipt during consolidation.
 		invoice.set("payments", [])
 		rounding_method = self.get_source_rounding_method()
 		invoice.flags.rms_pos_rounding_method = rounding_method
@@ -194,12 +204,12 @@ class POSReturn(Document):
 			}, "qty") or 0))
 		return quantity
 
-	def build_stock_receipt_items(self):
-		if self.is_waste:
+	def build_stock_receipt_items(self, include_waste=False):
+		if self.is_waste and not include_waste:
 			return []
 		items = []
 		for returned in self.items:
-			if returned.is_waste:
+			if returned.is_waste and not include_waste:
 				continue
 			source_line = frappe.get_doc("POS Invoice Item", returned.source_pos_invoice_item)
 			order_item = frappe.get_doc("POS Order Item", returned.pos_order_item)
@@ -223,12 +233,18 @@ class POSReturn(Document):
 					if flt(returned.qty) != flt(abs(source_line.qty)):
 						frappe.throw(_("This saved recipe snapshot cannot safely allocate a partial stock return."))
 					product_components = components
-				ratio = flt(returned.qty) / flt(abs(source_line.qty) or 1)
+				original_qty = flt(order_item.qty or abs(source_line.qty) or 1)
+				if product.name != order_item.selling_product:
+					modifier = next((row for row in parse_json_rows(order_item.modifiers)
+						if row.get("modifier_product") == product.name or row.get("item") == source_line.item_code), None)
+					if modifier:
+						original_qty *= flt(modifier.get("qty") or 1)
+				ratio = flt(returned.qty) / original_qty
 				for component in product_components:
 					items.append({"item": component.item, "qty": flt(component.qty) * ratio,
 						"uom": component.uom, "warehouse": component.warehouse,
 						"expense_account": cogs_account, "basic_rate": flt(component.cost)})
 			elif product.maintain_stock and frappe.db.get_value("Item", source_line.item_code, "is_stock_item"):
-				items.append({"item": source_line.item_code, "qty": flt(returned.qty),
+				items.append({"item": source_line.item_code, "qty": flt(returned.qty) * flt(source_line.conversion_factor or 1),
 					"uom": source_line.stock_uom, "warehouse": source_line.warehouse, "expense_account": cogs_account})
 		return items

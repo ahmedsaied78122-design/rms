@@ -20,8 +20,8 @@
       "label": "Order Item",
       "options": "POS Order Item",
       "reqd": 1,
-      "in_list_view": 1,
-      "columns": 2,
+      "in_list_view": 0,
+      "columns": 3,
       "link_filters": "[[\"POS Order Item\",\"parent\",\"=\",\"eval:doc.pos_order\"],[\"POS Order Item\",\"parenttype\",\"=\",\"POS Order\"]]"
     },
     {
@@ -31,7 +31,7 @@
       "options": "Selling Product",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 3
+      "columns": 5
     },
     {
       "fieldname": "qty",
@@ -69,5 +69,7 @@
       "default": "0"
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

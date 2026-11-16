@@ -1,0 +1,29 @@
+{
+  "stores": [
+    {
+      "store": "بيت الشرق - المعادي",
+      "categories": 27,
+      "catalog_products": 62,
+      "order_types_verified": 3,
+      "kds_areas": 5
+    },
+    {
+      "store": "بيت الشرق - مدينة نصر",
+      "categories": 27,
+      "catalog_products": 62,
+      "order_types_verified": 3,
+      "kds_areas": 5
+    },
+    {
+      "store": "بيت الشرق - التجمع الخامس",
+      "categories": 27,
+      "catalog_products": 62,
+      "order_types_verified": 3,
+      "kds_areas": 5
+    }
+  ],
+  "new_dishes": 21,
+  "direct_parent_products_verified": true,
+  "arabic_pasta_options_verified": true,
+  "local_images_verified": true
+}

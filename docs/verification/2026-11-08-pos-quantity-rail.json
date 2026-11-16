@@ -1,0 +1,37 @@
+{
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "behavior": {
+    "quantity_controls": "Left vertical rail with current quantity, digits 0-9, decimal separator and C at the bottom",
+    "first_tap": "Replaces the default quantity",
+    "following_taps": "Concatenate digits, including multi-digit quantities such as 12",
+    "clear": "C clears the quantity and prevents adding zero quantity",
+    "quantity_row": "Removed from the visible form; hidden Frappe value retained for submission",
+    "options": "Content-sized wrapping cards with minimum touch dimensions",
+    "required_spice": "Still enforced before adding; no automatic selection"
+  },
+  "validation": {
+    "frontend_suites_passed": 14,
+    "unit_checks": [
+      "Rapid taps retain their order across asynchronous Frappe field updates",
+      "First tap replaces the default",
+      "C clears and disables adding",
+      "Decimal input retains its separator and rejects a second separator",
+      "Whole-number products reject fractional quantities",
+      "Required modifier enforcement remains in both product option and modifier-only dialogs"
+    ],
+    "live_chromium_viewports": ["1024x768", "849x665", "390x844"],
+    "live_checks": [
+      "Quantity rail appears left of product options",
+      "All 12 keypad buttons are present and old quantity row is hidden",
+      "Quantity 12 and comment reach the intercepted cart action",
+      "C clears the field",
+      "Choice cards measure below 200px rather than stretching across each row",
+      "Required spice blocks adding until selected",
+      "Modifier-only mobile dialog accepts quantity 3 without horizontal overflow"
+    ],
+    "test_orders_created": 0,
+    "order_writes": 0,
+    "unrelated_existing_page_error": "frappe.ui.toast is not a function during Desk startup; tested dialogs passed"
+  }
+}

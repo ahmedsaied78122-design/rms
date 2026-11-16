@@ -3,9 +3,18 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
+from rms.streaming_replica import upstream, validate as validate_replica
+
 
 class ShiftExpense(Document):
+	def before_update_after_submit(self):
+		if upstream(self):
+			validate_replica(self)
+
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		if not self.flags.from_pos_api and not self.is_new() and self._action != "submit":
 			frappe.throw(_("Shift Expenses are changed through the POS workflow."))
 		if flt(self.amount) <= 0:
@@ -14,6 +23,8 @@ class ShiftExpense(Document):
 			frappe.throw(_("Invalid Shift Expense status."))
 
 	def on_update(self):
+		if upstream(self):
+			return
 		if not self.flags.from_pos_api and self._action != "submit" and self.status != "Draft":
 			frappe.throw(_("Shift Expense status is controlled by the POS workflow."))
 

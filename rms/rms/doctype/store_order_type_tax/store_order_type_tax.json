@@ -16,7 +16,7 @@
       "options": "Order Type",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 4,
+      "columns": 5,
       "link_filters": "[[\"Order Type\",\"enabled\",\"=\",\"1\"]]"
     },
     {
@@ -26,9 +26,12 @@
       "options": "Sales Taxes and Charges Template",
       "reqd": 1,
       "in_list_view": 1,
-      "columns": 6,
-      "link_filters": "[[\"Sales Taxes and Charges Template\",\"company\",\"=\",\"eval:parent.company\"]]"
+      "columns": 5,
+      "link_filters": "[[\"Sales Taxes and Charges Template\",\"company\",\"=\",\"eval:parent.company\"]]",
+      "read_only_depends_on": "eval:!parent.company"
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

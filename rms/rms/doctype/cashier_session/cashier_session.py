@@ -3,11 +3,15 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, now_datetime
 
+from rms.streaming_replica import upstream, validate as validate_replica
+
 from rms.utils import get_business_date
 
 
 class CashierSession(Document):
 	def before_insert(self):
+		if upstream(self):
+			return
 		self.user = self.user or frappe.session.user
 		self.load_store_defaults()
 		self.status = "Open"
@@ -16,6 +20,9 @@ class CashierSession(Document):
 		self.load_payment_methods()
 
 	def validate(self):
+		if upstream(self):
+			validate_replica(self)
+			return
 		self.validate_context()
 		self.validate_open_session()
 		self.validate_payments()
@@ -52,6 +59,12 @@ class CashierSession(Document):
 			frappe.throw(_("Add at least one payment method to the Store POS Profile."))
 
 	def validate_context(self):
+		previous = self.get_doc_before_save()
+		if previous and any(
+			self.get(field) != previous.get(field)
+			for field in ("store", "user", "pos_profile", "pos_opening_entry")
+		):
+			frappe.throw(_("The Store, cashier, POS Profile and POS Opening Entry cannot be changed on an existing Cashier Session."))
 		store = frappe.db.get_value("Store", self.store, ["company", "pos_profile", "enabled"], as_dict=True)
 		if not store or not store.enabled:
 			frappe.throw(_("Choose an enabled Store."))
@@ -61,9 +74,10 @@ class CashierSession(Document):
 		assigned_profile = frappe.db.get_value("POS User Store", {
 			"parent": pos_user, "parenttype": "POS User", "store": self.store,
 		}, "pos_profile") if pos_user else None
-		if assigned_profile and self.pos_profile != assigned_profile:
+		# An open till retains its original profile when future assignments change.
+		if not previous and assigned_profile and self.pos_profile != assigned_profile:
 			frappe.throw(_("Use the Cashier POS Profile assigned to this POS User and Store."))
-		if not assigned_profile and store.pos_profile and self.pos_profile != store.pos_profile:
+		if not previous and not assigned_profile and store.pos_profile and self.pos_profile != store.pos_profile:
 			frappe.throw(_("Use the POS Profile assigned to this Store or assign a cashier-specific POS Profile."))
 		profile = frappe.db.get_value("POS Profile", self.pos_profile, ["company", "disabled"], as_dict=True)
 		if not profile or profile.disabled or profile.company != store.company:

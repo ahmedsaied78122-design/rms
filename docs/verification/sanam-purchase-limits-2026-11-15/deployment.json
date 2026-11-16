@@ -1,0 +1,34 @@
+{
+  "site": "https://sanam.highsolve.com",
+  "date": "2026-11-15",
+  "source_file": "HR APK/صنف (10).xlsx",
+  "source_sheet": "03",
+  "source_rows": 177,
+  "unique_items": 173,
+  "valid_item_rows_applied": 171,
+  "items_with_active_bound": 170,
+  "intentionally_open_pending_review": [
+    "201021",
+    "202019"
+  ],
+  "source_open_item": "10809",
+  "multiple_uom_decision": "Use the stock/default UOM row and normalize transaction price by conversion_factor",
+  "rate_basis": "Company currency (SAR), base_net_rate / conversion_factor, after discounts, before tax; inclusive bounds; each zero/blank bound is unrestricted",
+  "enforced_doctypes": [
+    "Purchase Invoice",
+    "Purchase Receipt"
+  ],
+  "enforced_events": [
+    "Before Save",
+    "Before Submit"
+  ],
+  "validation_cases": {
+    "local": 31,
+    "remote_readonly": 12,
+    "actual_workflow_rejections": 5,
+    "browser_show_hide": true
+  },
+  "temporary_draft_test_note": "One draft purchase receipt was saved with an in-range final rate after ERPNext added the original template margin; it was deleted immediately. Subsequent below/above tests cleared margin and were rejected. No purchasing document was submitted.",
+  "temporary_endpoint_removed": true,
+  "purchase_error_message": "Shows the item, entered net rate and an out-of-range notice; does not disclose minimum or maximum values."
+}

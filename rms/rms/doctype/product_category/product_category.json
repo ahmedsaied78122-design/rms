@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -14,15 +14,18 @@
   "field_order": [
     "category_section",
     "title",
-    "image",
     "parent_product_category",
-    "sequence_id",
-    "enabled",
-    "defaults_section",
     "is_group",
+    "rms_column_category_section_1",
+    "enabled",
+    "image",
+    "sequence_id",
+    "defaults_section",
     "item_group",
     "default_warehouse",
+    "rms_column_defaults_section_1",
     "default_preparation_area",
+    "rms_tree_section",
     "lft",
     "rgt",
     "old_parent"
@@ -31,7 +34,7 @@
     {
       "fieldname": "category_section",
       "fieldtype": "Section Break",
-      "label": "Category"
+      "label": "Category essentials"
     },
     {
       "fieldname": "title",
@@ -43,11 +46,6 @@
       "columns": 4
     },
     {
-      "fieldname": "image",
-      "fieldtype": "Attach Image",
-      "label": "Category Image"
-    },
-    {
       "fieldname": "parent_product_category",
       "fieldtype": "Link",
       "label": "Parent Category",
@@ -56,12 +54,16 @@
       "link_filters": "[[\"Product Category\",\"enabled\",\"=\",\"1\"],[\"Product Category\",\"is_group\",\"=\",\"1\"]]"
     },
     {
-      "fieldname": "sequence_id",
-      "fieldtype": "Int",
-      "label": "Sequence ID",
+      "fieldname": "is_group",
+      "fieldtype": "Check",
+      "label": "Is Group",
       "default": "0",
       "in_list_view": 1,
       "columns": 2
+    },
+    {
+      "fieldname": "rms_column_category_section_1",
+      "fieldtype": "Column Break"
     },
     {
       "fieldname": "enabled",
@@ -73,24 +75,32 @@
       "columns": 2
     },
     {
-      "fieldname": "defaults_section",
-      "fieldtype": "Section Break",
-      "label": "Product Defaults"
+      "fieldname": "image",
+      "fieldtype": "Attach Image",
+      "label": "Category Image"
     },
     {
-      "fieldname": "is_group",
-      "fieldtype": "Check",
-      "label": "Is Group",
+      "fieldname": "sequence_id",
+      "fieldtype": "Int",
+      "label": "Display Order",
       "default": "0",
       "in_list_view": 1,
-      "columns": 2
+      "columns": 2,
+      "description": "Lower numbers appear first."
+    },
+    {
+      "fieldname": "defaults_section",
+      "fieldtype": "Section Break",
+      "label": "Category defaults"
     },
     {
       "fieldname": "item_group",
+      "description": "Required for a product category that is not a parent group. Select a leaf stock item group.",
       "fieldtype": "Link",
       "label": "Item Group",
       "options": "Item Group",
-      "link_filters": "[[\"Item Group\",\"is_group\",\"=\",\"0\"]]"
+      "link_filters": "[[\"Item Group\",\"is_group\",\"=\",\"0\"]]",
+      "mandatory_depends_on": "eval:!doc.is_group"
     },
     {
       "fieldname": "default_warehouse",
@@ -100,11 +110,23 @@
       "link_filters": "[[\"Warehouse\",\"is_group\",\"=\",\"0\"],[\"Warehouse\",\"disabled\",\"=\",\"0\"]]"
     },
     {
+      "fieldname": "rms_column_defaults_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
       "fieldname": "default_preparation_area",
       "fieldtype": "Link",
       "label": "Default Preparation Area",
       "options": "Preparation Area",
       "link_filters": "[[\"Preparation Area\",\"enabled\",\"=\",\"1\"]]"
+    },
+    {
+      "fieldname": "rms_tree_section",
+      "fieldtype": "Section Break",
+      "label": "System details",
+      "collapsible": 1,
+      "hidden": 1,
+      "collapsible_depends_on": "eval:false"
     },
     {
       "fieldname": "lft",
@@ -134,7 +156,8 @@
       "read_only": 1,
       "ignore_user_permissions": 1,
       "print_hide": 1,
-      "report_hide": 1
+      "report_hide": 1,
+      "link_filters": "[[\"Product Category\", \"enabled\", \"=\", 1]]"
     }
   ],
   "permissions": [
@@ -153,5 +176,6 @@
     }
   ],
   "is_tree": 1,
-  "nsm_parent_field": "parent_product_category"
+  "nsm_parent_field": "parent_product_category",
+  "show_title_field_in_link": 1
 }

@@ -1,0 +1,328 @@
+{
+  "date": "2026-11-09",
+  "assets": {
+    "workspace_js": "studio-5",
+    "shell_js": "desk-a-85",
+    "studio_css": "studio-5"
+  },
+  "core_browser": {
+    "checks": [
+      {
+        "name": "Sidebar uses only native permitted workspaces",
+        "pass": true
+      },
+      {
+        "name": "Native workspace selection and nested navigation",
+        "pass": true
+      },
+      {
+        "name": "Workspace filter and desktop collapse preserve working canvas",
+        "pass": true
+      },
+      {
+        "name": "Native global search keeps suggestions and keyboard focus",
+        "pass": true
+      },
+      {
+        "name": "Native workspace editor and Discard remain available",
+        "pass": true
+      },
+      {
+        "name": "Native product list selection, filters and primary action remain available",
+        "pass": true
+      },
+      {
+        "name": "Primary Add action opens native new document without saving",
+        "pass": true
+      },
+      {
+        "name": "Native Store form fields and sidebar retain their data",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 320px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 390px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 768px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 1024px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 1194px",
+        "pass": true
+      },
+      {
+        "name": "Responsive Store form and drawer at 1366px",
+        "pass": true
+      },
+      {
+        "name": "Mobile native list filters open independently of global navigation",
+        "pass": true
+      },
+      {
+        "name": "Native report filters and data render",
+        "pass": true
+      },
+      {
+        "name": "Report fits mobile without page-level horizontal overflow",
+        "pass": true
+      },
+      {
+        "name": "Mobile workspace and focus loop",
+        "pass": true
+      },
+      {
+        "name": "POS fullscreen remains isolated from Management",
+        "pass": true
+      },
+      {
+        "name": "Returning from POS restores Management layout",
+        "pass": true
+      }
+    ],
+    "errors": [],
+    "screenshots": [
+      "management-collapsed.png",
+      "management-desktop.png",
+      "management-products-desktop.png",
+      "management-form-desktop.png",
+      "management-form-390.png",
+      "management-form-768.png",
+      "management-mobile-filters.png",
+      "management-products-mobile.png",
+      "management-report-desktop.png",
+      "management-report-mobile.png",
+      "management-mobile.png",
+      "management-mobile-menu.png",
+      "management-tablet.png",
+      "management-dark.png",
+      "pos-regression-desktop.png"
+    ]
+  },
+  "interactions": {
+    "checks": [
+      {
+        "name": "Real widgets and original controllers restore without duplication",
+        "pass": true
+      },
+      {
+        "name": "No framework branding in the displayed overview",
+        "pass": true
+      },
+      {
+        "name": "Chart palette, original data and native action menu",
+        "pass": true
+      },
+      {
+        "name": "Chart filter opens using the existing filter controller",
+        "pass": true
+      },
+      {
+        "name": "Metric keyboard activation retains its original route and filter",
+        "pass": true
+      },
+      {
+        "name": "Workspace editor and original onboarding copy use RMS branding",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 320px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 390px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 600px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 601px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 768px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 810px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 1024px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 1194px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 1366px",
+        "pass": true
+      },
+      {
+        "name": "Studio layout and command search at 1600px",
+        "pass": true
+      },
+      {
+        "name": "Mobile Ctrl+G opens the real global search with focus",
+        "pass": true
+      },
+      {
+        "name": "Mobile search selections navigate and close the search panel",
+        "pass": true
+      },
+      {
+        "name": "Account card opens the existing profile and sign-out actions",
+        "pass": true
+      },
+      {
+        "name": "Home has a separate RMS overview without duplicated widget instances",
+        "pass": true
+      }
+    ],
+    "errors": []
+  },
+  "search": {
+    "results": [
+      "Desktop command search selects the list with Enter",
+      "Phone Ctrl+G and Enter navigate and close the search panel",
+      "Opening notifications closes phone search and keeps the notification menu usable"
+    ],
+    "errors": []
+  },
+  "arabic": {
+    "checks": [
+      "RMS overview, chart layout and permitted navigation in Arabic/RTL",
+      "Arabic module search and right-side phone drawer",
+      "Global command search remains functional in RTL on phone",
+      "Reduced-motion navigation",
+      "Dark mode across the new workspace, cards and charts"
+    ],
+    "errors": []
+  },
+  "devices": {
+    "engine": "Chromium; mobile/iPad user agent, viewport and touch emulation. Physical Safari hardware was not available.",
+    "results": [
+      {
+        "name": "iPhone 13",
+        "viewport": {
+          "width": 390,
+          "height": 664
+        },
+        "touch": true,
+        "inputFont": "16px",
+        "navTarget": "42px",
+        "pass": true,
+        "errors": []
+      },
+      {
+        "name": "iPad (gen 7)",
+        "viewport": {
+          "width": 810,
+          "height": 1080
+        },
+        "touch": true,
+        "inputFont": "16px",
+        "navTarget": "42px",
+        "pass": true,
+        "errors": []
+      },
+      {
+        "name": "iPad Pro 12.9 landscape",
+        "viewport": {
+          "width": 1366,
+          "height": 1024
+        },
+        "touch": true,
+        "inputFont": "16px",
+        "navTarget": "42px",
+        "pass": true,
+        "errors": []
+      }
+    ]
+  },
+  "javascript": [
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_browsing.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_cart_layout.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_cart_merging.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_customers.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_header_actions.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_notes.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_operation_permissions.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_options.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_order_lifecycle.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_order_notes.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_order_url.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_resume.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_return_reason.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_startup.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_sync.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/public/js/test_approval_notifications.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/public/js/test_rms_desk.js",
+      "pass": true
+    },
+    {
+      "suite": "rms/public/js/test_rms_management_workspace.js",
+      "pass": true
+    }
+  ]
+}

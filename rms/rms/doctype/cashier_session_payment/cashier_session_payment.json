@@ -46,7 +46,8 @@
       "in_list_view": 1,
       "columns": 2,
       "mandatory_depends_on": "eval:parent.status == 'Closing'",
-      "depends_on": "eval:parent.status == 'Closing'"
+      "depends_on": "eval:parent.status == 'Closing' || parent.status == 'Closed'",
+      "read_only_depends_on": "eval:parent.status == 'Closed'"
     },
     {
       "fieldname": "difference",
@@ -57,5 +58,7 @@
       "read_only": 1
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

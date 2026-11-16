@@ -1,0 +1,16 @@
+{
+  "doctype": "Number Card",
+  "name": "RMS Today Sales",
+  "label": "Today Business Sales",
+  "module": "RMS",
+  "is_standard": 1,
+  "is_public": 1,
+  "type": "Custom",
+  "document_type": "POS Order",
+  "method": "rms.analytics.dashboard.get_number",
+  "filters_json": "{\"metric\": \"today_sales\"}",
+  "filters_config": "[{\"fieldname\": \"company\", \"label\": \"Company\", \"fieldtype\": \"Link\", \"options\": \"Company\"}]",
+  "show_full_number": 1,
+  "show_percentage_stats": 0,
+  "color": "#24785e"
+}

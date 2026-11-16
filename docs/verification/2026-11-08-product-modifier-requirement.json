@@ -1,0 +1,23 @@
+{
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "configuration": {
+    "path": "Selling Product > Modifier Groups > Selection Requirement",
+    "Default": "Uses shared Modifier Group minimum; legacy rows retain this behavior",
+    "Optional": "Minimum zero for this product",
+    "Required": "Minimum one for this product",
+    "variants": "Configured on the final sellable product or size"
+  },
+  "validation": {
+    "python_tests_passed": 145,
+    "frontend_suites_passed": 14,
+    "live_configuration_and_order_resolution": [
+      "Same globally required group optional on burger and required on four-cheese pizza",
+      "Same globally optional group required on burger and optional on four-cheese pizza"
+    ],
+    "live_desk_form": "Column shown in the Modifier Groups table; expanded row select exposes Default, Optional and Required",
+    "temporary_product_and_group_rule_changes_rolled_back": true,
+    "existing_rules_and_order_unchanged": true,
+    "order_writes": 0
+  }
+}

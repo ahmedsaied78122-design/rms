@@ -32,3 +32,19 @@ frappe.ui.form.on("Selling Product", {
 			});
 	},
 });
+
+async function updateOptionAttributeValues(frm) {
+ const grid = frm.fields_dict.option_products?.grid;
+ if (!grid) return;
+ const selected = frm.doc.option_attribute;
+ const attribute = selected ? await frappe.db.get_doc("Item Attribute", selected) : null;
+ if (frm.doc.option_attribute !== selected) return;
+ grid.update_docfield_property("attribute_value", "fieldtype", attribute && !attribute.numeric_values ? "Select" : "Data");
+ grid.update_docfield_property("attribute_value", "options", attribute && !attribute.numeric_values ? ["", ...attribute.item_attribute_values.map(row => row.attribute_value)] : "");
+ grid.update_docfield_property("attribute_value", "reqd", Boolean(selected));
+ grid.refresh();
+}
+frappe.ui.form.on("Selling Product", {
+ refresh: updateOptionAttributeValues,
+ option_attribute: updateOptionAttributeValues,
+});

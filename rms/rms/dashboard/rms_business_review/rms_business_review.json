@@ -1,0 +1,66 @@
+{
+  "doctype": "Dashboard",
+  "name": "RMS Business Review",
+  "dashboard_name": "RMS Business Review",
+  "module": "RMS",
+  "is_standard": 1,
+  "is_default": 0,
+  "charts": [
+    {
+      "chart": "RMS Supplier Purchase Leaders",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Production Completion",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Revenue Trend",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Payment Distribution",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Product Leaders",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Category Leaders",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Cashier Leaders",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Table Leaders",
+      "width": "Half"
+    },
+    {
+      "chart": "RMS Order Type Mix",
+      "width": "Half"
+    }
+  ],
+  "cards": [
+    {
+      "card": "RMS Today Sales"
+    },
+    {
+      "card": "RMS Today Invoices"
+    },
+    {
+      "card": "RMS Today Average"
+    },
+    {
+      "card": "RMS Month Sales"
+    },
+    {
+      "card": "RMS Month Invoices"
+    },
+    {
+      "card": "RMS Month Average"
+    }
+  ]
+}

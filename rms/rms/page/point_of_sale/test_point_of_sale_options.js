@@ -9,9 +9,10 @@ const backOfficeExpenseSource = fs.readFileSync(path.join(__dirname, "../../../p
 const styles = fs.readFileSync(path.join(__dirname, "../../../public/css/point_of_sale.css"), "utf8");
 
 async function run() {
+	assert.match(source, /data-actions-menu[\s\S]*?data-action="operation-approvals"/, "keep approvals inside the secondary actions menu");
 	assert.doesNotMatch(source, /data-action="review-expenses"|__\("Review Expenses"\)/, "keep the standalone Review Expenses screen out of the POS toolbar");
 	assert.doesNotMatch(source, /get_manager_pending_shift_expenses|issue_shift_expense_approval_code|reject_shift_expense|reviewPendingExpenses/, "keep manager expense review and approval actions out of POS");
-	assert.match(source, /set_secondary_action_label\(__\("Authorize Pending Expense"\)\)[\s\S]*?authorizePendingExpense\(context\.pending_expenses\)/, "keep the manager-code entry action for cashiers with pending expenses");
+	assert.match(source, /set_secondary_action_label\(__\("Authorize Pending Expense"\)\)[\s\S]*?authorizePendingExpense\(context\.pending_expenses, context\.approvers \|\| \[\]\)/, "keep the manager-code entry action for cashiers with pending expenses");
 	assert.match(backOfficeExpenseSource, /frm\.add_custom_button\(__\("Issue Approval Code"\)/, "issue manager approval codes from the Shift Expense back-office record");
 	assert.match(backOfficeExpenseSource, /frm\.add_custom_button\(__\("Reject Expense"\)/, "keep rejection in the Shift Expense back-office record");
 	assert.match(source, /class="rms-payment-panel-head">[\s\S]*?\$\{paymentItemsButton\}/, "place View items beside Payment methods above the discount row");
@@ -184,6 +185,11 @@ async function run() {
 	let primaryDisabled = true;
 	const handlers = {};
 	let hideCount = 0;
+	let dialogQuantity = 2;
+	let checkedModifiers = [];
+	let displayedQuantity = "";
+	let keypadHtml = "";
+	let keypadHidden = true;
 	const wrapper = {
 		addClass() { return this; },
 		show() { return this; },
@@ -191,9 +197,13 @@ async function run() {
 		on(_event, selector, callback) { handlers[selector] = callback; return this; },
 		off() { return this; },
 		find(selector) {
+			if (selector === ".modal-footer") return { prepend(value) { keypadHtml = value; } };
+			if (selector === "[data-quantity-popover]") return { prop(name, value) { keypadHidden = value; } };
+			if (selector === "[data-quantity-display]") return { text(value) { displayedQuantity = value; } };
+			if (selector === "[data-modifier]:checked") return checkedModifiers;
 			if (selector === "[data-option-flow]") return { html(value) { flowHtml = value; } };
 			if (selector === ".modal-footer .btn-primary") return { prop(_name, value) { primaryDisabled = value; } };
-			return { html() {}, prop() {} };
+			return { html() {}, prop() {}, attr() {}, trigger() {} };
 		},
 	};
 	const frappe = {
@@ -202,7 +212,8 @@ async function run() {
 			constructor(config) { dialogConfig = config; this.$wrapper = wrapper; dialog = this; }
 			show() {}
 			hide() { hideCount += 1; }
-			get_value(fieldname) { return fieldname === "quantity" ? 2 : fieldname === "notes" ? "خفيف سكر" : undefined; }
+			get_value(fieldname) { return fieldname === "quantity" ? dialogQuantity : fieldname === "notes" ? "خفيف سكر" : undefined; }
+			async set_value(fieldname, value) { await Promise.resolve(); if (fieldname === "quantity") dialogQuantity = value; }
 		} },
 		msgprint(message) { throw new Error(message); },
 	show_alert() {},
@@ -305,8 +316,8 @@ async function run() {
 	quantityUi.adjustPaymentItemAllocation(teaGroup.key, 1, 1);
 	assert.equal(quantityUi.guestCheckState.guest_checks[0].items.length, 2, "keep the selected guest check's source quantities while recalculating a re-split");
 	const root = {
-		name: "FRAPPE", title: "Frappé", has_options: true, options: [
-			{ name: "FLAVOR-CARAMEL", title: "Caramel", has_options: true, price: null },
+		name: "FRAPPE", title: "Frappé", option_attribute: "Flavor", has_options: true, options: [
+			{ name: "FLAVOR-CARAMEL", title: "Frappé with caramel", attribute_value: "Caramel", has_options: true, price: null },
 		], modifier_groups: [],
 	};
 	const sizeConfig = {
@@ -326,6 +337,9 @@ async function run() {
 
 	pos.showProductOptions(root, "FRAPPE");
 	assert.equal((flowHtml.match(/rms-pos-option-level/g) || []).length, 1, "show the first choice in the single modal");
+	assert.match(flowHtml, /<h4>Flavor<\/h4>/);
+	assert.match(flowHtml, />Caramel<\/span>/);
+	assert.doesNotMatch(flowHtml, /Choose options|Frappé with caramel/);
 
 	await handlers["[data-option-depth]"]({ currentTarget: { dataset: { optionDepth: "0" }, value: "FLAVOR-CARAMEL" } });
 	assert.equal((flowHtml.match(/rms-pos-option-level/g) || []).length, 2, "keep the flavor and size choices visible together");
@@ -333,11 +347,13 @@ async function run() {
 
 	await handlers["[data-option-depth]"]({ currentTarget: { dataset: { optionDepth: "1" }, value: "FRAPPE-CARAMEL-LARGE" } });
 	assert.match(flowHtml, /Milk/);
+	assert.match(flowHtml, /<details class="rms-pos-modifier-group">/);
+	assert.doesNotMatch(flowHtml, /<details[^>]* open/);
 	assert.equal(primaryDisabled, false, "enable Add to order once a priced leaf option is selected");
 	assert.equal(hideCount, 0, "keep modifiers in the same modal as product options");
 
 	handlers["[data-modifier-key]"]({ currentTarget: {
-		dataset: { modifierKey: "MILK:WHOLE-MILK", group: "MILK" }, type: "radio", checked: true,
+		dataset: { modifierKey: JSON.stringify(["MILK", "WHOLE-MILK"]), group: "MILK" }, type: "radio", checked: true,
 	} });
 	await dialogConfig.primary_action({ quantity: 2, notes: "خفيف سكر" });
 	assert.equal(hideCount, 1, "close the modal only after adding the configured product");
@@ -346,7 +362,100 @@ async function run() {
 	assert.deepEqual(JSON.parse(JSON.stringify(pos.added[2])), [{ modifier_group: "MILK", modifier_product: "WHOLE-MILK", qty: 1 }]);
 	assert.equal(pos.added[4].qty, 2);
 	assert.equal(pos.added[4].notes, "خفيف سكر");
+	assert.ok(!dialogConfig.fields.some(field => field.fieldname === "quantity_keypad"), "the keypad does not take space in the dialog body");
+	for (const key of ["0", "1", "9", ".", "C"]) assert.ok(keypadHtml.includes(`data-quantity-key="${key}"`));
+	assert.equal(dialogConfig.fields.find(field => field.fieldname === "quantity").hidden, 1, "remove the visible quantity row");
+	assert.equal(keypadHidden, true);
+	handlers["[data-quantity-toggle]"]();
+	assert.equal(keypadHidden, false, "open the compact keypad only when the quantity is tapped");
+	handlers["[data-quantity-close]"]();
+	assert.equal(keypadHidden, true);
+	const adjustQuantity = delta => handlers["[data-quantity-adjust]"]({ currentTarget: { dataset: { quantityAdjust: String(delta) } } });
+	await adjustQuantity(1);
+	assert.equal(dialogQuantity, 3);
+	await adjustQuantity(-1);
+	assert.equal(dialogQuantity, 2);
+	const tapQuantity = key => handlers["[data-quantity-key]"]({ currentTarget: { dataset: { quantityKey: key } } });
+	await tapQuantity("4");
+	assert.equal(dialogQuantity, 4, "first tap replaces the initial quantity");
+	assert.equal(displayedQuantity, "4");
+	await Promise.all([tapQuantity("2"), tapQuantity("3")]);
+	assert.equal(dialogQuantity, 423, "rapid taps concatenate in order despite asynchronous Frappe updates");
+	await tapQuantity("C");
+	assert.equal(dialogQuantity, 0, "C clears the complete quantity");
+	assert.equal(displayedQuantity, "0");
+	assert.equal(primaryDisabled, true, "clearing prevents adding an item with zero quantity");
+	await tapQuantity("2");
+	await tapQuantity(".");
+	assert.equal(displayedQuantity, "2.", "preserve decimal separator while entering a quantity");
+	await tapQuantity(".");
+	await tapQuantity("5");
+	assert.equal(dialogQuantity, 2.5);
+	assert.equal(primaryDisabled, false);
+	assert.equal(pos.validConfigurationQuantity({ must_be_whole_number: true }, 2.5), false);
+	assert.equal(pos.validConfigurationQuantity({ must_be_whole_number: true }, 2), true);
+	handlers["[data-quantity-toggle]"]();
+	let escapeHandled = false;
+	handlers["[data-quantity-control]"]({ key: "Escape", preventDefault() {}, stopPropagation() { escapeHandled = true; } });
+	assert.equal(keypadHidden, true);
+	assert.equal(escapeHandled, true, "Escape closes the keypad without dismissing the product dialog");
 
+	finalConfig.modifier_groups[0].min_selections = 1;
+	delete pos.added;
+	pos.showProductOptions(root, "FRAPPE");
+	await handlers["[data-option-depth]"]({ currentTarget: { dataset: { optionDepth: "0" }, value: "FLAVOR-CARAMEL" } });
+	await handlers["[data-option-depth]"]({ currentTarget: { dataset: { optionDepth: "1" }, value: "FRAPPE-CARAMEL-LARGE" } });
+	assert.equal(primaryDisabled, true, "a priced option still needs its required modifier");
+	assert.match(flowHtml, /<details[^>]* open/);
+	assert.match(flowHtml, /Required/);
+	await assert.rejects(dialogConfig.primary_action({ quantity: 1 }), /Choose at least/);
+	assert.equal(pos.added, undefined, "the primary action cannot bypass a required modifier");
+	handlers["[data-modifier-key]"]({ currentTarget: { dataset: { modifierKey: JSON.stringify(["MILK", "WHOLE-MILK"]), group: "MILK" }, type: "radio", checked: true } });
+	assert.equal(primaryDisabled, false);
+	await dialogConfig.primary_action({ quantity: 4, notes: "Required choice" });
+	assert.equal(pos.added[4].qty, 4);
+	await handlers["[data-option-depth]"]({ currentTarget: { dataset: { optionDepth: "0" }, value: "FLAVOR-CARAMEL" } });
+	await handlers["[data-option-depth]"]({ currentTarget: { dataset: { optionDepth: "1" }, value: "FRAPPE-CARAMEL-LARGE" } });
+	assert.equal(primaryDisabled, true, "changing the option clears old required selections");
+
+	delete pos.added;
+	pos.showModifiers(finalConfig);
+	assert.equal(primaryDisabled, true, "modifier-only products also require their configured minimum");
+	await assert.rejects(dialogConfig.primary_action(), /Choose at least/);
+	assert.equal(pos.added, undefined);
+	checkedModifiers = [{ dataset: { group: "MILK", modifier: "WHOLE-MILK" } }];
+	handlers["[data-modifier]"]();
+	assert.equal(primaryDisabled, false);
+	await dialogConfig.primary_action();
+	assert.equal(pos.added[4].qty, 2.5, "preserve fractional quantities entered on the keypad");
+	checkedModifiers = [];
+	handlers["[data-modifier]"]();
+	assert.equal(primaryDisabled, true, "removing a required choice disables Add again");
+
+	dialogQuantity = undefined;
+	const optionalConfig = { ...finalConfig, modifier_groups: [{ ...finalConfig.modifier_groups[0], min_selections: 0 }] };
+	pos.showModifiers(optionalConfig);
+	assert.equal(primaryDisabled, true, "wait for the hidden quantity field to initialize");
+	dialogQuantity = 1;
+	dialogConfig.fields.find(field => field.fieldname === "quantity").change();
+	assert.equal(primaryDisabled, false, "enable an optional-modifier item when its default quantity finishes initializing without requiring another tap");
+
+	assert.match(pos.modifierGroupHtml({title:"Sauces",allow_collapse:false},"choices"), /^<section/, "non-collapsible groups stay fully visible");
+	assert.doesNotMatch(pos.modifierGroupHtml({title:"Sauces",allow_collapse:true,collapsed_by_default:true,min_selections:0},"choices"), /<details[^>]* open/, "optional groups honor the collapsed default");
+	assert.match(pos.modifierGroupHtml({title:"Sauces",allow_collapse:true,collapsed_by_default:true,min_selections:1},"choices"), /<details[^>]* open/, "required choices remain discoverable");
+	const limitedConfig = { modifier_groups: [{ name: "SAUCE", title: "Sauces", allow_multiple_selections: true, min_selections: 1, max_selections: 2, options: [{name:"A"},{name:"B"},{name:"C"}] }] };
+	const sauceChoice = name => ({ modifier_group: "SAUCE", modifier_product: name });
+	assert.equal(pos.modifierSelectionError(limitedConfig, [sauceChoice("A"), sauceChoice("B")]), "");
+	assert.match(pos.modifierSelectionError(limitedConfig, [sauceChoice("A"), sauceChoice("B"), sauceChoice("C")]), /Choose at most/);
+	const choiceInputs = ["A", "B", "C"].map((name, index) => ({dataset:{group:"SAUCE"},checked:index<2,disabled:false}));
+	const limitDialog = {$wrapper:[{querySelectorAll:()=>choiceInputs}]};
+	pos.syncModifierLimits(limitDialog, limitedConfig, [sauceChoice("A"), sauceChoice("B")]);
+	assert.deepEqual(choiceInputs.map(input=>input.disabled), [false,false,true], "at the maximum only unchecked choices are disabled");
+	choiceInputs[1].checked = false;
+	pos.syncModifierLimits(limitDialog, limitedConfig, [sauceChoice("A")]);
+	assert.equal(choiceInputs[2].disabled, false, "removing a choice allows replacing it");
+	const unlimitedConfig = { modifier_groups: [{ ...limitedConfig.modifier_groups[0], max_selections: 0 }] };
+	assert.equal(pos.modifierSelectionError(unlimitedConfig, [sauceChoice("A"), sauceChoice("B"), sauceChoice("C")]), "");
 	let productHtml = "";
 	let productCountText = "";
 	pos.page = { main: { find(selector) {
@@ -356,6 +465,7 @@ async function run() {
 	} } };
 	pos.state = {
 		session: { name: "SESSION-1" },
+		store: "STORE-1", brand: "BRAND-1", order_type: "Takeaway",
 		permissions: { can_checkout: true },
 		catalog_mode: "products",
 		bootstrap_loading: false,
@@ -454,7 +564,10 @@ async function run() {
 	assert.match(discountFeedback.innerHTML, /data-method="Password" aria-pressed="true"/, "visually select fixed-password approval");
 	discountFeedback.innerHTML = "";
 	pos.paymentDiscountApprovers = approvers;
-	pos.selectDiscountApprover("manager@example.com");
+	let automaticRequests = 0;
+	pos.requestDiscountApprovalCode = async () => { automaticRequests++; };
+	await pos.selectDiscountApprover("manager@example.com");
+	assert.equal(automaticRequests, 1, "selecting the manager automatically sends OTP");
 	assert.match(discountFeedback.innerHTML, /POS Manager[\s\S]*data-discount-approval-code/, "show the selected manager before revealing the code input");
 	assert.equal(approvalCodeFocused, true, "focus the newly revealed code field after manager selection");
 	let selectedType = "Percentage";
@@ -518,9 +631,11 @@ async function run() {
 	pos.paymentTotal = 10;
 	pos.paymentDiscount = { type: "Percentage", value: 0, reason: "" };
 	pos.paymentSubmitting = false;
+	pos.ensureCurrentOrderActive = async () => true;
 	pos.call = () => { paymentCalls += 1; return new Promise((resolve) => { finishPayment = resolve; }); };
 	const firstSubmission = pos.submitPayment(false);
 	const repeatedSubmission = pos.submitPayment(false);
+	await new Promise(resolve => setImmediate(resolve));
 	assert.equal(paymentCalls, 1, "ignore a second payment action while the first request is pending");
 	assert.equal(payButtonsDisabled, true, "disable both payment actions during submission");
 	finishPayment({ pos_invoice: "POSINV-1", status: "Paid" });

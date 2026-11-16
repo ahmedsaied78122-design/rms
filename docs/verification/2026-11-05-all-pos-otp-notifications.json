@@ -1,0 +1,33 @@
+{
+  "discount": {
+    "checks": [
+      "Cashier receives delivery confirmation without OTP",
+      "Discount request saved in Approval Challenge",
+      "Repeated request reuses same valid discount challenge",
+      "Actual notification-bell endpoint returns unread discount notification to Ahmed",
+      "Bell title contains OTP and details contain exact discount and reason",
+      "Duplicate request does not duplicate bell notification",
+      "Code rejects changed discount value",
+      "Code received by Ahmed approves the exact discount preview",
+      "Correct discount OTP is consumed once",
+      "Consumed discount OTP cannot be replayed"
+    ],
+    "count": 10,
+    "rolled_back": true
+  },
+  "expense": {
+    "checks": [
+      "Expense cashier receives delivery confirmation without code",
+      "Expense OTP request is idempotent",
+      "Expense code delivered to Ahmed in actual bell endpoint",
+      "Code received through bell approves expense and posts journal",
+      "Expense OTP consumed"
+    ],
+    "count": 5,
+    "rolled_back": true
+  },
+  "date": "2026-11-05",
+  "backend_tests": 193,
+  "frontend_suites": 11,
+  "scope": "All POS OTP issuance paths deliver codes to selected approver Notification Log"
+}

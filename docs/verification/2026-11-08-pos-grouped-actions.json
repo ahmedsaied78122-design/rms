@@ -1,0 +1,28 @@
+{
+  "primaryActions": [
+    "open-orders",
+    "table-map",
+    "kitchen-display",
+    "session"
+  ],
+  "groupedActions": 5,
+  "escapeAndOutsideClose": true,
+  "arrowNavigation": true,
+  "permissionChangesReflected": true,
+  "sessionRequiredActionsDisabled": true,
+  "mobileInsideViewport": true,
+  "expenseActionOpened": true,
+  "financialWrites": 0,
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "frontend_suites_passed": 15,
+  "menu_label": "المزيد",
+  "grouped_action_names": [
+    "المصروفات",
+    "المرتجعات",
+    "سجل المبيعات",
+    "الموافقات",
+    "العودة للتطبيقات"
+  ],
+  "keyboard_closed_menu_does_not_capture_other_dialog_escape": true
+}

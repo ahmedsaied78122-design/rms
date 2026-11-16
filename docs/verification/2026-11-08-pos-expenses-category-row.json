@@ -1,0 +1,75 @@
+{
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "expense_profile_fix": {
+    "session": "RMS-SES-2026-00001",
+    "session_profile": "بيت الشرق - كاشير المعادي",
+    "current_assignment": "بيت الشرق - كاشير التجمع الخامس",
+    "expense_posted_with_balanced_journal": true,
+    "cash_expected_decreased_by_expense": true,
+    "unit_tests": 33,
+    "all_financial_test_changes_rolled_back": true
+  },
+  "session_binding": {
+    "existing_session_retains_opening_profile": true,
+    "new_session_uses_current_assignment": true,
+    "existing_store_cashier_profile_and_opening_immutable": true,
+    "opening_match_and_enabled_profile_checks_preserved": true
+  },
+  "frontend_suites_passed": 14,
+  "native_chromium": {
+    "desktop": {
+      "height": 42,
+      "client": 986,
+      "scroll": 986,
+      "y": [
+        204,
+        204,
+        204,
+        204,
+        204,
+        204,
+        204
+      ],
+      "pageWidth": 1351,
+      "viewport": 1366
+    },
+    "nested": {
+      "height": 42,
+      "client": 986,
+      "scroll": 986,
+      "y": [
+        204,
+        204,
+        204,
+        204,
+        204,
+        204,
+        204,
+        204
+      ],
+      "pageWidth": 1351,
+      "viewport": 1366
+    },
+    "mobile": {
+      "height": 42,
+      "client": 323,
+      "scroll": 730,
+      "y": [
+        467,
+        467,
+        467,
+        467,
+        467,
+        467,
+        467
+      ],
+      "pageWidth": 375,
+      "viewport": 390
+    },
+    "expenseFormReady": true,
+    "approvalsShortcutRemoved": true,
+    "financialWrites": 0
+  },
+  "approvals_shortcut": "Removed from cashier toolbar; notification approval flow and backend permissions retained"
+}

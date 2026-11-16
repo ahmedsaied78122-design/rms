@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-05",
+  "backend_tests": 194,
+  "frontend_suites": 11,
+  "permission_regression": {
+    "user": "ahmed.gamal@rms.arab-erp.com",
+    "document": "RMS-APR-2026-00001",
+    "native_form_http_status": 200,
+    "read_allowed": true,
+    "write_denied": true
+  },
+  "automatic_otp": [
+    "Discount manager selected",
+    "Discount method switched to OTP",
+    "Void or Return manager/method changed",
+    "Pending Expense manager/expense selected"
+  ],
+  "automatic_delivery_tests_passed": true
+}

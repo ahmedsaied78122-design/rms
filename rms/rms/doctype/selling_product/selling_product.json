@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -14,22 +14,24 @@
   "field_order": [
     "identity_section",
     "title",
-    "item",
     "product_category",
     "uom",
-    "maintain_stock",
-    "allow_negative_stock",
-    "image",
+    "item",
+    "rms_column_identity_section_1",
     "enabled",
+    "image",
     "sequence_id",
-    "identity_column",
     "is_modifier",
     "can_be_sold_separately",
+    "maintain_stock",
+    "allow_negative_stock",
     "options_section",
     "has_options",
+    "option_attribute",
     "option_products",
     "pricing_section",
     "selling_price",
+    "rms_price_rules_section",
     "selling_prices",
     "recipe_section",
     "with_recipe",
@@ -37,8 +39,10 @@
     "additional_recipe",
     "defaults_section",
     "default_store",
+    "rms_column_defaults_section_1",
     "default_store_company",
     "default_warehouse",
+    "rms_availability_section",
     "store_availability",
     "store_order_type_exclusions",
     "modifiers_section",
@@ -51,7 +55,7 @@
     {
       "fieldname": "identity_section",
       "fieldtype": "Section Break",
-      "label": "Product"
+      "label": "Product essentials"
     },
     {
       "fieldname": "title",
@@ -61,6 +65,28 @@
       "in_list_view": 1,
       "in_standard_filter": 1,
       "columns": 1
+    },
+    {
+      "fieldname": "product_category",
+      "fieldtype": "Link",
+      "label": "Product Category",
+      "options": "Product Category",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1,
+      "link_filters": "[[\"Product Category\",\"enabled\",\"=\",\"1\"],[\"Product Category\",\"item_group\",\"is\",\"set\"]]",
+      "description": "Changes catalog navigation and inherited category defaults. The linked stock item's accounting group is retained."
+    },
+    {
+      "fieldname": "uom",
+      "fieldtype": "Link",
+      "label": "Unit of Measure",
+      "options": "UOM",
+      "in_list_view": 1,
+      "columns": 1,
+      "read_only_depends_on": "eval:!doc.__islocal",
+      "reqd": 1
     },
     {
       "fieldname": "item",
@@ -75,26 +101,44 @@
       "read_only": 1
     },
     {
-      "fieldname": "product_category",
-      "fieldtype": "Link",
-      "label": "Product Category",
-      "options": "Product Category",
-      "reqd": 1,
-      "in_list_view": 1,
-      "in_standard_filter": 1,
-      "columns": 1,
-      "read_only_depends_on": "eval:!doc.__islocal",
-      "link_filters": "[[\"Product Category\",\"enabled\",\"=\",\"1\"],[\"Product Category\",\"is_group\",\"=\",\"0\"]]"
+      "fieldname": "rms_column_identity_section_1",
+      "fieldtype": "Column Break"
     },
     {
-      "fieldname": "uom",
-      "fieldtype": "Link",
-      "label": "Unit of Measure",
-      "options": "UOM",
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
       "in_list_view": 1,
-      "columns": 1,
-      "read_only_depends_on": "eval:!doc.__islocal",
-      "reqd": 1
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "image",
+      "fieldtype": "Attach Image",
+      "label": "Product Image"
+    },
+    {
+      "fieldname": "sequence_id",
+      "fieldtype": "Int",
+      "label": "Display Order",
+      "default": "0",
+      "in_list_view": 1,
+      "columns": 2,
+      "description": "Lower numbers appear first."
+    },
+    {
+      "fieldname": "is_modifier",
+      "fieldtype": "Check",
+      "label": "Is Modifier",
+      "default": "0"
+    },
+    {
+      "fieldname": "can_be_sold_separately",
+      "fieldtype": "Check",
+      "label": "Can Be Sold Separately",
+      "default": "1",
+      "depends_on": "eval:doc.is_modifier"
     },
     {
       "fieldname": "maintain_stock",
@@ -114,67 +158,41 @@
       "depends_on": "eval:doc.maintain_stock"
     },
     {
-      "fieldname": "image",
-      "fieldtype": "Attach Image",
-      "label": "Product Image"
-    },
-    {
-      "fieldname": "enabled",
-      "fieldtype": "Check",
-      "label": "Enabled",
-      "default": "1",
-      "in_list_view": 1,
-      "in_standard_filter": 1,
-      "columns": 2
-    },
-    {
-      "fieldname": "sequence_id",
-      "fieldtype": "Int",
-      "label": "Sequence in Category",
-      "default": "0",
-      "in_list_view": 1,
-      "columns": 2
-    },
-    {
-      "fieldname": "identity_column",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "is_modifier",
-      "fieldtype": "Check",
-      "label": "Is Modifier",
-      "default": "0"
-    },
-    {
-      "fieldname": "can_be_sold_separately",
-      "fieldtype": "Check",
-      "label": "Can Be Sold Separately",
-      "default": "1",
-      "depends_on": "eval:doc.is_modifier"
-    },
-    {
       "fieldname": "options_section",
       "fieldtype": "Section Break",
-      "label": "Options"
+      "label": "Sizes and variations"
     },
     {
       "fieldname": "has_options",
       "fieldtype": "Check",
       "label": "Has Options",
-      "default": "0"
+      "default": "0",
+      "read_only_depends_on": "eval:doc.maintain_stock || doc.with_recipe || (doc.recipe && doc.recipe.length) || (doc.selling_prices && doc.selling_prices.length) || doc.selling_price > 0",
+      "description": "A parent groups separately priced products, such as sizes. Clear parent prices and recipes before enabling; a stock-tracked product cannot be a parent."
+    },
+    {
+      "fieldname": "option_attribute",
+      "fieldtype": "Link",
+      "label": "Option Attribute",
+      "options": "Item Attribute",
+      "depends_on": "eval:doc.has_options",
+      "description": "Attribute displayed as the choice heading in POS. Set an Attribute Value for every option.",
+      "link_filters": "[[\"Item Attribute\",\"disabled\",\"=\",0]]"
     },
     {
       "fieldname": "option_products",
       "fieldtype": "Table",
       "label": "Option Products",
       "options": "Selling Product Option",
-      "depends_on": "eval:doc.has_options"
+      "depends_on": "eval:doc.has_options",
+      "mandatory_depends_on": "eval:doc.has_options",
+      "description": "Add rows here. Open a row to see all its settings."
     },
     {
       "fieldname": "pricing_section",
       "fieldtype": "Section Break",
-      "label": "Pricing",
-      "depends_on": "eval:!doc.has_options"
+      "label": "Selling prices",
+      "depends_on": "eval:!doc.has_options && (!doc.is_modifier || doc.can_be_sold_separately)"
     },
     {
       "fieldname": "selling_price",
@@ -183,16 +201,25 @@
       "depends_on": "eval:!doc.has_options && (!doc.is_modifier || doc.can_be_sold_separately)"
     },
     {
+      "fieldname": "rms_price_rules_section",
+      "fieldtype": "Section Break",
+      "label": "Advanced price rules",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:doc.selling_prices && doc.selling_prices.length",
+      "depends_on": "eval:!doc.has_options && (!doc.is_modifier || doc.can_be_sold_separately)"
+    },
+    {
       "fieldname": "selling_prices",
       "fieldtype": "Table",
       "label": "Conditional Selling Prices",
       "options": "Selling Product Price Rule",
-      "depends_on": "eval:!doc.has_options && (!doc.is_modifier || doc.can_be_sold_separately)"
+      "depends_on": "eval:!doc.has_options && (!doc.is_modifier || doc.can_be_sold_separately)",
+      "description": "Optional overrides by store, order type or brand. Each row needs at least one condition. Lower priority numbers win; the base price is the fallback."
     },
     {
       "fieldname": "recipe_section",
       "fieldtype": "Section Break",
-      "label": "Recipe",
+      "label": "Recipe and ingredients",
       "depends_on": "eval:!doc.has_options"
     },
     {
@@ -200,7 +227,9 @@
       "fieldtype": "Check",
       "label": "With Recipe",
       "default": "0",
-      "depends_on": "eval:!doc.has_options"
+      "depends_on": "eval:!doc.has_options",
+      "read_only_depends_on": "eval:doc.maintain_stock",
+      "description": "Use a recipe for prepared products. A stock-tracked product cannot also have a recipe."
     },
     {
       "fieldname": "recipe",
@@ -208,19 +237,23 @@
       "label": "Base Recipe",
       "options": "Selling Product Recipe Line",
       "depends_on": "eval:doc.with_recipe && !doc.has_options",
-      "mandatory_depends_on": "eval:doc.with_recipe && !doc.has_options"
+      "mandatory_depends_on": "eval:doc.with_recipe && !doc.has_options",
+      "description": "Quantities are for one product unit. Ingredient units and costs are resolved from the linked stock item."
     },
     {
       "fieldname": "additional_recipe",
       "fieldtype": "Table",
       "label": "Additional Recipe",
       "options": "Selling Product Additional Recipe Line",
-      "depends_on": "eval:doc.with_recipe && !doc.has_options"
+      "depends_on": "eval:doc.with_recipe && !doc.has_options",
+      "description": "Extra ingredients used only for the selected order types, such as takeaway packaging."
     },
     {
       "fieldname": "defaults_section",
       "fieldtype": "Section Break",
-      "label": "Operational Defaults"
+      "label": "Store defaults",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:doc.default_store || doc.default_warehouse"
     },
     {
       "fieldname": "default_store",
@@ -229,7 +262,13 @@
       "options": "Store",
       "in_list_view": 0,
       "link_filters": "[[\"Store\",\"enabled\",\"=\",\"1\"]]",
-      "reqd": 0
+      "reqd": 0,
+      "mandatory_depends_on": "eval:doc.default_warehouse",
+      "description": "Optional. Choose a store and its warehouse together, or leave both empty to inherit category/store defaults."
+    },
+    {
+      "fieldname": "rms_column_defaults_section_1",
+      "fieldtype": "Column Break"
     },
     {
       "fieldname": "default_store_company",
@@ -245,47 +284,65 @@
       "fieldtype": "Link",
       "label": "Default Warehouse",
       "options": "Warehouse",
-      "link_filters": "[[\"Warehouse\",\"company\",\"=\",\"eval:doc.default_store_company\"],[\"Warehouse\",\"is_group\",\"=\",\"0\"],[\"Warehouse\",\"disabled\",\"=\",\"0\"]]"
+      "link_filters": "[[\"Warehouse\",\"company\",\"=\",\"eval:doc.default_store_company\"],[\"Warehouse\",\"is_group\",\"=\",\"0\"],[\"Warehouse\",\"disabled\",\"=\",\"0\"]]",
+      "mandatory_depends_on": "eval:doc.default_store",
+      "read_only_depends_on": "eval:!doc.default_store"
+    },
+    {
+      "fieldname": "rms_availability_section",
+      "fieldtype": "Section Break",
+      "label": "Availability and order types",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:(doc.store_availability && doc.store_availability.length) || (doc.store_order_type_exclusions && doc.store_order_type_exclusions.length)"
     },
     {
       "fieldname": "store_availability",
       "fieldtype": "Table",
       "label": "Store Availability",
-      "options": "Selling Product Store Availability"
+      "options": "Selling Product Store Availability",
+      "description": "Leave empty to allow this product in all enabled stores. Otherwise only the listed stores can sell it."
     },
     {
       "fieldname": "store_order_type_exclusions",
       "fieldtype": "Table",
       "label": "Disabled Order Types by Store",
-      "options": "Selling Product Store Order Type Exclusion"
+      "options": "Selling Product Store Order Type Exclusion",
+      "description": "Exclude only the selected store and order-type combinations."
     },
     {
       "fieldname": "modifiers_section",
       "fieldtype": "Section Break",
-      "label": "Modifiers"
+      "label": "Modifier groups and choices",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:(doc.modifier_groups && doc.modifier_groups.length) || (doc.modifier_options && doc.modifier_options.length)"
     },
     {
       "fieldname": "modifier_groups",
       "fieldtype": "Table",
       "label": "Modifier Groups",
-      "options": "Selling Product Modifier Group"
+      "options": "Selling Product Modifier Group",
+      "description": "Set the minimum and maximum choices for each group on this product. These limits are independent of other products."
     },
     {
       "fieldname": "modifier_options",
       "fieldtype": "Table",
       "label": "Modifier Options",
-      "options": "Selling Product Modifier Option"
+      "options": "Selling Product Modifier Option",
+      "description": "Add only modifier products from the groups selected above. Prices in these rows apply to this product only."
     },
     {
       "fieldname": "printing_section",
       "fieldtype": "Section Break",
-      "label": "Printing"
+      "label": "Preparation and printing",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:doc.print_routes && doc.print_routes.length"
     },
     {
       "fieldname": "print_routes",
       "fieldtype": "Table",
       "label": "Print Routes",
-      "options": "Selling Product Print Route"
+      "options": "Selling Product Print Route",
+      "description": "Route this product to preparation areas in each selected store. Empty routes inherit category/store defaults."
     }
   ],
   "permissions": [
@@ -302,5 +359,6 @@
       "share": 1,
       "report": 1
     }
-  ]
+  ],
+  "show_title_field_in_link": 1
 }

@@ -1,0 +1,18 @@
+{
+  "mainCategoryChildrenAsCardsOnly": true,
+  "mainCategoryUsesFullWidth": true,
+  "sideNavigationAppearsAfterEnteringSubcategory": true,
+  "parentBackHidesSideNavigation": true,
+  "parentBackRetainsKeyboardFocus": true,
+  "mobileHasNoRedundantPanelOrToggleAtFirstLevel": true,
+  "mobileSubcategoryPanelAndEscape": true,
+  "desktopWidth": 1171,
+  "mobileWidth": 325,
+  "cartAndOrderUnchanged": true,
+  "financialWrites": 0,
+  "verified_on": "2026-11-09",
+  "site": "rms.arab-erp.com",
+  "browsing_regression_suite_passed": true,
+  "database_changes": 0,
+  "desktop_screenshot": "/home/xxx/outputs/rms-category-first-level/desktop-main-category.png"
+}

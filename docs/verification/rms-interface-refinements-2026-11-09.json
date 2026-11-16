@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-09",
+  "assets": {
+    "shell": "desk-a-87",
+    "studio_css": "studio-8"
+  },
+  "javascript_suites": 18,
+  "backend_unit_tests": 5,
+  "browser_review": {
+    "mode": "Isolated browser fixture using actual native/RMS styles and RMS scripts; language RPC mocked. No live user/session or user preference was modified.",
+    "results": [
+      "Selected invoice tab and first/fourth featured cards have black text in dark mode",
+      "Sidebar footer contains the account card without POS or all-apps links",
+      "Welcome remains Arabic/RTL in an English interface",
+      "The collapsed desktop rail has a working, labelled expand button",
+      "Language control protects dirty data and toggles both ways through the scoped request contract",
+      "Responsive language control and navigation at 320px",
+      "Responsive language control and navigation at 390px",
+      "Responsive language control and navigation at 768px",
+      "Responsive language control and navigation at 810px",
+      "Responsive language control and navigation at 1024px",
+      "Responsive language control and navigation at 1366px",
+      "Selected tabs keep black text in light mode",
+      "The actual public SVG loader animates RMS letters before application JavaScript",
+      "Reduced-motion mode displays a steady RMS word"
+    ],
+    "errors": []
+  }
+}

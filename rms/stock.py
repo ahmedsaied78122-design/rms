@@ -5,7 +5,33 @@ from frappe.utils import flt, nowdate, nowtime
 from erpnext.stock.get_item_details import get_conversion_factor
 
 
-def create_material_issue(company, items, expense_account=None, remarks=None):
+def prevent_duplicate_return_stock(doc, method=None):
+	"""RMS return receipts already posted stock before POS consolidation."""
+	if not doc.is_return or not doc.is_consolidated:
+		return
+	sources = {row.pos_invoice for row in doc.items if row.pos_invoice}
+	if not sources:
+		return
+	rms_returns = set(frappe.get_all("POS Return", filters={
+		"return_pos_invoice": ["in", list(sources)], "status": "Approved",
+	}, pluck="return_pos_invoice"))
+	if rms_returns and (rms_returns != sources or any(not row.pos_invoice for row in doc.items)):
+		frappe.throw(_("Consolidate RMS return invoices separately from other returns to avoid duplicate stock movements."))
+	if rms_returns:
+		doc.update_stock = 0
+
+
+def ensure_void_stock_entry_type():
+	"""Waste is a Material Issue in ERPNext, identified by its own entry type."""
+	if frappe.db.exists("Stock Entry Type", "Void"):
+		if frappe.db.get_value("Stock Entry Type", "Void", "purpose") != "Material Issue":
+			frappe.throw(_("Stock Entry Type Void must use purpose Material Issue."))
+	else:
+		frappe.get_doc({"doctype": "Stock Entry Type", "name": "Void", "purpose": "Material Issue"}).insert(ignore_permissions=True)
+	return "Void"
+
+
+def create_material_issue(company, items, expense_account=None, remarks=None, stock_entry_type=None):
 	"""Create one standard ERPNext Material Issue for stock component rows."""
 	quantities = {}
 	for row in items:
@@ -15,9 +41,9 @@ def create_material_issue(company, items, expense_account=None, remarks=None):
 	if not quantities:
 		return None
 
-	stock_entry_type = frappe.db.get_value("Stock Entry Type", {"purpose": "Material Issue"}, "name")
-	if not stock_entry_type:
-		frappe.throw(_("Create a standard Stock Entry Type for Material Issue first."))
+	stock_entry_type = stock_entry_type or "Material Issue"
+	if frappe.db.get_value("Stock Entry Type", stock_entry_type, "purpose") != "Material Issue":
+		frappe.throw(_("Choose a Stock Entry Type with purpose Material Issue."))
 	company_doc = frappe.get_doc("Company", company)
 	entry = frappe.new_doc("Stock Entry")
 	entry.stock_entry_type = stock_entry_type

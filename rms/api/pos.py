@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import json
+import math
 from html import escape as html_escape
 import re
 import secrets
@@ -8,11 +9,16 @@ from decimal import Decimal, InvalidOperation
 
 import frappe
 from frappe import _
-from frappe.utils import flt, now_datetime, nowdate
+from frappe.utils import cint, flt, now_datetime, nowdate
 
 from rms.stock import create_material_issue
 from rms.snapshots import parse_json_rows, serialize_json_rows
 from rms.rms.doctype.pos_order.pos_order import get_active_order_item_qty, validate_confirmed_item_cancellation
+from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import (
+	allows_multiple_selections,
+	get_maximum_selections,
+	get_minimum_selections,
+)
 from rms.taxes import (
 	allow_rms_cashier_session_pos_invoice,
 	apply_order_discount as _apply_order_discount,
@@ -28,6 +34,7 @@ POS_CAPABILITIES = (
 	"can_checkout", "can_edit_open_orders", "can_apply_manual_discount", "can_cancel_orders", "can_transfer_tables",
 	"can_split_orders", "can_merge_orders", "can_request_returns", "can_access_kitchen",
 	"can_prepare_orders", "can_pick_orders", "can_acknowledge_cancellations",
+	"can_void_items", "can_void_waste", "can_return_waste",
 )
 POS_USER_SCOPES = {
 	"brand": ("POS User Brand", "restaurant_brand", "allowed_brands"),
@@ -53,8 +60,13 @@ def get_pos_return_permission_query(user=None):
 	return "1 = 0"
 
 
-def has_pos_return_permission(doc, user=None, permission_type=None):
+def has_pos_return_permission(doc, user=None, permission_type=None, ptype=None):
+	permission_type = ptype or permission_type
 	user = user or frappe.session.user
+	from rms.streaming_replica import upstream
+
+	if user == frappe.session.user and upstream(doc):
+		return True  # Normal DocPerms still apply; only the interactive role veto is lifted.
 	roles = set(frappe.get_roles(user))
 	if user == "Administrator" or "System Manager" in roles:
 		return True
@@ -101,8 +113,13 @@ def get_approval_challenge_permission_query(user=None):
 	return f"(`tabApproval Challenge`.store in (select sua.parent from `tabStore User Assignment` sua where sua.user = {user_sql} and sua.enabled = 1) or not exists (select 1 from `tabStore User Assignment` sua2 where sua2.parent = `tabApproval Challenge`.store and sua2.enabled = 1))"
 
 
-def has_shift_expense_permission(doc, user=None, permission_type=None):
+def has_shift_expense_permission(doc, user=None, permission_type=None, ptype=None):
+	permission_type = ptype or permission_type
 	user = user or frappe.session.user
+	from rms.streaming_replica import upstream
+
+	if user == frappe.session.user and upstream(doc):
+		return True  # Normal DocPerms still apply; only the interactive role veto is lifted.
 	roles = set(frappe.get_roles(user))
 	if user == "Administrator" or "System Manager" in roles:
 		return True
@@ -111,7 +128,8 @@ def has_shift_expense_permission(doc, user=None, permission_type=None):
 	return bool(permission_type == "read" and "POS Cashier" in roles and doc.owner == user)
 
 
-def has_approval_challenge_permission(doc, user=None, permission_type=None):
+def has_approval_challenge_permission(doc, user=None, permission_type=None, ptype=None):
+	permission_type = ptype or permission_type
 	user = user or frappe.session.user
 	roles = set(frappe.get_roles(user))
 	if user == "Administrator" or "System Manager" in roles:
@@ -144,10 +162,21 @@ def get_pos_capabilities(user=None):
 	can_approve_discount = bool(roles & {"POS Manager", "System Manager"})
 	pos_user = get_active_pos_user(user)
 	if not pos_user:
-		return {**{fieldname: True for fieldname in POS_CAPABILITIES}, "can_approve_discount": can_approve_discount}
+		values = {fieldname: True for fieldname in POS_CAPABILITIES}
+		for fieldname in ("can_void_items", "can_void_waste", "can_request_returns", "can_return_waste"):
+			values[fieldname] = can_approve_discount
+		return {**values, "can_approve_discount": can_approve_discount}
 	values = frappe.db.get_value("POS User", pos_user, list(POS_CAPABILITIES), as_dict=True) or {}
-	return {**{fieldname: bool(1 if values.get(fieldname) is None else values.get(fieldname)) for fieldname in POS_CAPABILITIES},
+	operation_permissions = {"can_void_items", "can_void_waste", "can_request_returns", "can_return_waste"}
+	return {**{fieldname: bool(values.get(fieldname, 0) if fieldname in operation_permissions else
+		1 if values.get(fieldname) is None else values.get(fieldname)) for fieldname in POS_CAPABILITIES},
 		"can_approve_discount": can_approve_discount}
+
+
+@frappe.whitelist()
+def get_pos_permissions():
+	require_pos_role()
+	return get_pos_capabilities()
 
 
 @frappe.whitelist()
@@ -294,9 +323,12 @@ def create_cashier_session_for_opening(store, profile_name, opening, opening_amo
 
 
 def assert_store_access(store_name):
-	store = frappe.db.get_value("Store", store_name, ["name", "enabled", "pos_profile", "company"], as_dict=True)
+	store = frappe.db.get_value("Store", store_name, ["name", "enabled", "pos_profile", "company", "streaming_branch"], as_dict=True)
 	if not store or not store.enabled:
 		frappe.throw(_("Choose an enabled Store."))
+	from arab_streaming.streaming.ownership import assert_local_branch_writer
+
+	assert_local_branch_writer(store.get("streaming_branch"))
 	pos_user = get_active_pos_user(frappe.session.user)
 	if pos_user:
 		if not frappe.db.exists("POS User Store", {
@@ -348,6 +380,12 @@ def redeem_shift_expense_approval_code(expense_name, code):
 	from rms.expenses import redeem_shift_expense_approval_code as _redeem
 
 	return _redeem(expense_name, code)
+
+
+@frappe.whitelist(methods=['POST'])
+def request_shift_expense_approval_code(expense_name, approver, resend=0):
+	from rms.expenses import request_shift_expense_approval_code as _request
+	return _request(expense_name, approver, resend)
 
 
 @frappe.whitelist()
@@ -446,6 +484,25 @@ def get_categories(brand, store=None):
 	rows = frappe.get_all("Product Category", filters={"name": ["in", ids]},
 		fields=["name", "title", "parent_product_category", "sequence_id", "is_group", "image"],
 		order_by="sequence_id asc, title asc")
+	# Prefer an uploaded category photo; otherwise use a product photo from its branch.
+	photos = frappe.get_all("Selling Product", filters={"enabled": 1,
+		"product_category": ["in", ids], "image": ["!=", ""]},
+		fields=["product_category", "image"], order_by="sequence_id asc, name asc")
+	by_category = {}
+	for photo in photos:
+		by_category.setdefault(photo.product_category, photo.image)
+	by_name = {row.name: row for row in rows}
+	for row in rows:
+		if not row.image:
+			row.image = by_category.get(row.name)
+		if row.image:
+			parent = by_name.get(row.parent_product_category)
+			seen = {row.name}
+			while parent and parent.name not in seen:
+				seen.add(parent.name)
+				if not parent.image:
+					parent.image = row.image
+				parent = by_name.get(parent.parent_product_category)
 	return rows
 
 
@@ -463,6 +520,9 @@ def get_bootstrap(store=None):
 			continue
 	default_store = get_default_pos_store(allowed_stores)
 
+	if not store:
+		active_session = get_user_session()
+		store = active_session.store if active_session else default_store
 	if store:
 		assert_store_access(store)
 		store_row = frappe.db.get_value("Store", store, ["name", "title", "store_code", "pos_profile", "operating_day_end"], as_dict=True)
@@ -506,7 +566,7 @@ def get_default_pos_store(allowed_stores, user=None):
 
 
 @frappe.whitelist()
-def get_catalog(store, brand, order_type, category=None, search=None, limit=100):
+def get_catalog(store, brand, order_type, category=None, search=None, limit=100, include_descendants=1, full_menu=0):
 	require_pos_role()
 	assert_store_access(store)
 	if brand not in {row["name"] for row in get_brands(store)}:
@@ -526,7 +586,9 @@ def get_catalog(store, brand, order_type, category=None, search=None, limit=100)
 	option_products = set(frappe.get_all("Selling Product Option", filters={
 		"parent": ["in", option_parents], "parenttype": "Selling Product",
 	}, pluck="option_product")) if option_parents else set()
-	if category:
+	if category and not cint(include_descendants):
+		category_ids = {category}
+	elif category:
 		bounds = frappe.db.get_value("Product Category", category, ["lft", "rgt"], as_dict=True)
 		if bounds:
 			category_ids = set(category_ids) & set(frappe.get_all("Product Category", filters={
@@ -547,10 +609,23 @@ def get_catalog(store, brand, order_type, category=None, search=None, limit=100)
 		"Selling Product",
 		filters=filters,
 		or_filters=or_filters,
-		fields=["name", "title", "product_category", "image", "uom", "sequence_id", "has_options", "is_modifier", "can_be_sold_separately"],
+		fields=["name", "title", "product_category", "image", "item", "selling_price", "uom", "sequence_id", "has_options", "is_modifier", "can_be_sold_separately"],
 		order_by="sequence_id asc, title asc",
-		limit_page_length=min(max(int(limit), 1), 200),
+		# The register filters a complete, scoped menu locally; ordinary searches stay bounded.
+		limit_page_length=0 if cint(full_menu) else min(max(int(limit), 1), 200),
 	)
+	children = {field: {} for field in ('selling_prices', 'store_availability', 'store_order_type_exclusions')}
+	names = [row.name for row in products if row.name not in option_products and not (row.is_modifier and not row.can_be_sold_separately)]
+	if not names:
+		return []
+	for field, doctype, fields in (
+		('selling_prices', 'Selling Product Price Rule', ['parent','name','priority','store','order_type','restaurant_brand','selling_price']),
+		('store_availability', 'Selling Product Store Availability', ['parent','store']),
+		('store_order_type_exclusions', 'Selling Product Store Order Type Exclusion', ['parent','store','order_type']),
+	):
+		for row in frappe.get_all(doctype, filters={'parent':['in',names], 'parenttype':'Selling Product', 'parentfield':field}, fields=fields):
+			children[field].setdefault(row.parent, []).append(row)
+	category_titles = {row.name: row.title for row in frappe.get_all('Product Category', filters={'name':['in',list(category_ids)]}, fields=['name','title'])}
 	result = []
 	for product in products:
 		# Option products are selected from their parent product's option dialog.
@@ -558,7 +633,8 @@ def get_catalog(store, brand, order_type, category=None, search=None, limit=100)
 			continue
 		if product.is_modifier and not product.can_be_sold_separately:
 			continue
-		doc = frappe.get_doc("Selling Product", product.name)
+		doc = frappe.get_doc(dict(doctype='Selling Product', **product,
+			**{field: by_parent.get(product.name, []) for field, by_parent in children.items()}))
 		availability = [row for row in doc.store_availability if row.store == store]
 		if doc.store_availability and not availability:
 			continue
@@ -567,9 +643,9 @@ def get_catalog(store, brand, order_type, category=None, search=None, limit=100)
 		price = None
 		if not doc.has_options:
 			price = doc.resolve_price(store, order_type, brand, strict=False)
-		category_title = frappe.db.get_value("Product Category", product.product_category, "title")
+		category_title = category_titles.get(product.product_category)
 		must_be_whole_number = frappe.get_cached_value("UOM", product.uom, "must_be_whole_number") if product.uom else 0
-		result.append({**product, "category_title": category_title, "barcode_match": product.item in barcode_items,
+		result.append({**{key: value for key, value in product.items() if key not in ("item", "selling_price")}, "category_title": category_title, "barcode_match": product.item in barcode_items,
 			"must_be_whole_number": bool(must_be_whole_number), "price": price["selling_price"] if price else None,
 			"price_list": price["price_list"] if price else None})
 	return result
@@ -591,14 +667,14 @@ def get_product_configuration(product, store, brand, order_type):
 		option = frappe.db.get_value("Selling Product", row.option_product, ["title", "enabled", "has_options"], as_dict=True)
 		if option and option.enabled:
 			price = frappe.get_doc("Selling Product", row.option_product).resolve_price(store, order_type, brand, strict=False)
-			options.append({"name": row.option_product, "title": option.title, "sequence_id": row.sequence_id,
+			options.append({"name": row.option_product, "title": option.title, "attribute_value": getattr(row, "attribute_value", None), "sequence_id": row.sequence_id,
 				"has_options": bool(option.has_options),
 				"price": None if option.has_options else price["selling_price"] if price else None,
 				"price_list": price["price_list"] if price else None})
 
 	groups = []
 	for row in doc.modifier_groups:
-		group = frappe.db.get_value("Modifier Group", row.modifier_group, ["title", "enabled", "allow_collapse", "collapsed_by_default", "allow_multiple_selections"], as_dict=True)
+		group = frappe.db.get_value("Modifier Group", row.modifier_group, ["title", "enabled", "allow_collapse", "collapsed_by_default", "allow_multiple_selections", "min_selections", "max_selections"], as_dict=True)
 		if not group or not group.enabled:
 			continue
 		choices = []
@@ -610,12 +686,14 @@ def get_product_configuration(product, store, brand, order_type):
 				choices.append({"name": option.modifier_product, "title": product_info.title, "cost": option.cost,
 					"selling_price": option.selling_price or 0, "sequence_id": option.sequence_id})
 		groups.append({"name": row.modifier_group, "title": group.title, "allow_collapse": bool(group.allow_collapse),
-			"allow_multiple_selections": bool(group.allow_multiple_selections),
+			"allow_multiple_selections": allows_multiple_selections(group, row),
+			"min_selections": get_minimum_selections(row, group.min_selections),
+			"max_selections": get_maximum_selections(group, row),
 			"collapsed_by_default": bool(group.collapsed_by_default), "sequence_id": row.sequence_id,
 			"options": sorted(choices, key=lambda option: (option["sequence_id"], option["title"]))})
 	product_price = None if doc.has_options else doc.resolve_price(store, order_type, brand, strict=False)
 	must_be_whole_number = frappe.get_cached_value("UOM", doc.uom, "must_be_whole_number") if doc.uom else 0
-	return {"name": doc.name, "title": doc.title, "uom": doc.uom,
+	return {"name": doc.name, "title": doc.title, "option_attribute": getattr(doc, "option_attribute", None), "uom": doc.uom,
 		"must_be_whole_number": bool(must_be_whole_number), "has_options": bool(doc.has_options),
 		"price": product_price["selling_price"] if product_price else None,
 		"options": sorted(options, key=lambda option: (option["sequence_id"], option["title"])),
@@ -631,17 +709,411 @@ def get_dining_areas(store):
 
 
 @frappe.whitelist()
-def get_customers(search=None, limit=30):
+def get_customers(search=None, limit=30, start=0):
 	require_pos_role()
-	filters = {"disabled": 0}
-	if search:
-		search = str(search).strip()[:80]
-		rows = frappe.get_all("Customer", filters=filters, or_filters=[
-			{"customer_name": ["like", f"%{search}%"]}, {"name": ["like", f"%{search}%"]}
-		], fields=["name", "customer_name"], order_by="customer_name asc", limit_page_length=min(max(int(limit), 1), 50))
+	search = str(search or "").strip()[:140]
+	return frappe.db.sql("""
+		select customer.name, customer.customer_name, customer.mobile_no
+		from `tabCustomer` customer
+		where customer.disabled = 0 and (
+			customer.name like %(search)s or customer.customer_name like %(search)s
+			or customer.mobile_no like %(search)s
+			or exists (
+				select 1 from `tabDynamic Link` link
+				inner join `tabContact Phone` phone on phone.parent = link.parent
+					and phone.parenttype = 'Contact'
+				where link.parenttype = 'Contact' and link.link_doctype = 'Customer'
+					and link.link_name = customer.name and phone.phone like %(search)s
+			)
+		)
+		order by customer.customer_name, customer.name
+		limit %(limit)s offset %(start)s
+	""", {"search": f"%{search}%", "limit": min(max(int(limit), 1), 50),
+		"start": max(int(start), 0)}, as_dict=True)
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def customer_query(doctype, txt, searchfield, start, page_len, filters=None):
+	return [[row.name, row.customer_name, row.mobile_no or ""]
+		for row in get_customers(txt, page_len, start)]
+
+
+@frappe.whitelist()
+def create_customer(customer_name, mobile_no, store, additional_phones=None, address=None, addresses=None):
+	require_pos_role()
+	assert_store_access(store)
+	customer_name = str(customer_name or "").strip()
+	mobile_no = str(mobile_no or "").strip()
+	if not customer_name or not mobile_no:
+		frappe.throw(_("Customer name and phone number are required."))
+	if len(customer_name) > 140 or len(mobile_no) > 140:
+		frappe.throw(_("Customer name and phone number must not exceed 140 characters."))
+	if isinstance(additional_phones, str):
+		try:
+			additional_phones = frappe.parse_json(additional_phones) if additional_phones.strip() else None
+		except ValueError:
+			frappe.throw(_("Invalid phone numbers."))
+	if additional_phones is not None and not isinstance(additional_phones, list):
+		frappe.throw(_("Invalid phone numbers."))
+	if len(additional_phones or []) > 9:
+		frappe.throw(_("A customer can have up to ten phone numbers."))
+	phones = [mobile_no]
+	seen_phones = {re.sub(r"\D", "", mobile_no)}
+	for phone in additional_phones or []:
+		if not isinstance(phone, str) or len(phone) > 140:
+			frappe.throw(_("Invalid phone number."))
+		phone = phone.strip()
+		key = re.sub(r"\D", "", phone)
+		if key and key not in seen_phones:
+			phones.append(phone)
+			seen_phones.add(key)
+	if isinstance(address, str):
+		try:
+			address = frappe.parse_json(address) if address.strip() else None
+		except ValueError:
+			frappe.throw(_("Invalid address."))
+	if address is not None and not isinstance(address, dict):
+		frappe.throw(_("Invalid address."))
+	address_rows = _parse_customer_addresses(addresses)
+	if address:
+		address_rows.insert(0, address)
+	address_rows = _validate_customer_addresses(address_rows)
+	profile = get_pos_profile_for_store(store)
+	default_customer = frappe.db.get_value("POS Profile", profile, "customer") if profile else None
+	defaults = frappe.db.get_value("Customer", default_customer,
+		["customer_group", "territory"], as_dict=True) if default_customer else None
+	customer_group = (defaults or {}).get("customer_group") or frappe.db.get_single_value("Selling Settings", "customer_group")
+	territory = (defaults or {}).get("territory") or frappe.db.get_single_value("Selling Settings", "territory")
+	if not customer_group or not territory:
+		frappe.throw(_("Set a default customer on this Store's POS Profile or configure the Selling Settings customer group and territory."))
+	customer = frappe.get_doc({"doctype": "Customer", "customer_name": customer_name,
+		"customer_type": "Individual", "mobile_no": mobile_no,
+		"customer_group": customer_group, "territory": territory})
+	# POS role and Store access above authorize this restricted creation flow.
+	# ERPNext also creates the linked primary Contact from the supplied phone.
+	customer.insert(ignore_permissions=True)
+	if len(phones) > 1:
+		contact = frappe.get_doc("Contact", customer.customer_primary_contact)
+		for phone in phones[1:]:
+			contact.add_phone(phone)
+		contact.save(ignore_permissions=True)
+	_add_customer_addresses(customer, store, address_rows)
+	return {"name": customer.name, "customer_name": customer.customer_name, "mobile_no": customer.mobile_no}
+
+
+def _parse_customer_addresses(addresses, error_message="Invalid addresses."):
+	if isinstance(addresses, str):
+		try:
+			addresses = frappe.parse_json(addresses) if addresses.strip() else None
+		except ValueError:
+			frappe.throw(_(error_message))
+	if addresses is not None and not isinstance(addresses, list):
+		frappe.throw(_(error_message))
+	return list(addresses or [])
+
+
+def _validate_customer_addresses(addresses):
+	validated = []
+	for address in addresses:
+		if not isinstance(address, dict):
+			frappe.throw(_("Invalid address."))
+		address_values = {}
+		for field in ("address_line1", "address_line2", "city", "state"):
+			value = address.get(field) or ""
+			if not isinstance(value, str) or len(value) > 140:
+				frappe.throw(_("Invalid address."))
+			address_values[field] = value.strip()
+		if not address_values["address_line1"] or not address_values["city"]:
+			frappe.throw(_("Street address and city are required when adding an address."))
+		validated.append(address_values)
+	return validated
+
+
+def _add_customer_addresses(customer, store, addresses):
+	if addresses:
+		company = frappe.db.get_value("Store", store, "company")
+		country = frappe.db.get_value("Company", company, "country") if company else None
+		country = country or frappe.db.get_default("country")
+		if not country:
+			frappe.throw(_("Set the Store company's country before adding customer addresses."))
+		for address_values in addresses:
+			is_primary = not customer.customer_primary_address
+			customer_address = frappe.get_doc({"doctype": "Address", "address_title": customer.customer_name,
+				"address_type": "Shipping", "country": country, "is_primary_address": int(is_primary),
+				"is_shipping_address": int(is_primary), **address_values,
+				"links": [{"link_doctype": "Customer", "link_name": customer.name}]})
+			customer_address.insert(ignore_permissions=True)
+			if is_primary:
+				customer.db_set("customer_primary_address", customer_address.name)
+				customer.customer_primary_address = customer_address.name
+
+
+def _get_pos_customer(customer):
+	doc = frappe.get_doc("Customer", customer)
+	if doc.disabled:
+		frappe.throw(_("This customer is disabled."))
+	return doc
+
+
+def _customer_linked_names(customer, parenttype):
+	return frappe.get_all("Dynamic Link", filters={"parenttype": parenttype,
+		"link_doctype": "Customer", "link_name": customer}, pluck="parent")
+
+
+@frappe.whitelist()
+def get_customer_details(customer, store):
+	require_pos_role()
+	assert_store_access(store)
+	doc = _get_pos_customer(customer)
+	contacts = _customer_linked_names(doc.name, "Contact")
+	phone_rows = frappe.get_all("Contact Phone", filters={"parenttype": "Contact", "parent": ["in", contacts]},
+		fields=["name", "parent as contact", "phone"], order_by="idx asc, name asc") if contacts else []
+	primary_key = re.sub(r"\D", "", doc.mobile_no or "")
+	default_phone = next((row for row in phone_rows if row.contact == doc.customer_primary_contact
+		and re.sub(r"\D", "", row.phone) == primary_key), None)
+	default_phone = default_phone or next((row for row in phone_rows if re.sub(r"\D", "", row.phone) == primary_key), None)
+	if doc.mobile_no and not default_phone:
+		default_phone = frappe._dict(phone=doc.mobile_no)
+		phone_rows.insert(0, default_phone)
+	default_phone = default_phone or (phone_rows[0] if phone_rows else None)
+	for row in phone_rows:
+		row["is_default"] = row is default_phone
+	address_names = _customer_linked_names(doc.name, "Address")
+	addresses = frappe.get_all("Address", filters={"name": ["in", address_names], "disabled": 0},
+		fields=["name", "address_line1", "address_line2", "city", "state", "country", "is_primary_address"],
+		order_by="is_primary_address desc, creation asc") if address_names else []
+	default_address = next((row for row in addresses if row.name == doc.customer_primary_address), None)
+	default_address = default_address or (addresses[0] if addresses else None)
+	for row in addresses:
+		row["is_default"] = row is default_address
+	return {"name": doc.name, "customer_name": doc.customer_name, "mobile_no": doc.mobile_no,
+		"phones": list(dict.fromkeys(row.phone for row in phone_rows if row.phone)),
+		"phone_rows": phone_rows, "addresses": addresses}
+
+
+def _exclusive_customer_link(doc, customer):
+	return bool(doc.links) and all(row.link_doctype == "Customer" and row.link_name == customer for row in doc.links)
+
+
+@frappe.whitelist()
+def save_customer_details(customer_name, store, phones, addresses=None, customer=None):
+	"""Save editable phone/address rows by their linked IDs, with explicit defaults.
+
+	Omitted existing rows are retained. This editor does not delete saved records.
+	"""
+	require_pos_role()
+	assert_store_access(store)
+	phone_rows = _parse_customer_addresses(phones, error_message="Invalid phone numbers.")
+	address_rows = _parse_customer_addresses(addresses)
+	customer_name = str(customer_name or "").strip()
+	if not customer_name or len(customer_name) > 140:
+		frappe.throw(_("Enter a customer name of up to 140 characters."))
+	if not phone_rows or len(phone_rows) > 50:
+		frappe.throw(_("Enter between one and fifty phone numbers."))
+	seen_phones, seen_ids = {}, set()
+	for row in phone_rows:
+		if not isinstance(row, dict) or not isinstance(row.get("phone"), str):
+			frappe.throw(_("Invalid phone number."))
+		if type(row.get("is_default", False)) not in (bool, int) or row.get("is_default", False) not in (0, 1):
+			frappe.throw(_("Choose one default phone number."))
+		row["phone"] = row["phone"].strip()
+		key = re.sub(r"\D", "", row["phone"])
+		if not key or len(row["phone"]) > 140:
+			frappe.throw(_("Invalid phone number."))
+		if key in seen_phones and (not row.get("name") or not seen_phones[key].get("name")):
+			frappe.throw(_("Phone numbers must be unique."))
+		seen_phones[key] = row
+		if row.get("name"):
+			if not isinstance(row["name"], str) or row["name"] in seen_ids:
+				frappe.throw(_("Invalid phone number."))
+			seen_ids.add(row["name"])
+	if sum(row.get("is_default") is True or row.get("is_default") == 1 for row in phone_rows) != 1:
+		frappe.throw(_("Choose one default phone number."))
+	if address_rows and sum(isinstance(row, dict) and (row.get("is_default") is True
+		or row.get("is_default") == 1) for row in address_rows) != 1:
+		frappe.throw(_("Choose one default address."))
+	for row in address_rows:
+		if not isinstance(row, dict) or type(row.get("is_default", False)) not in (bool, int) or row.get("is_default", False) not in (0, 1):
+			frappe.throw(_("Choose one default address."))
+	validated_addresses = _validate_customer_addresses(address_rows)
+	default_phone = next(row for row in phone_rows if row.get("is_default"))
+	if not customer:
+		if any(row.get("name") or row.get("contact") for row in phone_rows) or any(row.get("name") for row in address_rows):
+			frappe.throw(_("Invalid customer contact details."), frappe.PermissionError)
+		# The existing creation API retains its ten-number limit.
+		ordered_addresses = [values for row, values in zip(address_rows, validated_addresses) if row.get("is_default")]
+		ordered_addresses += [values for row, values in zip(address_rows, validated_addresses) if not row.get("is_default")]
+		return create_customer(customer_name, default_phone["phone"], store,
+			additional_phones=[row["phone"] for row in phone_rows if row is not default_phone], addresses=ordered_addresses)
+
+	doc = _get_pos_customer(customer)
+	contact_names = set(_customer_linked_names(doc.name, "Contact"))
+	address_names = set(_customer_linked_names(doc.name, "Address"))
+	contacts, changed_contacts, existing_addresses = {}, set(), {}
+	# Validate ownership of every submitted row before changing any documents.
+	for row in phone_rows:
+		if not row.get("name"):
+			if row.get("contact"):
+				frappe.throw(_("Invalid customer contact details."), frappe.PermissionError)
+			continue
+		contact_name = row.get("contact")
+		if not isinstance(contact_name, str) or contact_name not in contact_names:
+			frappe.throw(_("This phone number does not belong to this customer."), frappe.PermissionError)
+		if contact_name not in contacts:
+			contacts[contact_name] = frappe.get_doc("Contact", contact_name)
+		contact = contacts[contact_name]
+		phone = next((phone for phone in contact.phone_nos if phone.name == row["name"]), None)
+		if phone is None:
+			frappe.throw(_("This phone number does not belong to this customer."), frappe.PermissionError)
+		if phone.phone != row["phone"] and not _exclusive_customer_link(contact, doc.name):
+			frappe.throw(_("This Contact is shared. Edit it from the Contact form."))
+	for row in address_rows:
+		if not row.get("name"):
+			continue
+		if not isinstance(row["name"], str) or row["name"] not in address_names or row["name"] in existing_addresses:
+			frappe.throw(_("This address does not belong to this customer."), frappe.PermissionError)
+		address = frappe.get_doc("Address", row["name"])
+		if address.disabled or not _exclusive_customer_link(address, doc.name):
+			frappe.throw(_("This address is disabled or shared. Edit it from the Address form."))
+		existing_addresses[row["name"]] = address
+
+	# New phone rows go to a dedicated primary Contact when the current one is shared.
+	new_contact = None
+	if any(not row.get("name") for row in phone_rows):
+		target_name = doc.customer_primary_contact
+		if target_name in contact_names and target_name not in contacts:
+			contacts[target_name] = frappe.get_doc("Contact", target_name)
+		target = contacts.get(target_name)
+		if target is None or not _exclusive_customer_link(target, doc.name):
+			new_contact = frappe.get_doc({"doctype": "Contact", "first_name": customer_name,
+				"links": [{"link_doctype": "Customer", "link_name": doc.name}]})
+			target = new_contact
+	default_contact = None
+	for row in phone_rows:
+		if row.get("name"):
+			contact = contacts[row["contact"]]
+			phone = next(phone for phone in contact.phone_nos if phone.name == row["name"])
+			if phone.phone != row["phone"]:
+				phone.phone = row["phone"]
+				changed_contacts.add(row["contact"])
+		else:
+			contact = target
+			phone = contact.append("phone_nos", {"phone": row["phone"]})
+			if contact is not new_contact:
+				changed_contacts.add(contact.name)
+		if row is default_phone:
+			default_contact = contact
+			if not _exclusive_customer_link(contact, doc.name):
+				if doc.mobile_no != phone.phone or doc.customer_primary_contact != contact.name:
+					frappe.throw(_("This Contact is shared. Set its default number from the Contact form."))
+			else:
+				for candidate in contact.phone_nos:
+					candidate.is_primary_mobile_no = int(candidate is phone)
+				if contact is not new_contact:
+					changed_contacts.add(contact.name)
+	if new_contact:
+		# A non-default new Contact still needs a primary mobile for ERPNext.
+		if new_contact is not default_contact:
+			new_contact.phone_nos[0].is_primary_mobile_no = 1
+		new_contact.insert(ignore_permissions=True)
+	for name in changed_contacts:
+		contacts[name].save(ignore_permissions=True)
+	doc.customer_name = customer_name
+	doc.mobile_no = default_phone["phone"]
+	doc.customer_primary_contact = default_contact.name
+	doc.save(ignore_permissions=True)
+	if address_rows:
+		company = frappe.db.get_value("Store", store, "company")
+		country = frappe.db.get_value("Company", company, "country") if company else None
+		country = country or frappe.db.get_default("country")
+		default_address = None
+		# Save the selected default last, so ERPNext clears previous preference flags.
+		for row, values in sorted(zip(address_rows, validated_addresses), key=lambda pair: bool(pair[0].get("is_default"))):
+			address = existing_addresses.get(row.get("name"))
+			is_new = address is None
+			if is_new:
+				if not country:
+					frappe.throw(_("Set the Store company's country before adding customer addresses."))
+				address = frappe.get_doc({"doctype": "Address", "address_title": customer_name,
+					"address_type": "Shipping", "country": country,
+					"links": [{"link_doctype": "Customer", "link_name": doc.name}]})
+			address.update(values)
+			address.is_primary_address = int(bool(row.get("is_default")))
+			address.is_shipping_address = address.is_primary_address
+			if is_new:
+				address.insert(ignore_permissions=True)
+			else:
+				address.save(ignore_permissions=True)
+			if row.get("is_default"):
+				default_address = address.name
+		doc.db_set("customer_primary_address", default_address)
+	return {"name": doc.name, "customer_name": doc.customer_name, "mobile_no": doc.mobile_no}
+
+
+@frappe.whitelist()
+def update_customer(customer, customer_name, mobile_no, store, additional_phones=None, addresses=None):
+	require_pos_role()
+	assert_store_access(store)
+	doc = _get_pos_customer(customer)
+	customer_name = str(customer_name or "").strip()
+	mobile_no = str(mobile_no or "").strip()
+	if not customer_name or not mobile_no:
+		frappe.throw(_("Customer name and phone number are required."))
+	if len(customer_name) > 140 or len(mobile_no) > 140:
+		frappe.throw(_("Customer name and phone number must not exceed 140 characters."))
+	if isinstance(additional_phones, str):
+		try:
+			additional_phones = frappe.parse_json(additional_phones) if additional_phones.strip() else None
+		except ValueError:
+			frappe.throw(_("Invalid phone numbers."))
+	if additional_phones is not None and not isinstance(additional_phones, list):
+		frappe.throw(_("Invalid phone numbers."))
+	if len(additional_phones or []) > 9:
+		frappe.throw(_("A customer can have up to ten phone numbers."))
+	phones = [mobile_no]
+	for phone in additional_phones or []:
+		if not isinstance(phone, str) or len(phone) > 140:
+			frappe.throw(_("Invalid phone number."))
+		if phone.strip():
+			phones.append(phone.strip())
+	address_rows = _validate_customer_addresses(_parse_customer_addresses(addresses))
+	# Only update a Contact exclusively linked to this customer. Shared Contacts
+	# remain untouched; a dedicated primary Contact is created instead.
+	contact = frappe.get_doc("Contact", doc.customer_primary_contact) if doc.customer_primary_contact else None
+	if contact and (not contact.links or any(
+		row.link_doctype != "Customer" or row.link_name != doc.name for row in contact.links
+	)):
+		contact = None
+	is_new_contact = contact is None
+	if is_new_contact:
+		contact = frappe.get_doc({"doctype": "Contact", "first_name": customer_name,
+			"links": [{"link_doctype": "Customer", "link_name": doc.name}]})
+	if doc.mobile_no:
+		phones.append(doc.mobile_no)
+	seen = {re.sub(r"\D", "", row.phone) for row in contact.phone_nos}
+	for phone in phones:
+		key = re.sub(r"\D", "", phone)
+		if not key:
+			frappe.throw(_("Invalid phone number."))
+		if key not in seen:
+			contact.append("phone_nos", {"phone": phone})
+			seen.add(key)
+	primary_key = re.sub(r"\D", "", mobile_no)
+	primary_set = False
+	for row in contact.phone_nos:
+		row.is_primary_mobile_no = int(not primary_set and re.sub(r"\D", "", row.phone) == primary_key)
+		primary_set = primary_set or bool(row.is_primary_mobile_no)
+	if is_new_contact:
+		contact.insert(ignore_permissions=True)
 	else:
-		rows = frappe.get_all("Customer", filters=filters, fields=["name", "customer_name"], order_by="customer_name asc", limit_page_length=min(max(int(limit), 1), 50))
-	return rows
+		contact.save(ignore_permissions=True)
+	doc.customer_name = customer_name
+	doc.mobile_no = contact.mobile_no
+	doc.customer_primary_contact = contact.name
+	doc.save(ignore_permissions=True)
+	_add_customer_addresses(doc, store, address_rows)
+	return {"name": doc.name, "customer_name": doc.customer_name, "mobile_no": doc.mobile_no}
 
 
 @frappe.whitelist()
@@ -775,12 +1247,17 @@ def set_kitchen_ticket_status(ticket_name, status):
 		if ticket.status != "Cancelled":
 			frappe.throw(_("Only cancelled Kitchen Tickets can acknowledge a cancellation."))
 		if not ticket.cancellation_acknowledged_at:
+			from copy import deepcopy
+			from arab_streaming.streaming.outbox import notify_persisted_change
+
+			before_acknowledgment = deepcopy(ticket)
 			ticket.cancellation_acknowledged_at = now_datetime()
 			ticket.cancellation_acknowledged_by = frappe.session.user
 			frappe.db.set_value("Kitchen Ticket", ticket.name, {
 				"cancellation_acknowledged_at": ticket.cancellation_acknowledged_at,
 				"cancellation_acknowledged_by": ticket.cancellation_acknowledged_by,
 			})
+			notify_persisted_change(before_acknowledgment)
 		return {"name": ticket.name, "status": ticket.status, "acknowledged": True}
 	ticket.set_status(status)
 	return {"name": ticket.name, "status": ticket.status}
@@ -1168,6 +1645,17 @@ def get_pos_invoice_print_html(order_name, invoice_name=None):
 
 
 @frappe.whitelist()
+def get_order_state(order_name):
+	"""Allow scoped cashiers to detect closure, including another cashier's order."""
+	require_pos_role()
+	doc = frappe.get_doc("POS Order", order_name)
+	assert_store_access(doc.store)
+	require_order_scope(doc)
+	return {"name": doc.name, "status": doc.status, "modified": str(doc.modified),
+		"is_closed": doc.status in ("Paid", "Cancelled") or doc.docstatus == 2}
+
+
+@frappe.whitelist()
 def get_order(order_name):
 	require_pos_role()
 	doc = frappe.get_doc("POS Order", order_name)
@@ -1378,12 +1866,136 @@ def cancel_order(order_name):
 	return {"name": doc.name, "status": doc.status}
 
 
+def _get_order_for_item_cancellation(order_name, for_update=False):
+	require_pos_role()
+	doc = frappe.get_doc("POS Order", order_name, for_update=for_update)
+	assert_store_access(doc.store)
+	require_order_scope(doc)
+	if doc.status not in ("Confirmed", "In Preparation", "Ready"):
+		frappe.throw(_("Only confirmed, unpaid order items can be cancelled."))
+	if getattr(doc, "guest_checks", None):
+		frappe.throw(_("Items cannot be changed after guest checks are confirmed."))
+	if doc.cashier_session != frappe.db.get_value("Cashier Session", {"user": frappe.session.user, "status": ["in", ["Open", "Closing"]]}, "name"):
+		require_pos_action("can_edit_open_orders")
+	return doc
+
+
 @frappe.whitelist()
-def cancel_confirmed_order_item(order_name, item_name, qty, action_reason):
-	"""Manager-only, audited cancellation of a previously confirmed order line."""
-	require_pos_action("can_cancel_orders")
-	if not (set(frappe.get_roles()) & {"POS Manager", "System Manager"}):
-		frappe.throw(_("A POS Manager must approve cancellation of an item already sent to preparation."), frappe.PermissionError)
+def get_order_item_cancellation_options(order_name):
+	doc = _get_order_for_item_cancellation(order_name)
+	items = []
+	for row in doc.items:
+		remaining = get_active_order_item_qty(row.qty, row.cancelled_qty)
+		if row.sent_to_kitchen and remaining > 0:
+			items.append({"name": row.name, "title": frappe.get_cached_value("Selling Product", row.selling_product, "title") or row.selling_product,
+				"remaining_qty": remaining, "uom": row.uom,
+				"must_be_whole_number": bool(frappe.get_cached_value("UOM", row.uom, "must_be_whole_number")) if row.uom else False})
+	reasons = frappe.get_all("POS Action Reason", filters={"enabled": 1,
+		"applies_to": ["in", ["Both", "Confirmed Item Cancellation"]]}, fields=["name", "reason"], order_by="reason asc")
+	return {"name": doc.name, "modified": str(doc.modified), "items": items, "reasons": reasons}
+
+
+@frappe.whitelist(methods=["POST"])
+def cancel_confirmed_order_items(order_name, items, action_reason, expected_modified=None, is_waste=0,
+		comment="", approval_approver=None, approval_password=None, approval_code=None, approval_request_only=False):
+	"""Cancel a selected batch atomically, retaining each line's audit and kitchen notices."""
+	doc = _get_order_for_item_cancellation(order_name, for_update=True)
+	from rms.pos_operation_approval import clean_comment, make_context, authorize
+	comment = clean_comment(comment)
+	is_waste = validate_void_waste_flag(is_waste)
+	if expected_modified and frappe.utils.get_datetime(expected_modified) != frappe.utils.get_datetime(doc.modified):
+		frappe.throw(_("The order changed. Close the cancellation window and select the items again."))
+	if isinstance(items, str):
+		try:
+			items = frappe.parse_json(items)
+		except ValueError:
+			frappe.throw(_("Choose valid items and quantities to cancel."))
+	if not isinstance(items, list) or not items or len(items) > 200:
+		frappe.throw(_("Choose between one and 200 items to cancel."))
+	from rms.rms.doctype.pos_action_reason.pos_action_reason import validate_pos_action_reason
+	reason = validate_pos_action_reason(action_reason, "Confirmed Item Cancellation")
+	rows = {row.name: row for row in doc.items}
+	validated, seen = [], set()
+	for entry in items:
+		if not isinstance(entry, dict) or not isinstance(entry.get("item_name"), str):
+			frappe.throw(_("Choose valid items and quantities to cancel."))
+		name = entry["item_name"]
+		if name in seen or name not in rows:
+			frappe.throw(_("Select unique items belonging to this order."))
+		seen.add(name)
+		row = rows[name]
+		qty = flt(entry.get("qty"))
+		if not math.isfinite(qty):
+			frappe.throw(_("Choose valid quantities to cancel."))
+		qty = validate_confirmed_item_cancellation(doc.status, row.sent_to_kitchen, row.qty, row.cancelled_qty, qty, reason, True)
+		if row.uom and frappe.get_cached_value("UOM", row.uom, "must_be_whole_number") and qty % 1:
+			frappe.throw(_("Cancellation quantity must be a whole number for Unit {0}.").format(row.uom))
+		validated.append((name, qty))
+	context = make_context("Void", doc.name, doc.store, {
+		"items": sorted([{"item_name": name, "qty": qty, "title": frappe.get_cached_value("Selling Product", rows[name].selling_product, "title") or rows[name].selling_product} for name, qty in validated], key=lambda row: row["item_name"]),
+		"action_reason": action_reason, "is_waste": is_waste, "comment": comment,
+	}, doc.modified, doc.cashier_session)
+	if approval_request_only:
+		return {"operation_context": context}
+	# Validate the entire batch first; roll back all line/audit/print-queue updates
+	# if any individual cancellation subsequently fails.
+	frappe.db.savepoint("rms_batch_item_cancellation")
+	try:
+		authorization = authorize(context, approval_approver, approval_password, approval_code)
+		if authorization.get("requires_manager_authorization"):
+			return authorization
+		for name, qty in validated:
+			_cancel_confirmed_order_item(order_name, name, qty, action_reason, is_waste=is_waste, comment=comment, authorization=authorization)
+	except Exception:
+		frappe.db.rollback(save_point="rms_batch_item_cancellation")
+		raise
+	doc = frappe.get_doc("POS Order", order_name)
+	return {"name": doc.name, "status": doc.status, "modified": str(doc.modified),
+		"items": [{"name": row.name, "cancelled_qty": flt(row.cancelled_qty)} for row in doc.items if row.name in seen],
+		"subtotal": doc.subtotal, "discount_amount": doc.discount_amount,
+		"tax_total": doc.tax_total, "grand_total": doc.grand_total}
+
+
+def validate_void_waste_flag(value):
+	if value not in (None, 0, 1, "0", "1", False, True):
+		frappe.throw(_("Choose a valid Waste option."))
+	return int(value in (1, "1", True))
+
+
+def create_void_waste_stock_entry(order, row, qty, reason):
+	"""Issue only the voided quantity, using the recipes saved with the order."""
+	ratio = flt(qty) / flt(row.qty)
+	components = [dict(component, qty=flt(component.qty) * ratio) for component in parse_json_rows(row.recipe_snapshot)]
+	products = [(row.selling_product, row.item, qty, row.uom, row.warehouse)]
+	products.extend((modifier.modifier_product, modifier.item, flt(modifier.qty or 1) * qty,
+		None, modifier.warehouse) for modifier in parse_json_rows(row.modifiers))
+	for product_name, item_code, quantity, uom, warehouse in products:
+		product = frappe.get_cached_doc("Selling Product", product_name)
+		if not product.with_recipe and product.maintain_stock and frappe.db.get_value("Item", item_code, "is_stock_item"):
+			components.append({"item": item_code, "qty": quantity, "uom": uom or product.uom or frappe.db.get_value("Item", item_code, "stock_uom"), "warehouse": warehouse})
+	if not components:
+		return None
+	company = frappe.db.get_value("Store", order.store, "company")
+	expense_account = frappe.db.get_value("Order Type Account Mapping", {
+		"parent": order.order_type, "parenttype": "Order Type", "company": company,
+	}, "cost_of_goods_sold_account")
+	if not expense_account:
+		frappe.throw(_("Configure the Order Type Cost of Goods Sold Account before recording waste."))
+	return create_material_issue(company, components, expense_account,
+		_("Void waste for POS Order {0}, item {1}: {2}").format(order.name, row.name, reason), stock_entry_type="Void")
+
+
+@frappe.whitelist()
+def cancel_confirmed_order_item(order_name, item_name, qty, action_reason, is_waste=0, comment="",
+		approval_approver=None, approval_password=None, approval_code=None):
+	return cancel_confirmed_order_items(order_name, [{"item_name": item_name, "qty": qty}], action_reason,
+		is_waste=is_waste, comment=comment, approval_approver=approval_approver, approval_password=approval_password, approval_code=approval_code)
+
+
+def _cancel_confirmed_order_item(order_name, item_name, qty, action_reason, is_waste=0, comment="", authorization=None):
+	"""Apply one previously authorized cancellation with stock and kitchen audit."""
+	if not authorization:
+		frappe.throw(_("This cancellation requires operation authorization."), frappe.PermissionError)
 	doc = frappe.get_doc("POS Order", order_name)
 	assert_store_access(doc.store)
 	require_order_scope(doc)
@@ -1402,10 +2014,14 @@ def cancel_confirmed_order_item(order_name, item_name, qty, action_reason):
 	cancel_qty = validate_confirmed_item_cancellation(
 		doc.status, row.sent_to_kitchen, row.qty, row.cancelled_qty, qty, reason, True
 	)
+	is_waste = validate_void_waste_flag(is_waste)
+	waste_stock_entry = create_void_waste_stock_entry(doc, row, cancel_qty, reason) if is_waste else None
 	row.cancelled_qty = flt(row.cancelled_qty) + cancel_qty
 	doc.append("item_cancellations", {
 		"pos_order_item": row.name, "qty": cancel_qty, "action_reason": action_reason, "reason": reason,
 		"cancelled_by": frappe.session.user, "cancelled_at": now_datetime(),
+		"is_waste": is_waste, "waste_stock_entry": waste_stock_entry,
+		"comment": comment, "approved_by": authorization["approved_by"], "approval_challenge": authorization.get("approval_challenge"),
 	})
 	for ticket_name in frappe.get_all("Kitchen Ticket", filters={"pos_order": doc.name}, pluck="name"):
 		ticket = frappe.get_doc("Kitchen Ticket", ticket_name)
@@ -1449,6 +2065,7 @@ def cancel_confirmed_order_item(order_name, item_name, qty, action_reason):
 					"idempotency_key": key, "status": "Queued",
 					"payload": f"CANCEL {cancel_qty:g} × {row.selling_product}: {(reason or '').strip()}"}).insert(ignore_permissions=True)
 	doc.flags.allow_item_cancellation = True
+	doc.flags.pos_operation_authorized = True
 	doc.flags.ignore_permissions = True
 	if all(get_active_order_item_qty(entry.qty, entry.cancelled_qty) <= 0 for entry in doc.items):
 		doc.status = "Cancelled"
@@ -1460,10 +2077,33 @@ def cancel_confirmed_order_item(order_name, item_name, qty, action_reason):
 
 
 @frappe.whitelist()
+def update_order_notes(order_name, notes, expected_modified=None):
+	"""Edit the whole-order comment with the same scope as other POS edits."""
+	require_pos_action("can_checkout")
+	doc = frappe.get_doc("POS Order", order_name, for_update=True)
+	assert_store_access(doc.store)
+	require_order_scope(doc)
+	session = get_user_session(doc.store)
+	if not session or session.status != "Open":
+		frappe.throw(_("Open your Cashier Session for this Store before editing an order."))
+	if doc.cashier_session != session.name:
+		require_pos_action("can_edit_open_orders")
+	if doc.status not in ("Open", "Pending Confirmation", "Confirmed", "In Preparation", "Ready"):
+		frappe.throw(_("Only active unpaid orders can be edited."), frappe.PermissionError)
+	if not isinstance(notes, str) or len(notes) > 2000:
+		frappe.throw(_("Enter an order comment of up to 2000 characters."))
+	if expected_modified and frappe.utils.get_datetime(expected_modified) != frappe.utils.get_datetime(doc.modified):
+		frappe.throw(_("The order changed. Refresh it before editing the comment."))
+	doc.order_notes = notes.strip()
+	doc.save(ignore_permissions=True)
+	return {"name": doc.name, "order_notes": doc.order_notes, "modified": str(doc.modified)}
+
+
+@frappe.whitelist()
 def update_order_item_notes(order_name, item_name, notes):
 	"""Save a note on an active order line that has not been sent to preparation."""
 	require_pos_action("can_checkout")
-	doc = frappe.get_doc("POS Order", order_name)
+	doc = frappe.get_doc("POS Order", order_name, for_update=True)
 	assert_store_access(doc.store)
 	require_order_scope(doc)
 	session = get_user_session(doc.store)
@@ -1483,7 +2123,14 @@ def update_order_item_notes(order_name, item_name, notes):
 	if len(notes) > 1000:
 		frappe.throw(_("A comment cannot exceed 1000 characters."))
 	frappe.db.set_value("POS Order Item", row.name, "notes", notes, update_modified=True)
-	return {"name": row.name, "notes": notes}
+	modified = now_datetime()
+	frappe.db.set_value("POS Order", doc.name, {"modified": modified, "modified_by": frappe.session.user}, update_modified=False)
+	from arab_streaming.streaming.outbox import notify_persisted_change
+
+	notify_persisted_change(doc)
+	doc.modified = modified
+	doc.notify_update()
+	return {"name": row.name, "notes": notes, "modified": str(modified)}
 
 
 @frappe.whitelist()
@@ -1496,8 +2143,14 @@ def save_order(order_data):
 		frappe.throw(_("Open your Cashier Session before saving an order."))
 
 	append_mode = False
+	pending_edit_mode = False
+	existing_item_names = set()
 	if data.get("name"):
-		doc = frappe.get_doc("POS Order", data["name"])
+		doc = frappe.get_doc("POS Order", data["name"], for_update=True)
+		assert_store_access(doc.store)
+		require_order_scope(doc)
+		if data.get("expected_modified") and frappe.utils.get_datetime(data["expected_modified"]) != frappe.utils.get_datetime(doc.modified):
+			return {"name": doc.name, "conflict": True, "modified": str(doc.modified)}
 		if doc.cashier_session != session.name:
 			require_pos_action("can_edit_open_orders")
 			if doc.store != store_doc.name or doc.status not in ("Open", "Pending Confirmation", "Confirmed", "In Preparation", "Ready"):
@@ -1514,7 +2167,14 @@ def save_order(order_data):
 				"discount_type", "discount_scope", "discount_value", "discount_reason"):
 				if (data.get(fieldname) or None) != (doc.get(fieldname) or None):
 					frappe.throw(_("An order already sent to preparation can only receive new items."))
+			if data.get("edit_pending_items"):
+				if doc.guest_checks:
+					frappe.throw(_("Items cannot be changed after guest checks are confirmed."))
+				pending_edit_mode = True
+				doc.flags.allow_pending_item_edit = True
+				doc.flags.allow_order_item_append = False
 		elif doc.status in ("Open", "Pending Confirmation"):
+			existing_item_names = {row.name for row in doc.items}
 			doc.set("items", [])
 		else:
 			frappe.throw(_("Only active unpaid orders can be edited."), frappe.PermissionError)
@@ -1528,13 +2188,25 @@ def save_order(order_data):
 		for fieldname in ("restaurant_brand", "order_type", "customer", "external_reference", "dining_area", "dining_table",
 			"discount_type", "discount_scope", "discount_value", "discount_reason"):
 			doc.set(fieldname, data.get(fieldname))
+		if "order_notes" in data:
+			if not isinstance(data["order_notes"], str) or len(data["order_notes"]) > 2000:
+				frappe.throw(_("Enter an order comment of up to 2000 characters."))
+			doc.order_notes = data["order_notes"].strip()
 	if doc.restaurant_brand not in {row["name"] for row in get_brands(store_doc.name)}:
 		frappe.throw(_("Choose a Brand available to you in this Store."), frappe.PermissionError)
 	if doc.order_type not in {row["name"] for row in get_order_types(store_doc.name)}:
 		frappe.throw(_("Choose an Order Type available to you in this Store."), frappe.PermissionError)
 	items_to_save = data.get("items") or []
-	if append_mode and not items_to_save:
+	if pending_edit_mode:
+		pending_rows = [row for row in doc.items if not row.sent_to_kitchen]
+		existing_item_names = {row.name for row in pending_rows}
+		for item in items_to_save:
+			if item.get("order_item_name") and item["order_item_name"] not in existing_item_names:
+				frappe.throw(_("Only unconfirmed items can be edited."))
+		doc.set("items", [row for row in doc.items if row.sent_to_kitchen])
+	if append_mode and not pending_edit_mode and not items_to_save:
 		return {"name": doc.name, "status": doc.status, "subtotal": doc.subtotal, "tax_total": doc.tax_total,
+			"modified": str(doc.modified),
 			"grand_total": doc.grand_total, "sales_taxes_and_charges_template": doc.sales_taxes_and_charges_template,
 			"appended_items": [], "guest_checks": get_guest_checks(doc.name)["guest_checks"] if doc.guest_checks else []}
 	guest_check_append_target = None
@@ -1544,10 +2216,16 @@ def save_order(order_data):
 			frappe.throw(_("New items cannot be added because every guest check is already paid."))
 		doc.flags.allow_guest_check_item_append = True
 	appended_items = []
+	reused_item_names = set()
 	for item in items_to_save:
+		existing_name = item.get("order_item_name") if item.get("order_item_name") in existing_item_names else None
+		if existing_name in reused_item_names:
+			frappe.throw(_("The same order item cannot be included twice."))
+		if existing_name:
+			reused_item_names.add(existing_name)
 		row = doc.append("items", {
-			"name": frappe.generate_hash(length=10),
-			"__islocal": 1,
+			"name": existing_name or frappe.generate_hash(length=10),
+			"__islocal": 0 if existing_name else 1,
 			"selling_product": item.get("selling_product"),
 			"option_parent": item.get("option_parent"),
 			"qty": flt(item.get("qty") or 1),
@@ -1573,6 +2251,7 @@ def save_order(order_data):
 	else:
 		doc.save(ignore_permissions=True)
 	return {"name": doc.name, "status": doc.status, "subtotal": doc.subtotal, "tax_total": doc.tax_total,
+		"modified": str(doc.modified),
 		"grand_total": doc.grand_total, "sales_taxes_and_charges_template": doc.sales_taxes_and_charges_template,
 		"appended_items": appended_items, "guest_checks": get_guest_checks(doc.name)["guest_checks"] if doc.guest_checks else []}
 
@@ -1666,6 +2345,10 @@ def get_pos_discount_approval(doc, discount_type, discount_value, discount_reaso
 	if consume:
 		frappe.db.sql("select name from `tabApproval Challenge` where name = %s for update", challenge_name)
 	challenge = frappe.get_doc("Approval Challenge", challenge_name)
+	if isinstance(challenge.operation_payload, str) and challenge.operation_payload:
+		approved_terms = frappe.parse_json(challenge.operation_payload).get('payload', {})
+		if approved_terms.get('order_modified') and frappe.utils.get_datetime(approved_terms['order_modified']) != frappe.utils.get_datetime(doc.modified):
+			frappe.throw(_("The order changed since this approval request. Request a new code for the current totals."))
 	if challenge.store != doc.store or challenge.requester != requester:
 		frappe.throw(_("This manager code was issued for a different cashier or Store."), frappe.PermissionError)
 	approver_roles = set(frappe.get_roles(challenge.approver))
@@ -1730,6 +2413,75 @@ def verify_pos_discount_manager_password(doc, approver, password, discount_type,
 	challenge.flags.from_pos_api = True
 	challenge.insert(ignore_permissions=True)
 	return {"approver": approver, "approval_token": token}
+
+
+
+def notify_pos_discount_approval(challenge, code, discount_type, value, reason, scope, guest_check_name=None):
+	"""Deliver a discount code to the chosen manager's notification bell only."""
+	suffix = '%' if discount_type == 'Percentage' else ''
+	title = _('Approval code {0} · POS Discount').format(html_escape(code))
+	details = '<p><strong>{0}</strong></p><p>{1} · {2} · {3}</p><p>{4}{5} · {6}</p><p>{7}</p><p>{8}</p>'.format(
+		html_escape(code), html_escape(challenge.requester), html_escape(challenge.subject_name), html_escape(challenge.store),
+		html_escape(format(flt(value), '.6g')), suffix, html_escape(scope), html_escape(reason),
+		html_escape(_('Valid for five minutes. Share this code only if you approve this discount.')))
+	if guest_check_name:
+		details += '<p>{0}</p>'.format(html_escape(guest_check_name))
+	return frappe.get_doc(dict(doctype='Notification Log', type='Alert', for_user=challenge.approver,
+		from_user=challenge.requester, subject=title, email_content=details,
+		document_type='Approval Challenge', document_name=challenge.name, read=0)).insert(ignore_permissions=True)
+
+
+@frappe.whitelist(methods=['POST'])
+def request_pos_discount_approval_code(order_name, approver, discount_type='Percentage', discount_value=0,
+		discount_reason='', guest_check_name=None, expected_modified=None, resend=0):
+	"""Cashier requests an OTP; the secret is delivered only to the selected manager."""
+	from rms.approval_delivery import wants_resend, can_resend, delivery_result, revoke
+	resend=wants_resend(resend)
+	require_pos_action('can_checkout')
+	doc = frappe.get_doc('POS Order', order_name, for_update=True)
+	assert_store_access(doc.store)
+	require_order_scope(doc)
+	if doc.status not in ('Confirmed', 'In Preparation', 'Ready') or doc.pos_invoice:
+		frappe.throw(_('Only an unpaid confirmed order can receive a discount approval.'))
+	if expected_modified and frappe.utils.get_datetime(expected_modified) != frappe.utils.get_datetime(doc.modified):
+		frappe.throw(_('The order changed. Review the discount again before requesting a code.'))
+	reason = (discount_reason or '').strip()
+	value = flt(discount_value)
+	if not reason or not math.isfinite(value) or value <= 0:
+		frappe.throw(_('Enter a positive discount and its reason before requesting approval.'))
+	preview = preview_order_discount(order_name, discount_type, value, reason, guest_check_name=guest_check_name)
+	if not preview.get('requires_manager_approval'):
+		frappe.throw(_('This discount is within your allowed limit and does not need manager approval.'))
+	if approver not in {row['user'] for row in get_pos_discount_approvers(doc.store, exclude_user=frappe.session.user)}:
+		frappe.throw(_('Choose a different POS Manager with access to this Store.'), frappe.PermissionError)
+	if not is_pos_scope_allowed('brand', doc.restaurant_brand, user=approver) or not is_pos_scope_allowed('order_type', doc.order_type, user=approver):
+		frappe.throw(_('The selected manager is not allowed to approve this Brand or Order Type.'), frappe.PermissionError)
+	from frappe.utils import add_to_date, now_datetime
+	from frappe.utils.password import passlibctx
+	scope = preview['discount_scope']
+	context_hash = pos_discount_approval_context_hash(doc.name, frappe.session.user, doc.store, discount_type, value, reason, scope, guest_check_name)
+	filters = dict(subject_doctype='POS Order', subject_name=doc.name, action=POS_DISCOUNT_APPROVAL_ACTION,
+		requester=frappe.session.user, approver=approver, approval_context_hash=context_hash,
+		status='Issued', expires_at=['>', now_datetime()])
+	for existing in frappe.get_all('Approval Challenge', filters=filters, fields=['name', 'expires_at', 'operation_payload', 'creation'], order_by='creation desc'):
+		previous = frappe.parse_json(existing.operation_payload or '{}').get('payload', {})
+		if previous.get('order_modified') and frappe.utils.get_datetime(previous['order_modified']) != frappe.utils.get_datetime(doc.modified):
+			continue
+		if frappe.db.exists('Notification Log', dict(for_user=approver, document_type='Approval Challenge', document_name=existing.name)):
+			if not resend or not can_resend(existing):return delivery_result(existing,approver)
+			revoke(existing)
+	from rms.approval_notifications import build_discount_snapshot
+	snapshot = build_discount_snapshot(doc, discount_type, value, reason, scope, guest_check_name, preview)
+	code = f'{secrets.randbelow(1000000):06d}'
+	challenge = frappe.new_doc('Approval Challenge')
+	challenge.update(dict(store=doc.store, subject_doctype='POS Order', subject_name=doc.name,
+		action=POS_DISCOUNT_APPROVAL_ACTION, requester=frappe.session.user, approver=approver,
+		status='Issued', code_hash=passlibctx.hash(code), approval_context_hash=context_hash,
+		expires_at=add_to_date(now_datetime(), minutes=5), operation_payload=json.dumps(dict(action='Discount', payload={**snapshot, 'is_waste':0}), ensure_ascii=False)))
+	challenge.flags.from_pos_api = True
+	challenge.insert(ignore_permissions=True)
+	notify_pos_discount_approval(challenge, code, discount_type, value, reason, scope, guest_check_name)
+	return delivery_result(challenge,approver)
 
 
 @frappe.whitelist()
@@ -1800,8 +2552,11 @@ def issue_pos_discount_approval_code(order_name, discount_type="Percentage", dis
 		"status": "Issued", "code_hash": passlibctx.hash(code),
 		"approval_context_hash": context_hash, "expires_at": add_to_date(now_datetime(), minutes=5),
 	})
+	from rms.approval_notifications import build_discount_snapshot
+	challenge.operation_payload = json.dumps(dict(action='Discount', payload=build_discount_snapshot(doc, discount_type, value, reason, scope, guest_check_name)), ensure_ascii=False)
 	challenge.flags.from_pos_api = True
 	challenge.insert(ignore_permissions=True)
+	notify_pos_discount_approval(challenge, code, discount_type, value, reason, scope, guest_check_name)
 	return {"code": code, "expires_at": challenge.expires_at, "discount_type": discount_type,
 		"discount_value": value, "discount_reason": reason, "cashier": requester}
 
@@ -2557,9 +3312,7 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 	invoice.account_for_change_amount = profile.account_for_change_amount
 	if guest_rows and frappe.get_meta("POS Invoice").has_field("rms_guest_payment_breakdown"):
 		invoice.rms_guest_payment_breakdown = json.dumps(guest_rows, ensure_ascii=False)
-	invoice.update_stock = int(bool(profile.update_stock) or any(
-		frappe.db.get_value("Item", row.item, "is_stock_item") for row in doc.items
-	))
+	# ERPNext v15 posts POS stock through the consolidated Sales Invoice.
 	account_mapping = frappe.db.get_value(
 		"Order Type Account Mapping",
 		{"parent": doc.order_type, "parenttype": "Order Type", "company": company},
@@ -2583,6 +3336,8 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 		invoice_item = {
 			"item_code": row.item,
 			"item_name": frappe.db.get_value("Item", row.item, "item_name"),
+			"description": frappe.db.get_value("Item", row.item, "description")
+				or frappe.db.get_value("Item", row.item, "item_name") or row.item,
 			"qty": active_qty,
 			"uom": row.uom,
 			"stock_uom": item_stock_uom,
@@ -2603,6 +3358,8 @@ def pay_order(order_name, payments, guest_breakdown=None, discount_type=None, di
 			modifier_invoice_item = {
 				"item_code": modifier_product.item,
 				"item_name": frappe.db.get_value("Item", modifier_product.item, "item_name"),
+				"description": frappe.db.get_value("Item", modifier_product.item, "description")
+					or frappe.db.get_value("Item", modifier_product.item, "item_name") or modifier_product.item,
 			"qty": active_qty * flt(modifier.qty),
 				"uom": modifier_product.uom,
 				"stock_uom": modifier_stock_uom,
@@ -2746,7 +3503,7 @@ def session_payment_rows(session_name):
 
 @frappe.whitelist()
 def get_returnable_sales(store):
-	require_pos_action("can_request_returns")
+	require_pos_role()
 	assert_store_access(store)
 	session = get_user_session(store)
 	if not session or session.status != "Open":
@@ -2827,8 +3584,11 @@ def get_pos_order_for_invoice(invoice_name, fields=None):
 
 @frappe.whitelist(methods=["POST"])
 def request_pos_return(source_pos_invoice, items, payments, action_reason=None,
-		approval_approver=None, approval_password=None):
-	require_pos_action("can_request_returns")
+		approval_approver=None, approval_password=None, approval_code=None, comment="", approval_request_only=False):
+	require_pos_role()
+	from rms.pos_operation_approval import clean_comment, make_context, authorize
+	from rms.rms.doctype.pos_return.pos_return import POSReturn
+	comment = clean_comment(comment)
 	items = frappe.parse_json(items or "[]")
 	payments = frappe.parse_json(payments or "[]")
 	if not isinstance(items, list) or not isinstance(payments, list):
@@ -2844,7 +3604,7 @@ def request_pos_return(source_pos_invoice, items, payments, action_reason=None,
 	allowed_lines = {row.name: row for row in get_returnable_sale_items(source_pos_invoice, session=session)}
 	if not allowed_lines:
 		frappe.throw(_("This POS Invoice has no returnable items for this Store."))
-	waste_flags = {bool(item.get("is_waste")) for item in items}
+	waste_flags = {bool(validate_void_waste_flag(item.get("is_waste", 0))) for item in items}
 	if len(waste_flags) > 1:
 		frappe.throw(_("Mark the entire return as waste or non-waste."))
 	ret = frappe.new_doc("POS Return")
@@ -2853,6 +3613,7 @@ def request_pos_return(source_pos_invoice, items, payments, action_reason=None,
 	ret.source_pos_invoice = source.name
 	ret.action_reason = action_reason
 	ret.reason = reason
+	ret.comment = comment
 	ret.is_waste = int(next(iter(waste_flags), False))
 	for item in items:
 		line_name = item.get("source_pos_invoice_item")
@@ -2863,17 +3624,26 @@ def request_pos_return(source_pos_invoice, items, payments, action_reason=None,
 	for payment in payments:
 		ret.append("payments", {"mode_of_payment": payment.get("mode_of_payment"), "amount": flt(payment.get("amount"))})
 	ret.validate_request()
-	roles = set(frappe.get_roles())
-	if frappe.session.user == "Administrator" or roles & {"POS Manager", "System Manager"}:
-		manager = frappe.session.user
-	elif approval_approver and approval_password:
-		manager = verify_pos_return_manager_password(session.store, approval_approver, approval_password)
-	else:
-		approvers = get_pos_discount_approvers(session.store, exclude_user=frappe.session.user)
-		return {"requires_manager_authorization": True, "approvers": approvers,
-			"refund_total": ret.refund_total, "currency": source.currency}
-	ret.insert(ignore_permissions=True)
-	return approve_pos_return_document(ret, manager)
+	context = make_context("Return", source.name, session.store, {
+		"items": sorted([{"source_pos_invoice_item": row.source_pos_invoice_item, "qty": flt(row.qty), "is_waste": ret.is_waste,
+			"title": frappe.get_cached_value("Item", row.item_code, "item_name") or row.item_code,
+			"reserved_qty": POSReturn.get_reserved_qty(row.source_pos_invoice_item)} for row in ret.items], key=lambda row: row["source_pos_invoice_item"]),
+		"payments": sorted([{"mode_of_payment": row.mode_of_payment, "amount": flt(row.amount)} for row in ret.payments], key=lambda row: row["mode_of_payment"]),
+		"action_reason": action_reason, "is_waste": ret.is_waste, "comment": comment,
+	}, source.modified, session.name)
+	if approval_request_only:
+		return {"operation_context": context}
+	frappe.db.savepoint("rms_request_pos_return")
+	try:
+		authorization = authorize(context, approval_approver, approval_password, approval_code)
+		if authorization.get("requires_manager_authorization"):
+			return {**authorization, "refund_total": ret.refund_total, "currency": source.currency}
+		ret.approval_challenge = authorization.get("approval_challenge")
+		ret.insert(ignore_permissions=True)
+		return approve_pos_return_document(ret, authorization["approved_by"])
+	except Exception:
+		frappe.db.rollback(save_point="rms_request_pos_return")
+		raise
 
 
 def verify_pos_return_manager_password(store, approver, password):
@@ -2902,7 +3672,7 @@ def verify_pos_return_manager_password(store, approver, password):
 
 @frappe.whitelist(methods=["POST"])
 def preview_pos_return(source_pos_invoice, items, action_reason=None):
-	require_pos_action("can_request_returns")
+	require_pos_role()
 	items = frappe.parse_json(items or "[]")
 	if not isinstance(items, list) or not items:
 		frappe.throw(_("Select at least one return item."))
@@ -2920,7 +3690,7 @@ def preview_pos_return(source_pos_invoice, items, action_reason=None):
 	ret.source_pos_invoice = source_pos_invoice
 	ret.action_reason = action_reason
 	ret.reason = reason
-	waste_flags = {bool(item.get("is_waste")) for item in items}
+	waste_flags = {bool(validate_void_waste_flag(item.get("is_waste", 0))) for item in items}
 	if len(waste_flags) > 1:
 		frappe.throw(_("Mark the entire return as waste or non-waste."))
 	ret.is_waste = int(next(iter(waste_flags), False))
@@ -2944,18 +3714,30 @@ def preview_pos_return(source_pos_invoice, items, action_reason=None):
 def approve_pos_return(return_name):
 	if frappe.session.user == "Guest" or not (set(frappe.get_roles()) & {"POS Manager", "System Manager"}):
 		frappe.throw(_("Only a POS Manager can approve a return."), frappe.PermissionError)
-	ret = frappe.get_doc("POS Return", return_name)
+	ret = frappe.get_doc("POS Return", return_name, for_update=True)
+	permissions = get_pos_capabilities()
+	if ret.status != "Approved" and (not permissions.get("can_request_returns") or (ret.is_waste and not permissions.get("can_return_waste"))):
+		frappe.throw(_("Your POS User requires manager authorization for this return. Use the POS approval flow."), frappe.PermissionError)
 	return approve_pos_return_document(ret, frappe.session.user)
 
 
 def approve_pos_return_document(ret, manager):
+	frappe.db.savepoint("rms_approve_pos_return")
+	try:
+		return _approve_pos_return_document(ret, manager)
+	except Exception:
+		frappe.db.rollback(save_point="rms_approve_pos_return")
+		raise
+
+
+def _approve_pos_return_document(ret, manager):
 	assert_store_access(ret.store)
 	order = get_pos_order_for_invoice(ret.source_pos_invoice, ["restaurant_brand", "order_type"])
 	if order:
 		require_order_scope(order)
 	if ret.status == "Approved" and ret.return_pos_invoice:
 		return {"name": ret.name, "status": ret.status, "return_pos_invoice": ret.return_pos_invoice,
-			"stock_entry": ret.stock_entry, "refund_total": ret.refund_total}
+			"stock_entry": ret.stock_entry, "waste_stock_entry": ret.waste_stock_entry, "refund_total": ret.refund_total}
 	if ret.status != "Pending Approval":
 		frappe.throw(_("Only a return Pending Approval can be approved."))
 	session = frappe.get_doc("Cashier Session", ret.cashier_session)
@@ -2997,22 +3779,27 @@ def approve_pos_return_document(ret, manager):
 			frappe.db.set_value("POS Invoice", invoice.name, "owner", manager, update_modified=False)
 			invoice.submit()
 		company = frappe.db.get_value("Store", ret.store, "company")
-		stock_items = ret.build_stock_receipt_items()
+		stock_items = ret.build_stock_receipt_items(include_waste=True) if ret.is_waste else ret.build_stock_receipt_items()
 		from rms.stock import create_material_receipt
 
 		stock_entry = create_material_receipt(company, stock_items,
-			_("POS return {0}: good items returned to inventory").format(ret.name))
+			_("POS return {0}: items received{1}").format(ret.name, _(" for waste disposal") if ret.is_waste else ""))
+		waste_stock_entry = None
+		if ret.is_waste and stock_items:
+			waste_stock_entry = create_material_issue(company, stock_items,
+				stock_items[0].get("expense_account"), _("Waste from POS return {0}: {1}").format(ret.name, ret.reason), stock_entry_type="Void")
 	finally:
 		frappe.set_user(actor)
 	ret.return_pos_invoice = invoice.name
 	ret.stock_entry = stock_entry
+	ret.waste_stock_entry = waste_stock_entry
 	ret.status = "Approved"
 	ret.approved_by = manager
 	ret.approved_at = now_datetime()
 	ret.flags.allow_workflow_update = True
 	ret.save(ignore_permissions=True)
 	return {"name": ret.name, "status": ret.status, "return_pos_invoice": invoice.name,
-		"stock_entry": stock_entry, "refund_total": ret.refund_total}
+		"stock_entry": stock_entry, "waste_stock_entry": waste_stock_entry, "refund_total": ret.refund_total}
 
 
 @frappe.whitelist(methods=["POST"])
@@ -3034,3 +3821,6 @@ def reject_pos_return(return_name, reason=None):
 	ret.flags.allow_workflow_update = True
 	ret.save(ignore_permissions=True)
 	return {"name": ret.name, "status": ret.status}
+
+# Public operation approval endpoints live with their authorization implementation.
+from rms.pos_operation_approval import request_pos_operation_approval, issue_pos_operation_approval_code, get_pending_pos_operation_approvals

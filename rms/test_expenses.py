@@ -127,10 +127,11 @@ class TestPOSExpenses(unittest.TestCase):
 				patch("frappe.get_doc", return_value=expense), \
 				patch("rms.expenses.assert_store_access"), \
 				patch("frappe.get_all", return_value=[]), \
-				patch("frappe.new_doc", return_value=challenge):
+				patch("frappe.new_doc", return_value=challenge), patch("rms.expenses.notify_shift_expense_approval") as notify:
 			result = issue_shift_expense_approval_code("RMS-EXP-1")
 		self.assertEqual(result["challenge"], "RMS-APR-1")
 		self.assertEqual(len(result["code"]), 6)
+		notify.assert_called_once_with(expense, challenge, result["code"])
 		self.assertNotEqual(challenge.code_hash, result["code"])
 		self.assertEqual(challenge.subject_name, "RMS-EXP-1")
 		self.assertEqual(challenge.action, "Post Shift Expense")
@@ -150,3 +151,22 @@ class TestPOSExpenses(unittest.TestCase):
 		self.assertEqual(result["status"], "Posted")
 		challenge.verify_code.assert_called_once_with("381604")
 		expense.post_to_ledger.assert_called_once_with("manager@example.com")
+
+	def test_cashier_requests_expense_code_for_selected_manager_without_receiving_secret(self):
+		session=frappe._dict(name='SESSION-1',status='Open')
+		doc=frappe._dict(name='EXPENSE-1',owner='cashier@example.com',cashier_session='SESSION-1',store='STORE-1',status='Pending Approval')
+		with patch('rms.expenses._get_open_expense_session',return_value=session),patch('frappe.get_doc',return_value=doc), \
+				patch('frappe.session',frappe._dict(user='cashier@example.com')),patch('rms.api.pos.get_pos_discount_approvers',return_value=[{'user':'manager@example.com'}]), \
+				patch('frappe.db.get_value',return_value=None),patch('rms.expenses._issue_expense_code',return_value={'challenge':'APPROVAL-1','code':'123456','expires_at':'2026-11-05'}) as issue:
+			result=expenses.request_shift_expense_approval_code('EXPENSE-1','manager@example.com')
+		issue.assert_called_once_with(doc,'manager@example.com')
+		self.assertNotIn('code',result);self.assertEqual(result['delivered_to'],'manager@example.com')
+
+	def test_expense_notification_contains_code_in_selected_manager_bell(self):
+		doc=frappe._dict(name='EXPENSE-1',owner='cashier@example.com',store='STORE-1',amount=25,currency='EGP',expense_category='Meals',remarks='<test>')
+		challenge=frappe._dict(name='APPROVAL-1',approver='manager@example.com')
+		with patch('frappe.get_doc') as create:
+			expenses.notify_shift_expense_approval(doc,challenge,'123456')
+		notice=create.call_args.args[0]
+		self.assertEqual(notice['for_user'],'manager@example.com');self.assertEqual(notice['type'],'Alert')
+		self.assertIn('123456',notice['subject']);self.assertIn('&lt;test&gt;',notice['email_content'])

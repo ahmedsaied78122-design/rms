@@ -1,49 +1,470 @@
 {
   "app": "rms",
   "charts": [],
-  "content": "[]",
+  "content": "[{\"id\":\"rms-shortcut-1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Point of Sale\",\"col\":4}},{\"id\":\"rms-shortcut-2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Table Management\",\"col\":4}},{\"id\":\"rms-shortcut-3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Kitchen Display\",\"col\":4}},{\"id\":\"rms-shortcut-4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"POS Orders\",\"col\":4}},{\"id\":\"rms-shortcut-5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Products\",\"col\":4}},{\"id\":\"rms-shortcut-6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cashier Sessions\",\"col\":4}},{\"id\":\"rms-card-1\",\"type\":\"card\",\"data\":{\"card_name\":\"Daily operations\",\"col\":4}},{\"id\":\"rms-card-2\",\"type\":\"card\",\"data\":{\"card_name\":\"Products and menus\",\"col\":4}},{\"id\":\"rms-card-3\",\"type\":\"card\",\"data\":{\"card_name\":\"Stores and cashier access\",\"col\":4}},{\"id\":\"rms-card-4\",\"type\":\"card\",\"data\":{\"card_name\":\"Dining and preparation\",\"col\":4}},{\"id\":\"rms-card-5\",\"type\":\"card\",\"data\":{\"card_name\":\"Payments and operational rules\",\"col\":4}},{\"id\":\"rms-card-6\",\"type\":\"card\",\"data\":{\"card_name\":\"Stock and waste\",\"col\":4}},{\"id\":\"rms-card-7\",\"type\":\"card\",\"data\":{\"card_name\":\"Printing and devices\",\"col\":4}},{\"id\":\"rms-card-8\",\"type\":\"card\",\"data\":{\"card_name\":\"Operational reports\",\"col\":4}},{\"id\":\"rms-card-9\",\"type\":\"card\",\"data\":{\"card_name\":\"System and synchronization\",\"col\":4}}]",
   "custom_blocks": [],
   "doctype": "Workspace",
   "for_user": "",
   "hide_custom": 0,
-  "icon": "store",
+  "icon": "organization",
   "is_hidden": 0,
-  "label": "الإدارة",
-  "links": [],
+  "label": "Management",
+  "links": [
+    {
+      "type": "Card Break",
+      "label": "Daily operations",
+      "description": "Orders, shifts, expenses and approvals.",
+      "icon": "play",
+      "hidden": 0,
+      "link_count": 5
+    },
+    {
+      "type": "Link",
+      "label": "POS Orders",
+      "link_type": "DocType",
+      "link_to": "POS Order",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Cashier Sessions",
+      "link_type": "DocType",
+      "link_to": "Cashier Session",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "POS Returns",
+      "link_type": "DocType",
+      "link_to": "POS Return",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Shift Expenses",
+      "link_type": "DocType",
+      "link_to": "Shift Expense",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Approval Requests",
+      "link_type": "DocType",
+      "link_to": "Approval Challenge",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Card Break",
+      "label": "Products and menus",
+      "description": "Build your catalog, variations and modifier choices.",
+      "icon": "shopping-bag",
+      "hidden": 0,
+      "link_count": 6
+    },
+    {
+      "type": "Link",
+      "label": "Selling Products",
+      "link_type": "DocType",
+      "link_to": "Selling Product",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Product Categories",
+      "link_type": "DocType",
+      "link_to": "Product Category",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Store Menus",
+      "link_type": "DocType",
+      "link_to": "Store Menu",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Modifier Groups",
+      "link_type": "DocType",
+      "link_to": "Modifier Group",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Option Attributes",
+      "link_type": "DocType",
+      "link_to": "Item Attribute",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Units of Measure",
+      "link_type": "DocType",
+      "link_to": "UOM",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Card Break",
+      "label": "Stores and cashier access",
+      "description": "Brands, stores, order types and cashier assignments.",
+      "icon": "store",
+      "hidden": 0,
+      "link_count": 5
+    },
+    {
+      "type": "Link",
+      "label": "Brands",
+      "link_type": "DocType",
+      "link_to": "Restaurant Brand",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Stores",
+      "link_type": "DocType",
+      "link_to": "Store",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Order Types",
+      "link_type": "DocType",
+      "link_to": "Order Type",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "POS Users",
+      "link_type": "DocType",
+      "link_to": "POS User",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Cashier POS Profiles",
+      "link_type": "DocType",
+      "link_to": "POS Profile",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Card Break",
+      "label": "Dining and preparation",
+      "description": "Dining spaces, preparation areas and kitchen progress.",
+      "icon": "kitchen",
+      "hidden": 0,
+      "link_count": 4
+    },
+    {
+      "type": "Link",
+      "label": "Dining Areas",
+      "link_type": "DocType",
+      "link_to": "Dining Area",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Dining Tables",
+      "link_type": "DocType",
+      "link_to": "Dining Table",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Preparation Areas",
+      "link_type": "DocType",
+      "link_to": "Preparation Area",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Kitchen Tickets",
+      "link_type": "DocType",
+      "link_to": "Kitchen Ticket",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Card Break",
+      "label": "Payments and operational rules",
+      "description": "Payment methods, expense accounts and operation reasons.",
+      "icon": "credit-card",
+      "hidden": 0,
+      "link_count": 5
+    },
+    {
+      "type": "Link",
+      "label": "Modes of Payment",
+      "link_type": "DocType",
+      "link_to": "Mode of Payment",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Expense Categories",
+      "link_type": "DocType",
+      "link_to": "Expense Category",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Void and Return Reasons",
+      "link_type": "DocType",
+      "link_to": "POS Action Reason",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Sales Tax Templates",
+      "link_type": "DocType",
+      "link_to": "Sales Taxes and Charges Template",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Cost Centers",
+      "link_type": "DocType",
+      "link_to": "Cost Center",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Card Break",
+      "label": "Stock and waste",
+      "description": "Stock items, warehouse balances and product waste.",
+      "icon": "stock",
+      "hidden": 0,
+      "link_count": 4
+    },
+    {
+      "type": "Link",
+      "label": "Stock Items",
+      "link_type": "DocType",
+      "link_to": "Item",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Warehouses",
+      "link_type": "DocType",
+      "link_to": "Warehouse",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Waste Entries",
+      "link_type": "DocType",
+      "link_to": "Waste Entry",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Stock Movements",
+      "link_type": "DocType",
+      "link_to": "Stock Entry",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Card Break",
+      "label": "Printing and devices",
+      "description": "Printers, delivery jobs and print formats.",
+      "icon": "printer",
+      "hidden": 0,
+      "link_count": 4
+    },
+    {
+      "type": "Link",
+      "label": "Print Devices",
+      "link_type": "DocType",
+      "link_to": "Print Device",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Print Dispatch Queue",
+      "link_type": "Page",
+      "link_to": "print-dispatch-queue",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Print Dispatch Jobs",
+      "link_type": "DocType",
+      "link_to": "Print Dispatch Job",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Print Formats",
+      "link_type": "DocType",
+      "link_to": "Print Format",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Card Break",
+      "label": "Operational reports",
+      "description": "Sales, product performance and till reconciliation.",
+      "icon": "chart",
+      "hidden": 0,
+      "link_count": 3
+    },
+    {
+      "type": "Link",
+      "label": "POS Sales Summary",
+      "link_type": "Report",
+      "link_to": "RMS POS Sales Summary",
+      "hidden": 0,
+      "onboard": 0,
+      "is_query_report": 1,
+      "report_ref_doctype": "POS Order"
+    },
+    {
+      "type": "Link",
+      "label": "Product Sales Summary",
+      "link_type": "Report",
+      "link_to": "RMS Product Sales Summary",
+      "hidden": 0,
+      "onboard": 0,
+      "is_query_report": 1,
+      "report_ref_doctype": "Selling Product"
+    },
+    {
+      "type": "Link",
+      "label": "Cashier Session Reconciliation",
+      "link_type": "Report",
+      "link_to": "RMS Cashier Session Reconciliation",
+      "hidden": 0,
+      "onboard": 0,
+      "is_query_report": 1,
+      "report_ref_doctype": "Cashier Session"
+    },
+    {
+      "type": "Card Break",
+      "label": "System and synchronization",
+      "description": "Change capture, technical logs and system user access.",
+      "icon": "setting-gear",
+      "hidden": 0,
+      "link_count": 4
+    },
+    {
+      "type": "Link",
+      "label": "Synchronization Settings",
+      "link_type": "DocType",
+      "link_to": "RMS Sync Settings",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Synchronization Events",
+      "link_type": "DocType",
+      "link_to": "RMS Sync Event",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "User Accounts",
+      "link_type": "DocType",
+      "link_to": "User",
+      "hidden": 0,
+      "onboard": 0
+    },
+    {
+      "type": "Link",
+      "label": "Access Roles",
+      "link_type": "DocType",
+      "link_to": "Role",
+      "hidden": 0,
+      "onboard": 0
+    }
+  ],
   "module": "RMS",
-  "name": "الإدارة",
+  "name": "Management",
   "number_cards": [],
   "parent_page": "",
   "public": 1,
   "quick_lists": [],
   "roles": [],
-  "sequence_id": 1,
+  "sequence_id": 0.5,
   "shortcuts": [
-    {"type": "Page", "link_to": "point-of-sale", "label": "Point of Sale", "icon": "cash-register", "color": "blue"},
-    {"type": "Page", "link_to": "kitchen-display", "label": "Kitchen Display", "icon": "chef-hat", "color": "orange"},
-    {"type": "DocType", "link_to": "Store", "label": "Stores", "doc_view": "List", "icon": "store", "color": "green"},
-    {"type": "DocType", "link_to": "POS User", "label": "POS Users", "doc_view": "List", "icon": "users", "color": "blue"},
-    {"type": "DocType", "link_to": "Order Type", "label": "Order Types", "doc_view": "List", "icon": "list", "color": "blue"},
-    {"type": "DocType", "link_to": "Restaurant Brand", "label": "Brands", "doc_view": "List", "icon": "tag", "color": "purple"},
-    {"type": "DocType", "link_to": "Store Menu", "label": "Store Menus", "doc_view": "List", "icon": "book-open", "color": "cyan"},
-    {"type": "DocType", "link_to": "Product Category", "label": "Product Categories", "doc_view": "Tree", "icon": "folder-tree", "color": "yellow"},
-    {"type": "DocType", "link_to": "Selling Product", "label": "Selling Products", "doc_view": "List", "icon": "shopping-bag", "color": "green"},
-    {"type": "DocType", "link_to": "Modifier Group", "label": "Modifier Groups", "doc_view": "List", "icon": "layers", "color": "purple"},
-    {"type": "DocType", "link_to": "Preparation Area", "label": "Preparation Areas", "doc_view": "List", "icon": "utensils", "color": "orange"},
-    {"type": "DocType", "link_to": "Print Device", "label": "Print Devices", "doc_view": "List", "icon": "printer", "color": "blue"},
-    {"type": "Page", "link_to": "print-dispatch-queue", "label": "Print Dispatch Queue", "icon": "printer-check", "color": "orange"},
-    {"type": "DocType", "link_to": "Dining Area", "label": "Dining Areas", "doc_view": "List", "icon": "layout-dashboard", "color": "cyan"},
-    {"type": "DocType", "link_to": "Dining Table", "label": "Dining Tables", "doc_view": "List", "icon": "table", "color": "yellow"},
-    {"type": "DocType", "link_to": "Cashier Session", "label": "Cashier Sessions", "doc_view": "List", "icon": "wallet", "color": "green"},
-    {"type": "DocType", "link_to": "Shift Expense", "label": "Shift Expenses", "doc_view": "List", "icon": "receipt", "color": "red"},
-    {"type": "DocType", "link_to": "Expense Category", "label": "Expense Categories", "doc_view": "List", "icon": "list-filter", "color": "orange"},
-    {"type": "DocType", "link_to": "Approval Challenge", "label": "Approval Challenges", "doc_view": "List", "icon": "shield-check", "color": "purple"},
-    {"type": "Report", "link_to": "RMS Cashier Session Reconciliation", "label": "Cashier Session Reconciliation", "icon": "file-chart-column", "color": "green"},
-    {"type": "Report", "link_to": "RMS POS Sales Summary", "label": "POS Sales Summary", "icon": "chart-no-axes-combined", "color": "blue"},
-    {"type": "Report", "link_to": "RMS Product Sales Summary", "label": "Product Sales Summary", "icon": "chart-no-axes-column-increasing", "color": "purple"},
-    {"type": "DocType", "link_to": "Waste Entry", "label": "Waste Entries", "doc_view": "List", "icon": "trash-2", "color": "red"}
+    {
+      "type": "Page",
+      "link_to": "point-of-sale",
+      "label": "Point of Sale",
+      "icon": "cash-register",
+      "color": "#24785e"
+    },
+    {
+      "type": "Page",
+      "link_to": "table-management",
+      "label": "Table Management",
+      "icon": "table",
+      "color": "#24785e"
+    },
+    {
+      "type": "Page",
+      "link_to": "kitchen-display",
+      "label": "Kitchen Display",
+      "icon": "chef-hat",
+      "color": "#24785e"
+    },
+    {
+      "type": "DocType",
+      "link_to": "POS Order",
+      "label": "POS Orders",
+      "icon": "shopping-bag",
+      "color": "#24785e",
+      "doc_view": "List"
+    },
+    {
+      "type": "DocType",
+      "link_to": "Selling Product",
+      "label": "Selling Products",
+      "icon": "shopping-bag",
+      "color": "#24785e",
+      "doc_view": "List"
+    },
+    {
+      "type": "DocType",
+      "link_to": "Cashier Session",
+      "label": "Cashier Sessions",
+      "icon": "wallet",
+      "color": "#24785e",
+      "doc_view": "List"
+    }
   ],
   "sidebar_items": [],
   "standard": 1,
-  "title": "الإدارة"
+  "title": "Management"
 }

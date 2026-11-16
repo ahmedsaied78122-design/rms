@@ -1,6 +1,7 @@
 import hashlib
 import json
 import re
+from decimal import Decimal, InvalidOperation
 
 import frappe
 from frappe import _
@@ -8,6 +9,10 @@ from frappe.model.document import Document
 from frappe.model.naming import make_autoname
 
 from rms.recipe import get_additional_recipe_order_types
+from rms.rms.doctype.selling_product_modifier_group.selling_product_modifier_group import (
+	get_minimum_selections,
+	validate_product_limits,
+)
 
 
 class SellingProduct(Document):
@@ -19,18 +24,22 @@ class SellingProduct(Document):
 		self.validate_item_ownership()
 		self.validate_default_warehouse()
 		self.validate_options_and_prices()
+		self.validate_option_attribute()
 		self.validate_recipe()
 		self.validate_store_rows()
 		self.validate_modifiers()
 
 	def on_update(self):
 		if self.item and frappe.db.exists("Item", self.item):
+			values = {
+				"disabled": 0 if self.enabled else 1,
+				"allow_negative_stock": int(bool(self.allow_negative_stock)),
+			}
+			if self.has_value_changed("title"):
+				values["item_name"] = self.title
 			frappe.db.set_value(
 				"Item", self.item,
-				{
-					"disabled": 0 if self.enabled else 1,
-					"allow_negative_stock": int(bool(self.allow_negative_stock)),
-				},
+				values,
 				update_modified=False,
 			)
 			self.sync_erpnext_prices()
@@ -43,8 +52,19 @@ class SellingProduct(Document):
 		warehouse = None
 		if self.default_store == store:
 			warehouse = self.default_warehouse
-		if not warehouse:
-			warehouse = category.default_warehouse
+		if not warehouse and category.default_warehouse:
+			# A menu category may be shared by stores in different companies.
+			# Inherit its warehouse only when it is valid for the active store.
+			category_warehouse = frappe.db.get_value(
+				"Warehouse", category.default_warehouse, ["company", "is_group", "disabled"], as_dict=True
+			)
+			if (
+				category_warehouse
+				and category_warehouse.company == store_doc.company
+				and not category_warehouse.is_group
+				and not category_warehouse.disabled
+			):
+				warehouse = category.default_warehouse
 		if not warehouse:
 			warehouse = store_doc.default_warehouse
 
@@ -64,14 +84,21 @@ class SellingProduct(Document):
 
 	def create_erpnext_item(self):
 		if self.item:
+			from arab_streaming.streaming.context import replay_source
+
+			if replay_source():
+				# The authenticated replay resolves this dependency before inserting
+				# the product. Reuse its identity; normal ownership/UOM checks follow.
+				frappe.get_doc("Item", self.item).check_permission("read")
+				return
 			frappe.throw(_("The ERPNext Item is created automatically and cannot be selected manually."))
 
 		if not self.product_category or not self.uom:
 			frappe.throw(_("Select a Product Category and Unit of Measure before saving."))
 
 		category = frappe.get_doc("Product Category", self.product_category)
-		if not category.enabled or category.is_group or not category.item_group:
-			frappe.throw(_("Select an enabled leaf Product Category with an Item Group."))
+		if not category.enabled or not category.item_group:
+			frappe.throw(_("Select an enabled Product Category with an Item Group."))
 
 		item_code = make_autoname("RMS-ITEM-.YYYY.-.#####")
 		item = frappe.get_doc(
@@ -97,14 +124,10 @@ class SellingProduct(Document):
 		category = frappe.db.get_value(
 			"Product Category", self.product_category, ["enabled", "is_group", "item_group"], as_dict=True
 		)
-		if not category or not category.enabled or category.is_group or not category.item_group:
-			frappe.throw(_("Select an enabled leaf Product Category with an Item Group."))
-		if self.item and frappe.db.exists("Item", self.item):
-			item_group = frappe.db.get_value("Item", self.item, "item_group")
-			if item_group != category.item_group:
-				frappe.throw(
-					_("The Product Category Item Group cannot change after the linked Item is created.")
-				)
+		if not category or not category.enabled or not category.item_group:
+			frappe.throw(_("Select an enabled Product Category with an Item Group."))
+		# Menu navigation can change independently of the existing stock item's
+		# accounting classification. Category defaults still resolve at sale time.
 
 	def validate_item_ownership(self):
 		if self.item and frappe.db.exists(
@@ -320,6 +343,37 @@ class SellingProduct(Document):
 		)
 		return {"selling_price": rate if rate is not None else self.selling_price, "price_list": price_list}
 
+	def validate_option_attribute(self):
+		if not self.has_options or not self.option_attribute:
+			return
+		from erpnext.controllers.item_variant import validate_is_incremental, validate_item_attribute_value
+
+		attribute = frappe.get_doc("Item Attribute", self.option_attribute)
+		if attribute.disabled:
+			frappe.throw(_("Choose an enabled Option Attribute."))
+		allowed = [row.attribute_value for row in attribute.item_attribute_values]
+		seen = set()
+		for row in self.option_products:
+			value = str(row.attribute_value if row.attribute_value is not None else "").strip()
+			if not value:
+				frappe.throw(_("Set an Attribute Value for option {0}.").format(row.option_product))
+			key = value.casefold()
+			if attribute.numeric_values:
+				try:
+					number = Decimal(value)
+					if not number.is_finite():
+						raise InvalidOperation
+				except InvalidOperation:
+					frappe.throw(_("Attribute Value must be a number."))
+				validate_is_incremental(attribute, attribute.name, value, self.name)
+				key = number.normalize()
+			else:
+				validate_item_attribute_value(allowed, attribute.name, value, self.name, from_variant=False)
+			if key in seen:
+				frappe.throw(_("Each option must have a different Attribute Value."))
+			seen.add(key)
+			row.attribute_value = value
+
 	def validate_options_and_prices(self):
 		if self.has_options:
 			if self.maintain_stock:
@@ -476,6 +530,8 @@ class SellingProduct(Document):
 			frappe.throw(_("A Store and Preparation Area print route can only appear once."))
 
 	def validate_modifiers(self):
+		for row in self.modifier_groups:
+			validate_product_limits(row)
 		groups = [row.modifier_group for row in self.modifier_groups if row.modifier_group]
 		if len(groups) != len(set(groups)):
 			frappe.throw(_("A Modifier Group can only be added once."))
@@ -484,12 +540,19 @@ class SellingProduct(Document):
 				frappe.throw(_("Modifier Group {0} is disabled.").format(frappe.bold(group)))
 
 		configured = set(groups)
+		choices = {group: set() for group in groups}
 		for row in self.modifier_options:
 			if row.modifier_group not in configured:
 				frappe.throw(_("Every Modifier Option must belong to a Modifier Group enabled on this product."))
+			if row.modifier_product in choices[row.modifier_group]:
+				frappe.throw(_("A modifier product can only appear once in the same group on this product."))
+			choices[row.modifier_group].add(row.modifier_product)
 			modifier = frappe.db.get_value(
 				"Selling Product", row.modifier_product, ["enabled", "is_modifier", "item"], as_dict=True
 			)
 			if not modifier or not modifier.enabled or not modifier.is_modifier:
 				frappe.throw(_("Modifier Options must reference enabled products marked Is Modifier."))
 			row.cost = frappe.db.get_value("Item", modifier.item, "valuation_rate") or 0
+		for row in self.modifier_groups:
+			if get_minimum_selections(row) > len(choices.get(row.modifier_group, set())):
+				frappe.throw(_("Minimum Selections cannot exceed the available choices on this product."))

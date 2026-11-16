@@ -1,0 +1,45 @@
+{
+  "primaryActions": [
+    "open-orders",
+    "table-map",
+    "kitchen-display",
+    "session"
+  ],
+  "englishLabels": [
+    "Expenses",
+    "Returns",
+    "Sales History",
+    "Approvals",
+    "My Account",
+    "Language",
+    "Back to Apps",
+    "Sign Out"
+  ],
+  "arabicLabels": [
+    "المصروفات",
+    "المرتجعات",
+    "سجل المبيعات",
+    "الموافقات",
+    "حسابي",
+    "اللغة",
+    "العودة للتطبيقات",
+    "تسجيل الخروج"
+  ],
+  "arabicRender": "Server translation dictionary; client language only; user preference unchanged",
+  "ownAccountOpened": true,
+  "languageDialogOpened": true,
+  "logoutToLogin": true,
+  "keyboardAndOutsideClose": true,
+  "permissionsReflected": true,
+  "mobileInsideViewport": true,
+  "expenseDialogOpened": true,
+  "financialWrites": 0,
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "frontend_suites_passed": 15,
+  "cashier_shift_unchanged_after_logout": true,
+  "user_language_preference_unchanged_during_test": true,
+  "save_failure_prevents_logout_and_language_reload": true,
+  "closed_menu_escape_does_not_capture_dialog_key": true,
+  "identity_is_html_escaped": true
+}

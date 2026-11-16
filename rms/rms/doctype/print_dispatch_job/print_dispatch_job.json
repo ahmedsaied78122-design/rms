@@ -17,21 +17,24 @@
     "store",
     "preparation_area",
     "print_device",
+    "rms_column_job_section_1",
     "status",
+    "attempt_count",
+    "queued_at",
+    "printed_at",
+    "rms_source_section",
     "document_type",
     "document_name",
-    "idempotency_key",
-    "attempt_count",
-    "payload",
+    "rms_diagnostics_section",
     "last_error",
-    "queued_at",
-    "printed_at"
+    "payload",
+    "idempotency_key"
   ],
   "fields": [
     {
       "fieldname": "job_section",
       "fieldtype": "Section Break",
-      "label": "Print Job"
+      "label": "Print job"
     },
     {
       "fieldname": "naming_series",
@@ -71,6 +74,10 @@
       "link_filters": "[[\"Print Device\",\"enabled\",\"=\",\"1\"]]"
     },
     {
+      "fieldname": "rms_column_job_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
       "fieldname": "status",
       "fieldtype": "Select",
       "label": "Status",
@@ -81,6 +88,30 @@
       "in_standard_filter": 1,
       "columns": 2,
       "read_only": 1
+    },
+    {
+      "fieldname": "attempt_count",
+      "fieldtype": "Int",
+      "label": "Attempt Count",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "queued_at",
+      "fieldtype": "Datetime",
+      "label": "Queued At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "printed_at",
+      "fieldtype": "Datetime",
+      "label": "Printed At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rms_source_section",
+      "fieldtype": "Section Break",
+      "label": "Source document"
     },
     {
       "fieldname": "document_type",
@@ -99,19 +130,16 @@
       "columns": 2
     },
     {
-      "fieldname": "idempotency_key",
-      "fieldtype": "Data",
-      "label": "Idempotency Key",
-      "reqd": 1,
-      "unique": 1,
-      "read_only": 1,
-      "hidden": 1
+      "fieldname": "rms_diagnostics_section",
+      "fieldtype": "Section Break",
+      "label": "Delivery details",
+      "collapsible": 1,
+      "collapsible_depends_on": "eval:false"
     },
     {
-      "fieldname": "attempt_count",
-      "fieldtype": "Int",
-      "label": "Attempt Count",
-      "default": "0",
+      "fieldname": "last_error",
+      "fieldtype": "Small Text",
+      "label": "Last Error",
       "read_only": 1
     },
     {
@@ -122,22 +150,13 @@
       "read_only": 1
     },
     {
-      "fieldname": "last_error",
-      "fieldtype": "Small Text",
-      "label": "Last Error",
-      "read_only": 1
-    },
-    {
-      "fieldname": "queued_at",
-      "fieldtype": "Datetime",
-      "label": "Queued At",
-      "read_only": 1
-    },
-    {
-      "fieldname": "printed_at",
-      "fieldtype": "Datetime",
-      "label": "Printed At",
-      "read_only": 1
+      "fieldname": "idempotency_key",
+      "fieldtype": "Data",
+      "label": "Idempotency Key",
+      "reqd": 1,
+      "unique": 1,
+      "read_only": 1,
+      "hidden": 1
     }
   ],
   "permissions": [

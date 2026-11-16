@@ -3,23 +3,97 @@
   "name": "Expense Category",
   "module": "RMS",
   "engine": "InnoDB",
-  "autoname": "field:title",
+  "autoname": "",
   "title_field": "title",
   "search_fields": "title,company,expense_account",
   "sort_field": "title",
   "sort_order": "ASC",
   "track_changes": 1,
-  "field_order": ["details_section", "title", "enabled", "company", "expense_account", "cost_center"],
+  "field_order": [
+    "details_section",
+    "title",
+    "enabled",
+    "company",
+    "rms_column_details_section_1",
+    "expense_account",
+    "cost_center"
+  ],
   "fields": [
-    {"fieldname": "details_section", "fieldtype": "Section Break", "label": "Expense Category"},
-    {"fieldname": "title", "fieldtype": "Data", "label": "Category Name", "reqd": 1, "unique": 1, "in_list_view": 1, "in_standard_filter": 1, "columns": 2},
-    {"fieldname": "enabled", "fieldtype": "Check", "label": "Enabled", "default": "1", "in_list_view": 1, "in_standard_filter": 1, "columns": 1},
-    {"fieldname": "company", "fieldtype": "Link", "label": "Company", "options": "Company", "reqd": 1, "in_list_view": 1, "in_standard_filter": 1, "columns": 2},
-    {"fieldname": "expense_account", "fieldtype": "Link", "label": "Expense Account", "options": "Account", "reqd": 1, "in_list_view": 1, "columns": 2, "link_filters": "[[\"Account\",\"company\",\"=\",\"eval:doc.company\"],[\"Account\",\"root_type\",\"=\",\"Expense\"],[\"Account\",\"is_group\",\"=\",\"0\"]]"},
-    {"fieldname": "cost_center", "fieldtype": "Link", "label": "Cost Center", "options": "Cost Center", "link_filters": "[[\"Cost Center\",\"company\",\"=\",\"eval:doc.company\"],[\"Cost Center\",\"is_group\",\"=\",\"0\"]]"}
+    {
+      "fieldname": "details_section",
+      "fieldtype": "Section Break",
+      "label": "Expense category"
+    },
+    {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "label": "Category Name",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": "1",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "rms_column_details_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "expense_account",
+      "fieldtype": "Link",
+      "label": "Expense Account",
+      "options": "Account",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "link_filters": "[[\"Account\", \"company\", \"=\", \"eval:doc.company\"], [\"Account\", \"is_group\", \"=\", 0], [\"Account\", \"root_type\", \"=\", \"Expense\"]]",
+      "read_only_depends_on": "eval:!doc.company"
+    },
+    {
+      "fieldname": "cost_center",
+      "fieldtype": "Link",
+      "label": "Cost Center",
+      "options": "Cost Center",
+      "link_filters": "[[\"Cost Center\", \"company\", \"=\", \"eval:doc.company\"], [\"Cost Center\", \"is_group\", \"=\", 0]]",
+      "read_only_depends_on": "eval:!doc.company"
+    }
   ],
   "permissions": [
-    {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1},
-    {"role": "POS Manager", "read": 1, "write": 1, "create": 1, "report": 1}
-  ]
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "report": 1
+    },
+    {
+      "role": "POS Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "report": 1
+    }
+  ],
+  "naming_rule": "By script",
+  "show_title_field_in_link": 1
 }

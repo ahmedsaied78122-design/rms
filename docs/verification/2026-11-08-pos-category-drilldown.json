@@ -1,0 +1,42 @@
+{
+  "rootCategories": 6,
+  "topBarContainsOnlyRoots": true,
+  "desktopRailWidth": 156,
+  "desktopProductWidth": 1003,
+  "childCategoryImageCardsPreserved": true,
+  "onlyDirectProductsShownWhenBrowsing": true,
+  "leafSelectionAndParentBack": true,
+  "fourLevels": "Browser-only fixture; no database changes",
+  "searchAndModeSwitch": true,
+  "staleResponsesCoveredByUnitTests": true,
+  "responsiveSizes": [
+    {
+      "width": 1024,
+      "railWidth": 130,
+      "gridWidth": 505
+    },
+    {
+      "width": 768,
+      "railWidth": 130,
+      "gridWidth": 561
+    }
+  ],
+  "mobileProductGridWidth": 325,
+  "mobileOverlayKeyboardEscapeAndOutsideClose": true,
+  "rtl": true,
+  "reducedMotion": true,
+  "productOptionsStillOpen": true,
+  "mobileProductsDoNotOverlapCart": true,
+  "cartAndOrderUnchanged": true,
+  "financialWrites": 0,
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "frontend_suites_passed": 15,
+  "database_schema_changes": 0,
+  "persistent_category_changes": 0,
+  "category_cards_click_through_verified": true,
+  "selected_category_products": "Only directly assigned products; search includes descendants as before",
+  "read_only_navigation_requires_no_order_state_request": true,
+  "desktop_screenshot": "/home/xxx/outputs/rms-category-navigation/desktop-main-category.png",
+  "mobile_screenshot": "/home/xxx/outputs/rms-category-navigation/mobile-navigation.png"
+}

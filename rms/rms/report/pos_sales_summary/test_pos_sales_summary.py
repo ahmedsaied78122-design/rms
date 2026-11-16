@@ -36,6 +36,10 @@ class TestPOSSalesSummary(unittest.TestCase):
 				self.assertIn("TIME(ret.approved_at) < COALESCE(store.operating_day_end", query)
 		self.assertTrue(columns)
 		self.assertEqual(rows, [])
+		sales_query, returns_query = (call.args[0] for call in sql.call_args_list)
+		self.assertIn("qty - COALESCE(cancelled_qty, 0)", sales_query)
+		self.assertIn("invoice_line.rms_pos_order_item", returns_query)
+		self.assertNotIn("o.cashier_session = ret.cashier_session", returns_query)
 
 	def test_return_totals_are_merged_on_approval_business_date_and_subtracted(self):
 		key = (getdate("2026-10-02"), "STORE-1", "BRAND-1", "Dine In", "EGP")
@@ -48,4 +52,11 @@ class TestPOSSalesSummary(unittest.TestCase):
 		self.assertEqual(rows[0]["paid_orders"], 3)
 		self.assertEqual(rows[0]["approved_returns"], 20)
 		self.assertEqual(rows[0]["net_sales"], 204)
+
+	def test_return_on_a_day_without_sales_is_not_counted_twice(self):
+		row = frappe._dict(business_date=getdate("2026-10-02"), store="STORE-1", restaurant_brand="BRAND-1",
+			order_type="Takeaway", currency="EGP", approved_returns=114)
+		rows = merge_sales_and_returns([], [row])
+		self.assertEqual(rows[0]["approved_returns"],114)
+		self.assertEqual(rows[0]["net_sales"],-114)
 

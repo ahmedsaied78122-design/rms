@@ -1,0 +1,37 @@
+{
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "context": { "store": "بيت الشرق - المعادي", "order_type": "تيك أواي" },
+  "shared_group": "الصوصات الإضافية",
+  "products": {
+    "برجر لحم شرقي": {
+      "base_price": 155,
+      "requirement": "Required",
+      "options": { "ثومية": 15, "صوص حار": 8 },
+      "spice_requirement": "Optional",
+      "other_group": "إضافات الجبن"
+    },
+    "كفتة مشوية": {
+      "base_price": 210,
+      "requirement": "Optional",
+      "options": { "ثومية": 7, "طحينة إضافية": 12 },
+      "other_group": "الإضافات الجانبية"
+    }
+  },
+  "validation": {
+    "server_cases_passed": 9,
+    "frontend_suites_passed": 14,
+    "live_browser_passed": true,
+    "burger_without_sauce_blocked": true,
+    "kofta_without_sauce_accepted": true,
+    "disallowed_choices_rejected_on_server": true,
+    "server_overwrites_submitted_modifier_price": true,
+    "amount_before_tax_with_thoomia": { "burger": 170, "kofta": 217 },
+    "default_quantity_initialization": "Hidden Float onchange refreshes Add readiness after asynchronous default initialization",
+    "shared_group_settings_unchanged": true,
+    "global_modifier_product_price_unchanged": true,
+    "unrelated_product_modifier_price_unchanged": true,
+    "order_writes": 0,
+    "existing_order_unchanged": true
+  }
+}

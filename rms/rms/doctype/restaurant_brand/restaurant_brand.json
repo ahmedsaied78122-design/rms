@@ -4,8 +4,8 @@
   "module": "RMS",
   "engine": "InnoDB",
   "allow_rename": 1,
-  "autoname": "field:title",
-  "naming_rule": "By fieldname",
+  "autoname": "",
+  "naming_rule": "By script",
   "title_field": "title",
   "search_fields": "title",
   "sort_field": "modified",
@@ -15,9 +15,10 @@
     "brand_section",
     "title",
     "brand_code",
+    "rms_column_brand_section_1",
     "enabled",
-    "pos_rounding_method",
     "brand_image",
+    "pos_rounding_method",
     "menus_section",
     "menus"
   ],
@@ -25,7 +26,7 @@
     {
       "fieldname": "brand_section",
       "fieldtype": "Section Break",
-      "label": "Brand"
+      "label": "Brand essentials"
     },
     {
       "fieldname": "title",
@@ -44,6 +45,10 @@
       "columns": 2
     },
     {
+      "fieldname": "rms_column_brand_section_1",
+      "fieldtype": "Column Break"
+    },
+    {
       "fieldname": "enabled",
       "fieldtype": "Check",
       "label": "Enabled",
@@ -53,28 +58,30 @@
       "columns": 2
     },
     {
-      "fieldname": "pos_rounding_method",
-      "fieldtype": "Select",
-      "label": "POS Rounding Method",
-    "options": "No Rounding\nRound Up\nNearest\nRound Down",
-      "default": "Nearest",
-      "description": "Controls whole-EGP rounding for the final POS payable."
-    },
-    {
       "fieldname": "brand_image",
       "fieldtype": "Attach Image",
       "label": "Brand Image"
     },
     {
+      "fieldname": "pos_rounding_method",
+      "fieldtype": "Select",
+      "label": "POS Rounding Method",
+      "options": "No Rounding\nRound Up\nNearest\nRound Down",
+      "default": "Nearest",
+      "description": "Controls whole-EGP rounding for the final POS payable."
+    },
+    {
       "fieldname": "menus_section",
       "fieldtype": "Section Break",
-      "label": "Menus"
+      "label": "Menus available for this brand"
     },
     {
       "fieldname": "menus",
       "fieldtype": "Table",
       "label": "Menus",
-      "options": "Brand Menu Assignment"
+      "options": "Brand Menu Assignment",
+      "description": "Save the brand first, then assign enabled menus belonging to it.",
+      "read_only_depends_on": "eval:doc.__islocal"
     }
   ],
   "permissions": [
@@ -91,5 +98,6 @@
       "share": 1,
       "report": 1
     }
-  ]
+  ],
+  "show_title_field_in_link": 1
 }

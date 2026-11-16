@@ -1,0 +1,18 @@
+{
+  "method": "Real native bundles, layout, controls and grids with local form data and mocked RPC; no live user/session/business record created.",
+  "parents": 24,
+  "children": 32,
+  "checks": [
+    "Native printer controls show and require only the selected connection method",
+    "Native printer dependency and requiredness change together",
+    "Native product variation, recipe and separately sold modifier conditions match their workflows",
+    "Discount fields follow the capability; independent kitchen actions remain visible",
+    "Leaf categories require an item group; parent groups do not",
+    "Native child-link filter evaluates the parent modifier groups",
+    "All 32 child-table types render through the real native grid and row metadata",
+    "ar light key forms fit at 390/1500px",
+    "ar dark key forms fit at 390/1500px",
+    "Native POS dialog blocks a third choice, permits replacement, rejects a forced over-limit selection and adds a valid selection"
+  ],
+  "errors": []
+}

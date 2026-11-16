@@ -1,0 +1,740 @@
+[
+  {
+    "doctype": "Account",
+    "master_records": 99,
+    "slave_records": 99,
+    "common": 99,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 14,
+    "different_fields": {
+      "account_currency": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "account_currency": 1
+    }
+  },
+  {
+    "doctype": "Address",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 18,
+    "different_fields": {
+      "links": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "links": 1
+    }
+  },
+  {
+    "doctype": "Address Template",
+    "master_records": 10,
+    "slave_records": 10,
+    "common": 10,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 3,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Branch",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 2,
+    "different_fields": {
+      "custom_streaming_enabled": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "custom_streaming_enabled": 1
+    }
+  },
+  {
+    "doctype": "Brand",
+    "master_records": 0,
+    "slave_records": 0,
+    "common": 0,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 4,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Cashier Session",
+    "master_records": 4,
+    "slave_records": 3,
+    "common": 2,
+    "master_only": 2,
+    "slave_only": 1,
+    "field_count": 12,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Company",
+    "master_records": 1,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 78,
+    "different_fields": {
+      "transactions_annual_history": 1,
+      "sales_monthly_history": 1,
+      "total_monthly_sales": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "transactions_annual_history": 1,
+      "total_monthly_sales": 1,
+      "sales_monthly_history": 1
+    }
+  },
+  {
+    "doctype": "Contact",
+    "master_records": 12,
+    "slave_records": 13,
+    "common": 12,
+    "master_only": 0,
+    "slave_only": 1,
+    "field_count": 26,
+    "different_fields": {
+      "links": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "links": 1
+    }
+  },
+  {
+    "doctype": "Cost Center",
+    "master_records": 5,
+    "slave_records": 5,
+    "common": 5,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 6,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Country",
+    "master_records": 250,
+    "slave_records": 250,
+    "common": 250,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 5,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Currency",
+    "master_records": 149,
+    "slave_records": 149,
+    "common": 149,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 8,
+    "different_fields": {
+      "enabled": 1,
+      "symbol": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "enabled": 1,
+      "symbol": 1
+    }
+  },
+  {
+    "doctype": "Customer",
+    "master_records": 9,
+    "slave_records": 9,
+    "common": 9,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 47,
+    "different_fields": {
+      "email_id": 2,
+      "first_name": 2,
+      "primary_address": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "first_name": 2,
+      "primary_address": 1
+    }
+  },
+  {
+    "doctype": "Customer Group",
+    "master_records": 5,
+    "slave_records": 5,
+    "common": 5,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 7,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Dining Area",
+    "master_records": 6,
+    "slave_records": 6,
+    "common": 6,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 5,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Dining Table",
+    "master_records": 24,
+    "slave_records": 24,
+    "common": 24,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 6,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Expense Category",
+    "master_records": 2,
+    "slave_records": 2,
+    "common": 2,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 5,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Fiscal Year",
+    "master_records": 1,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 7,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Industry Type",
+    "master_records": 51,
+    "slave_records": 51,
+    "common": 51,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 1,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Item",
+    "master_records": 144,
+    "slave_records": 144,
+    "common": 144,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 69,
+    "different_fields": {
+      "image": 19
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "image": 19
+    }
+  },
+  {
+    "doctype": "Item Attribute",
+    "master_records": 7,
+    "slave_records": 7,
+    "common": 7,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 7,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Item Group",
+    "master_records": 6,
+    "slave_records": 6,
+    "common": 6,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 6,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Item Tax Template",
+    "master_records": 1,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 4,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Journal Entry",
+    "master_records": 2,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 1,
+    "slave_only": 0,
+    "field_count": 43,
+    "different_fields": {
+      "loan": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Kitchen Ticket",
+    "master_records": 21,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 20,
+    "slave_only": 0,
+    "field_count": 14,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Loyalty Program",
+    "master_records": 0,
+    "slave_records": 0,
+    "common": 0,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 14,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Manufacturer",
+    "master_records": 0,
+    "slave_records": 0,
+    "common": 0,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 6,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Mode of Payment",
+    "master_records": 9,
+    "slave_records": 9,
+    "common": 9,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 4,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Modifier Group",
+    "master_records": 8,
+    "slave_records": 8,
+    "common": 8,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 8,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Order Type",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 7,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "POS Action Reason",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 4,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "POS Closing Entry",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 2,
+    "master_only": 1,
+    "slave_only": 1,
+    "field_count": 17,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "POS Invoice",
+    "master_records": 15,
+    "slave_records": 2,
+    "common": 2,
+    "master_only": 13,
+    "slave_only": 0,
+    "field_count": 121,
+    "different_fields": {
+      "items": 2
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "items": 2
+    }
+  },
+  {
+    "doctype": "POS Opening Entry",
+    "master_records": 4,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 1,
+    "slave_only": 0,
+    "field_count": 11,
+    "different_fields": {
+      "posting_date": 1,
+      "pos_closing_entry": 1,
+      "period_start_date": 1,
+      "pos_profile": 1,
+      "balance_details": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "posting_date": 1,
+      "pos_closing_entry": 1,
+      "period_start_date": 1,
+      "pos_profile": 1
+    }
+  },
+  {
+    "doctype": "POS Order",
+    "master_records": 22,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 21,
+    "slave_only": 0,
+    "field_count": 31,
+    "different_fields": {
+      "retail_sale_id": 1,
+      "is_retail": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "POS Profile",
+    "master_records": 4,
+    "slave_records": 4,
+    "common": 4,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 39,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "POS Return",
+    "master_records": 7,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 6,
+    "slave_only": 0,
+    "field_count": 20,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "POS User",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 30,
+    "different_fields": {
+      "roles_summary": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "roles_summary": 1
+    }
+  },
+  {
+    "doctype": "Preparation Area",
+    "master_records": 15,
+    "slave_records": 15,
+    "common": 15,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 8,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Price List",
+    "master_records": 8,
+    "slave_records": 8,
+    "common": 8,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 7,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Print Device",
+    "master_records": 0,
+    "slave_records": 0,
+    "common": 0,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 8,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Product Category",
+    "master_records": 28,
+    "slave_records": 28,
+    "common": 28,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 9,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Purchase Taxes and Charges Template",
+    "master_records": 1,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 6,
+    "different_fields": {
+      "taxes": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "taxes": 1
+    }
+  },
+  {
+    "doctype": "Restaurant Brand",
+    "master_records": 1,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 6,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Sales Invoice",
+    "master_records": 10,
+    "slave_records": 2,
+    "common": 2,
+    "master_only": 8,
+    "slave_only": 0,
+    "field_count": 140,
+    "different_fields": {
+      "loan": 2
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Sales Taxes and Charges Template",
+    "master_records": 2,
+    "slave_records": 2,
+    "common": 2,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 6,
+    "different_fields": {
+      "taxes": 1
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "taxes": 1
+    }
+  },
+  {
+    "doctype": "Selling Product",
+    "master_records": 136,
+    "slave_records": 136,
+    "common": 136,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 27,
+    "different_fields": {
+      "image": 19,
+      "recipe": 2
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "image": 19,
+      "recipe": 2
+    }
+  },
+  {
+    "doctype": "Shift Expense",
+    "master_records": 2,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 1,
+    "slave_only": 0,
+    "field_count": 22,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Stock Entry",
+    "master_records": 15,
+    "slave_records": 6,
+    "common": 6,
+    "master_only": 9,
+    "slave_only": 0,
+    "field_count": 54,
+    "different_fields": {
+      "items": 6
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "items": 6
+    }
+  },
+  {
+    "doctype": "Stock Entry Type",
+    "master_records": 11,
+    "slave_records": 11,
+    "common": 11,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 4,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Store",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 19,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Store Menu",
+    "master_records": 1,
+    "slave_records": 1,
+    "common": 1,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 4,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Supplier Group",
+    "master_records": 8,
+    "slave_records": 8,
+    "common": 8,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 5,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Tax Category",
+    "master_records": 0,
+    "slave_records": 0,
+    "common": 0,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 2,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Terms and Conditions",
+    "master_records": 0,
+    "slave_records": 0,
+    "common": 0,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 7,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Territory",
+    "master_records": 3,
+    "slave_records": 3,
+    "common": 3,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 5,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "UOM",
+    "master_records": 240,
+    "slave_records": 240,
+    "common": 240,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 3,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "User",
+    "master_records": 5,
+    "slave_records": 5,
+    "common": 5,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 57,
+    "different_fields": {
+      "roles": 3
+    },
+    "differences_ignoring_generated_child_names_and_empty_strings": {
+      "roles": 3
+    }
+  },
+  {
+    "doctype": "Warehouse",
+    "master_records": 8,
+    "slave_records": 8,
+    "common": 8,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 17,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  },
+  {
+    "doctype": "Waste Entry",
+    "master_records": 2,
+    "slave_records": 2,
+    "common": 2,
+    "master_only": 0,
+    "slave_only": 0,
+    "field_count": 11,
+    "different_fields": {},
+    "differences_ignoring_generated_child_names_and_empty_strings": {}
+  }
+]

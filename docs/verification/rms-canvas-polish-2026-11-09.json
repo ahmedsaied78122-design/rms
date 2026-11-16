@@ -1,0 +1,16 @@
+{
+  "method": "Isolated native/RMS styles, RMS scripts and real EditorJS; workspace persistence and account actions are local test doubles. No authenticated account or workspace was changed.",
+  "results": [
+    "Desktop uses only the sidebar toggle",
+    "Shortcut counts have enough line height and no circular clipping",
+    "Nested tooltip values and labels contrast with the dark background",
+    "Sidebar account opens locally and forwards only the chosen existing action",
+    "Editing stays in the RMS canvas with save/discard and real EditorJS tools",
+    "Save restores original widget DOM before native serialization and preserves the new order",
+    "Remove changes only the draft; Discard restores the original blocks",
+    "Add widget uses the registered EditorJS tool and Discard restores the original draft",
+    "Account popover stays within the viewport in RTL",
+    "Phone retains one panel entry and a local account menu with independent Escape behavior"
+  ],
+  "errors": []
+}

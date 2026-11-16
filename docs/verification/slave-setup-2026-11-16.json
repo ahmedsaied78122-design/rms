@@ -1,0 +1,63 @@
+{
+  "verified_at": "2026-11-16T08:31:18.642559+00:00",
+  "site": "slave-rms1.arab-erp.com",
+  "copy": {
+    "status": "Complete",
+    "progress": 100.0,
+    "setup_complete": true,
+    "error": null
+  },
+  "run_status": "Complete",
+  "processed_count": 859,
+  "checkpoints_complete": true,
+  "received_counts": {
+    "Company": 1,
+    "Account": 99,
+    "Cost Center": 5,
+    "Warehouse": 8,
+    "Item": 142,
+    "Selling Product": 135,
+    "Store": 3,
+    "Customer": 8,
+    "Contact": 11,
+    "Address": 2,
+    "GL Entry": 0,
+    "Stock Ledger Entry": 0
+  },
+  "products_without_item": 0,
+  "duplicate_product_item_links": 0,
+  "reference_roles": {
+    "Expense Approver": {
+      "desk_access": 0,
+      "standard_permissions": 0,
+      "custom_permissions": 0
+    },
+    "Leave Approver": {
+      "desk_access": 0,
+      "standard_permissions": 0,
+      "custom_permissions": 0
+    },
+    "Loan Manager": {
+      "desk_access": 0,
+      "standard_permissions": 0,
+      "custom_permissions": 0
+    }
+  },
+  "commits": {
+    "frappe": "b0b5b99a1d9d2cb3d54b32293d3854bf2c15f4a4",
+    "erpnext": "bfd8100d42162048248b7b947f2e21fdf7999a91",
+    "arab_streaming": "658b968fff18b532b2d901ac07fb8560fbb39552",
+    "rms": "246942a513eb2d5164d384ab06188d0b873d9eed"
+  },
+  "focused_tests_passed": 29,
+  "public_http_status": 200,
+  "master_export_status": "Complete",
+  "public_browser_setup_complete": true,
+  "public_browser_branch_catalog": {
+    "products": 62,
+    "categories": 27,
+    "order_types": 3
+  },
+  "service_active": true,
+  "service_enabled": true
+}

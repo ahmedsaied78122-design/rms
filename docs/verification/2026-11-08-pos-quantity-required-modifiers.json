@@ -1,0 +1,36 @@
+{
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "order_context": "RMS-ORD-2026-00016",
+  "behavior": {
+    "quantity_shortcuts": [1, 2, 3, 4, 5],
+    "custom_quantity_preserved": true,
+    "required_modifier_group": "درجة الشطة",
+    "min_selections": 1,
+    "required_group_initially_open": true,
+    "no_automatic_required_choice": true,
+    "explicit_no_chili_accepted": true,
+    "new_items_blocked_without_required_choice": "Frontend primary action and server order resolution",
+    "previously_saved_unchanged_choices": "Preserved when minimum configuration changes"
+  },
+  "validation": {
+    "python_tests_passed": 46,
+    "frontend_suites_passed": 14,
+    "pasta_configurations_with_required_spice": 24,
+    "live_chromium": {
+      "desktop": "1366x900; three option levels, required selection gate, quantity 4 and item comment passed to intercepted cart action",
+      "mobile": "390x844; modifier-only dialog, quantity 3, required selection gate, no horizontal overflow",
+      "quantity_highlight": "Waits for asynchronous Frappe field update",
+      "unrelated_page_error_observed": "frappe.ui.toast is not a function during Desk startup; tested dialogs still passed"
+    },
+    "real_order_resolution": [
+      "Missing required choice rejected on new product",
+      "Explicit No Chili accepted",
+      "Existing saved row remains valid",
+      "New row on existing order rejected without spice and accepted with explicit choice"
+    ],
+    "test_orders_created": 0,
+    "existing_order_changed": false,
+    "temporary_browser_session_removed": true
+  }
+}

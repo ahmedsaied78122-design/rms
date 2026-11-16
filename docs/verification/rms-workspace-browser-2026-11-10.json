@@ -1,0 +1,194 @@
+{
+  "method": "Actual installed native widgets and route generation, local fixture data and RPC; no live authentication, user or transaction.",
+  "checks": [
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 1024,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 1500,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 1024,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 1500,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 1024,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "light",
+      "width": 1500,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 1024,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    },
+    {
+      "lang": "ar",
+      "theme": "dark",
+      "width": 1500,
+      "overflow": false,
+      "cards": 9,
+      "links": 40,
+      "directory": false
+    }
+  ],
+  "interactions": [
+    "Arabic and technical English search",
+    "No results and Escape reset",
+    "Native singleton/report routes",
+    "Keyboard shortcut navigation",
+    "Reversible widget ownership after search",
+    "No expansion of pre-filtered permission scope"
+  ],
+  "errors": []
+}

@@ -4,6 +4,30 @@ from frappe.model.document import Document
 
 
 class OrderType(Document):
+	def after_rename(self, old, new, merge=False):
+		# Generated selling price-list identities include the Order Type ID.
+		# Rename those records too, so Item Prices and invoice links keep their rates.
+		rules = frappe.get_all("Selling Product Price Rule", filters={"order_type": new},
+			fields=["parent", "store", "restaurant_brand"])
+		products = {}
+		price_lists = {}
+		for row in rules:
+			if row.parent not in products:
+				products[row.parent] = frappe.get_doc("Selling Product", row.parent)
+			product = products[row.parent]
+			conditions = {"store": row.store or "", "order_type": new, "restaurant_brand": row.restaurant_brand or ""}
+			for currency in product.get_price_currencies(row.store):
+				old_list = product.get_price_list_name({**conditions, "order_type": old}, currency)
+				new_list = product.get_price_list_name(conditions, currency)
+				if old_list != new_list and frappe.db.exists("Price List", old_list):
+					price_lists[old_list] = new_list
+		for old_list, new_list in price_lists.items():
+			if frappe.db.exists("Price List", new_list):
+				frappe.throw(_("Price List {0} already exists. Resolve the duplicate before renaming this Order Type.").format(new_list))
+			frappe.rename_doc("Price List", old_list, new_list, show_alert=False, rebuild_search=False)
+		if price_lists:
+			frappe.enqueue("frappe.utils.global_search.rebuild_for_doctype", doctype="Price List", enqueue_after_commit=True)
+
 	def validate(self):
 		if self.sequence_id is not None and self.sequence_id < 0:
 			frappe.throw(_("Sequence ID cannot be negative."))

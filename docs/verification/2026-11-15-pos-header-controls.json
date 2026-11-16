@@ -1,0 +1,240 @@
+{
+  "date": "2026-11-15",
+  "change": "Order Type, Categories/Products toggle and bounded search share the green header. Custom accessible Order Type listbox with keyboard navigation, selected checkmark, outside dismissal, and synchronization with existing native sale selection.",
+  "site": {
+    "site": "rms.arab-erp.com",
+    "scope": "UI assets and cache only; no schema or transaction changes",
+    "hook_versions": true,
+    "native_page_script": true,
+    "arabic_translation": true,
+    "assets": [
+      {
+        "path": "css/point_of_sale.css?v=pos-a-106",
+        "status": 200,
+        "sha256": "ec0851e0982dd919a3345129392b883ab5beac7882a4e177e0a84308edb854ba"
+      },
+      {
+        "path": "js/rms_desk.js?v=desk-a-95",
+        "status": 200,
+        "sha256": "b08dc24061a44e5403444df6e4a776cd07d6304f67001a75c00035072e3aab2e"
+      }
+    ],
+    "ping": true
+  },
+  "browser": {
+    "passed": true,
+    "scope": "Actual POS mount/bind/render and handlers; mocked read-only RPC, no live sale mutations",
+    "results": [
+      {
+        "lang": "en",
+        "width": 320,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 320,
+          "viewport": 320,
+          "header": 253.390625,
+          "controls": 94.390625
+        }
+      },
+      {
+        "lang": "en",
+        "width": 390,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 390,
+          "viewport": 390,
+          "header": 214.390625,
+          "controls": 94.390625
+        }
+      },
+      {
+        "lang": "en",
+        "width": 768,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 768,
+          "viewport": 768,
+          "header": 118.390625,
+          "controls": 46.390625
+        }
+      },
+      {
+        "lang": "en",
+        "width": 1024,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 1024,
+          "viewport": 1024,
+          "header": 118.390625,
+          "controls": 46.390625
+        }
+      },
+      {
+        "lang": "en",
+        "width": 1440,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 1440,
+          "viewport": 1440,
+          "header": 65.390625,
+          "controls": 46.390625
+        }
+      },
+      {
+        "lang": "en",
+        "width": 1920,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 1920,
+          "viewport": 1920,
+          "header": 65.390625,
+          "controls": 46.390625
+        }
+      },
+      {
+        "lang": "ar",
+        "width": 320,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 320,
+          "viewport": 320,
+          "header": 253.390625,
+          "controls": 94.390625
+        }
+      },
+      {
+        "lang": "ar",
+        "width": 390,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 390,
+          "viewport": 390,
+          "header": 214.390625,
+          "controls": 94.390625
+        }
+      },
+      {
+        "lang": "ar",
+        "width": 768,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 768,
+          "viewport": 768,
+          "header": 118.390625,
+          "controls": 46.390625
+        }
+      },
+      {
+        "lang": "ar",
+        "width": 1024,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 1024,
+          "viewport": 1024,
+          "header": 118.390625,
+          "controls": 46.390625
+        }
+      },
+      {
+        "lang": "ar",
+        "width": 1440,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 1440,
+          "viewport": 1440,
+          "header": 65.390625,
+          "controls": 46.390625
+        }
+      },
+      {
+        "lang": "ar",
+        "width": 1920,
+        "checks": 36,
+        "dimensions": {
+          "scroll": 1920,
+          "viewport": 1920,
+          "header": 65.390625,
+          "controls": 46.390625
+        }
+      }
+    ]
+  },
+  "regression_suites": [
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_browsing.js",
+      "passed": true,
+      "output": "PASS: menu loads and renders without a session; search works; sales remain protected; stale menus are discarded."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_cart_layout.js",
+      "passed": true,
+      "output": "PASS: new items first, stable row actions, compact confirmed rows, one bulk action, collapsed cancellations and permission restrictions.\nPASS: rounded order summary matches payment, adjustment is explicit, exact totals stay intact, short order labels preserve complete API identifiers."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_cart_merging.js",
+      "passed": true,
+      "output": "PASS: repeated products increase one row, saved IDs persist, identical drafts consolidate, options/notes stay distinct and prepared rows are protected."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_customers.js",
+      "passed": true,
+      "output": "PASS: all phone fields editable; saved addresses editable; phone/address defaults selectable; IDs retained; failed saves preserve edits."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_header_actions.js",
+      "passed": true,
+      "output": "PASS: grouped actions, keyboard focus, Escape isolation, live role visibility and session availability.\nPASS: translated English/Arabic account menu, escaped identity, own-account route, save-before-logout and language reload, failed-save protection."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_notes.js",
+      "passed": true,
+      "output": ""
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_operation_permissions.js",
+      "passed": true,
+      "output": "PASS: live permissions, direct actions, password/OTP requests, failed approval recovery, comments and cancellation."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_options.js",
+      "passed": true,
+      "output": ""
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_order_lifecycle.js",
+      "passed": true,
+      "output": "PASS: cancellation opens a new sale; only unsaved additions transfer with consent; stale saves and prompts cannot affect a later sale."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_order_notes.js",
+      "passed": true,
+      "output": "PASS: whole-order comments save, clear, survive draft payloads, preserve failed edits and reject stale-sale callbacks."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_order_url.js",
+      "passed": true,
+      "output": "PASS: encoded order URLs, payment links, new-sale cleanup, direct-link precedence, fresh tabs, Desk navigation and permission failures."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_resume.js",
+      "passed": true,
+      "output": "PASS: takeaway defaults, new-sale reset, same-order/screen reload, closed-order checks, session and user isolation."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_return_reason.js",
+      "passed": true,
+      "output": "PASS: missing return reason is identified inline, no incomplete preview, selection survives focus and reaches the refund preview."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_startup.js",
+      "passed": true,
+      "output": "PASS: payment restores without waiting for menu; one order snapshot; one catalog request; parallel new-sale startup."
+    },
+    {
+      "file": "rms/rms/page/point_of_sale/test_point_of_sale_sync.js",
+      "passed": true,
+      "output": "PASS: realtime refresh, polling recovery, three-way draft merge, conflict handling and stale-response isolation."
+    }
+  ],
+  "limitations": "Browser uses actual POS DOM and handlers with mocked read-only RPC; no live sales or accounting transactions created."
+}

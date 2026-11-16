@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-labelledby="title desc">
+ <title id="title">RMS</title><desc id="desc">Loading RMS</desc>
+ <style>
+  text{fill:#348d62;font:700 43px Inter,"Segoe UI",Arial,sans-serif;text-anchor:middle;dominant-baseline:central}
+  .r{animation:r-orbit 2.8s ease-in-out infinite}.m{animation:m-orbit 2.8s ease-in-out infinite}.s{animation:s-orbit 2.8s ease-in-out infinite}
+  @keyframes r-orbit{0%,12%,100%{transform:translate(-44px,0)}30%{transform:translate(-38px,-27px) rotate(-15deg)}50%{transform:translate(22px,-39px) rotate(15deg)}70%{transform:translate(43px,22px) rotate(12deg)}85%{transform:translate(-20px,35px) rotate(-10deg)}}
+  @keyframes m-orbit{0%,12%,100%{transform:translate(0,0)}30%{transform:translate(16px,-39px) rotate(10deg)}50%{transform:translate(42px,20px) rotate(-10deg)}70%{transform:translate(-25px,35px) rotate(10deg)}85%{transform:translate(-42px,-20px) rotate(-12deg)}}
+  @keyframes s-orbit{0%,12%,100%{transform:translate(44px,0)}30%{transform:translate(35px,27px) rotate(15deg)}50%{transform:translate(-24px,35px) rotate(-10deg)}70%{transform:translate(-40px,-24px) rotate(-15deg)}85%{transform:translate(20px,-37px) rotate(10deg)}}
+  .r{transform:translate(-44px,0)}.m{transform:translate(0,0)}.s{transform:translate(44px,0)}
+  @media(prefers-reduced-motion:reduce){.r,.m,.s{animation:none}}
+ </style>
+ <g transform="translate(120 100)"><g class="r"><text>R</text></g><g class="m"><text>M</text></g><g class="s"><text>S</text></g></g>
+</svg>

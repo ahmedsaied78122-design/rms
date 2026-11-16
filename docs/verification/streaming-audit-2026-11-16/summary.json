@@ -1,0 +1,121 @@
+{
+  "checked_at_utc": "2026-11-16T13:10:50.398151+00:00",
+  "sites": [
+    "rms.arab-erp.com",
+    "slave-rms1.arab-erp.com"
+  ],
+  "versions": {
+    "frappe": "15.122.0",
+    "erpnext": "15.122.0",
+    "arab_streaming": "0.2.15",
+    "rms": "0.1.0"
+  },
+  "commits": {
+    "frappe": "b0b5b99",
+    "erpnext": "bfd8100",
+    "arab_streaming": "b76ba24",
+    "rms_runtime": "569ad3a"
+  },
+  "tests": {
+    "engine_full_suite": 138,
+    "final_password_focused_suite": 11,
+    "rms_focused_suite": 167,
+    "suite_counts_overlap": true
+  },
+  "field_coverage": {
+    "root_doctypes": 59,
+    "root_and_child_paths": 152,
+    "fields_examined": 2692,
+    "transferable_codec_pass": 1891,
+    "codec_failures": 0,
+    "individual_live_mutation_of_every_field": false
+  },
+  "http": {
+    "master": {
+      "login_status": 200,
+      "get_bootstrap_status": 403,
+      "get_pos_context_status": 403
+    },
+    "slave": {
+      "login_status": 200,
+      "get_bootstrap_status": 200,
+      "get_pos_context_status": 200,
+      "other_branch_status": 403
+    }
+  },
+  "administrator_password": {
+    "administrator_current_password_hash_equal": true,
+    "password_event": {
+      "name": "qld6k5jvt8",
+      "status": "Applied",
+      "created_by": "Administrator"
+    },
+    "plaintext_password_read_or_supplied": false,
+    "master_administrator_password_changed_by_audit": false,
+    "slave_password_set_to_current_master_password": true
+  },
+  "receiver_seed": {
+    "existing_receiver_seed_events": 6,
+    "plaintext_password_changes": false
+  },
+  "offline": {
+    "receiver_stopped": true,
+    "source_save_committed": true,
+    "dispatch_status_while_offline": "Pending",
+    "dispatch_event": "n4rgpuuiij",
+    "dispatch_status_after_recovery": "Applied"
+  },
+  "images": {
+    "references_compared": 292,
+    "content_match": true,
+    "read_errors": 0
+  },
+  "active_events": {
+    "master_capture": 0,
+    "master_dispatch": 0,
+    "slave_capture": 0,
+    "slave_dispatch": 0
+  },
+  "audit_account_exposure_zero": true,
+  "fixture_stock_quantity_and_value_zero": true,
+  "cleanup": [
+    {
+      "doctype": "POS User",
+      "field": "enabled",
+      "value": 0
+    },
+    {
+      "doctype": "POS Profile",
+      "field": "disabled",
+      "value": 1
+    },
+    {
+      "doctype": "Customer",
+      "field": "disabled",
+      "value": 1
+    },
+    {
+      "doctype": "Item",
+      "field": "disabled",
+      "value": 1
+    },
+    {
+      "doctype": "Selling Product",
+      "field": "enabled",
+      "value": 0
+    },
+    {
+      "doctype": "UOM",
+      "field": "enabled",
+      "value": 0
+    },
+    {
+      "doctype": "User",
+      "field": "enabled",
+      "value": 0
+    }
+  ],
+  "individual_live_mutation_of_every_field": false,
+  "all_business_variants_live_certified": false,
+  "ledger_history_note": "One pre-fix cancelled stock ledger row differs in derived running quantity; movement values, GL and final balances match. Original ledgers retained."
+}

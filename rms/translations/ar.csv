@@ -1,0 +1,1307 @@
+User Menu,قائمة المستخدم
+Signed in,مسجل الدخول
+Cashier actions,إجراءات الكاشير
+Expenses,المصروفات
+Returns,المرتجعات
+Sales History,سجل المبيعات
+Approvals,الموافقات
+Account,الحساب
+My Account,حسابي
+Language,اللغة
+Back to Apps,العودة للتطبيقات
+Sign Out,تسجيل الخروج
+The page will reload after saving your language.,سيتم تحديث الصفحة بعد حفظ لغة حسابك.
+Cashier session closed,وردية الكاشير مغلقة
+Cashier session open,وردية الكاشير مفتوحة
+Subcategories,الأقسام الفرعية
+Close subcategories,إغلاق الأقسام الفرعية
+Category path,مسار القسم
+Back to {0},العودة إلى {0}
+All categories,كل الأقسام
+Product categories,أقسام المنتجات
+Sections,الأقسام
+Open section,فتح القسم
+{0} products,{0} صنف
+{0} sections,{0} قسم
+Products in this section,أصناف هذا القسم
+Rounding adjustment,فرق التقريب
+Set a Store Code before creating an order.,حدد كود الفرع قبل إنشاء طلب.
+About RMS,عن RMS
+"YOUR BUSINESS, CONNECTED",كل أعمالك، متصلة
+Every detail.,كل تفاصيل شغلك.
+One workspace.,في مكان واحد.
+"From your first order to your last report. Bring your people, branches and operations together.",من أول طلب لآخر تقرير. فريقك وفروعك وكل عملياتك في مكان واحد.
+"Every part of your business, in one place.",كل تفاصيل شغلك، في مكان واحد.
+Your menu,قائمتك
+Point of sale,نقطة البيع
+Everything in sync.,كل شيء مترابط.
+Sign in to RMS,تسجيل الدخول إلى RMS
+Sign in,تسجيل الدخول
+Enter your login ID,أدخل بيانات حسابك
+Show password,إظهار كلمة المرور
+Hide password,إخفاء كلمة المرور
+Back office,الإدارة
+Restaurant & Retail,المطاعم والتجزئة
+Management,الإدارة
+Integrated ERP,نظام ERP متكامل
+ONE ERP. EVERY DEPARTMENT.,نظام ERP واحد لكل الإدارات
+Your business.,كل أعمالك.
+One ERP.,في نظام واحد.
+"Connect finance, people, manufacturing and supply chain. Every department, every branch, in one integrated system.",الحسابات والموارد البشرية والتصنيع وسلسلة الإمداد. كل إداراتك وفروعك في نظام واحد متكامل.
+A complete ERP. Everything in one place.,نظام ERP متكامل. كل شغلك في مكان واحد.
+ERP workspace,لوحة النظام
+Business overview,نظرة عامة على الأعمال
+One system for every team,نظام واحد لكل إداراتك
+Explore the ERP suite,استعرض وحدات النظام
+ERP modules,وحدات النظام
+Accounting & Finance,الحسابات والمالية
+Human Resources,الموارد البشرية
+Manufacturing,التصنيع
+Inventory & Warehouses,المخزون والمخازن
+Supply Chain,سلسلة الإمداد
+Sales & CRM,المبيعات والعملاء
+Purchasing,المشتريات
+Projects,المشروعات
+Assets & Maintenance,الأصول والصيانة
+Quality Management,إدارة الجودة
+Support & Service,الدعم وخدمة العملاء
+Integrations,التكاملات
+Reports & Analytics,التقارير والتحليلات
+Workflows & Approvals,سير العمل والموافقات
+Management navigation,التنقل في الإدارة
+WORKSPACES,مساحات العمل
+Workspaces,مساحات العمل
+Find a workspace,ابحث عن مساحة عمل
+All applications,كل التطبيقات
+Open navigation,فتح قائمة التنقل
+Close navigation,إغلاق قائمة التنقل
+Expand navigation,توسيع قائمة التنقل
+Collapse navigation,طي قائمة التنقل
+Show sections in {0},إظهار أقسام {0}
+No matching workspaces,لا توجد مساحات عمل مطابقة
+No workspaces available,لا توجد مساحات عمل متاحة
+Business settings,إعدادات الأعمال
+Business integrations,تكاملات الأعمال
+"Welcome to RMS, {0}",أهلًا يا {0}، نورت RMS
+Wishing you a smooth day. Remember God and send blessings upon the Prophet.,نتمنى لك تجربة جميلة وسلسة. اذكر الله وصلِّ على النبي.
+Overview,نظرة عامة
+Inventory,المخزون
+Sales,المبيعات
+People & access,الفريق والصلاحيات
+Customization,التخصيص
+Utilities,أدوات مساعدة
+Business suite,منظومة أعمال متكاملة
+YOUR WORKSPACE,مساحة أعمالك
+Business,الأعمال
+People & service,الفريق والخدمات
+Platform,إدارة المنظومة
+Personal,مساحاتي
+My account,حسابي
+Find a module,ابحث عن وحدة
+Search RMS…,ابحث في RMS…
+Close search,إغلاق البحث
+Edit layout,تخصيص اللوحة
+New workspace,مساحة عمل جديدة
+"Your business, at a glance.",أعمالك، في نظرة واحدة.
+"Your people, operations and numbers. One connected view.",فريقك، عملياتك، وأرقامك. كل شيء متصل في مكان واحد.
+"A clear view of your inventory, warehouses and stock movements.",رؤية واضحة للمخزون والمستودعات وحركة الأصناف.
+"Accounts, cash flow and financial performance, connected.",الحسابات والسيولة والأداء المالي، في صورة متكاملة.
+"Purchases, suppliers and sourcing, working together.",المشتريات والموردون والتوريد، ضمن دورة عمل واحدة.
+"Customers, sales and growth, in one workspace.",العملاء والمبيعات والنمو، في مساحة عمل واحدة.
+Plan production and keep every operation moving.,خطط للإنتاج وتابع سير كل عملية.
+"Bring your projects, tasks and progress together.",مشاريعك ومهامك وتقدم العمل، في مكان واحد.
+Manage your team and access to your business.,أدر فريقك وصلاحيات الوصول إلى أعمالك.
+Everything you need to move your business forward.,كل ما تحتاجه لإدارة أعمالك والتقدم بها.
+{0} connected modules,{0} وحدات متصلة
+One business. Everything connected.,منظومة واحدة. كل شيء متصل.
+Key figures,المؤشرات الرئيسية
+Your workspace at a glance,مساحة أعمالك في نظرة واحدة
+Business pulse,نبض الأعمال
+Explore the numbers behind your operations,تابع الأرقام وراء عملياتك
+Quick access,وصول سريع
+Go straight to your daily work,انتقل مباشرة إلى أعمالك اليومية
+Explore your workspace,استكشف مساحة أعمالك
+"Records, reports and tools",المستندات والتقارير والأدوات
+Latest activity,أحدث الأنشطة
+Keep work moving,تابع سير العمل
+Your workspace,مساحة أعمالك
+Reports & analytics,التقارير والتحليلات
+Business records,مستندات الأعمال
+Save or discard your changes before switching language.,احفظ تعديلاتك أو تجاهلها قبل تبديل اللغة.
+Switching language…,جاري تبديل اللغة…
+Please sign in to change your language.,سجل الدخول لتغيير اللغة.
+Choose Arabic or English.,اختر العربية أو الإنجليزية.
+Workspace options,خيارات مساحة العمل
+Editing your workspace,تخصيص مساحة أعمالك
+Add widget,إضافة ويدجت
+Key figure,مؤشر رئيسي
+Widget type,نوع الويدجت
+Move up,تحريك لأعلى
+Move down,تحريك لأسفل
+Remove widget,إزالة الويدجت
+Change chart width,تغيير عرض الشارت
+{} Available,{} متاح
+{}  Available,{} متاح
+{} To Deliver,{} بانتظار التسليم
+{}  To Deliver,{} بانتظار التسليم
+{} To Receive,{} بانتظار الاستلام
+{}  To Receive,{} بانتظار الاستلام
+{} Pending,{} قيد الانتظار
+{} Open,{} مفتوح
+{} Assigned,{} مسند
+{} To Bill,{} بانتظار الفوترة
+Learn Sales Management,تعلّم إدارة المبيعات
+Learn Accounting,تعلّم المحاسبة
+Learn Inventory Management,تعلّم إدارة المخزون
+Learn Manufacturing,تعلّم التصنيع
+Learn Procurement,تعلّم المشتريات
+Learn Project Management,تعلّم إدارة المشروعات
+Accounts by company,الحسابات حسب الشركة
+Acknowledge Kitchen Cancellations,تأكيد الاطلاع على إلغاءات المطبخ
+Actual Amount,المبلغ الفعلي
+Add Items to Other Cashiers’ Open Orders,إضافة أصناف لطلبات كاشير آخر
+Additional Recipe,مكونات إضافية
+Allow Collapse,السماح بطي المجموعة
+Allow Multiple Selections,السماح باختيار أكثر من عنصر
+Allowed Brands,العلامات التجارية المسموح بها
+Allowed Order Types,أنواع الطلبات المسموح بها
+Allowed Preparation Areas,مناطق التحضير المسموح بها
+Allowed Users,المستخدمون المسموح لهم
+Allowlisted Payload,البيانات المسموح بمزامنتها
+Applies To,ينطبق على
+Apply Manual Discounts,تطبيق خصم يدوي
+Approval Challenge,طلب موافقة
+Approval and accounting,الموافقة والترحيل المحاسبي
+Approval history,سجل الموافقات
+Approved At,وقت الموافقة
+Approved By,وافق عليه
+Approved Context Hash,بصمة العملية المعتمدة
+Approved Operation,العملية المعتمدة
+Approver,المعتمد
+Area Name,اسم المنطقة
+Assigned Stores,الفروع المخصصة
+Assigned User Roles,أدوار حساب المستخدم
+Attempt Count,عدد المحاولات
+Authorized By,صرّح به
+Availability and order types,الإتاحة وأنواع الطلبات
+Base Recipe,الوصفة الأساسية
+Brand Code,كود العلامة التجارية
+Brand Menu Assignment,ربط قائمة بعلامة تجارية
+Brand essentials,بيانات العلامة التجارية
+Brands,العلامات التجارية
+Brands available here,العلامات المتاحة في الفرع
+Business Date,يوم العمل
+Can Be Sold Separately,يمكن بيعه منفصلًا
+Cancel Active Orders,إلغاء الطلبات النشطة
+Cancellation Acknowledged At,وقت الاطلاع على الإلغاء
+Cancellation Acknowledged By,اطلع على الإلغاء
+Cancellation History,سجل الإلغاءات
+Cancellation Reason,سبب الإلغاء
+Cancellation and return reason,سبب الإلغاء والمرتجع
+Cancellation history,سجل الإلغاءات
+Cancellation notice,إشعار إلغاء
+Cancelled At,وقت الإلغاء
+Cancelled Quantity,الكمية الملغاة
+Capture Events Locally,تسجيل الأحداث محليًا
+Captured At,وقت التسجيل
+Cashier POS Profile,ملف نقطة البيع للكاشير
+Cashier Session,وردية الكاشير
+Cashier Session Payment,أرصدة وسائل الدفع بالوردية
+Cashier session,وردية الكاشير
+Categories in this menu,أقسام هذه القائمة
+Category Image,صورة القسم
+Category defaults,الإعدادات الافتراضية للقسم
+Category essentials,بيانات القسم
+Closed At,وقت الإغلاق
+Collapsed By Default,مطوية افتراضيًا
+Conditional Selling Prices,أسعار بيع بشروط
+Confirmed to Preparation,من التأكيد إلى التحضير
+Connection settings,إعدادات الاتصال
+Consumed At,وقت استخدام الموافقة
+Cost of Goods Sold Account,حساب تكلفة المبيعات
+Create and Complete Sales,إنشاء المبيعات وإتمامها
+Default Brand,العلامة الافتراضية
+Default Preparation Area,منطقة التحضير الافتراضية
+Default Store,الفرع الافتراضي
+Delivery Included,يشمل التوصيل
+Delivery details,تفاصيل الإرسال
+Device Name,اسم الجهاز
+Dining Area,منطقة الجلوس
+Dining Table,طاولة
+Dining area,منطقة الجلوس
+Disabled Order Types by Store,أنواع الطلبات المستبعدة حسب الفرع
+Discount Reason,سبب الخصم
+Discount Scope,نطاق الخصم
+Discount Value,قيمة الخصم
+"Discounts, returns and approvals",الخصومات والمرتجعات والموافقات
+Display Name,الاسم المعروض
+Display Order,ترتيب العرض
+Display in POS,العرض في نقطة البيع
+ERPNext Employee,الموظف المرتبط
+ERPNext Item,الصنف المخزني المرتبط
+ERPNext POS Closing Entry,مستند إغلاق نقطة البيع
+ERPNext POS Opening Entry,مستند فتح نقطة البيع
+Effective account roles,أدوار الحساب الفعلية
+Expense Category,تصنيف المصروف
+Expense category,تصنيف المصروف
+Expense details,تفاصيل المصروف
+Expense request,طلب مصروف
+Expires At,تنتهي في
+External Reference,المرجع الخارجي
+Failed Attempts,المحاولات غير الناجحة
+Fixed POS Approval Password,كلمة مرور اعتماد العمليات
+Frappe User,حساب المستخدم
+Group Name,اسم المجموعة
+Group essentials,بيانات المجموعة
+Guest,الضيف
+Guest / Check Label,اسم الضيف أو الحساب
+Guest Checks,حسابات الضيوف
+Has KDS,تفعيل شاشة المطبخ
+Has Options,له أحجام أو اختيارات
+Has Printer,تفعيل الطباعة
+Host / IP Address,عنوان الجهاز أو IP
+IPP URL,رابط طابعة IPP
+Idempotency Key,معرّف منع التكرار
+Internal approval data,بيانات الاعتماد الداخلية
+Is Modifier,صنف إضافة
+Is Waste,هالك
+Is Waste (Legacy),هالك — سجل سابق
+Item Cancellation Notice,إشعار إلغاء صنف
+Items to prepare,الأصناف المطلوب تحضيرها
+Kitchen Ticket,تذكرة المطبخ
+Kitchen Ticket Item,صنف تذكرة المطبخ
+Kitchen access,صلاحيات المطبخ
+Kitchen display and printing,شاشة المطبخ والطباعة
+Kitchen ticket,تذكرة المطبخ
+Last Error,آخر خطأ
+Limit brands and order types,تحديد العلامات وأنواع الطلبات
+Linked accounting documents,المستندات المحاسبية المرتبطة
+Linked system documents,مستندات النظام المرتبطة
+Local Event Capture,تسجيل الأحداث محليًا
+Location and notes,الموقع والملاحظات
+Manager Approval,موافقة المدير
+Manager approval password,كلمة مرور اعتماد المدير
+Manual Discount Applies On,يُطبّق الخصم اليدوي على
+Mark Orders Picked Up,تأكيد استلام الطلبات
+Maximum Manual Discount (%),أقصى خصم يدوي (%)
+Maximum Selections,الحد الأقصى للاختيارات
+Menu Name,اسم قائمة البيع
+Menu essentials,بيانات قائمة البيع
+Menus,قوائم البيع
+Menus available for this brand,قوائم البيع الخاصة بالعلامة
+Merge Draft Orders,دمج الطلبات المسودة
+Minimum Selections,الحد الأدنى للاختيارات
+Modifier Group,مجموعة إضافات
+Modifier Groups,مجموعات الإضافات
+Modifier Options,اختيارات الإضافات
+Modifier Product,صنف الإضافة
+Modifier groups and choices,مجموعات الإضافات واختياراتها
+Modifiers,الإضافات
+Multi-Level,وصفة متعددة المستويات
+One-Time Code Hash,بصمة كود الموافقة
+Opened At,وقت الفتح
+Opening and closing balances,أرصدة الفتح والإغلاق
+Opening hours,ساعات العمل
+Operating Day End,نهاية يوم العمل
+Operation Details,تفاصيل العملية
+Operation approval,موافقة العملية
+Operation details,تفاصيل العملية
+Option Attribute,خاصية الاختيار
+Option Parent,الصنف الأساسي للاختيارات
+Option Product,الصنف الفرعي
+Option Products,الأصناف الفرعية
+Order Comment,ملاحظة الطلب
+Order Item,صنف الطلب
+Order Item Names,معرّفات أصناف الطلب
+Order Type Account Mapping,حسابات نوع الطلب
+Order Type MultiSelect Option,اختيار نوع طلب
+Order Type Taxes,ضرائب أنواع الطلبات
+Order Types,أنواع الطلبات
+Order items,أصناف الطلب
+Order overview,ملخص الطلب
+Order type essentials,بيانات نوع الطلب
+POS Action Reason,سبب إجراء نقطة البيع
+POS Order,طلب نقطة البيع
+POS Order Guest Check,حساب ضيف بالطلب
+POS Order Item,صنف طلب نقطة البيع
+POS Order Item Cancellation,إلغاء صنف بالطلب
+POS Order Item Modifier,إضافة على صنف الطلب
+POS Order Item Recipe Line,مكونات صنف الطلب
+POS Order Payment,دفعة طلب نقطة البيع
+POS Return,مرتجع نقطة البيع
+POS Return Item,صنف مرتجع
+POS Return Payment,دفعة استرداد
+POS Rounding Method,طريقة تقريب نقطة البيع
+POS User,مستخدم نقطة البيع
+POS User Brand,علامة مسموحة للمستخدم
+POS User Order Type,نوع طلب مسموح للمستخدم
+POS User Preparation Area,منطقة تحضير مسموحة للمستخدم
+POS User Store,فرع المستخدم
+Parent Category,القسم الرئيسي
+Payload SHA-256,بصمة البيانات SHA-256
+Payload Schema Version,إصدار بنية البيانات
+Picked At,وقت الاستلام
+Preparation Area,منطقة التحضير
+Preparation and printing,التحضير والطباعة
+Preparation area,منطقة التحضير
+Preparation timeline,التسلسل الزمني للتحضير
+Print Device,طابعة
+Print Dispatch Job,مهمة طباعة
+Print Method,طريقة الطباعة
+Print Payload,بيانات الطباعة
+Print Routes,مسارات الطباعة
+Print job,مهمة الطباعة
+Printed At,وقت الطباعة
+Printer essentials,بيانات الطابعة
+Product Category,قسم المنتجات
+Product Image,صورة الصنف
+Product Name,اسم الصنف
+Product essentials,بيانات الصنف
+Queue Name,اسم قائمة انتظار الطباعة
+RMS Sync Event,حدث مزامنة RMS
+RMS Sync Settings,إعدادات مزامنة RMS
+Ready At,وقت الجاهزية
+Reason Snapshot,السبب وقت الطلب
+Receipt Attachment,مرفق الإيصال
+Recipe Snapshot,الوصفة وقت الطلب
+Recipe Stock Entry,حركة مخزون الوصفة
+Recipe and ingredients,الوصفة والمكونات
+Record Expenses Without Approval,تسجيل مصروفات دون موافقة
+Refund Payments,دفعات الاسترداد
+Refund Total,إجمالي الاسترداد
+Refund payments,دفعات الاسترداد
+Rejected At,وقت الرفض
+Rejected By,رفضه
+Rejection Reason,سبب الرفض
+Reprint Receipts,إعادة طباعة الإيصالات
+Requested By,طلبه
+Require External Reference,مرجع خارجي إلزامي
+Require Table,الطاولة إلزامية
+Resolved accounts,الحسابات المحددة تلقائيًا
+Restaurant Brand,علامة تجارية
+Return Items as Waste Without Approval,إرجاع الأصناف كهالك دون موافقة
+Return POS Invoice,فاتورة المرتجع
+Return request,طلب المرتجع
+Returned Items,الأصناف المرتجعة
+Returned Stock Entry,حركة مخزون المرتجع
+Returned items,الأصناف المرتجعة
+Returns Without Approval,مرتجعات دون موافقة
+Sales and order actions,صلاحيات البيع وإدارة الطلب
+Schema Version,إصدار البنية
+Selection Requirement,إلزام الاختيار
+Selection rules,قواعد الاختيار
+Selling Price,سعر البيع
+Selling Product,صنف بيع
+Selling Product Additional Recipe Line,مكونات إضافية للصنف
+Selling Product Modifier Group,مجموعة إضافات الصنف
+Selling Product Modifier Option,اختيار إضافة للصنف
+Selling Product Option,اختيار فرعي للصنف
+Selling Product Price Rule,قاعدة تسعير الصنف
+Selling Product Print Route,مسار تحضير الصنف
+Selling Product Recipe Line,مكونات وصفة الصنف
+Selling Product Store Availability,إتاحة الصنف في فرع
+Selling Product Store Order Type Exclusion,استبعاد نوع طلب للصنف في فرع
+Selling prices,أسعار البيع
+Sent At,وقت الإرسال
+Shift Expense,مصروف الوردية
+Sizes and variations,الأحجام والاختيارات
+Source Document,المستند المصدر
+Source Modified,آخر تعديل للمصدر
+Source POS Invoice,فاتورة البيع الأصلية
+Source POS Invoice Item,بند الفاتورة الأصلية
+Source document,المستند المصدر
+Split Table Checks,تقسيم حسابات الطاولة
+Start and Prepare Kitchen Orders,بدء تحضير طلبات المطبخ
+Stock document,مستند المخزون
+Stock to be written off,المخزون المراد تسجيله كهالك
+Store,الفرع
+Store Availability,الفروع المتاح فيها الصنف
+Store Brand Assignment,علامة تجارية بفرع
+Store Code,كود الفرع
+Store Company,شركة الفرع
+Store Menu,قائمة بيع
+Store Menu Category,قسم قائمة البيع
+Store Name,اسم الفرع
+Store Order Type Tax,ضريبة نوع طلب بالفرع
+Store User Assignment,مستخدم مسموح له بالفرع
+Store Working Hour,ساعات عمل الفرع
+Store access,صلاحيات الوصول للفرع
+Store defaults,الإعدادات الافتراضية للفرع
+Store essentials,بيانات الفرع
+Stores and cashier profiles,الفروع وملفات الكاشير
+Sub Recipe,وصفة فرعية
+Synchronization event,حدث المزامنة
+System details,تفاصيل النظام
+Table Check Group,مجموعة حسابات الطاولة
+Table Name / Number,اسم الطاولة أو رقمها
+Table essentials,بيانات الطاولة
+Taxes and checkout,الضرائب وإتمام البيع
+Technical payload,البيانات التقنية
+Totals and discount,الإجماليات والخصم
+Transfer Orders Between Tables,نقل الطلبات بين الطاولات
+User essentials,بيانات المستخدم
+View Closed Sales History,عرض سجل المبيعات المغلقة
+View Dining Tables,عرض الطاولات
+View Kitchen Display,عرض شاشة المطبخ
+View Open Orders,عرض الطلبات المفتوحة
+Void Confirmed Items Without Approval,إلغاء أصناف مؤكدة دون موافقة
+Void Items as Waste Without Approval,إلغاء الأصناف كهالك دون موافقة
+Warehouse and POS defaults,إعدادات المخزون ونقطة البيع
+Waste,الهالك
+Waste Entry,تسجيل هالك
+Waste Entry Item,صنف هالك
+Waste Items,أصناف الهالك
+Waste Stock Entry,حركة مخزون الهالك
+Waste record,سجل الهالك
+What this user can see,ما يمكن لهذا المستخدم عرضه
+With Recipe,له وصفة مكونات
+RMS / Operations,RMS / العمليات
+RMS / Setup,RMS / الإعداد
+Form sections,أقسام النموذج
+{0} required fields remaining,متبقي {0} حقول مطلوبة
+Required fields complete,الحقول المطلوبة مكتملة
+Product setup,إعداد الصنف
+Store setup,إعداد الفرع
+Cashier access,صلاحيات الكاشير
+Modifier rules,قواعد الإضافات
+Organize your catalog,تنظيم أقسام المنتجات
+Brand setup,إعداد العلامة التجارية
+Build a menu,إنشاء قائمة بيع
+Dining layout,تنظيم مناطق الجلوس
+Table setup,إعداد الطاولة
+Kitchen and preparation,المطبخ والتحضير
+Printer connection,اتصال الطابعة
+Order behavior,سلوك نوع الطلب
+Expense accounts,حسابات المصروف
+Operational reasons,أسباب الإجراءات
+Order record,سجل الطلب
+Return review,مراجعة المرتجع
+Expense review,مراجعة المصروف
+Kitchen progress,متابعة المطبخ
+Stock write-off,تسجيل الهالك المخزني
+Print delivery,متابعة الطباعة
+Synchronization log,سجل المزامنة
+Synchronization settings,إعدادات المزامنة
+Up to {0},بحد أقصى {0}
+Choose at most {0} option(s) from Modifier Group {1}.,اختر بحد أقصى {0} من مجموعة الإضافات {1}.
+Maximum Selections cannot be negative.,الحد الأقصى للاختيارات لا يمكن أن يكون سالبًا.
+Maximum Selections cannot exceed one for a single-choice group.,الحد الأقصى لا يمكن أن يتجاوز اختيارًا واحدًا في المجموعة أحادية الاختيار.
+Maximum Selections cannot be lower than Minimum Selections.,الحد الأقصى للاختيارات لا يمكن أن يكون أقل من الحد الأدنى.
+Lower numbers appear first.,الأرقام الأقل تظهر أولًا.
+Add rows here. Open a row to see all its settings.,أضف الصفوف هنا. افتح الصف لعرض إعداداته كاملة.
+"Start with the product identity, then configure prices, ingredients and availability.",ابدأ ببيانات الصنف، ثم اضبط أسعاره ومكوناته والفروع المتاح فيها.
+"Choose the company first, assign one default brand, then configure taxes and cashier defaults.",اختر الشركة أولًا، وحدد علامة افتراضية واحدة، ثم اضبط الضرائب وإعدادات الكاشير.
+"Assign stores first. Choose what this person can see and do, then limit their scope if needed.",حدد الفروع أولًا، ثم اختر ما يمكن للمستخدم عرضه وتنفيذه، وقيّد نطاقه عند الحاجة.
+"Set the minimum and maximum choices, then decide how this group appears in the cashier screen.",حدد الحد الأدنى والأقصى للاختيارات، ثم اضبط طريقة عرض المجموعة للكاشير.
+Use a parent group for navigation and leaf categories for products. Defaults are inherited by products.,استخدم الأقسام الرئيسية للتنقل والأقسام الفرعية للمنتجات. ترث المنتجات الإعدادات الافتراضية للقسم.
+"Set the brand identity and rounding preference, then assign its menus.",أدخل بيانات العلامة وطريقة التقريب، ثم اربط قوائم البيع بها.
+"Choose its brand, then add categories in the order you want customers and cashiers to see them.",اختر العلامة، ثم أضف الأقسام بالترتيب المطلوب للعملاء والكاشير.
+"Choose the store, then optionally limit this area to one of its brands.",اختر الفرع، ويمكنك تخصيص المنطقة لإحدى علاماته التجارية.
+"Choose the store and dining area, then set the table capacity.",اختر الفرع ومنطقة الجلوس، ثم حدد عدد المقاعد بالطاولة.
+"Choose the store and enable the kitchen display, printing, or both.",اختر الفرع، ثم فعّل شاشة المطبخ أو الطباعة أو كليهما.
+Choose the printing method. Only the relevant connection settings are shown.,اختر طريقة الطباعة، وستظهر إعدادات الاتصال الخاصة بها فقط.
+"Choose the information this order type needs, then map its accounts by company.",حدد البيانات المطلوبة لهذا النوع من الطلبات، ثم اربط حساباته حسب الشركة.
+Choose the company first. Available expense accounts and cost centers follow that company.,اختر الشركة أولًا. ستظهر حسابات المصروف ومراكز التكلفة التابعة لها.
+"Use clear reasons that cashiers can select for cancellations, returns, or both.",اكتب أسبابًا واضحة يختار منها الكاشير عند الإلغاء أو المرتجع أو كليهما.
+Use the cashier screen to open and close sessions. This record shows balances and linked documents.,افتح الوردية وأغلقها من شاشة الكاشير. يعرض هذا السجل الأرصدة والمستندات المرتبطة.
+"Review items, totals and payments here. Manage the order from the cashier screen.",راجع الأصناف والإجماليات والمدفوعات هنا، وأدر الطلب من شاشة الكاشير.
+"Review returned quantities, refund payments and the manager approval history.",راجع الكميات المرتجعة ودفعات الاسترداد وسجل موافقة المدير.
+"Review the expense, its resolved accounts and approval status. Cashiers create requests from POS.",راجع المصروف وحساباته وحالة الموافقة. ينشئ الكاشير الطلب من نقطة البيع.
+Track preparation and cancellation notices. Kitchen actions are performed from the kitchen display.,تابع التحضير وإشعارات الإلغاء. تُنفذ إجراءات المطبخ من شاشته المخصصة.
+"Choose the product, quantity and warehouse. The stock movement remains linked to this record.",اختر الصنف والكمية والمخزن. تظل حركة المخزون مرتبطة بهذا السجل.
+Review the requested operation and approval status. Codes and authorization are handled by the existing approval flow.,راجع العملية المطلوبة وحالة الموافقة. تُدار الأكواد والتصاريح من مسار الاعتماد المخصص.
+"Review the printer, source document and delivery result. Existing retry actions remain available.",راجع الطابعة والمستند المصدر ونتيجة الإرسال. تظل إجراءات إعادة المحاولة متاحة.
+Read-only technical evidence of a captured change. Expand the payload only when investigating an issue.,سجل تقني للقراءة فقط يوثق التغيير المسجل. افتح البيانات التفصيلية عند فحص مشكلة.
+Choose whether changes are captured. The schema version is managed by the system.,حدد تفعيل تسجيل التغييرات. يدير النظام إصدار بنية البيانات.
+"For multiple-choice groups, 0 means no maximum. Single-choice groups always allow one choice.",في المجموعات متعددة الاختيارات، 0 يعني بلا حد أقصى. المجموعة أحادية الاختيار تسمح باختيار واحد دائمًا.
+Minimum distinct choices. 0 makes the group optional by default; each product can override whether it is required.,أقل عدد من الاختيارات المختلفة. 0 يجعل المجموعة اختيارية افتراضيًا، ويمكن تخصيص الإلزام لكل صنف.
+Use a recipe for prepared products. A stock-tracked product cannot also have a recipe.,استخدم الوصفة للأصناف المحضرة. لا يمكن جمع متابعة مخزون الصنف مع وصفة مكونات.
+"A parent groups separately priced products, such as sizes. Clear parent prices and recipes before enabling; a stock-tracked product cannot be a parent.",يجمع الصنف الأساسي اختيارات لها أسعار مستقلة مثل الأحجام. أزل أسعار ووصفة الصنف الأساسي قبل التفعيل. لا يمكن أن يكون الصنف المتابع مخزنيًا صنفًا أساسيًا للاختيارات.
+"Optional. Choose a store and its warehouse together, or leave both empty to inherit category/store defaults.",اختياري. اختر الفرع ومخزنه معًا، أو اتركهما فارغين لاستخدام الإعدادات الافتراضية للقسم والفرع.
+Required for a product category that is not a parent group. Select a leaf stock item group.,مطلوب للقسم الذي لا يمثل مجموعة رئيسية. اختر مجموعة أصناف مخزنية نهائية.
+Only the connection fields for your selected printing method are shown.,تظهر حقول الاتصال الخاصة بطريقة الطباعة المختارة فقط.
+"Optional overrides by store, order type or brand. Each row needs at least one condition. Lower priority numbers win; the base price is the fallback.",أسعار بديلة حسب الفرع أو نوع الطلب أو العلامة. كل صف يحتاج شرطًا واحدًا على الأقل. رقم الأولوية الأقل يطبق أولًا، وإلا يستخدم السعر الأساسي.
+Leave empty to allow this product in all enabled stores. Otherwise only the listed stores can sell it.,اتركه فارغًا لإتاحة الصنف في كل الفروع المفعلة، أو حدد الفروع التي تبيعه فقط.
+Exclude only the selected store and order-type combinations.,استبعد الصنف من تركيبات الفرع ونوع الطلب المحددة فقط.
+Choose the groups offered with this product. Default uses the group minimum; Optional and Required override it for this product.,اختر مجموعات الإضافات المعروضة مع الصنف. الافتراضي يستخدم حد المجموعة الأدنى، والاختياري والإجباري يخصصان الإلزام لهذا الصنف.
+Add only modifier products from the groups selected above. Prices in these rows apply to this product only.,أضف أصناف الإضافات للمجموعات المختارة بالأعلى فقط. أسعار هذه الصفوف تخص هذا الصنف فقط.
+Quantities are for one product unit. Ingredient units and costs are resolved from the linked stock item.,الكميات لوحدة واحدة من المنتج. تُجلب وحدات المكونات وتكلفتها من الصنف المخزني المرتبط.
+"Extra ingredients used only for the selected order types, such as takeaway packaging.",مكونات إضافية تُستهلك مع أنواع الطلبات المحددة فقط، مثل عبوات السفري.
+Route this product to preparation areas in each selected store. Empty routes inherit category/store defaults.,حدد مناطق تحضير الصنف بكل فرع. عند تركه فارغًا تُستخدم إعدادات القسم والفرع الافتراضية.
+Add each brand once and select exactly one default brand.,أضف كل علامة مرة واحدة وحدد علامة افتراضية واحدة فقط.
+Used for users without a POS User assignment. Cashier access is configured in POS User stores.,للمستخدمين غير المسجلين كمستخدم نقطة بيع. صلاحيات الكاشير تحدد من فروع مستخدم نقطة البيع.
+Each order type has one tax template from this store company.,لكل نوع طلب قالب ضريبة واحد تابع لشركة الفرع.
+Add the trading hours for each day. An end time before the start time means the shift crosses midnight.,أضف ساعات العمل لكل يوم. وقت النهاية الأقل من البداية يعني أن الفترة تمتد بعد منتصف الليل.
+Assign stores and optionally a cashier-specific POS profile from that store company. Select at most one default store.,حدد الفروع، ويمكن تخصيص ملف نقطة بيع للكاشير من شركة الفرع. حدد فرعًا افتراضيًا واحدًا على الأكثر.
+"Save the brand first, then assign enabled menus belonging to it.",احفظ العلامة أولًا، ثم اربط قوائم البيع المفعلة التابعة لها.
+Add enabled categories once each. Display Order controls their order within this menu.,أضف الأقسام المفعلة دون تكرار. يتحكم ترتيب العرض في موضعها داخل القائمة.
+Unsupported RMS link target.,نوع الربط غير مدعوم في نماذج RMS.
+Choose valid stores before selecting this field.,اختر فروعًا صحيحة قبل تحديد هذا الحقل.
+User Account,حساب المستخدم
+Stock Item,الصنف المخزني
+POS Opening Document,مستند فتح نقطة البيع
+POS Closing Document,مستند إغلاق نقطة البيع
+Name is filled from the selected user account.,يُجلب الاسم من حساب المستخدم المختار.
+Effective account roles. POS permissions can restrict access; they do not replace the required account roles.,أدوار الحساب الفعلية. يمكن لصلاحيات نقطة البيع تقييد الوصول، لكنها لا تحل محل أدوار الحساب المطلوبة.
+"Separate encrypted approval password for discounts, voids and returns. This is not your sign-in password.",كلمة مرور مشفرة مستقلة لاعتماد الخصومات والإلغاءات والمرتجعات. ليست كلمة مرور تسجيل الدخول.
+Assign a separate accounting POS Profile when this Store needs concurrent cashier sessions. Leave blank to use the Store default.,خصص ملف نقطة بيع مستقلًا عند الحاجة لورديات كاشير متزامنة في الفرع. اتركه فارغًا لاستخدام ملف الفرع الافتراضي.
+Basic required fields complete,الحقول الأساسية المطلوبة مكتملة
+"Record operating time ranges for each day, optionally by order type.",سجل فترات العمل لكل يوم، ويمكن تخصيصها حسب نوع الطلب.
+"Save the store first, then select one of its preparation areas.",احفظ الفرع أولًا، ثم اختر إحدى مناطق التحضير التابعة له.
+Remove the recipe rows before turning off the recipe. Your ingredients have been kept.,احذف صفوف المكونات أولًا قبل إلغاء تفعيل الوصفة. تم الاحتفاظ بمكوناتك.
+Advanced price rules,قواعد تسعير متقدمة
+Enabled,مفعّل
+Disabled,غير مفعّل
+Is Group,قسم رئيسي
+Maintain Stock,متابعة مخزون الصنف
+Allow Negative Stock,السماح بالمخزون السالب
+Add Row,إضافة صف
+No Data,لا توجد بيانات
+Attach,إرفاق
+Expand Row,فتح الصف
+Insert Above,إدراج صف بالأعلى
+Insert Below,إدراج صف بالأسفل
+Optional groups can start collapsed. Required groups start open so the cashier can see the required choices.,يمكن أن تبدأ المجموعات الاختيارية مطوية. تبدأ المجموعات الإجبارية مفتوحة ليشاهد الكاشير الاختيارات المطلوبة.
+Allow POS sales when this item's available stock is insufficient.,السماح ببيع الصنف من نقطة البيع عند عدم كفاية رصيده المخزني.
+"Allows adding items and confirming them for preparation. The cashier who opened the order remains responsible for payment, cancellation and session accounting.",يسمح بإضافة الأصناف وتأكيدها للتحضير. يظل الكاشير الذي فتح الطلب مسؤولًا عن الدفع والإلغاء وحسابات الوردية.
+"Also requires a POS Cashier, POS Manager, System Manager, or Kitchen Operator role.",يتطلب أيضًا دور كاشير أو مدير نقطة بيع أو مدير نظام أو مسؤول مطبخ.
+Append-only record of manager-approved cancellations after kitchen confirmation.,سجل تراكمي للإلغاءات المعتمدة من المدير بعد تأكيد الطلب للمطبخ.
+Approved,معتمد
+Assigned through the POS cashier session; change Store by starting a new POS session.,يُحدد من وردية الكاشير. لتغيير الفرع ابدأ وردية جديدة في نقطة البيع.
+Attribute displayed as the choice heading in POS. Set an Attribute Value for every option.,الخاصية التي تظهر كعنوان للاختيار في نقطة البيع. أدخل قيمة للخاصية في كل اختيار.
+Captured in POS checkout with the manual discount.,يُسجل من شاشة الدفع مع الخصم اليدوي.
+Cashier discounts use this base and cannot change it at checkout.,تستخدم خصومات الكاشير هذا الأساس، ولا يمكن تغييره أثناء الدفع.
+Choose or change the customer from the POS order screen.,اختر العميل أو غيّره من شاشة الطلب في نقطة البيع.
+Closing,جارٍ الإغلاق
+Confirmed Item Cancellation,إلغاء صنف مؤكد
+Controlled by the Store manual discount setting; not selectable by the cashier.,يتحدد من إعداد الخصم اليدوي للفرع، ولا يختاره الكاشير.
+Controls whole-EGP rounding for the final POS payable.,يتحكم في تقريب المبلغ النهائي المستحق بنقطة البيع إلى جنيه كامل.
+Created by POS checkout and matched to the submitted POS Invoice.,تُنشأ من الدفع في نقطة البيع وتطابق فاتورة البيع المعتمدة.
+Default uses the Modifier Group minimum. Optional allows skipping this group for this product. Required needs at least one choice for this product.,الافتراضي يستخدم الحد الأدنى للمجموعة. الاختياري يسمح بتخطيها لهذا الصنف، والإجباري يتطلب اختيار عنصر واحد على الأقل.
+Entered in POS when the selected Order Type requires an external reference.,يُدخل في نقطة البيع عندما يتطلب نوع الطلب مرجعًا خارجيًا.
+IPP,IPP
+"If disabled, POS expenses require an operation-specific manager approval code.",عند إيقافه تحتاج مصروفات نقطة البيع إلى كود موافقة مدير خاص بالعملية.
+"If disabled, completing a return requires manager password or a one-time code.",عند إيقافه يتطلب إتمام المرتجع كلمة مرور المدير أو كود موافقة يستخدم مرة واحدة.
+"If disabled, this operation requires a different authorized manager’s fixed password or one-time code.",عند إيقافه تحتاج العملية إلى كلمة مرور ثابتة أو كود لمرة واحدة من مدير آخر مخوّل.
+In Preparation,قيد التحضير
+Inherited from the Cashier Session when the POS order is created.,يُجلب من وردية الكاشير عند إنشاء طلب نقطة البيع.
+Leave empty to allow all Brands available in the assigned Stores.,اتركه فارغًا للسماح بكل العلامات المتاحة في الفروع المخصصة.
+Leave empty to allow all Order Types available in the assigned Stores.,اتركه فارغًا للسماح بكل أنواع الطلبات المتاحة في الفروع المخصصة.
+Leave empty to allow all Preparation Areas in the assigned Stores.,اتركه فارغًا للسماح بكل مناطق التحضير المتاحة في الفروع المخصصة.
+Maximum discount this POS User can apply without approval. Larger discounts require authorization from a POS Manager.,أقصى خصم يستطيع المستخدم تطبيقه دون موافقة. الخصومات الأعلى تتطلب اعتماد مدير نقطة البيع.
+Nearest,لأقرب عدد صحيح
+Network Socket,اتصال شبكي مباشر
+No Rounding,دون تقريب
+Optional label that identifies a guest's separate check at this table.,اسم اختياري يميز الحساب المنفصل لأحد ضيوف الطاولة.
+POS opens this Store by default when the cashier has no active session. Assign one default Store per POS User.,يفتح هذا الفرع افتراضيًا عندما لا توجد وردية نشطة للكاشير. حدد فرعًا افتراضيًا واحدًا لكل مستخدم نقطة بيع.
+Pending Confirmation,بانتظار التأكيد
+Picked,تم الاستلام
+Printed,تمت الطباعة
+Ready,جاهز
+Recorded text snapshot retained for return history.,نص السبب المحفوظ وقت العملية للاحتفاظ بسجل المرتجع.
+Records approved RMS master changes in the local journal. Events are not sent to another site.,يسجل تغييرات بيانات RMS الأساسية المسموح بها في السجل المحلي، ولا يرسل الأحداث إلى موقع آخر.
+Required,إجباري
+Resolved from Store and Order Type tax settings; managed by POS.,يُحدد من ضرائب الفرع ونوع الطلب، وتديره نقطة البيع.
+"Restricts cancellation acknowledgement. Acknowledging tickets also requires the Kitchen Operator, POS Manager, or System Manager role.",يقيّد تأكيد الاطلاع على الإلغاءات. يتطلب الإجراء أيضًا دور مسؤول مطبخ أو مدير نقطة بيع أو مدير نظام.
+"Restricts kitchen preparation actions. Starting or preparing tickets also requires the Kitchen Operator, POS Manager, or System Manager role.",يقيّد إجراءات التحضير. يتطلب بدء التحضير أيضًا دور مسؤول مطبخ أو مدير نقطة بيع أو مدير نظام.
+"Restricts pickup actions. Marking tickets picked up also requires the Kitchen Operator, POS Manager, or System Manager role.",يقيّد تأكيد الاستلام. يتطلب الإجراء أيضًا دور مسؤول مطبخ أو مدير نقطة بيع أو مدير نظام.
+"Review items here. Add, edit, or confirm them through the cashier POS.",راجع الأصناف هنا، وأضفها أو عدّلها أو أكدها من شاشة الكاشير.
+Round Down,تقريب لأسفل
+Round Up,تقريب لأعلى
+Select enabled Order Types. Choices are loaded from the Order Type records.,اختر أنواع الطلبات المفعلة. تُجلب الاختيارات من سجلات أنواع الطلبات.
+Select or transfer tables from the POS Tables screen.,اختر الطاولات أو انقلها من شاشة الطاولات بنقطة البيع.
+Select the login account. Display name and effective roles are fetched from this User.,اختر حساب تسجيل الدخول. يُجلب الاسم المعروض والأدوار الفعلية من الحساب.
+Selected for the sale in POS and locked on this order record.,يُختار أثناء البيع في نقطة البيع، ويُقفل للتعديل في سجل الطلب.
+Separate item-level checks and their submitted POS Invoices.,الحسابات المنفصلة على مستوى الأصناف وفواتير البيع المعتمدة المرتبطة بها.
+Set and validated through POS checkout. The discount scope comes from Store settings.,تُحدد وتُراجع من شاشة الدفع. يأتي نطاق الخصم من إعدادات الفرع.
+Set from the selected dining table in POS.,يُحدد من الطاولة المختارة في نقطة البيع.
+Set through the POS checkout discount controls.,يُحدد من أدوات الخصم بشاشة الدفع.
+Set when POS creates the order; keeps the sale attributed to its cashier session.,يُحدد عند إنشاء الطلب، ويحافظ على ربط البيع بوردية الكاشير.
+System Queue,قائمة انتظار النظام
+"When disabled, a user can choose at most one option from this group.",عند إيقافه يمكن اختيار عنصر واحد فقط من هذه المجموعة.
+insert,إنشاء
+rename,إعادة تسمية
+update,تحديث
+A Base Recipe Item can only appear once.,لا يمكن تكرار المكوّن في الوصفة الأساسية.
+A Menu can only be assigned once to a Brand.,لا يمكن ربط قائمة البيع بالعلامة التجارية أكثر من مرة.
+A Modifier Group can only be added once.,لا يمكن إضافة مجموعة الإضافات أكثر من مرة.
+A POS User record already exists for this Frappe User.,يوجد مستخدم نقطة بيع مسجل لهذا الحساب بالفعل.
+A Product Category can only appear once in a Menu.,لا يمكن تكرار القسم داخل قائمة البيع.
+A Product Category cannot be its own parent.,لا يمكن أن يكون القسم تابعًا لنفسه.
+A Product Category cannot be moved under one of its own descendants.,لا يمكن نقل القسم ليصبح تابعًا لأحد أقسامه الفرعية.
+A Store and Order Type exclusion can only appear once.,لا يمكن تكرار استبعاد نوع الطلب لنفس الفرع.
+A Store and Preparation Area print route can only appear once.,لا يمكن تكرار مسار الطباعة لنفس الفرع ومنطقة التحضير.
+A Store can only be assigned once.,لا يمكن تخصيص نفس الفرع أكثر من مرة.
+A brand can only be added once to a Store.,لا يمكن إضافة العلامة التجارية لنفس الفرع أكثر من مرة.
+A conditional price condition set can only appear once.,لا يمكن تكرار نفس شروط السعر البديل.
+Account {0} must be a ledger account for Company {1}.,يجب أن يكون الحساب {0} حسابًا فرعيًا تابعًا للشركة {1}.
+Account {0} must have Root Type {1}.,يجب أن يكون النوع الأساسي للحساب {0} هو {1}.
+Add at least one option product.,أضف صنفًا فرعيًا واحدًا على الأقل للاختيارات.
+Additional Recipe quantities must be greater than zero.,يجب أن تكون كميات المكونات الإضافية أكبر من صفر.
+An Additional Recipe Item can only appear once per Order Type.,لا يمكن تكرار المكوّن الإضافي لنفس نوع الطلب.
+An Options parent cannot also be maintained as a stock product.,لا يمكن متابعة المخزون للصنف الأساسي الذي يجمع الاختيارات.
+An Order Type can only have one account mapping per Company.,يسمح بربط حسابات واحد لكل نوع طلب وشركة.
+An item can only be selected once in {0}.,لا يمكن تكرار العنصر في {0}.
+An options parent cannot have a recipe.,لا يمكن إضافة وصفة للصنف الأساسي الذي يجمع الاختيارات.
+Assign this POS User to at least one Store.,خصص فرعًا واحدًا على الأقل لمستخدم نقطة البيع.
+Attribute Value must be a number.,يجب أن تكون قيمة الخاصية رقمًا.
+Brand Code must be unique.,كود العلامة التجارية مستخدم من قبل. اختر كودًا مختلفًا.
+Brand {0} is disabled.,العلامة التجارية {0} غير مفعلة.
+Capacity must be at least one person.,يجب أن تتسع الطاولة لشخص واحد على الأقل.
+Cashier POS Profile must be enabled and belong to the assigned Store Company.,يجب تفعيل ملف نقطة البيع للكاشير، وأن يكون تابعًا لشركة الفرع المخصص.
+"Choose Default, Optional or Required for Selection Requirement.",اختر افتراضي أو اختياري أو إجباري في إلزام الاختيار.
+Choose a leaf Item Group for this Product Category.,اختر مجموعة أصناف مخزنية نهائية لهذا القسم.
+Choose a non-group Cost Center from the selected Company.,اختر مركز تكلفة نهائيًا تابعًا للشركة المختارة.
+Choose a non-group Expense Account from the selected Company.,اختر حساب مصروف فرعيًا تابعًا للشركة المختارة.
+Choose a supported Print Method.,اختر طريقة طباعة مدعومة.
+Choose an enabled Option Attribute.,اختر خاصية اختيارات مفعلة.
+Choose an enabled Store before assigning a POS Profile.,اختر فرعًا مفعّلًا قبل تخصيص ملف نقطة البيع.
+Choose at least one Order Type for each Additional Recipe row.,اختر نوع طلب واحدًا على الأقل لكل صف مكونات إضافية.
+"Choose both Store and Warehouse, or leave both empty to use fallback defaults.",اختر الفرع والمخزن معًا، أو اتركهما فارغين لاستخدام الإعدادات الافتراضية.
+Choose either a stock Item or a Recipe; a product cannot be both.,اختر متابعة المخزون أو وصفة المكونات، ولا يمكن الجمع بينهما لنفس الصنف.
+Collapsed By Default requires Allow Collapse.,لتفعيل الطي الافتراضي، فعّل السماح بطي المجموعة أولًا.
+Default Preparation Area must be enabled.,يجب تفعيل منطقة التحضير الافتراضية.
+Default Preparation Area must belong to this Store.,يجب أن تكون منطقة التحضير الافتراضية تابعة لهذا الفرع.
+Default Warehouse must be an enabled leaf Warehouse belonging to the selected Company.,يجب أن يكون المخزن الافتراضي مخزنًا نهائيًا مفعّلًا تابعًا للشركة المختارة.
+Default Warehouse must be an enabled leaf Warehouse belonging to the selected Store's Company.,يجب أن يكون المخزن الافتراضي مخزنًا نهائيًا مفعّلًا تابعًا لشركة الفرع المختار.
+Default Warehouse must be an enabled leaf Warehouse.,يجب أن يكون المخزن الافتراضي مخزنًا نهائيًا مفعّلًا.
+Dining Area must belong to an enabled Store.,يجب أن تتبع منطقة الجلوس فرعًا مفعّلًا.
+Dining Area must belong to the selected Store.,يجب أن تكون منطقة الجلوس تابعة للفرع المختار.
+Dining Table must belong to an enabled Store.,يجب أن تكون الطاولة تابعة لفرع مفعّل.
+Each Order Type can have only one tax template per Store.,لكل نوع طلب قالب ضريبة واحد فقط في الفرع.
+Each Selling Product must own a unique ERPNext Item.,يجب ربط كل صنف بيع بصنف مخزني مستقل.
+Each assigned Menu must be enabled and belong to this Brand.,يجب أن تكون كل قائمة بيع مرتبطة مفعلة وتابعة لهذه العلامة.
+Each conditional price needs at least one condition.,أدخل شرطًا واحدًا على الأقل لكل سعر بديل.
+Each option must be an enabled Selling Product.,يجب أن يكون كل اختيار صنف بيع مفعّلًا.
+Each option must have a different Attribute Value.,يجب أن تختلف قيمة الخاصية بين الاختيارات.
+Enter a reason.,أدخل السبب.
+Every Modifier Option must belong to a Modifier Group enabled on this product.,يجب أن يتبع كل اختيار إضافة مجموعة مفعلة ضمن هذا الصنف.
+Expense Account must use the Company currency.,يجب أن تكون عملة حساب المصروف هي عملة الشركة.
+IPP printing requires an IPP URL.,أدخل رابط خدمة IPP لاستخدام هذه الطريقة في الطباعة.
+Maximum manual discount must be between 0% and 100%.,يجب أن يكون أقصى خصم يدوي بين 0% و100%.
+Menu categories must be enabled Product Categories.,يجب أن تكون أقسام قائمة البيع مفعلة.
+Menu must belong to an enabled Brand.,يجب أن تتبع قائمة البيع علامة تجارية مفعلة.
+Minimum Selections cannot be negative.,الحد الأدنى للاختيارات لا يمكن أن يكون سالبًا.
+Minimum Selections cannot exceed one for a single-choice group.,الحد الأدنى لا يمكن أن يتجاوز اختيارًا واحدًا في المجموعة أحادية الاختيار.
+Modifier Group {0} is disabled.,مجموعة الإضافات {0} غير مفعلة.
+Modifier Options must reference enabled products marked Is Modifier.,اختر أصنافًا مفعلة ومحددة كأصناف إضافات.
+Multi-Level can only be selected when Sub Recipe is enabled.,لا يمكن تفعيل المستويات المتعددة إلا عند تفعيل الوصفة الفرعية.
+Network Socket printing requires a Host / IP Address and Port.,أدخل عنوان الجهاز أو IP ورقم المنفذ للطباعة بالاتصال الشبكي المباشر.
+"No Selling Price matches this Store, Order Type, and Brand.",لا يوجد سعر بيع مناسب لهذا الفرع ونوع الطلب والعلامة التجارية.
+Only one Store can be the default for a POS User.,يمكن تحديد فرع افتراضي واحد فقط لمستخدم نقطة البيع.
+Order Type exclusions must reference an enabled Order Type.,يجب أن تستخدم الاستثناءات نوع طلب مفعّلًا.
+Order Type exclusions must reference an enabled Store.,يجب أن تستخدم الاستثناءات فرعًا مفعّلًا.
+Order Type {0} is disabled.,نوع الطلب {0} غير مفعّل.
+POS Profile must be enabled and belong to the Store Company.,يجب أن يكون ملف نقطة البيع مفعّلًا وتابعًا لشركة الفرع.
+Parent Product Category must be enabled and marked Is Group.,يجب أن يكون القسم الرئيسي مفعّلًا ومحددًا كقسم رئيسي.
+Port must be between 1 and 65535.,يجب أن يكون رقم المنفذ بين 1 و65535.
+Preparation Area must belong to an enabled Store.,يجب أن تكون منطقة التحضير تابعة لفرع مفعّل.
+Preparation Area must belong to the Store selected on its print route.,يجب أن تكون منطقة التحضير تابعة للفرع المحدد في مسار الطباعة.
+Preparation Area must have KDS or Printer output enabled before it can be routed.,فعّل شاشة المطبخ أو الطباعة في منطقة التحضير قبل إضافتها لمسار التحضير.
+Price rule Brand must be assigned to its Store.,يجب أن تكون العلامة المحددة في قاعدة السعر مرتبطة بالفرع.
+Price rules cannot target a disabled Brand.,لا يمكن تخصيص سعر لعلامة تجارية غير مفعلة.
+Price rules cannot target a disabled Order Type.,لا يمكن تخصيص سعر لنوع طلب غير مفعّل.
+Price rules cannot target a disabled Store.,لا يمكن تخصيص سعر لفرع غير مفعّل.
+Priority must be zero or a positive number; lower numbers take precedence.,يجب أن تكون الأولوية صفرًا أو رقمًا موجبًا. الأرقام الأقل تطبق أولًا.
+Recipe components must be ERPNext Items with Maintain Stock enabled.,يجب أن تكون مكونات الوصفة أصنافًا مخزنية مفعّلة لمتابعة المخزون.
+Recipe quantities must be greater than zero.,يجب أن تكون كميات مكونات الوصفة أكبر من صفر.
+Recipe rows require With Recipe to be enabled.,فعّل وصفة المكونات قبل إضافة صفوفها.
+Select a Print Device when Has Printer is enabled.,اختر طابعة عند تفعيل الطباعة.
+Select a Product Category and Unit of Measure before saving.,اختر قسم الصنف ووحدة القياس قبل الحفظ.
+Select a reason.,اختر السبب.
+Select an Item Group for each leaf Product Category.,اختر مجموعة أصناف مخزنية لكل قسم نهائي.
+Select an active ERPNext Employee.,اختر موظفًا نشطًا.
+Select an enabled Frappe User.,اختر حساب مستخدم مفعّلًا.
+Select an enabled Product Category with an Item Group.,اختر قسمًا مفعّلًا مرتبطًا بمجموعة أصناف مخزنية.
+Select enabled Stores only.,اختر فروعًا مفعلة فقط.
+Select enabled {0} records only.,اختر سجلات مفعلة من {0} فقط.
+Select exactly one default Brand for this Store.,حدد علامة تجارية افتراضية واحدة فقط لهذا الفرع.
+Selling Price cannot be negative.,سعر البيع لا يمكن أن يكون سالبًا.
+Selling Product options cannot contain a cycle.,لا يمكن أن ترجع اختيارات الصنف إلى نفسه مباشرة أو عبر أصناف أخرى.
+Sequence ID cannot be negative.,ترتيب العرض لا يمكن أن يكون سالبًا.
+Set a default currency before adding Selling Product prices.,حدد العملة الافتراضية قبل إضافة أسعار الأصناف.
+Set an Attribute Value for option {0}.,أدخل قيمة الخاصية للاختيار {0}.
+"Set prices on the option products, not on the options parent.",حدد الأسعار على الأصناف الفرعية بدل الصنف الأساسي الذي يجمع الاختيارات.
+Store Availability can only have one row per Store.,أضف كل فرع مرة واحدة فقط في إتاحة الصنف.
+Store Availability must reference an enabled Store.,يجب أن تكون الفروع المتاح بها الصنف مفعلة.
+"Sub Recipe requires an active, submitted BOM for Item {0}.",تحتاج الوصفة الفرعية إلى قائمة مكونات فعالة ومعتمدة للصنف {0}.
+System Queue printing requires a Queue Name.,أدخل اسم قائمة الانتظار للطباعة من النظام.
+The Brand must be assigned to this Store.,يجب أن تكون العلامة التجارية مرتبطة بهذا الفرع.
+The ERPNext Item is created automatically and cannot be selected manually.,يُنشأ الصنف المخزني تلقائيًا، ولا يمكن اختياره يدويًا.
+The Product Category Item Group cannot change after the linked Item is created.,لا يمكن تغيير مجموعة الأصناف المخزنية للقسم بعد إنشاء الصنف المرتبط.
+The Sales Taxes and Charges Template must belong to the Store Company.,يجب أن يكون قالب الضرائب والمصاريف تابعًا لشركة الفرع.
+The selected Employee is linked to a different Frappe User.,الموظف المختار مرتبط بحساب مستخدم آخر.
+The selected Print Device is disabled.,الطابعة المختارة غير مفعلة.
+The selected Store is disabled.,الفرع المختار غير مفعّل.
+This POS action reason is disabled.,سبب الإجراء المختار غير مفعّل.
+This reason is not available for {0}.,هذا السبب غير متاح لإجراء {0}.
+Unable to resolve currency for generated Price List {0}.,تعذر تحديد عملة قائمة الأسعار {0}.
+Unit of Measure and Maintain Stock must match the linked ERPNext Item.,يجب أن تطابق وحدة القياس وإعداد متابعة المخزون بيانات الصنف المخزني المرتبط.
+With Recipe requires at least one Base Recipe row.,أضف مكوّنًا واحدًا على الأقل عند تفعيل وصفة المكونات.
+{0} must be available in at least one assigned Store.,يجب أن يكون {0} متاحًا في فرع مخصص واحد على الأقل.
+Daily operations,التشغيل اليومي
+"Orders, shifts, expenses and approvals.",الطلبات والشيفتات والمصروفات والموافقات.
+Products and menus,المنتجات والمنيو
+"Build your catalog, variations and modifier choices.",تنظيم الأصناف والأحجام وخيارات الإضافات.
+Stores and cashier access,الفروع وصلاحيات الكاشير
+"Brands, stores, order types and cashier assignments.",العلامات التجارية والفروع وأنواع الطلب وربط الكاشير.
+Dining and preparation,الصالات والتحضير
+"Dining spaces, preparation areas and kitchen progress.",تنظيم الصالات والترابيزات ومناطق التحضير ومتابعة المطبخ.
+Payments and operational rules,الدفع وقواعد التشغيل
+"Payment methods, expense accounts and operation reasons.",طرق الدفع وحسابات المصروفات وأسباب الإلغاء والمرتجعات.
+Stock and waste,المخزون والهالك
+"Stock items, warehouse balances and product waste.",الأصناف المخزنية والمخازن وحركات المخزون والهالك.
+Printing and devices,الطباعة والأجهزة
+"Printers, delivery jobs and print formats.",الطابعات ومهام الطباعة وتنسيقات المستندات.
+Operational reports,تقارير التشغيل
+"Sales, product performance and till reconciliation.",المبيعات وأداء الأصناف وتسوية الشيفتات.
+System and synchronization,النظام والمزامنة
+"Change capture, technical logs and system user access.",تسجيل التغييرات والسجلات الفنية ومستخدمي النظام.
+Approval Requests,طلبات الموافقة
+POS Orders,طلبات نقطة البيع
+POS Returns,مرتجعات نقطة البيع
+Kitchen Tickets,تذاكر المطبخ
+Cashier POS Profiles,إعدادات الكاشير
+Option Attributes,خصائص الخيارات
+Units of Measure,وحدات القياس
+Modes of Payment,طرق الدفع
+Void and Return Reasons,أسباب الإلغاء والمرتجعات
+Sales Tax Templates,قوالب ضرائب المبيعات
+Cost Centers,مراكز التكلفة
+Stock Items,الأصناف المخزنية
+Stock Movements,حركات المخزون
+Warehouses,المخازن
+Print Dispatch Jobs,مهام إرسال الطباعة
+Print Formats,تنسيقات الطباعة
+Synchronization Settings,إعدادات المزامنة
+Synchronization Events,أحداث المزامنة
+User Accounts,حسابات المستخدمين
+Access Roles,أدوار الصلاحيات
+Find a screen or setting,ابحث عن شاشة أو إعداد
+"Browse by task, or search by name.",تصفح حسب المهمة أو ابحث بالاسم.
+{0} matching links,عدد الروابط المطابقة: {0}
+No matching screens. Try another name.,لا توجد شاشات مطابقة. جرّب اسمًا آخر.
+"Your RMS operations and setup, organized in one place.",تشغيل وإعدادات RMS، منظمة في مكان واحد.
+Point of Sale,نقطة البيع
+Table Management,إدارة الترابيزات
+Kitchen Display,شاشة المطبخ
+Selling Products,الأصناف البيعية
+Cashier Sessions,شيفتات الكاشير
+Stores,الفروع
+Product Categories,أقسام المنتجات
+Store Menus,قوائم المنيو
+POS Users,مستخدمو نقطة البيع
+Dining Areas,الصالات
+Dining Tables,الترابيزات
+Preparation Areas,مناطق التحضير
+Expense Categories,تصنيفات المصروفات
+Shift Expenses,مصروفات الشيفت
+Print Devices,الطابعات
+Print Dispatch Queue,متابعة مهام الطباعة
+Waste Entries,سجلات الهالك
+POS Sales Summary,ملخص مبيعات نقطة البيع
+Product Sales Summary,ملخص مبيعات الأصناف
+Cashier Session Reconciliation,تسوية شيفتات الكاشير
+Saved for reference. POS does not currently block orders outside these hours.,محفوظة كمرجع. نقطة البيع لا تمنع الطلبات تلقائيًا خارج هذه المواعيد.
+"Marks this order type for delivery. Courier assignment, delivery zones and delivery fees are not configured by this checkbox.",يصنّف نوع الطلب كتوصيل. هذا الخيار لا يضبط إسناد المندوبين أو مناطق التوصيل أو رسومه.
+Enter a name.,اكتب الاسم.
+Cost,التكلفة
+Editing Row,تعديل الصف
+Delete,حذف
+Duplicate,تكرار
+Move,نقل
+Quantity,الكمية
+Collapse,طي
+Close row,إغلاق الصف
+Save,حفظ
+Close,إغلاق
+No.,م
+Changes catalog navigation and inherited category defaults. The linked stock item's accounting group is retained.,يغيّر قسم المنيو والإعدادات الموروثة منه، مع الاحتفاظ بالتصنيف المحاسبي للصنف المخزني المرتبط.
+Minimum distinct choices for this product. 0 makes this group optional.,أقل عدد اختيارات مختلفة لهذا الصنف. 0 يجعل المجموعة اختيارية.
+Maximum distinct choices for this product. 1 allows one choice; 0 allows any number.,أقصى عدد اختيارات مختلفة لهذا الصنف. 1 لاختيار واحد؛ 0 دون حد أقصى.
+Set the minimum and maximum choices for each group on this product. These limits are independent of other products.,حدّد أقل وأقصى عدد اختيارات لكل مجموعة في هذا الصنف، بشكل مستقل عن بقية الأصناف.
+Selection limits must be whole numbers zero or greater.,حدود الاختيارات يجب أن تكون أعدادًا صحيحة تساوي صفرًا أو أكثر.
+A modifier product can only appear once in the same group on this product.,لا يمكن تكرار نفس الإضافة داخل المجموعة نفسها لهذا الصنف.
+Minimum Selections cannot exceed the available choices on this product.,الحد الأدنى للاختيارات لا يمكن أن يزيد عن الاختيارات المتاحة لهذا الصنف.
+Set the group display. Configure its minimum and maximum choices separately on each product.,اضبط عرض المجموعة، وحدّد الحد الأدنى والأقصى للاختيارات بشكل مستقل داخل كل صنف.
+The selected Modifier Group is disabled.,مجموعة الإضافات المختارة غير مفعّلة.
+Modifier quantities must be greater than zero.,كميات الإضافات يجب أن تكون أكبر من صفر.
+RMS Sales Ledger,سجل مبيعات RMS
+RMS Sales Pulse,نبض المبيعات
+RMS Sales Timeline,اتجاه المبيعات عبر الوقت
+RMS Store Performance,أداء الفروع
+RMS Brand Performance,أداء العلامات التجارية
+RMS Order Type Performance,أداء أنواع الطلب
+RMS Payment Mix,توزيع طرق الدفع
+RMS Customer Performance,أداء العملاء
+RMS Customer Value,قيمة العملاء
+RMS Cashier Performance,أداء الكاشير
+RMS Area Performance,أداء صالات البيع
+RMS Table Performance,أداء الطاولات
+RMS Category Revenue,إيرادات الأقسام
+RMS Product Revenue,إيرادات الأصناف
+RMS Product Sales Ledger,سجل بيع الأصناف
+RMS Discount Review,مراجعة الخصومات
+RMS Rounding Review,مراجعة فروق التقريب
+RMS Return Review,مراجعة المرتجعات
+RMS Daily Operations,ملخص يوم التشغيل
+RMS Order Notes,ملاحظات الطلبات
+RMS Item Cancellations,إلغاءات الأصناف
+RMS Table Occupancy,إشغال الطاولات
+RMS Kitchen Performance,أداء المطبخ
+RMS Print Activity,نشاط الطباعة
+RMS Product Margin,ربحية الأصناف الفعلية
+RMS Margin Movement,تغير هوامش الربح
+RMS Daily Margin Pulse,نبض الربحية اليومي
+RMS Menu Engineering,تحليل محفظة الأصناف
+RMS Product Price Impact,أثر أسعار البيع
+RMS Planned Margin,الربحية المخططة
+RMS Margin Scenarios,سيناريوهات ربحية الإضافات
+RMS Unused Products,الأصناف الراكدة
+RMS Recipe Coverage,الأصناف بدون وصفات
+RMS Ingredient Trace,تتبع المكونات في الوصفات
+RMS Recipe Consumption,استهلاك مكونات الوصفات
+RMS Live Availability,الأرصدة والطاقة البيعية
+RMS Inventory Movement,ملخص حركة المخزون
+RMS Draft Count Variance,فروق مسودات الجرد
+RMS Stock Repost Review,فحص إعادة تقييم المخزون
+RMS Request Fulfillment,تنفيذ طلبات التحويل
+RMS Purchase Requests,طلبات الشراء المعلقة
+RMS Valuation Timeline,تتبع تقييم المخزون
+RMS Purchase Price Changes,تغير أسعار الشراء
+RMS Revenue Trend,اتجاه إيرادات RMS
+RMS Payment Distribution,توزيع تحصيلات RMS
+RMS Product Leaders,الأصناف الأعلى إيرادًا
+RMS Category Leaders,الأقسام الأعلى إيرادًا
+RMS Cashier Leaders,أداء فريق الكاشير
+RMS Table Leaders,الطاولات الأعلى إيرادًا
+RMS Order Type Mix,توزيع إيرادات أنواع الطلب
+RMS Business Review,لوحة أداء الأعمال
+RMS Insights,تقارير وتحليلات RMS
+Report Explorer,مستكشف التقارير
+A clearer view of your business,صورة أوضح لأعمالك
+"Find a report, explore the details and follow the numbers back to their documents.",اعثر على تقريرك، واستكشف التفاصيل، وارجع من الأرقام إلى مستنداتها.
+Find a report,ابحث عن تقرير
+All Reports,كل التقارير
+{0} reports,{0} تقرير
+No matching reports,لا توجد تقارير مطابقة
+Unable to load reports. Refresh to try again.,تعذر تحميل التقارير. أعد المحاولة من زر التحديث.
+Today Business Sales,مبيعات يوم التشغيل الحالي
+Today Sales Invoices,فواتير يوم التشغيل الحالي
+Today Average Invoice,متوسط فاتورة يوم التشغيل
+Month Business Sales,مبيعات شهر التشغيل الحالي
+Month Sales Invoices,فواتير شهر التشغيل الحالي
+Month Average Invoice,متوسط فاتورة شهر التشغيل
+Today,اليوم
+Last 7 Days,آخر ٧ أيام
+This Month,هذا الشهر
+Compare Previous Period,مقارنة بالفترة السابقة
+Previous Period,الفترة السابقة
+Period Change,فرق الفترة
+Period Change %,نسبة تغير الفترة
+Date Basis,أساس الفترة
+Selected Dates,التواريخ المحددة
+Current Business Day,يوم التشغيل الحالي
+Current Business Month,شهر التشغيل الحالي
+Include Credit Notes,تضمين إشعارات الدائن
+Sales Invoices,فواتير البيع
+Credit Notes,إشعارات الدائن
+Modifier Quantity,كمية الإضافات
+Gross Revenue,الإيراد قبل الخصم
+Allocated Discount,الخصم الموزع
+Net Revenue,صافي الإيراد
+Net Collected,صافي التحصيل
+Rounding Difference,فرق التقريب
+Average Invoice,متوسط الفاتورة
+Contribution %,نسبة المساهمة
+Hour,الساعة
+Week,الأسبوع
+Month,الشهر
+Invoice and Product,الفاتورة والصنف
+Posted Cost,التكلفة المرحلة
+Valued Net Revenue,الإيراد المكتمل التقييم
+Valued Gross Profit,ربح البنود المكتملة التقييم
+Unvalued Lines,بنود لم يكتمل تقييمها
+Pending Valuation,بانتظار التقييم
+Gross Margin %,هامش الربح الإجمالي
+Sales Mix %,نسبة مزيج المبيعات
+Portfolio Position,تصنيف الصنف
+Star,نجم
+Volume Driver,محرك مبيعات
+Opportunity,فرصة نمو
+Review,يحتاج مراجعة
+No Positive Sales,بدون مبيعات موجبة
+Visit Days,أيام الزيارات
+Note Scope,مستوى الملاحظة
+Original Invoice,الفاتورة الأصلية
+Returned Line Value,قيمة البند المرتجع
+Refund (once per return),مبلغ الرد مرة واحدة لكل مرتجع
+Cancelled Item Value,قيمة الصنف الملغى
+Ready Tickets,تذاكر جاهزة
+Cancelled Tickets,تذاكر ملغاة
+Average Queue Minutes,متوسط الانتظار بالدقائق
+Average Preparation Minutes,متوسط التحضير بالدقائق
+Average Handoff Minutes,متوسط التسليم بالدقائق
+Tickets Above Analysis Target,تذاكر تجاوزت الزمن المحدد للتحليل
+Analysis Target Minutes,زمن التحضير المستهدف للتحليل بالدقائق
+Printed Receipts,إيصالات مطبوعة
+Failed Jobs,مهام فاشلة
+Attempts,المحاولات
+Available Minutes,الدقائق المتاحة
+Occupied Minutes,دقائق الإشغال
+Utilization %,نسبة الإشغال
+Table Visits,دورات استخدام الطاولة
+Missing Closing Timestamps,إغلاقات بلا توقيت محفوظ
+Use Configured Working Hours,احتساب مواعيد العمل المحددة فقط
+Quantity per Product,الكمية لكل صنف
+Ingredient,المكون
+Ingredient Cost,تكلفة المكون
+Current Unit Cost,تكلفة الوحدة الحالية
+Planned Selling Price,سعر البيع المخطط
+Planned Cost,التكلفة المخططة
+Planned Gross Profit,الربح الإجمالي المخطط
+Planned Margin %,هامش الربح المخطط
+Scenario,السيناريو
+Base Product,الصنف الأساسي
+One Modifier,إضافة واحدة
+Selection Range,نطاق الاختيارات
+Minimum Price,أقل سعر
+Maximum Price,أعلى سعر
+Minimum Cost,أقل تكلفة
+Maximum Cost,أعلى تكلفة
+Product Status,حالة الصنف
+Last Sale,آخر بيع
+Days Without Sales,أيام بدون بيع
+Reference Unit Price,سعر الوحدة المرجعي
+Realized Unit Price,سعر الوحدة المحقق
+Reference Revenue,الإيراد المرجعي
+Price Impact,أثر السعر
+Price Impact %,نسبة أثر السعر
+Include Modifiers,تضمين الإضافات
+Include Waste,تضمين الهالك
+Consumed Quantity,الكمية المستهلكة
+Returned Quantity,الكمية المرتجعة
+Waste Quantity,كمية الهالك
+Net Consumption,صافي الاستهلاك
+Show Recipe Capacity,عرض الطاقة البيعية للوصفات
+Recipe Capacity,الكمية الممكن تحضيرها
+Available Quantity,الكمية المتاحة
+Unit Value,قيمة الوحدة
+Opening Quantity,كمية أول المدة
+Opening Value,قيمة أول المدة
+Incoming Quantity,الكمية الواردة
+Outgoing Quantity,الكمية المنصرفة
+Closing Quantity,كمية آخر المدة
+Closing Value,قيمة آخر المدة
+Value Change,التغير في القيمة
+Hide Zero Balances,إخفاء الأرصدة الصفرية
+Previous Quantity,الكمية السابقة
+Balance Quantity,كمية الرصيد
+Previous Valuation Rate,معدل التقييم السابق
+Diagnostic,نتيجة الفحص
+Quantity Variance,فرق الكمية
+Value Variance,فرق القيمة
+Pending Rate Recalculation,بانتظار إعادة احتساب التقييم
+Quantity Balance Mismatch,عدم تطابق رصيد الكمية
+Stock Value Mismatch,عدم تطابق قيمة المخزون
+Counted Quantity,الكمية المجرودة
+Ledger Quantity,كمية الدفتر
+Counted Rate,معدل الجرد
+Ledger Value,القيمة الدفترية
+Minimum Quantity Variance,أقل فرق كمية
+Minimum Value Variance,أقل فرق قيمة
+Request Date,تاريخ الطلب
+Required Date,التاريخ المطلوب
+Requested Quantity,الكمية المطلوبة
+Ordered Quantity,الكمية المطلوبة للشراء
+Pending Quantity,الكمية المعلقة
+Transferred Quantity,الكمية المحولة فعليًا
+Unfulfilled Quantity,الكمية غير المنفذة
+Purchased Quantity,الكمية المشتراة
+Purchase Value,قيمة المشتريات
+Minimum Unit Price,أقل سعر وحدة
+Maximum Unit Price,أعلى سعر وحدة
+Weighted Average Price,متوسط السعر المرجح
+Previous Period Price,سعر الفترة السابقة
+Unit Price Change,فرق سعر الوحدة
+Price Change %,نسبة تغير السعر
+Posted Expenses,المصروفات المرحلة
+Metric,المؤشر
+Open Sessions,شيفتات مفتوحة
+Require a Closed Business Day,اشتراط إقفال يوم التشغيل
+Sign in to view this report.,سجل الدخول لعرض التقرير.
+You do not have permission to view this report.,ليست لديك صلاحية عرض هذا التقرير.
+This Company is not available to you.,هذه الشركة غير متاحة لك.
+Choose a Company before running this report.,اختر الشركة قبل تشغيل التقرير.
+Choose a date range of one year or less.,اختر فترة سنة واحدة أو أقل.
+Choose a supported report grouping.,اختر أسلوب تجميع مدعومًا.
+One or more selected Stores are not available to you.,فرع أو أكثر من الفروع المختارة غير متاح لك.
+Choose valid report filter values.,اختر قيمًا صحيحة لفلاتر التقرير.
+Choose an existing Product Category.,اختر قسم أصناف موجودًا.
+Choose a Warehouse in the selected Company.,اختر مخزنًا تابعًا للشركة المحددة.
+This report contains too many records. Narrow the dates or filters.,التقرير يحتوي على سجلات كثيرة. قلل الفترة أو حدد الفلاتر.
+Unknown RMS report.,تقرير RMS غير معروف.
+Unknown dashboard metric.,مؤشر لوحة البيانات غير معروف.
+Invalid analytics filters.,فلاتر التحليل غير صحيحة.
+Choose an Ingredient to trace its recipes.,اختر مكونًا لعرض الوصفات التي تستخدمه.
+Choose an existing Item Group.,اختر مجموعة أصناف موجودة.
+Dormant days must be greater than zero.,أيام الركود يجب أن تكون أكبر من صفر.
+Target minutes must be zero or greater.,الزمن المستهدف يجب أن يساوي صفرًا أو أكثر.
+Choose one business day for Daily Operations.,اختر يوم تشغيل واحدًا لملخص التشغيل اليومي.
+This business day still has open orders or cashier sessions.,يوم التشغيل ما زال يحتوي على طلبات أو شيفتات مفتوحة.
+Kitchen Ticket quantities must be greater than zero.,كميات تذكرة المطبخ يجب أن تكون أكبر من صفر.
+Dining Area must be enabled and belong to the selected Store.,صالة الطاولات يجب أن تكون مفعلة وتابعة للفرع المحدد.
+Planning uses the current recipe and Item valuation. Choose a Store and Order Type to include their price rules and packaging.,التخطيط يستخدم الوصفة وتقييم المكونات الحاليين. حدد الفرع ونوع الطلب لتضمين أسعارهما والتغليف.
+Actual margin uses posted stock valuations. Pending consolidation or missing historical movement allocations remain blank.,الربح الفعلي يعتمد على تقييمات المخزون المرحلة. تظل القيمة فارغة عند انتظار التجميع أو غياب بيانات التكلفة التاريخية.
+Delay uses the optional analysis target entered above. Blank means no target; historical product preparation targets are not stored in RMS.,يُقاس التأخير مقابل الزمن الذي تحدده للتحليل. تركه فارغًا يعني عدم تحديد زمن مستهدف؛ لا يحتفظ RMS حاليًا بأزمنة تحضير تاريخية لكل صنف.
+Overlapping checks count as one occupied period. Closures without a saved event timestamp are counted separately. Working-hours filtering uses the current configured schedule.,الفواتير المتداخلة تُحسب فترة إشغال واحدة. تُوضح الإغلاقات التي لا تحمل توقيتًا محفوظًا بشكل مستقل. فلتر المواعيد يستخدم جدول العمل الحالي.
+Consumption is attributed from saved recipe quantities and posted stock movements. Unvalued movements are excluded; waste is included only when selected.,يُربط الاستهلاك بكميات الوصفات المحفوظة وحركات المخزون المرحلة. تُستبعد الحركات غير المقيمة، ويُضمَّن الهالك عند اختياره فقط.
+Purchases Quantity,كمية المشتريات
+Purchases Value,قيمة المشتريات
+Purchase Returns Quantity,كمية مرتجعات الشراء
+Purchase Returns Value,قيمة مرتجعات الشراء
+Sales Issues Quantity,كمية صرف المبيعات
+Sales Issues Value,قيمة صرف المبيعات
+Sales Returns Quantity,كمية مرتجعات البيع
+Sales Returns Value,قيمة مرتجعات البيع
+Transfers In Quantity,كمية التحويلات الواردة
+Transfers In Value,قيمة التحويلات الواردة
+Transfers Out Quantity,كمية التحويلات الصادرة
+Transfers Out Value,قيمة التحويلات الصادرة
+Production In Quantity,كمية وارد الإنتاج
+Production In Value,قيمة وارد الإنتاج
+Production Out Quantity,كمية منصرف الإنتاج
+Production Out Value,قيمة منصرف الإنتاج
+Recipe Consumption Quantity,كمية استهلاك الوصفات
+Recipe Consumption Value,قيمة استهلاك الوصفات
+Waste Value,قيمة الهالك
+Reconciliation Quantity,كمية تسويات الجرد
+Reconciliation Value,قيمة تسويات الجرد
+Other Receipts Quantity,كمية الوارد الآخر
+Other Receipts Value,قيمة الوارد الآخر
+Other Issues Quantity,كمية المنصرف الآخر
+Other Issues Value,قيمة المنصرف الآخر
+RMS Customer Invoice History,سجل فواتير العملاء
+RMS Customer Revenue Cohorts,تحليل إيرادات العملاء الجدد والمتكررين
+RMS Purchase Invoice Lines,تفاصيل أصناف فواتير الشراء
+RMS Supplier Item Purchases,مشتريات الأصناف حسب المورد
+RMS Asset Purchase Review,مراجعة مشتريات الأصول
+RMS Ledger with Items,دفتر الأستاذ وتفاصيل الأصناف
+RMS Stock Sales Issues,صرف مخزون المبيعات
+RMS Material Issues,تحليل صرف المواد
+RMS Production Pulse,متابعة الإنتاج
+RMS Production Cost Allocation,توزيع تكاليف الإنتاج
+RMS Sales Cost Allocation,توزيع تكاليف المبيعات
+RMS Recipe Comparison,مقارنة وصفات الأصناف
+RMS Trading Flow,حركة المبيعات والمشتريات
+RMS Supplier Purchase Leaders,أعلى الأصناف شراءً من الموردين
+RMS Production Completion,إنجاز أوامر الإنتاج
+Actual Completion,الإكمال الفعلي
+Actual Operating Cost,تكلفة التشغيل الفعلية
+Allocated Overhead,المصروفات غير المباشرة الموزعة
+Allocated Refund,المبلغ المسترد الموزع
+Allocation Quantity,كمية أساس التوزيع
+Average Document Value,متوسط قيمة المستند
+Average New Customer Revenue,متوسط إيراد العميل الجديد
+Average Repeat Customer Revenue,متوسط إيراد العميل المتكرر
+Average Revenue per Customer,متوسط الإيراد لكل عميل
+Choose Customer or Supplier as the party type.,اختر عميلًا أو موردًا كنوع للطرف.
+Choose Selected Dates before comparing periods.,اختر «التواريخ المحددة» قبل مقارنة الفترات.
+Choose a Selling Product to inspect modifier scenarios.,اختر صنف بيع لاستعراض سيناريوهات الإضافات.
+Choose an Expense Account for overhead allocation.,اختر حساب مصروفات لتوزيع التكاليف غير المباشرة.
+Choose an Overhead Expense Account and Cost Center for this allocation scenario.,اختر حساب المصروفات غير المباشرة ومركز التكلفة لسيناريو التوزيع.
+Choose an accessible Account or Cost Center in this Company.,اختر حسابًا أو مركز تكلفة متاحًا لك في هذه الشركة.
+Choose daily grouping to compare equal date periods.,اختر التجميع اليومي لمقارنة فترتين متساويتين.
+"Clear product, customer, cashier, brand and order type filters before including unattributed waste.",امسح فلاتر الصنف والعميل والكاشير والعلامة ونوع الطلب قبل إضافة الهالك غير المنسوب لصنف معين.
+Completed on Time,اكتمل في الموعد
+Default Selling Price,سعر البيع الافتراضي
+First Purchase,أول شراء
+Invoice Revenue Including Tax,قيمة الفواتير شاملة الضريبة
+Last Purchase,آخر شراء
+Net Purchase Value,صافي قيمة المشتريات
+Net Purchased Quantity,صافي الكمية المشتراة
+Net Quantity,صافي الكمية
+Net Sales Value,صافي قيمة المبيعات
+Net Sold Quantity,صافي الكمية المباعة
+Net Tender Amount,صافي المقبوض حسب وسيلة الدفع
+New Customer Revenue,إيرادات العملاء الجدد
+New Customers,عملاء جدد
+Operating Cost Variance,فرق تكلفة التشغيل
+Overhead Expense Account,حساب المصروفات غير المباشرة
+Planned Completion,موعد الإكمال المخطط
+Planned Operating Cost,تكلفة التشغيل المخططة
+Planned Quantity,الكمية المخططة
+Posted Direct Cost,التكلفة المباشرة المرحلة
+Posted Issue Value,قيمة الصرف المرحلة
+Process Loss %,نسبة فاقد التصنيع
+Process Loss Quantity,كمية فاقد التصنيع
+Produced Quantity,الكمية المنتجة
+Production Completion %,نسبة إنجاز الإنتاج
+Production uses submitted Work Orders by planned start date. Unfinished orders have no on-time completion result.,يعرض أوامر الإنتاج المعتمدة حسب تاريخ البدء المخطط. لا تُحتسب نتيجة الالتزام بالموعد للأوامر التي لم تكتمل.
+Remaining Quantity,الكمية المتبقية
+Repeat Customer Revenue,إيرادات العملاء المتكررين
+Repeat Customers,عملاء متكررون
+Sales Less Purchases,المبيعات ناقص المشتريات
+"Sales less purchases is a period flow comparison, not gross profit. Stock purchased in another period is not treated as current cost of sales.",الفرق بين المبيعات والمشتريات مقارنة لحركة الفترة وليس مجمل الربح؛ فالمخزون المشترى في فترة أخرى لا يمثل تكلفة مبيعات الفترة الحالية.
+Scenario Total Cost,إجمالي تكلفة السيناريو
+Scenario Unit Cost,تكلفة الوحدة في السيناريو
+This party is not available to you.,هذا الطرف غير متاح لك.
+Unsupported inventory report.,تقرير مخزون غير مدعوم.
+Voucher Item Details,تفاصيل أصناف المستند
+Your POS User account is disabled.,حساب مستخدم نقطة البيع الخاص بك معطل.
+Analysis only: the selected overhead account balance is allocated by positive stock-unit quantity across the filtered items. It does not post expenses or change stock valuations. Direct costs without stock movements remain blank.,لأغراض التحليل فقط: يوزع رصيد حساب المصروفات المحدد حسب الكميات الموجبة بوحدات المخزون للأصناف المعروضة. لا يرحل مصروفات أو يغير تقييم المخزون. تظل التكلفة المباشرة فارغة عند عدم وجود حركة مخزون.
+Loading…,جارٍ التحميل…
+More Filters,فلاتر إضافية
+All,الكل
+Amount,المبلغ
+Asset Category,فئة الأصل
+Brand,العلامة التجارية
+Cancelled By,ألغاه
+Cashier,الكاشير
+Circular Sub Recipe detected for Item {0}.,توجد دورة مغلقة في الوصفة الفرعية للصنف {0}.
+Comment,تعليق
+Company,الشركة
+Cost Center,مركز التكلفة
+Count,العدد
+Credit Note,إشعار دائن
+Customer,العميل
+Customer Group,مجموعة العملاء
+Customer Name,اسم العميل
+Document,المستند
+Document Type,نوع المستند
+Expense Account,حساب المصروفات
+Fixed Asset,أصل ثابت
+Gross Profit,مجمل الربح
+Group By,تجميع حسب
+Invoice,الفاتورة
+Invoices,الفواتير
+Issued Quantity,الكمية المصروفة
+Item,الصنف
+Item Group,مجموعة الأصناف
+Item Name,اسم الصنف
+Material Request,طلب مواد
+Mode of Payment,طريقة الدفع
+No active submitted BOM exists for Sub Recipe Item {0}.,لا توجد قائمة مواد فعالة ومعتمدة للصنف الفرعي {0}.
+Notes,الملاحظات
+Open Orders,الطلبات المفتوحة
+Operations,العمليات
+Order,الطلب
+Order Type,نوع الطلب
+Party,الطرف
+Party Type,نوع الطرف
+Payments,المدفوعات
+Posting Date,تاريخ الترحيل
+Posting Time,وقت الترحيل
+Print Jobs,مهام الطباعة
+Purchase Invoice,فاتورة شراء
+Quantity Change,التغير في الكمية
+Quantity Sold,الكمية المباعة
+Reason,السبب
+Recipe component does not exist.,مكوّن الوصفة غير موجود.
+Refresh,تحديث
+Return,المرتجع
+Section,القسم
+Start Date must be on or before End Date.,يجب أن يسبق تاريخ البداية تاريخ النهاية أو يساويه.
+Status,الحالة
+Stock Entry,إذن مخزون
+Stock Reconciliation,تسوية مخزون
+Stock UOM,وحدة المخزون
+Stock Value,قيمة المخزون
+Supplier,المورد
+Table Name,اسم الطاولة
+Taxes,الضرائب
+To Date,إلى تاريخ
+UOM,وحدة القياس
+Unassigned,غير محدد
+Valuation Rate,سعر التقييم
+Warehouse,المخزن
+Work Order,أمر إنتاج
+Workspace,مساحة العمل
+Actual Start,البدء الفعلي
+Business Dashboard,لوحة مؤشرات الأعمال
+Choose a supported production view.,اختر عرض إنتاج مدعومًا.
+Inspected By,فحص بواسطة
+Inspection Date,تاريخ الفحص
+Inspections,الفحوص
+Job Card,بطاقة تشغيل
+Job Cards,بطاقات التشغيل
+Job Cards use their posting date. Recorded minutes exclude running time that has not yet been saved in a time log.,يعرض بطاقات التشغيل حسب تاريخ الترحيل. الدقائق المسجلة لا تشمل وقت التشغيل الجاري الذي لم يحفظ في سجل الوقت بعد.
+Movement Source,مصدر الحركة
+One or more report filters are outside your POS User scope.,فلتر أو أكثر خارج نطاق صلاحيات مستخدم نقطة البيع الخاص بك.
+Operation,العملية
+Planned Minutes,الدقائق المخططة
+Production View,عرض الإنتاج
+Quality Inspection,فحص جودة
+Quality Inspections,فحوص الجودة
+Recorded Minutes,الدقائق المسجلة
+Reference Document,المستند المرجعي
+Reference Type,نوع المرجع
+Sample Size,حجم العينة
+Submitted manufacturing inspections by inspection date. The sample size is not a count of rejected production units.,يعرض فحوص التصنيع المعتمدة حسب تاريخ الفحص. حجم العينة لا يمثل عدد وحدات الإنتاج المرفوضة.
+Time Variance Minutes,فرق الوقت بالدقائق
+Verified By,تحقق بواسطة
+Work Orders,أوامر الإنتاج
+Workstation,محطة العمل
+Sales follow POS scope. Posted expenses require expense report permission and remain Store-level; they are not allocated by Brand or Order Type.,المبيعات تتبع نطاق مستخدم نقطة البيع. المصروفات المرحلة تتطلب صلاحية تقارير المصروفات وتعرض على مستوى الفرع، ولا توزع حسب البراند أو نوع الطلب.
+POS Settings,إعدادات نقطة البيع
+Sale setup,إعداد البيع
+Store and brand,الفرع والعلامة التجارية
+No brands available,لا توجد علامات تجارية متاحة
+No order types available,لا توجد أنواع طلب متاحة
+Close the cashier session to change the Store.,أغلق وردية الكاشير لتغيير الفرع.
+Choose the Store and Brand for this register.,اختر الفرع والعلامة التجارية لنقطة البيع.
+Price List {0} already exists. Resolve the duplicate before renaming this Order Type.,قائمة الأسعار {0} موجودة بالفعل. عالج التكرار قبل تغيير معرّف نوع الطلب.
+Streaming Branch,فرع الاستريمينج
+Branch identity used to route this Store and its POS documents when Arab Streaming is configured.,الفرع المستخدم لتوجيه بيانات المتجر ومستندات نقطة البيع عند ربط الاستريمينج.
+A Streaming Branch can be linked to only one Store.,لا يمكن ربط فرع الاستريمينج بأكثر من متجر واحد.
+Unlink the streaming pairing before changing this Store's Streaming Branch.,افصل ارتباط الاستريمينج قبل تغيير الفرع المرتبط بهذا المتجر.
+This transaction belongs to a different streaming Branch.,هذه الحركة تخص فرع استريمينج آخر.
+The transaction Company does not match the paired Store.,شركة الحركة لا تطابق شركة المتجر المرتبط.
+Streaming cannot transfer a transaction to another Branch.,لا يمكن نقل حركة متزامنة إلى فرع آخر.
+Only authenticated streaming may assign an imported transaction Branch.,تعيين فرع الحركة المستقبلة متاح لخدمة الاستريمينج الموثّقة فقط.
+A paired Branch is required for this transaction.,يجب ربط فرع بهذه الحركة.
+This RMS Branch resolver is reserved for ERP transactions.,تحديد الفرع بهذه الطريقة مخصص لحركات النظام فقط.
+Only authenticated upstream streaming can apply an RMS replica.,استقبال نسخة المستند متاح للاستريمينج الموثّق من الفرع إلى الماستر فقط.
+Invalid numeric value in streaming snapshot.,توجد قيمة رقمية غير صحيحة في المستند المستقبَل.
+A required streaming reference is missing.,يوجد مرجع مطلوب مفقود في المستند المستقبَل.
+Streaming snapshot references inconsistent business records.,توجد مراجع غير متطابقة في المستند المستقبَل.
+Streaming snapshot amounts do not reconcile.,مبالغ المستند المستقبَل غير متطابقة.
+The original session dates are required.,تواريخ الوردية الأصلية مطلوبة.
+The session payment snapshot is required.,بيانات وسائل الدفع الأصلية للوردية مطلوبة.
+Duplicate payment method in streaming snapshot.,توجد وسيلة دفع مكررة في المستند المستقبَل.
+The original session closing date is required.,تاريخ إقفال الوردية الأصلي مطلوب.
+The order snapshot must include items and its business date.,يجب أن يتضمن الطلب الأصناف وتاريخ يوم العمل الأصلي.
+Cancelled quantities exceed the order quantity.,الكميات الملغاة تتجاوز كمية الطلب.
+Return items and refund payments are required.,أصناف المرتجع ومدفوعات الاسترداد مطلوبة.
+Each returned line must belong to the source invoice exactly once.,يجب أن ينتمي كل سطر مرتجع إلى الفاتورة الأصلية دون تكرار.
+Returned quantity exceeds the sold quantity.,كمية المرتجع تتجاوز الكمية المباعة.
+The original waste component snapshot is required.,مكونات الهالك الأصلية مطلوبة.
+Waste components do not match the original stock movement.,مكونات الهالك لا تطابق حركة المخزون الأصلية.
+Waste quantities do not match the original stock movement.,كميات الهالك لا تطابق حركة المخزون الأصلية.
+Only a completed POS closing can be replicated.,يمكن استقبال إقفال نقطة البيع المكتمل فقط.
+The consolidated Sales Invoice does not contain this POS Invoice.,فاتورة المبيعات المجمعة لا تتضمن فاتورة نقطة البيع هذه.
+The replicated invoice payable does not match a supported rounding rule.,المبلغ المستحق في الفاتورة المستقبلة لا يطابق قاعدة تقريب مدعومة.
+Choose installation type,اختيار نوع النظام
+"Set up a central Master, or connect a Slave to an existing Master.",جهّز نظام ماستر مركزي، أو اربط هذا السليف بماستر موجود.
+Installation Type,نوع النظام
+Connect this Slave,ربط هذا السليف
+Company and Store settings will be copied from the Master. You do not need to create a company here.,سيتم جلب الشركة وإعدادات المتجر من الماستر، ولا تحتاج إلى إنشاء شركة هنا.
+Master URL,رابط الماستر
+The HTTPS address of the existing Master.,عنوان HTTPS للماستر الموجود.
+Access Key,مفتاح الاتصال
+Secret,الرمز السري
+"Use an Instance Key issued by the Master, not your login password.",استخدم مفتاح Instance Key الصادر من الماستر، وليس كلمة مرور تسجيل الدخول.
+Test connection and load Stores,اختبار الاتصال وجلب المتاجر
+Only available Stores with an enabled Streaming Branch are listed.,تظهر المتاجر المتاحة المرتبطة بفرع مفعّل للمزامنة فقط.
+This Slave URL,رابط هذا السليف
+Connect and synchronize,الربط والمزامنة
+Resume synchronization,استكمال المزامنة
+Connection verified. Select the Store to continue.,نجح اختبار الاتصال. اختر المتجر للمتابعة.
+Connection could not be verified. Check the Master URL and Instance Key.,تعذّر التحقق من الاتصال. راجع رابط الماستر ومفتاح الاتصال.
+Connecting to the Master and preparing the initial copy…,جارٍ الاتصال بالماستر وتجهيز النسخ الأولي…
+Synchronization complete. Opening RMS…,اكتملت المزامنة. جارٍ فتح RMS…
+Synchronizing {0}: {1}%,جارٍ مزامنة {0}: {1}٪
+Connection interrupted. Checking synchronization again…,انقطع الاتصال. جارٍ التحقق من حالة المزامنة مجددًا…
+"Enter the Master URL, Access Key and Secret first.",أدخل رابط الماستر ومفتاح الاتصال والرمز السري أولًا.
+Setup has not started. Check the connection details and try again.,لم يبدأ الإعداد. راجع بيانات الاتصال وحاول مجددًا.
+Connection saved. Use Resume synchronization to finish setup.,تم حفظ الاتصال. استخدم استكمال المزامنة لإكمال الإعداد.

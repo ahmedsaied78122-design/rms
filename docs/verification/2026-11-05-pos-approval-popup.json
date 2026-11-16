@@ -1,0 +1,29 @@
+{
+  "checks": [
+    "Cashier receives delivery confirmation without OTP",
+    "Discount request saved in Approval Challenge",
+    "Repeated request reuses same valid discount challenge",
+    "Actual notification-bell endpoint returns unread discount notification to Ahmed",
+    "Popup returns the correct live OTP only to the selected approver",
+    "Popup contains saved percentage, money before and after, tax and item details",
+    "Popup contains exact reason and order number",
+    "Requester cannot retrieve approver-only popup code",
+    "Bell title contains OTP and details contain exact discount and reason",
+    "Duplicate request does not duplicate bell notification",
+    "Code rejects changed discount value",
+    "Code received by Ahmed approves the exact discount preview",
+    "Correct discount OTP is consumed once",
+    "Consumed discount OTP cannot be replayed",
+    "Used code is hidden in popup",
+    "Expired code is hidden in popup",
+    "Changed order hides OTP while preserving requested financial snapshot"
+  ],
+  "count": 17,
+  "rolled_back": true,
+  "date": "2026-11-05",
+  "backend_tests": 198,
+  "frontend_suites": 13,
+  "chromium_popup_without_navigation": true,
+  "chromium_mobile_fit": true,
+  "legacy_approval_supported": "RMS-APR-2026-00002"
+}

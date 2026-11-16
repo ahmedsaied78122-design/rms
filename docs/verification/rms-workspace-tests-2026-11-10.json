@@ -1,0 +1,399 @@
+{
+  "python": {
+    "tests": 423,
+    "errors": 0,
+    "failures": 0,
+    "mode": "Separate read-only transactions and blocked live Document.insert/save; no test users/sessions/business records.",
+    "existing_modules": [
+      {
+        "module": "rms.api.test_approval_delivery",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_approval_notifications",
+        "tests": 4,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_customers",
+        "tests": 15,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_discount_notifications",
+        "tests": 6,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_item_cancellation",
+        "tests": 10,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_operation_approval",
+        "tests": 13,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_order_notes",
+        "tests": 4,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_order_operations",
+        "tests": 93,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_order_state",
+        "tests": 3,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_order_sync",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_pending_items",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_profile_assignment",
+        "tests": 9,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_session_close",
+        "tests": 6,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_pos_tax_template",
+        "tests": 11,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_printing",
+        "tests": 8,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.api.test_streaming",
+        "tests": 8,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.approval_challenge.test_approval_challenge",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.cashier_session.test_cashier_session",
+        "tests": 7,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.cashier_session.test_cashier_session_returns",
+        "tests": 12,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.expense_category.test_expense_category",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.modifier_group.test_modifier_group",
+        "tests": 9,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.pos_order.test_pos_order_serialization",
+        "tests": 40,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.pos_return.test_pos_return",
+        "tests": 15,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.pos_user.test_pos_user",
+        "tests": 17,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.pos_user_store.test_pos_user_store",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.product_category.test_product_category",
+        "tests": 3,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.selling_product.test_option_attributes",
+        "tests": 10,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.doctype.selling_product_modifier_group.test_selling_product_modifier_group",
+        "tests": 7,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.report.cashier_session_reconciliation.test_cashier_session_reconciliation",
+        "tests": 3,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.report.pos_sales_summary.test_pos_sales_summary",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.rms.report.product_sales_summary.test_product_sales_summary",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.test_expenses",
+        "tests": 11,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.test_form_queries",
+        "tests": 6,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.test_interface_preferences",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.test_login_branding",
+        "tests": 3,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.test_pos_rounding",
+        "tests": 14,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.test_stock",
+        "tests": 4,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "module": "rms.test_utils",
+        "tests": 4,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "exit_code": 0
+      }
+    ],
+    "additional": {
+      "setup_contracts": 15,
+      "workspace_contracts": 4,
+      "read_only_recipe_and_naming": 16
+    }
+  },
+  "javascript": [
+    {
+      "suite": "rms/public/js/test_approval_notifications.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/public/js/test_rms_desk.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/public/js/test_rms_form_experience.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/public/js/test_rms_management_workspace.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_browsing.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_cart_layout.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_cart_merging.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_customers.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_header_actions.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_notes.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_operation_permissions.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_options.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_order_lifecycle.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_order_notes.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_order_url.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_resume.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_return_reason.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_startup.js",
+      "exit_code": 0
+    },
+    {
+      "suite": "rms/rms/page/point_of_sale/test_point_of_sale_sync.js",
+      "exit_code": 0
+    }
+  ],
+  "field_expression_evaluations": 2328,
+  "field_expressions": 97
+}

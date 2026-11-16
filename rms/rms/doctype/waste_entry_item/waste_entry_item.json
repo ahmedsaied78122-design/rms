@@ -71,5 +71,7 @@
       "link_filters": "[[\"Warehouse\",\"company\",\"=\",\"eval:parent.store_company\"],[\"Warehouse\",\"is_group\",\"=\",\"0\"],[\"Warehouse\",\"disabled\",\"=\",\"0\"]]"
     }
   ],
-  "permissions": []
+  "permissions": [],
+  "editable_grid": 1,
+  "grid_page_length": 20
 }

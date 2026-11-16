@@ -1,0 +1,30 @@
+{
+  "verified_on": "2026-11-08",
+  "site": "rms.arab-erp.com",
+  "behavior": {
+    "quantity_controls": "Compact minus, quantity and plus beside Add to order",
+    "numeric_keypad": "Hidden initially; tapping quantity opens a floating three-column keypad with C",
+    "keypad_dismissal": "Close button, outside click or focus, and Escape; Escape preserves the product dialog",
+    "dialog_height": "Follows options and notes; no quantity rail or fixed minimum body height",
+    "modifier_only_cancel": "Dialog header close button retained instead of a second footer action",
+    "required_spice": "Preserved"
+  },
+  "validation": {
+    "frontend_suites_passed": 14,
+    "live_chromium": {
+      "pizza_desktop": { "viewport": "1024x768", "height_px": 509.92, "submitted_quantity": 12 },
+      "modifier_only_mobile": { "viewport": "390x844", "height_px": 510.5, "submitted_quantity": 3 },
+      "three_level_pasta": { "viewport": "849x665", "height_px": 637 },
+      "keypad_does_not_increase_dialog_height": true,
+      "mobile_keypad_inside_viewport": true,
+      "mobile_footer_has_no_horizontal_overflow": true,
+      "plus_minus_and_clear": true,
+      "quantity_and_note_submission": true,
+      "missing_required_spice_blocks_add": true,
+      "escape_and_outside_focus_close_only_keypad": true
+    },
+    "order_writes": 0,
+    "temporary_browser_session_removed": true,
+    "unrelated_existing_page_error": "frappe.ui.toast is not a function during Desk startup; tested dialogs passed"
+  }
+}

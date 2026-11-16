@@ -1,0 +1,96 @@
+{
+  "vouchers": [
+    {
+      "doctype": "POS Invoice",
+      "name": "BR-6EAB61-WR-382A47-ACC-PSINV-2026-00001",
+      "gl_count": 0,
+      "gl_values_match": true,
+      "stock_count": 0,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "POS Invoice",
+      "name": "BR-6EAB61-WR-382A47-ACC-PSINV-2026-00002",
+      "gl_count": 0,
+      "gl_values_match": true,
+      "stock_count": 0,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Sales Invoice",
+      "name": "BR-6EAB61-WR-382A47-ACC-SINV-2026-00001",
+      "gl_count": 6,
+      "gl_values_match": true,
+      "stock_count": 0,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Sales Invoice",
+      "name": "BR-6EAB61-WR-382A47-ACC-SINV-2026-00002",
+      "gl_count": 6,
+      "gl_values_match": true,
+      "stock_count": 0,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Stock Entry",
+      "name": "BR-6EAB61-WR-382A47-MAT-STE-2026-00001",
+      "gl_count": 4,
+      "gl_values_match": true,
+      "stock_count": 2,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Stock Entry",
+      "name": "BR-6EAB61-WR-382A47-MAT-STE-2026-00002",
+      "gl_count": 4,
+      "gl_values_match": true,
+      "stock_count": 2,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Stock Entry",
+      "name": "BR-6EAB61-WR-382A47-MAT-STE-2026-00003",
+      "gl_count": 4,
+      "gl_values_match": true,
+      "stock_count": 2,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Stock Entry",
+      "name": "BR-6EAB61-WR-382A47-MAT-STE-2026-00004",
+      "gl_count": 4,
+      "gl_values_match": true,
+      "stock_count": 2,
+      "stock_full_values_match": false
+    },
+    {
+      "doctype": "Stock Entry",
+      "name": "BR-6EAB61-WR-382A47-MAT-STE-2026-00005",
+      "gl_count": 4,
+      "gl_values_match": true,
+      "stock_count": 2,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Stock Entry",
+      "name": "BR-6EAB61-WR-382A47-MAT-STE-2026-00006",
+      "gl_count": 4,
+      "gl_values_match": true,
+      "stock_count": 2,
+      "stock_full_values_match": true
+    },
+    {
+      "doctype": "Journal Entry",
+      "name": "BR-6EAB61-WR-382A47-ACC-JV-2026-00001",
+      "gl_count": 4,
+      "gl_values_match": true,
+      "stock_count": 0,
+      "stock_full_values_match": true
+    }
+  ],
+  "active_account_exposure_master": 0,
+  "active_account_exposure_slave": 0,
+  "fixture_stock_and_value_zero": true,
+  "historical_difference": "The cancelled first waste movement retains a different derived qty_after_transaction on its original cancelled SLE row, after its pre-fix receipt cancellation arrived before waste reversal. Native final quantities, stock values, movement quantities/values and GL entries match. Ledger rows were not edited."
+}
