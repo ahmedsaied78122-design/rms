@@ -294,6 +294,7 @@ def resolve_branch(document, config, peer=None, incoming=False):
 			)
 		)
 	# Foreign keys on the RMS wrapper are a reliable reverse association.
+	related_stores = set()
 	for root, field in [
 		("POS Order", "pos_invoice"),
 		("POS Order", "recipe_stock_entry"),
@@ -307,8 +308,8 @@ def resolve_branch(document, config, peer=None, incoming=False):
 	]:
 		link = frappe.get_meta(root).get_field(field)
 		if name and link and link.options == dt:
-			stores.update(frappe.get_all(root, filters={field: name}, pluck="store"))
-	branches = _store_branches(stores)
+			related_stores.update(frappe.get_all(root, filters={field: name}, pluck="store"))
+	branches = _store_branches(related_stores or stores)
 	paired = None
 	role = frappe.conf.get("arab_streaming_site_role")
 	if role == "Slave":
@@ -320,7 +321,10 @@ def resolve_branch(document, config, peer=None, incoming=False):
 	elif incoming and role == "Master" and peer and not frappe.db.exists(dt, name):
 		paired = peer.restaurant_branch
 	if paired:
-		if branches and branches != {paired}:
+		# A centrally managed POS Profile may be shared by several Stores.
+		# A durable wrapper is authoritative; otherwise the Slave pairing selects
+		# its own member of that profile's Stores, never an unrelated Branch.
+		if branches and (paired not in branches or (related_stores and branches != {paired})):
 			frappe.throw(
 				_("This transaction belongs to a different streaming Branch."),
 				frappe.PermissionError,

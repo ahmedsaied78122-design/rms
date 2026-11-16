@@ -69,3 +69,9 @@ Administrator. A Slave can select only its own paired branch. This remains true
 when transport is paused; explicit unlinking is required to transfer ownership.
 Catalog administration and authenticated incoming replicas retain their normal
 separate permissions. Deploy the engine before the RMS consumer.
+
+Shared POS Profiles do not assign a newly created Slave transaction to every
+Store using that profile. The paired branch selects its own profile association;
+a persisted RMS wrapper's Store remains authoritative, and unrelated branches
+and mismatched Companies remain rejected. Verified by the shared-profile and
+foreign-wrapper regression checks.

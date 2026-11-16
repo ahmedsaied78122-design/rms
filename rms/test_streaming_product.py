@@ -60,3 +60,23 @@ class TestStreamingReferenceRoles(unittest.TestCase):
 			db.exists.return_value = True
 			ensure_streaming_reference_roles()
 			get_doc.assert_not_called()
+
+
+class TestSharedProfileBranch(unittest.TestCase):
+	def test_shared_profile_uses_own_pair_but_a_durable_foreign_store_is_rejected(self):
+		from rms import streaming_policy as policy
+
+		for related, blocked in [(set(),False),({'foreign-store'},True)]:
+			with (
+				self.subTest(related=related),
+				patch.object(frappe,'conf',frappe._dict(arab_streaming_site_role='Slave')),
+				patch.object(policy,'_assignment',return_value=set()),
+				patch.object(policy,'_store_branches',return_value={'A','B'}),
+				patch('frappe.get_meta',return_value=frappe._dict(get_field=lambda field:frappe._dict(options='POS Opening Entry'))),
+				patch('frappe.get_all',side_effect=lambda dt,**kw: ['A'] if dt=='Master Instance' else ['Company'] if dt=='Store' and 'streaming_branch' in kw.get('filters',{}) else ['s1','s2'] if dt=='Store' else list(related)),
+				patch('frappe.throw',side_effect=frappe.PermissionError),
+			):
+				doc=frappe._dict(doctype='POS Opening Entry',name='audit-opening',company='Company',pos_profile='Shared')
+				if blocked:
+					with self.assertRaises(frappe.PermissionError):policy.resolve_branch(doc,{})
+				else:self.assertEqual(policy.resolve_branch(doc,{}),{'A'})
