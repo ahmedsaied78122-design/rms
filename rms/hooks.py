@@ -12,6 +12,7 @@ override_whitelisted_methods = {
 	"arab_streaming.api.connection.branches": "rms.onboarding.master_choices",
 }
 arab_streaming_after_initial_sync = ["rms.onboarding.finish_slave"]
+arab_streaming_connection_target_providers = ["rms.streaming_targets.provide"]
 arab_streaming_defer_initial_links = ["rms.onboarding.defer_initial_links"]
 app_logo_url = "/assets/rms/images/rms-mark.svg"
 app_home = "/rms"
@@ -44,8 +45,8 @@ app_include_css = [
 ]
 update_website_context = "rms.interface_preferences.website_context"
 
-after_migrate = ["rms.onboarding.install_defaults", "rms.setup.ensure_streaming_reference_roles", "rms.setup.ensure_stock_type_translation", "rms.setup.ensure_pos_roles", "rms.branding.apply_branding", "rms.analytics.install.ensure_analytics", "rms.streaming_policy.ensure_defaults", "rms.onboarding.preserve_pending_slave_setup"]
-after_install = ["rms.onboarding.install_defaults", "rms.setup.ensure_streaming_reference_roles", "rms.setup.ensure_stock_type_translation", "rms.branding.apply_branding", "rms.streaming_policy.ensure_defaults"]
+after_migrate = ["rms.onboarding.install_defaults", "rms.setup.ensure_streaming_reference_roles", "rms.setup.ensure_stock_type_translation", "rms.setup.ensure_pos_roles", "rms.branding.apply_branding", "rms.analytics.install.ensure_analytics", "rms.streaming_policy.ensure_defaults", "rms.streaming_targets.install", "rms.onboarding.preserve_pending_slave_setup"]
+after_install = ["rms.onboarding.install_defaults", "rms.setup.ensure_streaming_reference_roles", "rms.setup.ensure_stock_type_translation", "rms.branding.apply_branding", "rms.streaming_policy.ensure_defaults", "rms.streaming_targets.install"]
 
 # Native controllers generate prices, audit journals and print jobs locally.
 arab_streaming_local_doctypes = ["Approval Challenge", "Print Dispatch Job", "RMS Sync Event", "RMS Sync Settings", "Item Price", "Loyalty Point Entry", "POS Invoice Merge Log"]
@@ -143,6 +144,7 @@ company_data_to_be_ignored = [
 ]
 
 doctype_js = {
+	"Store": "public/js/store_streaming.js",
 	"Approval Challenge": "public/js/approval_challenge.js",
 	"POS User": "public/js/pos_user.js",
 	"Selling Product": "public/js/selling_product.js",

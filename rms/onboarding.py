@@ -50,9 +50,9 @@ def _fresh():
 	from arab_streaming import __version__
 	from packaging.version import Version
 
-	if Version(__version__) < Version("0.2.1"):
+	if Version(__version__) < Version("0.2.17"):
 		frappe.throw(
-			_("Update Arab Streaming to version 0.2.1 or later before Slave setup.")
+			_("Update Arab Streaming to version 0.2.17 or later before Slave setup.")
 		)
 
 
@@ -99,23 +99,21 @@ def master_setup_success(args):
 
 @frappe.whitelist(methods=["POST"])
 def master_choices(protocol, version):
-	"""Extend the existing, allowlisted Branch wire endpoint with permitted Stores."""
-	from arab_streaming.api.connection import branches
+	"""Use Store permissions for the existing authenticated setup endpoint."""
+	from arab_streaming.api.connection import authorize
 
-	result = branches(protocol, version)  # Native wire authentication and role checks.
+	authorize(protocol, version)
 	if not frappe.conf.get("arab_streaming_enabled") or not frappe.is_setup_complete():
 		frappe.throw(_("Complete the master setup and enable streaming first."))
-	stores = (
-		frappe.get_list(
+	assigned = set(frappe.get_all("Streaming Peer State", filters={"active_branch": ["is", "set"]}, pluck="active_branch"))
+	stores = [row for row in frappe.get_list(
 			"Store",
-			filters={"enabled": 1, "streaming_branch": ["in", result["branches"]]},
+			filters={"enabled": 1},
 			fields=["name", "title", "streaming_branch", "company"],
 			order_by="title",
 			limit_page_length=100,
-		)
-		if result["branches"]
-		else []
-	)
+		) if row.streaming_branch and row.streaming_branch not in assigned]
+	result = {"branches": [row.streaming_branch for row in stores]}
 	companies = (
 		frappe.get_list(
 			"Company",
@@ -177,7 +175,7 @@ def _choices(master_url, access_key, secret):
 	if not stores:
 		frappe.throw(
 			_(
-				"No available Store was found. Enable its Streaming Branch on the master and grant the key user Store access."
+				"No available Store was found. Choose an enabled, unpaired Store and grant the key user Store access."
 			)
 		)
 	companies = result.get("rms_companies")

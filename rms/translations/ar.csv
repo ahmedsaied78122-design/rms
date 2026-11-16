@@ -1305,3 +1305,9 @@ Connection interrupted. Checking synchronization again…,انقطع الاتص�
 "Enter the Master URL, Access Key and Secret first.",أدخل رابط الماستر ومفتاح الاتصال والرمز السري أولًا.
 Setup has not started. Check the connection details and try again.,لم يبدأ الإعداد. راجع بيانات الاتصال وحاول مجددًا.
 Connection saved. Use Resume synchronization to finish setup.,تم حفظ الاتصال. استخدم استكمال المزامنة لإكمال الإعداد.
+Choose an available Store. Its connection settings are configured automatically.,اختر فرعًا متاحًا. يتم إعداد الربط تلقائيًا.
+Choose a Store when linking this connection.,اختر الفرع عند ربط هذا الجهاز.
+Streaming connection,اتصال المزامنة
+No Slave is connected to this Store. Select this Store when connecting a Slave.,لا يوجد سليف مرتبط بهذا الفرع. اختر هذا الفرع عند ربط السليف.
+Store connection settings are managed automatically.,يتم إدارة إعدادات ربط الفرع تلقائيًا.
+Choose {0} when linking this connection.,اختر {0} عند ربط هذا الجهاز.

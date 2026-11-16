@@ -1,7 +1,7 @@
 # First-run Master and Slave setup
 
 The first Setup Wizard screen selects `Master` or `Slave`. Use matching RMS source
-on both sites and Arab Streaming 0.2.16 or later. Installation does not select a role
+on both sites and Arab Streaming 0.2.17 or later. Installation does not select a role
 or connect an existing site automatically.
 
 ## Master
@@ -106,3 +106,12 @@ POS catalog returned 62 products, 27 categories and 3 order types. No sales or
 accounting transactions were created for verification. The service was active and
 enabled, and the public site returned HTTP 200. Focused tests: 29 passed.
 See `docs/verification/slave-setup-2026-11-16.json` for the non-secret checks.
+
+## Store-only connection
+
+Create or select an enabled Store on the Master. RMS prepares its routing identity
+automatically; no Branch creation, activation or selection is required. The Slave
+wizard and the Master Instance Link dialog show Store names only. The generated
+Slave Instance displays that Store, and the Store shows the connected peer. Existing
+Store/pairing identities are preserved. A Store already assigned to another Slave
+is excluded from new connections.

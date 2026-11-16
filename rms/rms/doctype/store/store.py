@@ -4,6 +4,11 @@ from frappe.model.document import Document
 
 
 class Store(Document):
+	def onload(self):
+		from rms.streaming_targets import store_connection
+
+		store_connection(self)
+
 	def validate(self):
 		self.store_code = (self.store_code or "").strip()
 		self.validate_streaming_branch()
@@ -12,6 +17,9 @@ class Store(Document):
 		self.validate_order_type_taxes()
 
 	def validate_streaming_branch(self):
+		from rms.streaming_targets import ensure_store_scope
+
+		ensure_store_scope(self)
 		previous = self.get_doc_before_save()
 		if self.get("streaming_branch") and frappe.db.exists("Store", {
 			"streaming_branch": self.streaming_branch, "name": ["!=", self.name or ""],

@@ -1,3 +1,8 @@
+Slave setup and connection forms use **Store** as the only business selection.
+RMS creates its internal routing identity automatically, preserves existing
+pairings, and shows the peer connection from the Store. No manual Branch setup
+or selection is needed. This requires Arab Streaming 0.2.17 on both sites.
+
 POS startup now lists only Stores this site can operate. The Master keeps local
 branches selectable while paired Slave branches are excluded; a Slave offers its
 paired branch only. Stale saved selections fall back without restoring another
@@ -9,7 +14,7 @@ See the [branch selector verification](docs/verification/pos-branch-selector-202
 
 First-run setup now starts with Master/Slave selection. Master keeps the native
 company wizard; Slave uses a master URL, Instance Key and Store, then copies its
-setup through Arab Streaming. This release requires Arab Streaming **0.2.16+** and matching
+setup through Arab Streaming. This release requires Arab Streaming **0.2.17+** and matching
 RMS code on the master. See [first-run setup](docs/SETUP_WIZARD.md).
 
 The [2026-11-16 Master/Slave audit](docs/verification/streaming-audit-2026-11-16/README.md)

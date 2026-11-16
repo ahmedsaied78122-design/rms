@@ -17,6 +17,7 @@
     "store_code",
     "company",
     "streaming_branch",
+    "streaming_connection",
     "rms_column_identity_section_1",
     "enabled",
     "operating_day_end",
@@ -82,8 +83,10 @@
       "label": "Streaming Branch",
       "options": "Branch",
       "no_copy": 1,
-      "description": "The branch identity used to route this Store and its POS documents during streaming.",
-      "unique": 1
+      "description": "Managed automatically for this Store.",
+      "unique": 1,
+      "hidden": 1,
+      "read_only": 1
     },
     {
       "fieldname": "rms_column_identity_section_1",
@@ -235,6 +238,11 @@
       "fieldname": "description",
       "fieldtype": "Small Text",
       "label": "Description"
+    },
+    {
+      "fieldname": "streaming_connection",
+      "fieldtype": "HTML",
+      "label": "Streaming connection"
     }
   ],
   "permissions": [

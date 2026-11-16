@@ -50,7 +50,7 @@
 					description: __("Use an Instance Key issued by the Master, not your login password.") },
 				{ fieldname: "test_connection", fieldtype: "Button", label: __("Test connection and load Stores") },
 				{ fieldname: "store", fieldtype: "Select", label: __("Store"), options: "", reqd: 1,
-					description: __("Only available Stores with an enabled Streaming Branch are listed.") },
+					description: __("Choose an available Store. Its connection settings are configured automatically.") },
 				{ fieldname: "site_url", fieldtype: "Data", label: __("This Slave URL"), reqd: 1,
 					default: window.location.origin },
 			] });
@@ -99,7 +99,7 @@
 				this.slave_stores = message.stores;
 				const field = this.slave_form.get_field("store");
 				field.df.options = [{ value: "", label: "" }, ...message.stores.map(s => ({
-					value: s.name, label: `${s.title || s.name} (${s.streaming_branch})`,
+					value: s.name, label: s.title || s.name,
 				}))];
 				field.refresh();
 				if (message.stores.length === 1) await this.slave_form.set_value("store", message.stores[0].name);

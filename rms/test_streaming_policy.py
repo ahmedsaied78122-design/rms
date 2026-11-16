@@ -460,7 +460,7 @@ class TestRMSNativeClosingReplay(unittest.TestCase):
 class TestRMSStoreBranchMapping(unittest.TestCase):
 	def test_branch_cannot_be_assigned_to_two_stores(self):
 		doc = frappe.get_doc(dict(doctype="Store", name="S", streaming_branch="A"))
-		with patch("frappe.db.exists", return_value=True):
+		with patch("rms.streaming_targets.ensure_store_scope"), patch("frappe.db.exists", return_value=True):
 			with self.assertRaises(frappe.ValidationError):
 				doc.validate_streaming_branch()
 
@@ -480,7 +480,7 @@ class TestRMSStoreBranchMapping(unittest.TestCase):
 			with self.assertRaises(frappe.ValidationError):
 				doc.validate_streaming_branch()
 
-	def test_optional_mapping_can_be_filled_before_pairing(self):
+	def test_mapping_is_automatic_even_before_pairing(self):
 		doc = frappe.get_doc(dict(doctype="Store", name="S", streaming_branch="A"))
 		with (
 			patch.object(
@@ -489,8 +489,10 @@ class TestRMSStoreBranchMapping(unittest.TestCase):
 				return_value=frappe._dict(streaming_branch=None),
 			),
 			patch("frappe.db.exists", return_value=False),
+			patch.object(frappe,"conf",frappe._dict(arab_streaming_site_role="Master")),
 		):
-			doc.validate_streaming_branch()
+			with self.assertRaises(frappe.ValidationError):
+				doc.validate_streaming_branch()
 
 
 class TestRMSPolicyPublication(unittest.TestCase):
